@@ -4,7 +4,7 @@ import { groups, items, feeds, listUnreadItemIds, listSavedItemIds, mark } from 
 
 import { FeedItem, ItemType, Subscription, SubscriptionFeed } from './types';
 
-export enum LsItemType { GROUP, FEED }
+export enum LsItemType { GROUP, FEED, SAVED, ALL }
 
 export enum Marked { ITEM, FEED, GROUP }
 
@@ -14,6 +14,7 @@ const feedsCache: any = {}
  * 刷新同步数据到本地
  */
 export async function sync() {
+    // console.log(await favicons({id:1}));
     // 同步group
     (await groups()).groups.forEach((g: any) => {
         groupRepo.save({ id: g.id, title: g.title })
@@ -46,26 +47,44 @@ export async function sync() {
 
 }
 
-export async function listItem(id: any, type: LsItemType, page: number = 0, onlyread: boolean = false, unReadItemIds: Set<number>): Promise<FeedItem[] | undefined> {
+/**
+ * 
+ * @param id 
+ * @param type 
+ * @param page 
+ * @param onlyUnread 
+ * @param unReadItemIds 
+ * @returns 
+ */
+export async function listItem(id: any, type: LsItemType, page: number = 0, onlyUnread: boolean = false, unReadItemIds: Set<number>): Promise<FeedItem[] | undefined> {
     let feedIds: Set<number> = new Set([id])
     let res: FeedItem[]
     switch (type) {
         case LsItemType.FEED:
-            res = (await itemRepo.findAll(item => filterItem(item, feedIds, onlyread, unReadItemIds))).map(map)
+            res = (await itemRepo.findAll(item => filterItem(item, feedIds, onlyUnread, unReadItemIds))).map(map)
             break
         case LsItemType.GROUP:
-            feedIds = new Set((await feedRepo.getAll()).filter(item => item.groupId == id).map(item => item.id))
-            res = (await itemRepo.findAll(item => filterItem(item, feedIds, onlyread, unReadItemIds))).map(map)
+            feedIds = new Set((await feedRepo.getAll()).filter(item => id == -1 ? item.groupId == undefined : item.groupId == id).map(item => item.id))
+            res = (await itemRepo.findAll(item => filterItem(item, feedIds, onlyUnread, unReadItemIds))).map(map)
+            break
+        case LsItemType.SAVED:
+            let itemIds: Set<number> = new Set(id)
+            res = (await itemRepo.findAll(item => filterItem0(item, (id) => itemIds.has(id), onlyUnread, unReadItemIds))).map(map)
+            break
+        case LsItemType.ALL:
+            res = (await itemRepo.findAll(item => filterItem0(item, () => true, onlyUnread, unReadItemIds))).map(map)
             break
         default:
             throw Error('error')
     }
     res.reverse()
-    console.log(res)
     return res
 }
 
-
+/**
+ * 
+ * @returns 
+ */
 export async function listSubscription(): Promise<Subscription[] | undefined> {
     const groups: Group[] = await groupRepo.getAll();
     const feeds: Feed[] = await feedRepo.getAll()
@@ -76,7 +95,7 @@ export async function listSubscription(): Promise<Subscription[] | undefined> {
         gid2group[item.id] = item
     })
     feeds.forEach(f => {
-        const sf: SubscriptionFeed = { id: f.id, title: f.title, url: f.url, unReadQty: 0 }
+        const sf: SubscriptionFeed = { id: f.id, title: f.title, url: f.url, unreadQty: 0 }
         if (f.groupId) {
             gid2group[f.groupId].feeds.push(sf)
         } else {
@@ -86,6 +105,12 @@ export async function listSubscription(): Promise<Subscription[] | undefined> {
     return all
 }
 
+/**
+ * 
+ * @param feedId 
+ * @param unReadItemIds 
+ * @returns 
+ */
 export async function sumUnread(feedId: number, unReadItemIds: Set<number>): Promise<number> {
     return (await itemRepo.findAll(item => item.feedId == feedId && unReadItemIds.has(item.id))).length
 }
@@ -113,6 +138,15 @@ export async function listSavedIds(): Promise<number[]> {
  * @returns 
  */
 export async function read(id: number, marked: Marked, before?: number): Promise<any> {
+    if (id == -1 && marked == Marked.GROUP) {
+        return Promise.all((await feedRepo.getAll()).map(item => item.id).map(id => {
+            return mark({
+                id: id,
+                as: 'read',
+                mark: Marked[Marked.ITEM].toLowerCase(),
+            })
+        }))
+    }
     return await mark({
         id: id,
         as: 'read',
@@ -129,6 +163,15 @@ export async function read(id: number, marked: Marked, before?: number): Promise
  * @returns 
  */
 export async function unread(id: number, marked: Marked, before?: number): Promise<any> {
+    if (id == -1 && marked == Marked.GROUP) {
+        return Promise.all((await feedRepo.getAll()).map(item => item.id).map(id => {
+            return mark({
+                id: id,
+                as: 'unread',
+                mark: Marked[Marked.ITEM].toLowerCase(),
+            })
+        }))
+    }
     return await mark({
         id: id,
         as: 'unread',
@@ -163,14 +206,30 @@ export async function unsave(id: number): Promise<any> {
     })
 }
 
-function filterItem(item: Item, feedIds: Set<number>, onlyread: boolean = false, unReadItemIds: Set<number>): boolean {
-    return feedIds.has(item.feedId) && (!onlyread || unReadItemIds.has(item.feedId))
+export async function getNav(id: any, type: LsItemType): Promise<any> {
+    if (type == LsItemType.SAVED) {
+        return { title: '稍后阅读' }
+    } else if (type == LsItemType.ALL) {
+        return { title: '全部文章' }
+    } else if (type == LsItemType.GROUP) {
+        return await groupRepo.get(id)
+    } else if (type == LsItemType.FEED) {
+        return await feedRepo.get(id)
+    }
+}
+
+function filterItem(item: Item, feedIds: Set<number>, onlyUnread: boolean = false, unReadItemIds: Set<number>): boolean {
+    return feedIds.has(item.feedId) && (!onlyUnread || unReadItemIds.has(item.id))
+}
+
+function filterItem0(item: Item, itemIdFilter: (id: any) => boolean, onlyUnread: boolean = false, unReadItemIds: Set<number>): boolean {
+    return itemIdFilter(item.id) && (!onlyUnread || unReadItemIds.has(item.id))
 }
 
 function map(item: Item): FeedItem {
     const imgs = extImgs(item.description)
     const thumbnail: string | undefined = imgs && imgs.length > 0 ? imgs[0] : undefined
-    const type: ItemType = imgs.length > 5 ? ItemType.IMAGE : ItemType.BASIC
+    const type: string = ItemType[imgs.length > 5 ? ItemType.IMAGE : ItemType.BASIC]
     const text = extText(item.description)
     const summary: string = text && text.length > 36 ? text.substring(0, 36) : text
     const d: number = item.pubDate * 1000

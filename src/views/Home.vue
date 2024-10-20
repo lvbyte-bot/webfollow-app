@@ -2,99 +2,63 @@
   <v-responsive>
     <v-app>
       <v-navigation-drawer width="96">
-        <v-list-item
-          class="my-2 mx-3"
-          prepend-avatar="/logo.svg"
-          title="webfollow"
-        >
+        <v-list-item class="my-2 mx-3" prepend-avatar="/logo.svg" title="webfollow">
         </v-list-item>
         <v-divider></v-divider>
 
         <v-list density="compact" nav>
-          <v-list-item
-            prepend-icon="mdi-plus"
-            title="添加"
-            value="plus"
-          ></v-list-item>
-          <v-list-item
-            prepend-icon="mdi-download"
-            title="下载"
-            value="app"
-          ></v-list-item>
+          <v-list-item prepend-icon="mdi-plus" title="添加" value="plus"></v-list-item>
+          <v-list-item prepend-icon="mdi-download" title="下载" value="app"></v-list-item>
         </v-list>
       </v-navigation-drawer>
       <v-main>
         <div class="cols">
           <div class="resizeable">
-            <v-card flat height="100vh">
-              <v-list nav>
-                <v-list-item
-                  prepend-icon="mdi-newspaper"
-                  title="今日"
-                ></v-list-item>
-                <v-list-item
-                  prepend-icon="mdi-format-list-bulleted"
-                  title="稍后阅读"
-                ></v-list-item>
+           
+              <v-list nav class="sidbar">
+                <div class="sidbar-top">
+                <v-list-item prepend-icon="mdi-inbox" title="全部文章" to="/all"> <template v-slot:append>
+                    <small v-if="appStore.savedQty" v-text="appStore.unReadQty"></small>
+                  </template></v-list-item>
+                <v-list-item prepend-icon="mdi-format-list-bulleted" title="稍后阅读" to="/next">
+                  <template v-slot:append>
+                    <small v-if="appStore.savedQty" v-text="appStore.savedQty"></small>
+                  </template>
+                </v-list-item>
+              </div>
                 <v-list-subheader>FEEDS</v-list-subheader>
 
                 <v-list-group v-for="item in store.feeds">
                   <template v-slot:activator="{ props }">
-                    <v-list-item
-                      v-bind="props"
-                      prepend-icon="mdi-folder-outline"
-                      :title="item.title"
-                      :value="item.title"
-                    ></v-list-item>
+                    <v-list-item v-bind="props" prepend-icon="mdi-folder-outline" :title="item.title"
+                      :value="item.title"></v-list-item>
                   </template>
-                  <v-list-item
-                    title="查看全部"
-                    :value="'/c/' + item.id"
-                    :to="'/c/' + item.id"
-                  ></v-list-item>
-                  <v-list-item
-                    v-for="item in item.feeds"
-                    :key="item.id"
-                    :title="item.title"
-                    :value="item.id"
-                    :to="'/f/' + item.id"
-                    @contextmenu.prevent="showContextMenu($event, title)"
-                  >
+                  <v-list-item title="查看全部" :value="'/c/' + item.id" :to="'/c/' + item.id"><template v-slot:append>
+                      <small v-if="item.unreadQty" v-text="item.unreadQty"></small>
+                    </template></v-list-item>
+                  <v-list-item v-for="item in item.feeds" :key="item.id" :title="item.title" :value="item.id"
+                    :to="'/f/' + item.id" @contextmenu.prevent="showContextMenu($event, title)">
                     <template v-slot:append>
-                      <small
-                        v-if="item.unreadQty"
-                        v-text="item.unreadQty"
-                      ></small>
+                      <small v-if="item.unreadQty" v-text="item.unreadQty"></small>
                     </template>
                   </v-list-item>
                 </v-list-group>
               </v-list>
-              <div v-if="mobile" class="plus mx-auto">
+             
+            <div v-if="mobile" class="plus mx-auto">
                 <v-btn color="surface-variant" icon="mdi-plus"></v-btn>
               </div>
-            </v-card>
           </div>
           <div class="flexible">
             <router-view></router-view>
           </div>
         </div>
       </v-main>
-      <v-card
-        v-show="contextMenuVisible"
-        style="position: fixed; z-index: 10000"
-        :style="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }"
-      >
+      <v-card v-show="contextMenuVisible" style="position: fixed; z-index: 10000"
+        :style="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }">
         <v-list>
-          <v-list-item
-            prepend-icon=" mdi-pencil-box-outline"
-            @click="handleAction('edit')"
-            >编辑订阅源</v-list-item
-          >
-          <v-list-item
-            prepend-icon="mdi-delete-sweep"
-            @click="handleAction('delete')"
-            >取消订阅</v-list-item
-          >
+          <v-list-item prepend-icon=" mdi-pencil-box-outline" @click="handleAction('edit')">编辑订阅源</v-list-item>
+          <v-list-item prepend-icon="mdi-delete-sweep" @click="handleAction('delete')">取消订阅</v-list-item>
         </v-list>
       </v-card>
       <!-- <v-dialog v-model="title" max-width="500">
@@ -112,11 +76,12 @@ import Items from "./Items.vue";
 import { useDisplay } from "vuetify";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { listfeeds, listItems } from "@/service/fever";
-import { useFeedsStore } from "@/store";
+import { useFeedsStore, useAppStore } from "@/store";
 
 const store = useFeedsStore();
+const appStore = useAppStore();
 const title = ref("");
-
+const nav = ref('')
 const feeds = ref([]);
 
 onMounted(() => {
@@ -172,12 +137,13 @@ const show = ref(false);
   max-width: 36vw;
   height: 100vh;
 }
+
 .plus {
-  position: absolute;
+  display: inline-block;
+  position: fixed;
   bottom: 0;
-  width: 100%;
-  text-align: center;
-  padding: 2rem;
+  padding: 1rem;
+  z-index: 1000;
 }
 
 .flexible {
@@ -185,5 +151,20 @@ const show = ref(false);
   /* height: 100vh;
   overflow-y: auto;
   position: relative; */
+}
+.sidbar{
+  position: relative;
+  max-height: 100%;
+  overflow: auto;
+  background-color: rgb(var(--v-theme-background));
+  padding-top: 0;
+}
+.sidbar-top{
+  padding-top: 0.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: rgb(var(--v-theme-background));
+  border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
 }
 </style>

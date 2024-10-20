@@ -8,10 +8,14 @@ const routes = [{
     path: '',
     component: () => import('@/views/Home.vue'),
     children: [{
-        path: '/:category/:id',
+        path: '/:type/:id',
         component: () => import('@/views/Items.vue'),
         props: true
     }, {
+        path: '/:type',
+        component: () => import('@/views/Items.vue'),
+        props: true
+    },{
         path: '/',
         component: () => import('@/views/Items.vue'),
     }]

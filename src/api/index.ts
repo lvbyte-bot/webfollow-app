@@ -26,6 +26,13 @@ export function items(params: object) {
 }
 
 
+export function favicons(params: object) :Promise<any>{
+    return request(Object.assign({
+        'favicons': '0'
+    }, params))
+}
+
+
 export function listUnreadItemIds() {
     return request({
         'unread_item_ids': '0'

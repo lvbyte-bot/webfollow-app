@@ -1,50 +1,34 @@
 <template>
+  <!-- reader -->
   <v-scale-transition>
     <div class="cover" v-if="show && currentItem.title">
       <div class="cover-action">
-        <v-btn
-          size="small"
-          variant="text"
-          icon="mdi-close"
-          @click="show = false"
-          title="关闭"
-        ></v-btn>
-        <v-btn
-          size="small"
-          color="surface-variant"
-          icon="mdi-chevron-up"
-          title="上一篇文章"
-        ></v-btn>
-        <v-btn
-          size="small"
-          color="surface-variant"
-          icon="mdi-chevron-down"
-          title="下一篇文章"
-        ></v-btn>
+        <v-btn size="small" variant="text" icon="mdi-close" @click="show = false" title="关闭"></v-btn>
+        <!-- <v-btn size="small" color="surface-variant" icon="mdi-chevron-up" title="上一篇文章"></v-btn>
+        <v-btn size="small" color="surface-variant" icon="mdi-chevron-down" title="下一篇文章"></v-btn> -->
       </div>
       <v-container class="pa-0 pl-16">
-        <image-reader :item="currentItem" v-if="currentItem.type == 'image'" />
-        <basic-reader :item="currentItem" v-else-if="index == 1" />
-        <podcast-reader v-else-if="index == 3" />
+        <image-reader :item="currentItem" v-if="currentItem.type == 'IMAGE'" />
+        <basic-reader :item="currentItem" v-else-if="currentItem.type == 'BASIC'" />
+        <podcast-reader v-else-if="currentItem.type == 'PODCAST'" />
         <video-reader v-else />
       </v-container>
     </div>
   </v-scale-transition>
+  <!-- items -->
   <div class="main-warp">
     <v-container class="top-sider">
       <v-toolbar>
-        <v-app-bar-title>ifanr</v-app-bar-title>
-        <v-spacer></v-spacer>
-
-        <v-btn icon title="只看已读">
-          <v-icon>mdi-radiobox-blank</v-icon>
+        <div class="v-toolbar-title v-app-bar-title">{{ store.nav&&store.nav.title||'未分类' }}</div>
+        <!-- <v-spacer></v-spacer> -->
+        <v-btn :icon="onlyUnread ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'" :title="onlyUnread?'只看未读':'看全部'"
+          @click="onlyUnread = !onlyUnread">
+        </v-btn>
+        <v-btn :disabled="id=='-1'&&type=='c'" icon title="标记为已读" @click="markRead">
+          <v-icon> mdi-checkbox-multiple-marked-circle-outline</v-icon>
         </v-btn>
 
-        <v-btn icon title="标记为已读">
-          <v-icon>mdi-check-all</v-icon>
-        </v-btn>
-
-        <v-btn icon title="刷新">
+        <v-btn icon title="刷新" @click="refresh"  :class="{ 'rotating': loading }">
           <v-icon>mdi-reload</v-icon>
         </v-btn>
       </v-toolbar>
@@ -52,57 +36,9 @@
 
     <v-container class="mx-auto items-warp">
       <v-row>
-        <v-col
-          v-for="item in store.items"
-          cols="3"
-          xl="2"
-          lg="3"
-          sm="6"
-          xs="12"
-          :key="item.id"
-        >
-          <v-card
-            flat
-            @click="
-              () => {
-                show = true;
-                index = 1;
-                currentItem = item;
-              }
-            "
-          >
-            <v-img
-              v-if="item.thumbnail"
-              class="align-end text-white"
-              height="200"
-              :src="
-                item.thumbnail
-                  ? item.thumbnail
-                  : 'http://img.netbian.com/file/2024/0515/191947LFJ2P.jpg'
-              "
-              cover
-            >
-              <v-card-title class="bg-cover" v-text="item.title"></v-card-title>
-            </v-img>
-            <v-card-title v-else v-text="item.title"></v-card-title>
-            <v-card-subtitle class="pt-4">
-              {{ item.author }} /
-              {{ item.datestr }}
-            </v-card-subtitle>
-            <v-card-text>
-              <p class="color-surface" v-text="item.summary"></p>
-            </v-card-text>
-            <v-card-actions>
-              <v-btn
-                :icon="
-                  item.isRead ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'
-                "
-                title="标记为已读"
-              ></v-btn>
-              <v-spacer></v-spacer>
-              <v-btn icon="mdi-playlist-plus" title="稍后阅读"></v-btn>
-            </v-card-actions> </v-card
-        ></v-col>
+        <v-col v-for="item in store.items"  xl="2" lg="3" sm="4" xs="6" :key="item.id">
+          <Item :item="item" @click="openReader(item)" :type="type"></Item>
+        </v-col>
       </v-row>
     </v-container>
   </div>
@@ -113,40 +49,65 @@ import BasicReader from "./reader/BasicReader.vue";
 import ImageReader from "./reader/ImageReader.vue";
 import VideoReader from "./reader/VideoReader.vue";
 import PodcastReader from "./reader/PodcastReader.vue";
+import Item from "./item/Item.vue";
 import { onMounted, watch } from "vue";
-import { LsItemType } from "@/service";
-const props = defineProps(["category", "id"]);
-import { useItemsStore } from "@/store";
+import { LsItemType ,Marked} from "@/service";
+const props = defineProps(["type", "id"]);
+import { useItemsStore, useAppStore } from "@/store";
 
 const store = useItemsStore();
-const currentItem = ref({ title: "" });
+const app = useAppStore()
+const currentItem = ref({ title: "" ,id:0, type:undefined});
+const onlyUnread = ref(false)
+const loading = ref(false)
 onMounted(initData);
 
 async function loadData(
   id: any,
   type: LsItemType,
   page: number = 0,
-  onlyread: boolean = false
+  onlyUnread: boolean = false
 ) {
-  store.loadData(id, type, page, onlyread);
+  store.loadData(id, type, page, onlyUnread);
 }
 
 function initData() {
-  if (props.category == "f") {
-    loadData(Number(props.id), LsItemType.FEED, 0);
-  } else if (props.category == "c") {
-    loadData(Number(props.id), LsItemType.GROUP, 0);
+
+  show.value=false
+  if (props.type == "f") {
+    loadData(Number(props.id), LsItemType.FEED, 0, onlyUnread.value);
+  } else if (props.type == "c") {
+    loadData(Number(props.id), LsItemType.GROUP, 0, onlyUnread.value);
+  }else if (props.type == "next") {
+    loadData(null, LsItemType.SAVED, 0, onlyUnread.value);
+  }else if (props.type == "all") {
+    loadData(null, LsItemType.ALL, 0, onlyUnread.value);
   }
 }
 
+async function refresh() {
+  loading.value=true
+  await app.sync()
+  await initData()
+  loading.value=false
+}
+
+async function markRead() {
+  await app.read(Number(props.id), props.type == "f" ? Marked.FEED : Marked.GROUP)
+}
+function openReader(item){
+  show.value = true
+  currentItem.value = item
+}
 watch(props, initData);
+watch(onlyUnread, initData)
 const show = ref(false);
-const index = ref(0);
 </script>
 <style lang="scss" scoped>
 .items-warp {
   position: relative;
 }
+
 .cover {
   position: sticky;
   top: 0;
@@ -154,6 +115,7 @@ const index = ref(0);
   width: 100%;
   height: 100%;
   z-index: 100;
+
   .cover-action {
     position: absolute;
     top: 0;
@@ -165,8 +127,19 @@ const index = ref(0);
     grid-gap: 2rem;
   }
 }
-.bg-cover {
-  background-color: rgba(var(--v-theme-surface-variant), 0.8);
+
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rotating .v-icon {
+  animation: rotate 1s linear infinite;
 }
 </style>
 <style>
@@ -176,10 +149,12 @@ const index = ref(0);
   z-index: 10;
   padding: 0;
 }
+
 .main-warp {
   height: 100vh;
   overflow-y: auto;
 }
+
 .v-toolbar {
   background-color: rgb(var(--v-theme-background)) !important;
 }

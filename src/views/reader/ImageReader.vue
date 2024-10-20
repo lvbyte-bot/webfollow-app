@@ -1,5 +1,5 @@
 <template>
-  <v-card flat height="100vh">
+  <v-card flat >
     <div class="grid">
       <div class="image-reader">
         <!-- <v-img
@@ -10,17 +10,18 @@
         /> -->
         <swiper
           :modules="modules"
-          :slides-per-view="1"
-          :space-between="50"
+          :space-between="30"
           navigation
           pagination
           @swiper="onSwiper"
           @slideChange="onSlideChange"
         >
           <swiper-slide v-for="(image, index) in allImages" :key="index">
-            <v-img :aspect-ratio="1" class="swiper-img" cover :src="image" />
+              <img cover :width="300"   :src="image" />
           </swiper-slide>
         </swiper>
+        <!-- <img v-for="(image, index) in allImages" class="img" :key="index" :src="image" /> -->
+
       </div>
       <div class="image-no">
         <basic-reader :item="item"></basic-reader>
@@ -67,17 +68,13 @@ export default {
 </script>
 
 <style scoped>
-.image-no {
-  img {
-    display: none;
-  }
-}
 
 .grid {
   height: 100%;
   display: grid;
-  grid-template-columns: minmax(30vw, 1fr) 1fr;
+  grid-template-columns: minmax(40vw, 5fr) minmax(20vw, 3fr);
 }
+
 .image-reader-card {
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -85,14 +82,13 @@ export default {
 }
 
 .image-reader {
-  max-width: 70vw;
+  height: 100%;
 }
 
 .swiper {
-  width: 100%;
-  height: 100%;
   border-radius: 8px;
-  overflow: hidden;
+  height: 100vh;
+  padding: 1rem;
 }
 
 .swiper-slide {
@@ -102,16 +98,18 @@ export default {
 }
 
 .swiper-slide img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   transition: transform 0.3s ease;
+  max-height: 100vh;
+  height: auto;
+  width: auto;
+  display: none;
 }
 
 :deep(.swiper-button-next),
 :deep(.swiper-button-prev) {
   color: #fff;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(var(--v-theme-surface-variant),.6);
   padding: 20px;
   border-radius: 50%;
 }
@@ -121,16 +119,34 @@ export default {
 }
 
 :deep(.swiper-pagination-bullet-active) {
-  background-color: #007bff;
+  background-color: rgb(var(--v-theme-primary));
 }
 .ovf {
   overflow: auto;
 }
+.swiper-slide-active{
+  img{
+    display: block;
+  }
+}
+/* .swiper-wrapper {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+
+  .img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  } 
+}*/
 </style>
-<style>
-.swiper-img img {
-  max-height: 100%;
-  text-align: center;
-  margin: 0 a;
+<style lang="scss">
+.image-no {
+  img {
+    // display: none;
+    width: 50%;
+  }
 }
 </style>

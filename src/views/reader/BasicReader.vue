@@ -2,17 +2,21 @@
   <v-card flat height="100vh" class="ovf">
     <div class="px-1">
       <div class="top-sider">
-        <v-card-title class="text-overflow">{{ item.title }}</v-card-title>
+        <div >
+          <div class="title">
+            <a :href="item.link" :title="item.title">{{ item.title }}</a>
+            </div>
+            <small>
+            {{  item.author  +' - '+ item.feed.title }}  | 
+            {{ item.datestr }}
+         </small>
+        </div>
         <div>
-          <v-btn
-            variant="text"
-            :icon="item.is_read ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'"
-            title="阅读"
-          >
-          </v-btn>
+          <!-- <v-btn disabled variant="text" :icon="item.isRead ? 'mdi-radiobox-blank' : 'mdi-radiobox-marked'" title="阅读">
+          </v-btn> -->
 
-          <v-btn variant="text" icon title="稍后阅读">
-            <v-icon>mdi-playlist-plus</v-icon>
+          <v-btn variant="text" icon title="稍后阅读" @click="toggleSaved">
+            <v-icon>{{item.isSaved?'mdi-playlist-minus':'mdi-playlist-plus'}}</v-icon>
           </v-btn>
           <v-btn variant="text" icon title="加载网页原文">
             <v-icon> mdi-book-open-outline</v-icon>
@@ -27,8 +31,7 @@
       </div>
       <v-container>
         <slot>
-          <v-card-subtitle>{{ item.date }}</v-card-subtitle>
-          <div class="content" v-html="item.html"></div>
+          <div class="content" v-html="item.description"></div>
         </slot>
       </v-container>
     </div>
@@ -45,8 +48,7 @@
 </template>
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { useBaseStore } from "@/store";
-import { watch } from "vue";
+import { useAppStore } from "@/store";
 import { Marked } from "@/service";
 import { FeedItem } from "@/service/types";
 
@@ -54,41 +56,68 @@ const props = defineProps<{
   item: FeedItem;
 }>();
 
-const store = useBaseStore();
+
+const store = useAppStore();
 onMounted(() => {
   if (!props.item.isRead) {
     store.read(Number(props.item.id), Marked.ITEM);
   }
 });
-watch(
-  () => props.item.id,
-  () => {
-    if (!props.item.isRead) {
-      store.read(Number(props.item.id), Marked.ITEM);
-    }
+// watch(
+//   () => props.item.id,
+//   () => {
+//     if (!props.item.isRead) {
+//       store.read(Number(props.item.id), Marked.ITEM);
+//     }
+//   }
+// );
+function toggleSaved() {
+  if (props.item.isSaved) {
+    store.unsave(props.item.id)
+  } else {
+    store.save(props.item.id)
   }
-);
+} 
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .ovf {
   overflow-y: auto;
 }
+
 .top-sider {
   background-color: rgb(var(--v-theme-background));
   display: grid;
-  grid-template-columns: 1fr 240px;
+  grid-template-columns: 1fr 195px;
+  // justify-content: space-between;
+  align-items: center;
   padding: 0.5rem 0.3rem;
+  >*:first-child{
+  margin-left: 1rem;
+
+  }
+  >*:last-child{
+    min-width: 195px;
+  }
+  a{
+    text-decoration: none;
+    color: rgb(var(--v-border-color));
+  }
 }
+
 .text-overflow {
-  width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.title{
+  font-size: 20px;
+  // line-height: 48px;
 }
 </style>
 <style>
 .content {
   padding: 0.5rem;
+
   * {
     max-width: 100%;
   }

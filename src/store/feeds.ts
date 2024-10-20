@@ -1,11 +1,10 @@
 // stores/counter.js
 import {
     defineStore,
-    storeToRefs
 } from 'pinia'
 import {
     ref,
-    computed,
+    watch,
     onMounted,
     Ref,
 } from 'vue'
@@ -21,27 +20,33 @@ import { Subscription } from '@/service/types'
 export const useFeedsStore = defineStore('feeds', () => {
     const {
         unread_item_ids
-    } = storeToRefs(useBaseStore())
+    } = useBaseStore()
     const subscriptions: Ref<Subscription[] | undefined> = ref([])
 
-    const feeds = computed({
-        set: () => unread_item_ids.value.size + subscriptions.value.length,
-        get: () => subscriptions.value?.map(g => {
-            g.feeds.forEach(async f => {
-                // f.isSaved = saved_item_ids.value.has(f.id)
-                // f.isRead = !unread_item_ids.value.has(f.id)
-                f.unreadQty = await sumUnread(f.id, unread_item_ids.value)
-            });
+    const feeds: Ref<Subscription[] | undefined> = ref([])
+
+    async function initFeeds() {
+        feeds.value = await Promise.all(subscriptions.value?.map(async g => {
+            await Promise.all(g.feeds.map(async f => {
+                f.unreadQty = await sumUnread(f.id, unread_item_ids)
+            }));
             g.unreadQty = g.feeds.map(f => f.unreadQty).reduce((x, y) => x + y)
             return g
-        })
-    })
+        }) || [])
+    }
+
+    async function refresh() {
+        subscriptions.value = await listSubscription()
+        initFeeds()
+    }
 
     onMounted(async () => {
-        subscriptions.value = await listSubscription()
+        refresh()
+        watch(unread_item_ids, initFeeds)
     })
 
     return {
-        feeds
+        feeds,
+        refresh
     }
 })

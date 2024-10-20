@@ -1,15 +1,26 @@
 // stores/counter.js
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
-export { useFeedsStore } from './feeds'
+import { useBaseStore } from './base'
+import { useFeedsStore } from './feeds'
 export { useItemsStore } from './items'
-export { useBaseStore } from './base'
-export const useCounterStore = defineStore('counter', () => {
-    const count = ref(0)
-    const doubleCount = computed(() => count.value * 2)
-    function increment() {
-        count.value++
+import { sync as sync0 } from '@/service'
+import { computed} from 'vue'
+export const useAppStore = defineStore('app', () => {
+    const {
+        saved_item_ids, unread_item_ids, read, unread, save, unsave, refresh
+    } = useBaseStore()
+    const { refresh: refreshFeed } = useFeedsStore()
+    async function sync() {
+
+        await refresh(async () => {
+            await sync0()
+            await refreshFeed()
+        })
+
     }
-    return { count, doubleCount, increment }
+    const savedQty = computed(() => saved_item_ids.size)
+    const unReadQty = computed(() => unread_item_ids.size)
+    return { sync, read, unread, save, unsave, savedQty, unReadQty }
 })
 
+export { useFeedsStore };
