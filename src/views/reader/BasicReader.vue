@@ -6,7 +6,7 @@
           <div class="title">
             <a :href="item.link" :title="item.title">{{ item.title }}</a>
             </div>
-            <small>
+            <small class="text-caption">
             {{  item.author  +' - '+ item.feed.title }}  | 
             {{ item.datestr }}
          </small>
@@ -35,15 +35,6 @@
         </slot>
       </v-container>
     </div>
-    <!-- <v-card-actions>
-      <v-btn
-        color="surface-variant"
-        text="Agree"
-        variant="flat"
-        icon="mdi-chevron-down"
-      >
-      </v-btn>
-    </v-card-actions> -->
   </v-card>
 </template>
 <script setup lang="ts">
@@ -63,14 +54,7 @@ onMounted(() => {
     store.read(Number(props.item.id), Marked.ITEM);
   }
 });
-// watch(
-//   () => props.item.id,
-//   () => {
-//     if (!props.item.isRead) {
-//       store.read(Number(props.item.id), Marked.ITEM);
-//     }
-//   }
-// );
+
 function toggleSaved() {
   if (props.item.isSaved) {
     store.unsave(props.item.id)

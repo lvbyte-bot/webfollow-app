@@ -1,8 +1,8 @@
 <template>
   <v-responsive>
     <v-app>
-      <v-navigation-drawer width="96">
-        <v-list-item class="my-2 mx-3" prepend-avatar="/logo.svg" title="webfollow">
+      <v-navigation-drawer rail>
+        <v-list-item class="my-2 " prepend-avatar="/logo.svg" title="webfollow">
         </v-list-item>
         <v-divider></v-divider>
 

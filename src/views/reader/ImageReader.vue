@@ -146,7 +146,9 @@ export default {
 .image-no {
   img {
     // display: none;
-    width: 50%;
+    text-align: center;
+    margin: 0 auto;
+    width: 80%;
   }
 }
 </style>

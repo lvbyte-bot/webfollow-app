@@ -19,27 +19,36 @@
   <div class="main-warp">
     <v-container class="top-sider">
       <v-toolbar>
-        <div class="v-toolbar-title v-app-bar-title">{{ store.nav&&store.nav.title||'未分类' }}</div>
+        
+        <div class="v-toolbar-title v-app-bar-title">{{ store.nav&&store.nav.title||'未分类' }} </div>
         <!-- <v-spacer></v-spacer> -->
+        
         <v-btn :icon="onlyUnread ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'" :title="onlyUnread?'只看未读':'看全部'"
           @click="onlyUnread = !onlyUnread">
         </v-btn>
-        <v-btn :disabled="id=='-1'&&type=='c'" icon title="标记为已读" @click="markRead">
+        <v-btn :disabled="id=='-1'&&type=='c'||(type=='next'||type=='all')" icon title="标记为已读" @click="markRead">
           <v-icon> mdi-checkbox-multiple-marked-circle-outline</v-icon>
         </v-btn>
 
         <v-btn icon title="刷新" @click="refresh"  :class="{ 'rotating': loading }">
           <v-icon>mdi-reload</v-icon>
         </v-btn>
+        <v-btn  :icon="itemView=='card' ? 'mdi-card-bulleted-outline' : 'mdi-format-list-bulleted'" :title="itemView=='card'?'卡片视图':'列表视图'"
+          @click="itemView = itemView=='text'?'card':'text'">
+        </v-btn>
       </v-toolbar>
     </v-container>
 
     <v-container class="mx-auto items-warp">
-      <v-row>
-        <v-col v-for="item in store.items"  xl="2" lg="3" sm="4" xs="6" :key="item.id">
-          <Item :item="item" @click="openReader(item)" :type="type"></Item>
+      <v-row v-if="itemView=='card'">
+        <v-col v-for="item in store.items"  :key="item.id">
+          <Item   :item="item" @click="openReader(item)" :type="type"></Item>
         </v-col>
       </v-row>
+      <template v-else>
+        <TextItem  v-for="item in store.items" :item="item" @click="openReader(item)" :type="type" :key="item.id"></TextItem>
+      </template>
+      
     </v-container>
   </div>
 </template>
@@ -49,7 +58,8 @@ import BasicReader from "./reader/BasicReader.vue";
 import ImageReader from "./reader/ImageReader.vue";
 import VideoReader from "./reader/VideoReader.vue";
 import PodcastReader from "./reader/PodcastReader.vue";
-import Item from "./item/Item.vue";
+import Item from "./item/CardItem.vue";
+import TextItem from "./item/TextItem.vue";
 import { onMounted, watch } from "vue";
 import { LsItemType ,Marked} from "@/service";
 const props = defineProps(["type", "id"]);
@@ -60,6 +70,7 @@ const app = useAppStore()
 const currentItem = ref({ title: "" ,id:0, type:undefined});
 const onlyUnread = ref(false)
 const loading = ref(false)
+const itemView = ref('card')
 onMounted(initData);
 
 async function loadData(
@@ -95,7 +106,7 @@ async function refresh() {
 async function markRead() {
   await app.read(Number(props.id), props.type == "f" ? Marked.FEED : Marked.GROUP)
 }
-function openReader(item){
+function openReader(item:any){
   show.value = true
   currentItem.value = item
 }
@@ -147,7 +158,7 @@ const show = ref(false);
   position: sticky !important;
   top: 0;
   z-index: 10;
-  padding: 0;
+  padding: 0 1rem 0 0;
 }
 
 .main-warp {
