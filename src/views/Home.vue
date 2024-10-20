@@ -14,9 +14,9 @@
       <v-main>
         <div class="cols">
           <div class="resizeable">
-           
-              <v-list nav class="sidbar">
-                <div class="sidbar-top">
+
+            <v-list nav class="sidbar">
+              <div class="sidbar-top">
                 <v-list-item prepend-icon="mdi-inbox" title="全部文章" to="/all"> <template v-slot:append>
                     <small v-if="appStore.savedQty" v-text="appStore.unReadQty"></small>
                   </template></v-list-item>
@@ -26,28 +26,28 @@
                   </template>
                 </v-list-item>
               </div>
-                <v-list-subheader>FEEDS</v-list-subheader>
+              <v-list-subheader>FEEDS</v-list-subheader>
 
-                <v-list-group v-for="item in store.feeds">
-                  <template v-slot:activator="{ props }">
-                    <v-list-item v-bind="props" prepend-icon="mdi-folder-outline" :title="item.title"
-                      :value="item.title"></v-list-item>
+              <v-list-group v-for="item in store.feeds">
+                <template v-slot:activator="{ props }">
+                  <v-list-item v-bind="props" prepend-icon="mdi-folder-outline" :title="item.title"
+                    :value="item.title"></v-list-item>
+                </template>
+                <v-list-item title="查看全部" :value="'/c/' + item.id" :to="'/c/' + item.id"><template v-slot:append>
+                    <small v-if="item.unreadQty" v-text="item.unreadQty"></small>
+                  </template></v-list-item>
+                <v-list-item v-for="item in item.feeds" :key="item.id" :title="item.title" :value="item.id"
+                  :to="'/f/' + item.id" @contextmenu.prevent="showContextMenu($event, title)">
+                  <template v-slot:append>
+                    <small v-if="item.unreadQty" v-text="item.unreadQty"></small>
                   </template>
-                  <v-list-item title="查看全部" :value="'/c/' + item.id" :to="'/c/' + item.id"><template v-slot:append>
-                      <small v-if="item.unreadQty" v-text="item.unreadQty"></small>
-                    </template></v-list-item>
-                  <v-list-item v-for="item in item.feeds" :key="item.id" :title="item.title" :value="item.id"
-                    :to="'/f/' + item.id" @contextmenu.prevent="showContextMenu($event, title)">
-                    <template v-slot:append>
-                      <small v-if="item.unreadQty" v-text="item.unreadQty"></small>
-                    </template>
-                  </v-list-item>
-                </v-list-group>
-              </v-list>
-             
+                </v-list-item>
+              </v-list-group>
+            </v-list>
+
             <div v-if="mobile" class="plus mx-auto">
-                <v-btn color="surface-variant" icon="mdi-plus"></v-btn>
-              </div>
+              <v-btn color="surface-variant" icon="mdi-plus"></v-btn>
+            </div>
           </div>
           <div class="flexible">
             <router-view></router-view>
@@ -152,14 +152,16 @@ const show = ref(false);
   overflow-y: auto;
   position: relative; */
 }
-.sidbar{
+
+.sidbar {
   position: relative;
   max-height: 100%;
   overflow: auto;
   background-color: rgb(var(--v-theme-background));
   padding-top: 0;
 }
-.sidbar-top{
+
+.sidbar-top {
   padding-top: 0.5rem;
   position: sticky;
   top: 0;

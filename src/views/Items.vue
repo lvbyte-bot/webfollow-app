@@ -68,7 +68,7 @@ import { useItemsStore, useAppStore } from "@/store";
 const store = useItemsStore();
 const app = useAppStore()
 const currentItem = ref({ title: "" ,id:0, type:undefined});
-const onlyUnread = ref(false)
+const onlyUnread = ref(true)
 const loading = ref(false)
 const itemView = ref('card')
 onMounted(initData);
