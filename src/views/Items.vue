@@ -91,7 +91,7 @@
         height="100vh"
       >
         <v-btn variant="text" :to="feedStore.nextUnReadUrl">
-          点击打开下一个未读feed
+          点击打开下一个未读的feed
         </v-btn>
       </v-empty-state>
     </v-container>
