@@ -25,6 +25,8 @@ export const useItemsStore = defineStore('items', () => {
     } = useBaseStore()
     const data: Ref<FeedItem[] | undefined> = ref([])
 
+    const isLast: Ref<boolean | undefined> = ref(false)
+
     const nav: Ref<any> = ref({})
 
     let cacheLoadParams: any = {}
@@ -36,11 +38,16 @@ export const useItemsStore = defineStore('items', () => {
     }))
 
     async function loadData(id: any, type: LsItemType, page: number = 0, onlyUnread: boolean = false) {
+        if (page == 0) {
+            data.value = []
+        }
         cacheLoadParams = { id, type, page, onlyUnread }
         id = type == LsItemType.SAVED ? saved_item_ids : id
         id = type == LsItemType.ALL ? null : id
         nav.value = await getNav(id, type);
-        data.value = await listItem(id, type, page, onlyUnread, unread_item_ids)
+        const r = await listItem(id, type, page, onlyUnread, unread_item_ids)
+        r?.data.forEach((item) => data.value?.push(item))
+        isLast.value = r?.isLast
     }
 
     async function refreshItems() {
@@ -51,6 +58,7 @@ export const useItemsStore = defineStore('items', () => {
 
     return {
         items,
+        isLast,
         nav,
         loadData,
         refreshItems

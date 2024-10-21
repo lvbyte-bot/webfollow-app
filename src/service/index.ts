@@ -1,4 +1,4 @@
-import { groupRepo, feedRepo, itemRepo, Feed, Group, Item, isDbExists } from '../repository'
+import { groupRepo, feedRepo, itemRepo, Feed, Group, Item, isDbExists, Page } from '../repository'
 
 import { groups, items, feeds, listUnreadItemIds, listSavedItemIds, mark } from '../api'
 
@@ -59,29 +59,29 @@ export async function sync() {
  * @param unReadItemIds 
  * @returns 
  */
-export async function listItem(id: any, type: LsItemType, page: number = 0, onlyUnread: boolean = false, unReadItemIds: Set<number>): Promise<FeedItem[] | undefined> {
+export async function listItem(id: any, type: LsItemType, page: number = 0, onlyUnread: boolean = false, unReadItemIds: Set<number>): Promise<Page<FeedItem> | undefined> {
     let feedIds: Set<number> = new Set([id])
-    let res: Item[]
+    let res: Page<Item>
     switch (type) {
         case LsItemType.FEED:
-            res = (await itemRepo.findAll(item => filterItem(item, feedIds, onlyUnread, unReadItemIds)))
+            res = (await itemRepo.findAll(item => filterItem(item, feedIds, onlyUnread, unReadItemIds), page))
             break
         case LsItemType.GROUP:
             feedIds = new Set((await feedRepo.getAll()).filter(item => id == -1 ? item.groupId == undefined : item.groupId == id).map(item => item.id))
-            res = (await itemRepo.findAll(item => filterItem(item, feedIds, onlyUnread, unReadItemIds)))
+            res = (await itemRepo.findAll(item => filterItem(item, feedIds, onlyUnread, unReadItemIds), page))
             break
         case LsItemType.SAVED:
             let itemIds: Set<number> = new Set(id)
-            res = (await itemRepo.findAll(item => filterItem0(item, (id) => itemIds.has(id), onlyUnread, unReadItemIds)))
+            res = (await itemRepo.findAll(item => filterItem0(item, (id) => itemIds.has(id), onlyUnread, unReadItemIds), page))
             break
         case LsItemType.ALL:
-            res = (await itemRepo.findAll(item => filterItem0(item, () => true, onlyUnread, unReadItemIds)))
+            res = (await itemRepo.findAll(item => filterItem0(item, () => true, onlyUnread, unReadItemIds), page))
             break
         default:
             throw Error('error')
     }
-    res.sort((x: Item, y: Item) => y.pubDate - x.pubDate)
-    return res.map(map)
+    res.data.sort((x: Item, y: Item) => y.pubDate - x.pubDate)
+    return { data: res.data.map(map), isLast: res.isLast }
 }
 
 /**
@@ -115,7 +115,7 @@ export async function listSubscription(): Promise<Subscription[] | undefined> {
  * @returns 
  */
 export async function sumUnread(feedId: number, unReadItemIds: Set<number>): Promise<number> {
-    return (await itemRepo.findAll(item => item.feedId == feedId && unReadItemIds.has(item.id))).length
+    return (await itemRepo.listAll(item => item.feedId == feedId && unReadItemIds.has(item.id))).length
 }
 /**
  * 

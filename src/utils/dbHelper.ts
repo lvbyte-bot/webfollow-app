@@ -134,8 +134,7 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
         });
     }
 
-    // 添加 where 条件查询（通过游标遍历）
-    function where<T extends DbStore>(storeName: string, conditionFn: (item: T) => boolean): Promise<T[]> {
+    function listAll<T extends DbStore>(storeName: string, conditionFn: (item: T) => boolean): Promise<T[]> {
         return new Promise((resolve, reject) => {
             openDatabase().then(db => {
                 const transaction = db.transaction([storeName], 'readonly');
@@ -149,6 +148,42 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
                     if (cursor) {
                         if (conditionFn(cursor.value)) {
                             results.push(cursor.value);
+                        }
+                        cursor.continue();
+                    } else {
+                        resolve(results); // 返回符合条件的结果
+                    }
+                };
+
+                request.onerror = function (event) {
+                    reject('Error during cursor operation: ' + (event.target as IDBRequest).error?.message);
+                };
+            });
+        });
+    }
+
+    function findAll<T extends DbStore>(storeName: string, conditionFn: (item: T) => boolean, pageSize: number, pageIndex: number): Promise<T[]> {
+        return new Promise((resolve, reject) => {
+            openDatabase().then(db => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                const results: T[] = [];
+
+                const request = store.openCursor();
+
+                let count = 0;
+                const startOffset = pageIndex * pageSize;
+                const endOffset = startOffset + pageSize;
+
+                request.onsuccess = function (event) {
+                    const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
+                    if (cursor) {
+                        const record = cursor.value;
+                        if (conditionFn(record)) {
+                            if (count >= startOffset && count < endOffset) {
+                                results.push(record);
+                            }
+                            count++;
                         }
                         cursor.continue();
                     } else {
@@ -213,7 +248,8 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
         update,
         remove,
         getAll,
-        where,
+        findAll,
+        listAll,
         whereOne,
         count
     };

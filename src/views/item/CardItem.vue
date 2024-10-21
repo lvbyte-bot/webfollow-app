@@ -67,8 +67,8 @@ function toggleSaved() {
 function getSubtitle() {
   const source =
     props.type === "f"
-      ? props.item.author || props.item.feed.title
-      : props.item.feed.title;
+      ? props.item.author || props.item.feed?.title
+      : props.item.feed?.title;
   return `${source} | ${props.item.datestr}`;
 }
 </script>

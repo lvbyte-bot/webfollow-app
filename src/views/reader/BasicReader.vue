@@ -2,21 +2,22 @@
   <v-card flat height="100vh" class="ovf">
     <div class="px-1">
       <div class="top-sider">
-        <div >
+        <div>
           <div class="title">
             <a :href="item.link" :title="item.title">{{ item.title }}</a>
-            </div>
-            <small class="text-caption">
-            {{  item.author  +' - '+ item.feed.title }}  | 
-            {{ item.datestr }}
-         </small>
+          </div>
+          <small class="text-caption">
+            {{ getSubtitle() }}
+          </small>
         </div>
         <div>
           <!-- <v-btn disabled variant="text" :icon="item.isRead ? 'mdi-radiobox-blank' : 'mdi-radiobox-marked'" title="阅读">
           </v-btn> -->
 
           <v-btn variant="text" icon title="稍后阅读" @click="toggleSaved">
-            <v-icon>{{item.isSaved?'mdi-playlist-minus':'mdi-playlist-plus'}}</v-icon>
+            <v-icon>{{
+              item.isSaved ? "mdi-playlist-minus" : "mdi-playlist-plus"
+            }}</v-icon>
           </v-btn>
           <v-btn variant="text" icon title="加载网页原文">
             <v-icon> mdi-book-open-outline</v-icon>
@@ -47,7 +48,6 @@ const props = defineProps<{
   item: FeedItem;
 }>();
 
-
 const store = useAppStore();
 onMounted(() => {
   if (!props.item.isRead) {
@@ -57,11 +57,16 @@ onMounted(() => {
 
 function toggleSaved() {
   if (props.item.isSaved) {
-    store.unsave(props.item.id)
+    store.unsave(props.item.id);
   } else {
-    store.save(props.item.id)
+    store.save(props.item.id);
   }
-} 
+}
+
+function getSubtitle() {
+  const source = props.item.author + " - " + props.item.feed?.title;
+  return `${source} | ${props.item.datestr}`;
+}
 </script>
 <style lang="scss" scoped>
 .ovf {
@@ -75,14 +80,13 @@ function toggleSaved() {
   // justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0.3rem;
-  >*:first-child{
-  margin-left: 1rem;
-
+  > *:first-child {
+    margin-left: 1rem;
   }
-  >*:last-child{
+  > *:last-child {
     min-width: 195px;
   }
-  a{
+  a {
     text-decoration: none;
     color: rgb(var(--v-border-color));
   }
@@ -93,7 +97,7 @@ function toggleSaved() {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.title{
+.title {
   font-size: 20px;
   // line-height: 48px;
 }

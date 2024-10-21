@@ -4,7 +4,7 @@ import {
 
 export type { Group, Feed, Item } from './model';
 
-export { groupRepo, feedRepo, itemRepo } from './repository'
+export { groupRepo, feedRepo, itemRepo, type Page } from './repository'
 
 export async function isDbExists(): Promise<any> {
     await checkDBExists()

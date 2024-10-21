@@ -8,7 +8,7 @@ const { create,
     update,
     remove,
     getAll,
-    where, count, whereOne } = IndexedDB(db => {
+    listAll, findAll, count, whereOne } = IndexedDB(db => {
         // 创建 Groups 对象存储
         if (!db.objectStoreNames.contains('groups')) {
             const groupStore = db.createObjectStore('groups', { keyPath: 'id' });
@@ -56,8 +56,12 @@ class Repo<T extends DbStore> {
     async getAll(): Promise<T[]> {
         return getAll(this.storename)
     }
-    async findAll(conditionFn: (item: T) => boolean): Promise<T[]> {
-        return where(this.storename, conditionFn)
+    async listAll(conditionFn: (item: T) => boolean): Promise<T[]> {
+        return await listAll(this.storename, conditionFn)
+    }
+    async findAll(conditionFn: (item: T) => boolean, page: number = 0, size: number = 50): Promise<Page<T>> {
+        const data = await findAll(this.storename, conditionFn, size, page)
+        return { isLast: data.length != size, data }
     }
     async count(): Promise<number> {
         return count(this.storename)
@@ -65,6 +69,11 @@ class Repo<T extends DbStore> {
     async maxId(): Promise<number> {
         return (await whereOne(this.storename, (x: T, y: T) => (x.id > (y ? y.id : 0)) ? x : y))?.id;
     }
+}
+
+export interface Page<T> {
+    isLast: boolean,
+    data: T[]
 }
 
 export const groupRepo = new Repo<Group>('groups')

@@ -1,7 +1,7 @@
 <template>
   <!-- reader -->
   <v-scale-transition>
-    <div class="cover" v-if="show && currentItem.title">
+    <div class="cover" v-if="show && currentItem?.title">
       <div class="cover-action">
         <v-btn
           size="small"
@@ -25,7 +25,7 @@
     </div>
   </v-scale-transition>
   <!-- items -->
-  <div class="main-warp">
+  <div class="main-warp" ref="main">
     <v-container class="top-sider">
       <v-toolbar>
         <div class="v-toolbar-title v-app-bar-title">
@@ -86,11 +86,19 @@
           :key="item.id"
         ></TextItem>
       </template>
+      <v-empty-state
+        v-if="store.isLast && feedStore.nextUnReadUrl"
+        height="100vh"
+      >
+        <v-btn variant="text" :to="feedStore.nextUnReadUrl">
+          点击打开下一个未读feed
+        </v-btn>
+      </v-empty-state>
     </v-container>
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, Ref } from "vue";
 import BasicReader from "./reader/BasicReader.vue";
 import ImageReader from "./reader/ImageReader.vue";
 import VideoReader from "./reader/VideoReader.vue";
@@ -99,15 +107,32 @@ import Item from "./item/CardItem.vue";
 import TextItem from "./item/TextItem.vue";
 import { onMounted, watch } from "vue";
 import { LsItemType, Marked } from "@/service";
+
+import { useItemsStore, useAppStore, useFeedsStore } from "@/store";
+import { FeedItem } from "@/service/types";
+import { useScroll } from "@/utils/scrollListener";
 const props = defineProps(["type", "id"]);
-import { useItemsStore, useAppStore } from "@/store";
+
+const main = ref();
+
+const { isBottom } = useScroll(main);
 
 const store = useItemsStore();
 const app = useAppStore();
-const currentItem = ref({ title: "", id: 0, type: undefined });
+const feedStore = useFeedsStore();
+const currentItem: Ref<FeedItem | undefined> = ref(undefined);
 const onlyUnread = ref(true);
 const loading = ref(false);
 const itemView = ref("card");
+
+let page = 0;
+
+watch(isBottom, (v) => {
+  if (v && !store.isLast) {
+    initData(++page);
+  }
+});
+
 onMounted(initData);
 
 async function loadData(
@@ -119,16 +144,17 @@ async function loadData(
   store.loadData(id, type, page, onlyUnread);
 }
 
-function initData() {
+function initData(page0: number = 0) {
+  page = page0;
   show.value = false;
   if (props.type == "f") {
-    loadData(Number(props.id), LsItemType.FEED, 0, onlyUnread.value);
+    loadData(Number(props.id), LsItemType.FEED, page, onlyUnread.value);
   } else if (props.type == "c") {
-    loadData(Number(props.id), LsItemType.GROUP, 0, onlyUnread.value);
+    loadData(Number(props.id), LsItemType.GROUP, page, onlyUnread.value);
   } else if (props.type == "next") {
-    loadData(null, LsItemType.SAVED, 0, onlyUnread.value);
+    loadData(null, LsItemType.SAVED, page, onlyUnread.value);
   } else if (props.type == "all") {
-    loadData(null, LsItemType.ALL, 0, onlyUnread.value);
+    loadData(null, LsItemType.ALL, page, onlyUnread.value);
   }
 }
 
@@ -148,8 +174,11 @@ function openReader(item: any) {
   show.value = true;
   currentItem.value = item;
 }
-watch(props, initData);
-watch(onlyUnread, initData);
+watch(props, () => {
+  initData(0);
+  main.value.scrollTo(0, 0);
+});
+watch(onlyUnread, () => initData(0));
 const show = ref(false);
 </script>
 <style lang="scss" scoped>
@@ -185,19 +214,17 @@ const show = ref(false);
     transform: rotate(360deg);
   }
 }
-
-.rotating .v-icon {
-  animation: rotate 1s linear infinite;
-}
-</style>
-<style>
 .top-sider {
   position: sticky !important;
   top: 0;
   z-index: 10;
   padding: 0 1rem 0 0;
 }
-
+.rotating .v-icon {
+  animation: rotate 1s linear infinite;
+}
+</style>
+<style>
 .main-warp {
   height: 100vh;
   overflow-y: auto;

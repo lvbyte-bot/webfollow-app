@@ -1,11 +1,11 @@
 // src/api/request.js
 
-const api_key = '8665df00224988011c557f3229c1fe69'
+const api_key: string = '8665df00224988011c557f3229c1fe69'
 
-const url = '/fever/'
+const url: string = localStorage.getItem('url') || '/fever/'
 
-export async function request(params0: object, options = {
-    method: "POST",
+export async function request(params0: any, options = {
+    method: "GET",
 }): Promise<any> {
     // ... existing code ...
     const params = Object.assign({

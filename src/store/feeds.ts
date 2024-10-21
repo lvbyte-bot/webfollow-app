@@ -15,15 +15,20 @@ import {
 import {
     useBaseStore
 } from './base'
+import { useRoute } from 'vue-router'
 import { Subscription } from '@/service/types'
 
 export const useFeedsStore = defineStore('feeds', () => {
     const {
         unread_item_ids
     } = useBaseStore()
+    const route = useRoute()
     const subscriptions: Ref<Subscription[] | undefined> = ref([])
 
     const feeds: Ref<Subscription[] | undefined> = ref([])
+    const nextUnReadUrl = ref('')
+
+    let readUrls: any[] = []
 
     async function initFeeds() {
         feeds.value = await Promise.all(subscriptions.value?.map(async g => {
@@ -37,11 +42,42 @@ export const useFeedsStore = defineStore('feeds', () => {
                 return g
             }
         }) || [])
+        readUrls = [{ url: '/all' }, { url: '/next' }]
+        feeds.value.forEach(g => {
+            readUrls.push({ url: '/c/' + g.id, unreadQty: g.unreadQty })
+            g.feeds.forEach(f => {
+                readUrls.push({ url: '/f/' + f.id, unreadQty: f.unreadQty })
+            })
+        })
+
     }
 
     async function refresh() {
         subscriptions.value = await listSubscription()
         await initFeeds()
+    }
+
+    watch(route, () => {
+        nextUnReadUrl.value = getNextUnReadUrl(route.fullPath)
+    })
+
+    watch(feeds, () => {
+        setTimeout(() => {
+            nextUnReadUrl.value = getNextUnReadUrl(route.fullPath)
+        }, 500);
+    })
+
+    function getNextUnReadUrl(currentUrl: string): string {
+        let canNextUrl = false
+        for (let i = 0; i < readUrls.length; i++) {
+            if (canNextUrl && readUrls[i].unreadQty && readUrls[i].unreadQty > 0) {
+                return readUrls[i].url
+            }
+            if (readUrls[i].url == currentUrl) {
+                canNextUrl = true
+            }
+        }
+        return ''
     }
 
     onMounted(async () => {
@@ -51,6 +87,8 @@ export const useFeedsStore = defineStore('feeds', () => {
 
     return {
         feeds,
-        refresh
+        nextUnReadUrl,
+        refresh,
+        readUrls
     }
 })
