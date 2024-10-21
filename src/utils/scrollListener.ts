@@ -27,7 +27,7 @@ export function useScroll(el: any): any {
         const clientHeight = container.clientHeight;
 
         // 判断是否滚动到底部
-        if (scrollTop + clientHeight >= scrollHeight - 100) { // 100 像素缓冲
+        if (scrollTop + clientHeight >= scrollHeight - 300) { // 300 像素缓冲
             isBottom.value = true;
         } else {
             isBottom.value = false;

@@ -91,6 +91,9 @@
         height="100vh"
       >
         <v-btn variant="text" :to="feedStore.nextUnReadUrl">
+          <template #prepend>
+            <v-icon color="primary"> mdi-circle-medium </v-icon>
+          </template>
           点击打开下一个未读的feed
         </v-btn>
       </v-empty-state>

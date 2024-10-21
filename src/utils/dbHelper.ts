@@ -168,8 +168,13 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
                 const transaction = db.transaction([storeName], 'readonly');
                 const store = transaction.objectStore(storeName);
                 const results: T[] = [];
-
-                const request = store.openCursor();
+                let request
+                if (storeName == 'items') {
+                    const index = store.index('pubDate');
+                    request = index.openCursor(null, 'prev'); // 使用 'prev' 进行降序
+                } else {
+                    request = store.openCursor()
+                }
 
                 let count = 0;
                 const startOffset = pageIndex * pageSize;

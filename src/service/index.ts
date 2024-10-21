@@ -60,6 +60,9 @@ export async function sync() {
  * @returns 
  */
 export async function listItem(id: any, type: LsItemType, page: number = 0, onlyUnread: boolean = false, unReadItemIds: Set<number>): Promise<Page<FeedItem> | undefined> {
+    if (Object.keys(feedsCache).length < 1) {
+        (await feedRepo.getAll()).forEach(f => feedsCache[f.id] = f)
+    }
     let feedIds: Set<number> = new Set([id])
     let res: Page<Item>
     switch (type) {

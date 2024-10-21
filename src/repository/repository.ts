@@ -29,7 +29,7 @@ const { create,
             itemStore.createIndex('feedId', 'feedId', { unique: false });
             itemStore.createIndex('author', 'author', { unique: false });
             itemStore.createIndex('description', 'description', { unique: false });
-            itemStore.createIndex('pubDate', 'createdOnTime', { unique: false });
+            itemStore.createIndex('pubDate', 'pubDate', { unique: false });
             itemStore.createIndex('link', 'link', { unique: false });
             itemStore.createIndex('enclosure', 'enclosure', { unique: false });
         }
