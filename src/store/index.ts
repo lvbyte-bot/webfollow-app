@@ -2,19 +2,22 @@
 import { defineStore } from 'pinia'
 import { useBaseStore } from './base'
 import { useFeedsStore } from './feeds'
-export { useItemsStore } from './items'
-import { sync as sync0 } from '@/service'
-import { computed} from 'vue'
+import { useItemsStore } from './items'
+import { sync as sync2local } from '@/service'
+import { computed } from 'vue'
 export const useAppStore = defineStore('app', () => {
     const {
         saved_item_ids, unread_item_ids, read, unread, save, unsave, refresh
     } = useBaseStore()
     const { refresh: refreshFeed } = useFeedsStore()
+    const { refreshItems } = useItemsStore()
     async function sync() {
 
         await refresh(async () => {
-            await sync0()
+            await sync2local()
             await refreshFeed()
+            await refreshItems()
+            console.log('sync end')
         })
 
     }
@@ -23,4 +26,4 @@ export const useAppStore = defineStore('app', () => {
     return { sync, read, unread, save, unsave, savedQty, unReadQty }
 })
 
-export { useFeedsStore };
+export { useFeedsStore, useItemsStore };

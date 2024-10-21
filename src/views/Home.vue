@@ -2,44 +2,101 @@
   <v-responsive>
     <v-app>
       <v-navigation-drawer rail>
-        <v-list-item class="my-2 " prepend-avatar="/logo.svg" title="webfollow">
+        <v-list-item class="my-2" prepend-avatar="/logo.svg" title="webfollow">
         </v-list-item>
         <v-divider></v-divider>
 
         <v-list density="compact" nav>
-          <v-list-item prepend-icon="mdi-plus" title="添加" value="plus"></v-list-item>
-          <v-list-item prepend-icon="mdi-download" title="下载" value="app"></v-list-item>
+          <v-list-item
+            prepend-icon="mdi-plus"
+            title="添加"
+            value="plus"
+          ></v-list-item>
+          <v-list-item
+            prepend-icon="mdi-download"
+            title="下载"
+            value="app"
+          ></v-list-item>
         </v-list>
       </v-navigation-drawer>
       <v-main>
         <div class="cols">
           <div class="resizeable">
-
             <v-list nav class="sidbar">
               <div class="sidbar-top">
-                <v-list-item prepend-icon="mdi-inbox" title="全部文章" to="/all"> <template v-slot:append>
-                    <small v-if="appStore.savedQty" v-text="appStore.unReadQty"></small>
-                  </template></v-list-item>
-                <v-list-item prepend-icon="mdi-format-list-bulleted" title="稍后阅读" to="/next">
+                <v-list-item
+                  prepend-icon="mdi-inbox"
+                  title="全部文章"
+                  to="/all"
+                >
                   <template v-slot:append>
-                    <small v-if="appStore.savedQty" v-text="appStore.savedQty"></small>
+                    <small
+                      v-if="appStore.savedQty"
+                      v-text="appStore.unReadQty"
+                    ></small> </template
+                ></v-list-item>
+                <v-list-item
+                  prepend-icon="mdi-format-list-bulleted"
+                  title="稍后阅读"
+                  to="/next"
+                >
+                  <template v-slot:append>
+                    <small
+                      v-if="appStore.savedQty"
+                      v-text="appStore.savedQty"
+                    ></small>
                   </template>
                 </v-list-item>
               </div>
               <v-list-subheader>FEEDS</v-list-subheader>
-
-              <v-list-group v-for="item in store.feeds">
-                <template v-slot:activator="{ props }">
-                  <v-list-item v-bind="props" prepend-icon="mdi-folder-outline" :title="item.title"
-                    :value="item.title"></v-list-item>
+              <v-list-group v-for="item in store.feeds" :key="'c/' + item.id">
+                <template v-slot:activator="{ isOpen, props }">
+                  <v-list-item v-bind="props" :title="item.title">
+                    <template #prepend>
+                      <v-icon
+                        :icon="isOpen ? 'mdi-chevron-up' : ' mdi-chevron-down'"
+                      >
+                      </v-icon>
+                    </template>
+                    <template #append>
+                      <small
+                        v-if="item.unreadQty"
+                        v-text="item.unreadQty"
+                      ></small>
+                    </template>
+                  </v-list-item>
                 </template>
-                <v-list-item title="查看全部" :value="'/c/' + item.id" :to="'/c/' + item.id"><template v-slot:append>
-                    <small v-if="item.unreadQty" v-text="item.unreadQty"></small>
-                  </template></v-list-item>
-                <v-list-item v-for="item in item.feeds" :key="item.id" :title="item.title" :value="item.id"
-                  :to="'/f/' + item.id" @contextmenu.prevent="showContextMenu($event, title)">
+                <!-- <template #activator="{ isOpen, props }">
+                  <v-list-item :title="item.title">
+                    <template #prepend>
+                      <v-btn
+                        v-bind="props"
+                        :icon="isOpen ? 'mdi-chevron-up' : ' mdi-chevron-down'"
+                      >
+                      </v-btn>
+                    </template>
+                    <template #append>
+                      <small
+                        v-if="item.unreadQty"
+                        v-text="item.unreadQty"
+                      ></small>
+                    </template>
+                  </v-list-item>
+                </template> -->
+                <v-list-item title="全部" :to="'/c/' + item.id"> </v-list-item>
+                <v-list-item
+                  v-for="subItem in item.feeds"
+                  :key="subItem.id"
+                  :title="subItem.title"
+                  :value="subItem.id"
+                  :to="'/f/' + subItem.id"
+                  @contextmenu.prevent="showContextMenu($event, subItem.title)"
+                >
                   <template v-slot:append>
-                    <small v-if="item.unreadQty" v-text="item.unreadQty"></small>
+                    <small
+                      v-if="subItem.unreadQty"
+                      v-text="subItem.unreadQty"
+                    ></small>
                   </template>
                 </v-list-item>
               </v-list-group>
@@ -54,11 +111,22 @@
           </div>
         </div>
       </v-main>
-      <v-card v-show="contextMenuVisible" style="position: fixed; z-index: 10000"
-        :style="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }">
+      <v-card
+        v-show="contextMenuVisible"
+        style="position: fixed; z-index: 10000"
+        :style="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }"
+      >
         <v-list>
-          <v-list-item prepend-icon=" mdi-pencil-box-outline" @click="handleAction('edit')">编辑订阅源</v-list-item>
-          <v-list-item prepend-icon="mdi-delete-sweep" @click="handleAction('delete')">取消订阅</v-list-item>
+          <v-list-item
+            prepend-icon=" mdi-pencil-box-outline"
+            @click="handleAction('edit')"
+            >编辑订阅源</v-list-item
+          >
+          <v-list-item
+            prepend-icon="mdi-delete-sweep"
+            @click="handleAction('delete')"
+            >取消订阅</v-list-item
+          >
         </v-list>
       </v-card>
       <!-- <v-dialog v-model="title" max-width="500">
@@ -74,14 +142,15 @@
 <script setup async>
 import Items from "./Items.vue";
 import { useDisplay } from "vuetify";
+import { useRouter } from "vue-router";
 import { ref, onMounted, onBeforeUnmount } from "vue";
-import { listfeeds, listItems } from "@/service/fever";
 import { useFeedsStore, useAppStore } from "@/store";
 
 const store = useFeedsStore();
 const appStore = useAppStore();
+const router = useRouter();
 const title = ref("");
-const nav = ref('')
+const nav = ref("");
 const feeds = ref([]);
 
 onMounted(() => {

@@ -27,6 +27,8 @@ export const useItemsStore = defineStore('items', () => {
 
     const nav: Ref<any> = ref({})
 
+    let cacheLoadParams: any = {}
+
     const items = computed(() => data.value?.map(item => {
         item.isSaved = saved_item_ids.has(item.id)
         item.isRead = !unread_item_ids.has(item.id)
@@ -34,15 +36,23 @@ export const useItemsStore = defineStore('items', () => {
     }))
 
     async function loadData(id: any, type: LsItemType, page: number = 0, onlyUnread: boolean = false) {
+        cacheLoadParams = { id, type, page, onlyUnread }
         id = type == LsItemType.SAVED ? saved_item_ids : id
         id = type == LsItemType.ALL ? null : id
         nav.value = await getNav(id, type);
         data.value = await listItem(id, type, page, onlyUnread, unread_item_ids)
     }
 
+    async function refreshItems() {
+        if (Object.keys(cacheLoadParams).length) {
+            await loadData(cacheLoadParams.id, cacheLoadParams.type, cacheLoadParams.page, cacheLoadParams.onlyUnread)
+        }
+    }
+
     return {
         items,
         nav,
-        loadData
+        loadData,
+        refreshItems
     }
 })

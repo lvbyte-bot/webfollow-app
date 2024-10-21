@@ -2,10 +2,11 @@
   <router-view />
 </template>
 <script setup>
-import { sync } from "@/service";
+import { useAppStore } from "@/store";
 import { onMounted } from "vue";
+const appStore = useAppStore();
 onMounted(async () => {
-  await sync();
+  await appStore.sync();
 });
 </script>
 <style>

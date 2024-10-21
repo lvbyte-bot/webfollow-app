@@ -1,4 +1,4 @@
-import { groupRepo, feedRepo, itemRepo, Feed, Group, Item } from '../repository'
+import { groupRepo, feedRepo, itemRepo, Feed, Group, Item, isDbExists } from '../repository'
 
 import { groups, items, feeds, listUnreadItemIds, listSavedItemIds, mark } from '../api'
 
@@ -14,6 +14,9 @@ const feedsCache: any = {}
  * 刷新同步数据到本地
  */
 export async function sync() {
+    await isDbExists()
+
+    await groupRepo.count();
     // console.log(await favicons({id:1}));
     // 同步group
     (await groups()).groups.forEach((g: any) => {
@@ -58,27 +61,27 @@ export async function sync() {
  */
 export async function listItem(id: any, type: LsItemType, page: number = 0, onlyUnread: boolean = false, unReadItemIds: Set<number>): Promise<FeedItem[] | undefined> {
     let feedIds: Set<number> = new Set([id])
-    let res: FeedItem[]
+    let res: Item[]
     switch (type) {
         case LsItemType.FEED:
-            res = (await itemRepo.findAll(item => filterItem(item, feedIds, onlyUnread, unReadItemIds))).map(map)
+            res = (await itemRepo.findAll(item => filterItem(item, feedIds, onlyUnread, unReadItemIds)))
             break
         case LsItemType.GROUP:
             feedIds = new Set((await feedRepo.getAll()).filter(item => id == -1 ? item.groupId == undefined : item.groupId == id).map(item => item.id))
-            res = (await itemRepo.findAll(item => filterItem(item, feedIds, onlyUnread, unReadItemIds))).map(map)
+            res = (await itemRepo.findAll(item => filterItem(item, feedIds, onlyUnread, unReadItemIds)))
             break
         case LsItemType.SAVED:
             let itemIds: Set<number> = new Set(id)
-            res = (await itemRepo.findAll(item => filterItem0(item, (id) => itemIds.has(id), onlyUnread, unReadItemIds))).map(map)
+            res = (await itemRepo.findAll(item => filterItem0(item, (id) => itemIds.has(id), onlyUnread, unReadItemIds)))
             break
         case LsItemType.ALL:
-            res = (await itemRepo.findAll(item => filterItem0(item, () => true, onlyUnread, unReadItemIds))).map(map)
+            res = (await itemRepo.findAll(item => filterItem0(item, () => true, onlyUnread, unReadItemIds)))
             break
         default:
             throw Error('error')
     }
-    res.reverse()
-    return res
+    res.sort((x: Item, y: Item) => y.pubDate - x.pubDate)
+    return res.map(map)
 }
 
 /**
@@ -229,8 +232,8 @@ function filterItem0(item: Item, itemIdFilter: (id: any) => boolean, onlyUnread:
 function map(item: Item): FeedItem {
     const imgs = extImgs(item.description)
     const thumbnail: string | undefined = imgs && imgs.length > 0 ? imgs[0] : undefined
-    const type: string = ItemType[imgs.length > 5 ? ItemType.IMAGE : ItemType.BASIC]
     const text = extText(item.description)
+    const type: string = ItemType[imgs.length > 5 && imgs.length * 50 > text.length ? ItemType.IMAGE : ItemType.BASIC]
     const summary: string = text && text.length > 36 ? text.substring(0, 36) : text
     const d: number = item.pubDate * 1000
     const datestr: string = formatDate(d)

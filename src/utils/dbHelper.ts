@@ -21,28 +21,6 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
             request.onupgradeneeded = function (event) {
                 db = (event.target as IDBOpenDBRequest).result;
                 initDB(db)
-                // // 创建 Groups 对象存储
-                // if (!db.objectStoreNames.contains('groups')) {
-                //     const groupStore = db.createObjectStore('groups', { keyPath: 'id' });
-                //     groupStore.createIndex('title', 'title', { unique: false });
-                // }
-
-                // // 创建 Feeds 对象存储
-                // if (!db.objectStoreNames.contains('feeds')) {
-                //     const feedStore = db.createObjectStore('feeds', { keyPath: 'id' });
-                //     feedStore.createIndex('title', 'title', { unique: false });
-                //     feedStore.createIndex('groupId', 'groupId', { unique: false });
-                // }
-
-                // // 创建 Items 对象存储
-                // if (!db.objectStoreNames.contains('items')) {
-                //     const itemStore = db.createObjectStore('items', { keyPath: 'id' });
-                //     itemStore.createIndex('feedId', 'feedId', { unique: false });
-                //     itemStore.createIndex('author', 'author', { unique: false });
-                //     itemStore.createIndex('html', 'html', { unique: false });
-                //     itemStore.createIndex('createdOnTime', 'createdOnTime', { unique: false });
-                //     itemStore.createIndex('url', 'url', { unique: false });
-                // }
             };
 
             request.onsuccess = function (event) {
@@ -241,3 +219,19 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
     };
 }
 
+export function checkDBExists(dbName: string = 'WebFollowDatabase'): Promise<boolean> {
+    return new Promise((resolve) => {
+        const request = indexedDB.open(dbName);
+
+        request.onsuccess = () => {
+            // 数据库存在
+            resolve(true);
+            request.result.close(); // 关闭数据库连接
+        };
+
+        request.onerror = () => {
+            // 数据库不存在
+            resolve(false);
+        };
+    });
+}
