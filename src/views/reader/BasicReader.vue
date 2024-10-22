@@ -54,7 +54,6 @@ const props = defineProps<{
   item: FeedItem;
 }>();
 
-const html = ref("");
 useSideChapter(props.item.description, readerRef, {
   value: () => document.getElementById("chapters"),
 });
