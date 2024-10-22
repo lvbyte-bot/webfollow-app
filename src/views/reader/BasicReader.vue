@@ -1,5 +1,5 @@
 <template>
-  <v-card flat height="100vh" class="ovf">
+  <div class="ovf" ref="readerRef">
     <div class="px-1">
       <div class="top-sider">
         <div>
@@ -32,27 +32,40 @@
       </div>
       <v-container>
         <slot>
-          <div class="content" v-html="item.description"></div>
+          <div class="toc-list" ref="tocRef"></div>
+          <div id="content" class="content" v-html="html"></div>
         </slot>
       </v-container>
     </div>
-  </v-card>
+  </div>
 </template>
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useAppStore } from "@/store";
 import { Marked } from "@/service";
 import { FeedItem } from "@/service/types";
+import { md2html } from "@/utils/mdUtils";
+
+import { useSideChapter } from "@/utils/useSideChapter";
+
+const readerRef = ref();
+const tocRef = ref();
 
 const props = defineProps<{
   item: FeedItem;
 }>();
 
+const html = ref("");
+useSideChapter(props.item.description, readerRef, {
+  value: () => document.getElementById("chapters"),
+});
+
 const store = useAppStore();
-onMounted(() => {
+onMounted(async () => {
   if (!props.item.isRead) {
     store.read(Number(props.item.id), Marked.ITEM);
   }
+  html.value = await md2html(props.item.description);
 });
 
 function toggleSaved() {
@@ -70,10 +83,14 @@ function getSubtitle() {
 </script>
 <style lang="scss" scoped>
 .ovf {
+  height: 100vh;
   overflow-y: auto;
 }
 
 .top-sider {
+  position: sticky !important;
+  top: 0;
+  z-index: 10;
   background-color: rgb(var(--v-theme-background));
   display: grid;
   grid-template-columns: 1fr 195px;
@@ -101,13 +118,26 @@ function getSubtitle() {
   font-size: 20px;
   // line-height: 48px;
 }
+.content {
+  max-width: 1024px;
+  margin: 0 auto;
+}
 </style>
 <style>
 .content {
   padding: 0.5rem;
+  line-height: 2rem;
 
   * {
     max-width: 100%;
   }
+}
+pre {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  background-color: rgba(var(--v-theme-on-code), 0.9);
+  color: rgb(var(--v-theme-code));
+  padding: 1rem;
+  border-radius: 0.5rem;
 }
 </style>

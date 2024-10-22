@@ -11,6 +11,7 @@ export interface SubscriptionFeed {
     id: number,
     title: string,
     url: string,
+    siteUrl: string,
     unreadQty: number,
     icon?: string
 }

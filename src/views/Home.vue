@@ -66,23 +66,6 @@
                     </template>
                   </v-list-item>
                 </template>
-                <!-- <template #activator="{ isOpen, props }">
-                  <v-list-item :title="item.title">
-                    <template #prepend>
-                      <v-btn
-                        v-bind="props"
-                        :icon="isOpen ? 'mdi-chevron-up' : ' mdi-chevron-down'"
-                      >
-                      </v-btn>
-                    </template>
-                    <template #append>
-                      <small
-                        v-if="item.unreadQty"
-                        v-text="item.unreadQty"
-                      ></small>
-                    </template>
-                  </v-list-item>
-                </template> -->
                 <v-list-item title="全部" :to="'/c/' + item.id"> </v-list-item>
                 <v-list-item
                   v-for="subItem in item.feeds"
@@ -92,6 +75,10 @@
                   :to="'/f/' + subItem.id"
                   @contextmenu.prevent="showContextMenu($event, subItem.title)"
                 >
+                  <template #prepend>
+                    <img :src="subItem.icon" onerror="this.src='/logo.svg'" width="18">
+                      </img>
+                  </template>
                   <template v-slot:append>
                     <small
                       v-if="subItem.unreadQty"

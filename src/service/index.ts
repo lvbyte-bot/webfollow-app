@@ -4,6 +4,8 @@ import { groups, items, feeds, listUnreadItemIds, listSavedItemIds, mark } from 
 
 import { FeedItem, ItemType, Subscription, SubscriptionFeed } from './types';
 
+import { html2md } from '@/utils/mdUtils';
+
 export enum LsItemType { GROUP, FEED, SAVED, ALL }
 
 export enum Marked { ITEM, FEED, GROUP }
@@ -43,7 +45,7 @@ export async function sync() {
         fItems = (await items({ since_id: lastId })).items
         hasNext = fItems.length == 50
         fItems.forEach((item: any) => {
-            itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: item.html, pubDate: item.created_on_time, link: item.url })
+            itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url })
         })
         lastId += 50
     }
@@ -101,7 +103,7 @@ export async function listSubscription(): Promise<Subscription[] | undefined> {
         gid2group[item.id] = item
     })
     feeds.forEach(f => {
-        const sf: SubscriptionFeed = { id: f.id, title: f.title, url: f.url, unreadQty: 0 }
+        const sf: SubscriptionFeed = { id: f.id, title: f.title, url: f.url, unreadQty: 0, siteUrl: f.siteUrl, icon: getBaseUrl(f.siteUrl) + "/favicon.ico" }
         if (f.groupId) {
             gid2group[f.groupId].feeds.push(sf)
         } else {
@@ -277,4 +279,12 @@ function formatDate(date: number): string {
         day: "2-digit"
     };
     return new Date(date).toLocaleDateString("zh-CN", options);
+}
+
+function getBaseUrl(url: string) {
+    try {
+        return url.split('/').slice(0, 3).join('/');
+    } catch {
+        return url
+    }
 }

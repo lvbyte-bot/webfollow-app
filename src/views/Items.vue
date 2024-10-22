@@ -12,6 +12,7 @@
         ></v-btn>
         <!-- <v-btn size="small" color="surface-variant" icon="mdi-chevron-up" title="上一篇文章"></v-btn>
         <v-btn size="small" color="surface-variant" icon="mdi-chevron-down" title="下一篇文章"></v-btn> -->
+        <div id="chapters" class="chapter-list"></div>
       </div>
       <v-container class="pa-0 pl-16">
         <image-reader :item="currentItem" v-if="currentItem.type == 'IMAGE'" />
@@ -86,17 +87,23 @@
           :key="item.id"
         ></TextItem>
       </template>
-      <v-empty-state
-        v-if="store.isLast && feedStore.nextUnReadUrl"
-        height="100vh"
-      >
-        <v-btn variant="text" :to="feedStore.nextUnReadUrl">
-          <template #prepend>
-            <v-icon color="primary"> mdi-circle-medium </v-icon>
-          </template>
-          点击打开下一个未读的feed
-        </v-btn>
-      </v-empty-state>
+      <template v-if="store.isLast">
+        <v-empty-state v-if="feedStore.nextUnReadUrl" height="100vh">
+          <v-btn variant="text" :to="feedStore.nextUnReadUrl">
+            <template #prepend>
+              <v-icon color="primary"> mdi-circle-medium </v-icon>
+            </template>
+            点击打开下一个未读的feed
+          </v-btn>
+        </v-empty-state>
+        <v-empty-state
+          v-else
+          icon=" mdi-book-open-outline"
+          height="100vh"
+          text="我是有底线的"
+        >
+        </v-empty-state>
+      </template>
     </v-container>
   </div>
 </template>
@@ -205,7 +212,7 @@ const show = ref(false);
     padding: 1rem;
     display: grid;
     grid-template-columns: 1fr;
-    grid-gap: 2rem;
+    grid-gap: 1rem;
   }
 }
 
@@ -227,7 +234,7 @@ const show = ref(false);
   animation: rotate 1s linear infinite;
 }
 </style>
-<style>
+<style lang="scss">
 .main-warp {
   height: 100vh;
   overflow-y: auto;
@@ -235,5 +242,45 @@ const show = ref(false);
 
 .v-toolbar {
   background-color: rgb(var(--v-theme-background)) !important;
+}
+.chapter-list {
+  position: sticky;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  display: inline-block;
+  top: 100px;
+  color: rgba(var(--v-theme-on-code), 0.3);
+  margin-bottom: 3rem;
+  max-width: 160px;
+  overflow: hidden;
+  border: 1px solid rgba(var(--v-border-color), 0);
+  background-color: rgba(var(--v-theme-background), 0.1);
+  max-height: calc(100vh - 100px);
+  overflow: auto;
+  ul {
+    list-style: none;
+    font-size: 12px;
+    line-height: 24px;
+    li:hover {
+      cursor: pointer;
+    }
+    li {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      &:hover {
+        color: rgba(var(--v-theme-on-code), 0.9);
+      }
+    }
+  }
+  .active {
+    color: rgba(var(--v-theme-on-code), 0.9);
+  }
+  &:hover {
+    max-width: none;
+    background-color: rgb(var(--v-theme-background));
+    box-shadow: 6px 6px 6px rgba(var(--v-theme-on-code), 0.1);
+    border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  }
 }
 </style>
