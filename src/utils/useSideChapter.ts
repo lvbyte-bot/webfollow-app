@@ -57,10 +57,11 @@ export function useSideChapter(markdownContent: string, el: any, tocEl: any) {
 
             // 监听滚动事件以激活对应章节
             container.addEventListener('scroll', () => {
-                let scrollPosition = container.scrollTop + 100;
+                let scrollPosition = container.scrollTop + 80;
                 headings.forEach((heading: any, index: number) => {
-                    const headingTop = heading.offsetTop;
-                    const headingEnd = index == headings.length - 1 ? container.offsetHeight : headings[index + 1].offsetTop;
+                    // const headingTop = heading.offsetTop;
+                    const headingEnd = index == headings.length - 1 ? container.scrollHeight : headings[index + 1].offsetTop;
+                    console.log(scrollPosition, headingTop, headingEnd)
                     if (scrollPosition >= headingTop && scrollPosition < headingEnd) {
                         tocConainer.querySelectorAll('.toc-link').forEach((link: any) => link.classList.remove('active'));
                         tocConainer.querySelectorAll('.toc-link')[index].classList.add('active');
