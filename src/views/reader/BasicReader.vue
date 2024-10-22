@@ -19,10 +19,10 @@
               item.isSaved ? "mdi-playlist-minus" : "mdi-playlist-plus"
             }}</v-icon>
           </v-btn>
-          <v-btn variant="text" icon title="加载网页原文">
+          <v-btn disabled variant="text" icon title="加载网页原文">
             <v-icon> mdi-book-open-outline</v-icon>
           </v-btn>
-          <v-btn variant="text" icon title="调正字体">
+          <v-btn disabled variant="text" icon title="调正字体">
             <v-icon> mdi-format-size</v-icon>
           </v-btn>
           <v-btn variant="text" icon title="更多">

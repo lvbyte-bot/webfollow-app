@@ -88,7 +88,11 @@
         ></TextItem>
       </template>
       <template v-if="store.isLast">
-        <v-empty-state v-if="feedStore.nextUnReadUrl" height="100vh">
+        <v-empty-state
+          icon="mdi-book-open-page-variant-outline"
+          v-if="feedStore.nextUnReadUrl"
+          height="100vh"
+        >
           <v-btn variant="text" :to="feedStore.nextUnReadUrl">
             <template #prepend>
               <v-icon color="primary"> mdi-circle-medium </v-icon>
