@@ -4,7 +4,7 @@ import { groups, items, feeds, listUnreadItemIds, listSavedItemIds, mark } from 
 
 import { FeedItem, ItemType, Subscription, SubscriptionFeed } from './types';
 
-import { html2md } from '@/utils/mdUtils';
+import { html2md, md2html } from '@/utils/mdUtils';
 
 export enum LsItemType { GROUP, FEED, SAVED, ALL }
 
@@ -235,7 +235,8 @@ function filterItem0(item: Item, itemIdFilter: (id: any) => boolean, onlyUnread:
 }
 
 function map(item: Item): FeedItem {
-    const imgs = extImgs(item.description)
+    const html = md2html(item.description)
+    const imgs = extImgs(html)
     const thumbnail: string | undefined = imgs && imgs.length > 0 ? imgs[0] : undefined
     const text = extText(item.description)
     const type: string = ItemType[imgs.length > 5 && imgs.length * 50 > text.length ? ItemType.IMAGE : ItemType.BASIC]
@@ -250,6 +251,7 @@ function map(item: Item): FeedItem {
         datestr,
         imgs,
         type,
+        html,
         feed
     }
 }

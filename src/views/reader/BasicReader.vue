@@ -33,7 +33,7 @@
       <v-container>
         <slot>
           <div class="toc-list" ref="tocRef"></div>
-          <div id="content" class="content" v-html="html"></div>
+          <div id="content" class="content" v-html="item.html"></div>
         </slot>
       </v-container>
     </div>
@@ -44,7 +44,6 @@ import { onMounted, ref } from "vue";
 import { useAppStore } from "@/store";
 import { Marked } from "@/service";
 import { FeedItem } from "@/service/types";
-import { md2html } from "@/utils/mdUtils";
 
 import { useSideChapter } from "@/utils/useSideChapter";
 
@@ -65,7 +64,6 @@ onMounted(async () => {
   if (!props.item.isRead) {
     store.read(Number(props.item.id), Marked.ITEM);
   }
-  html.value = await md2html(props.item.description);
 });
 
 function toggleSaved() {

@@ -7,6 +7,6 @@ export function html2md(html: string): string {
     return turndownService.turndown(html);
 }
 
-export async function md2html(md: string): Promise<string> {
-    return await marked(md);
+export function md2html(md: string): any {
+    return marked(md, undefined);
 }

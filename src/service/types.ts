@@ -26,5 +26,6 @@ export interface FeedItem extends Item {
     datestr: string,
     imgs?: string[],
     type: ItemType | string,
+    html: string,
     feed?: Feed
 }
