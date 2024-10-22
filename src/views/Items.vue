@@ -87,7 +87,15 @@
           :key="item.id"
         ></TextItem>
       </template>
-      <template v-if="store.isLast">
+      <template v-if="app.loading">
+        <v-empty-state height="calc(100vh - 100px)">
+          <v-icon size="x-large" :class="{ rotating: app.loading }"
+            >mdi-loading</v-icon
+          >
+          <p class="mt-5">加载中...</p>
+        </v-empty-state>
+      </template>
+      <template v-else-if="store.isLast">
         <v-empty-state
           icon="mdi-book-open-page-variant-outline"
           v-if="feedStore.nextUnReadUrl"
@@ -285,6 +293,18 @@ const show = ref(false);
     background-color: rgb(var(--v-theme-background));
     box-shadow: 6px 6px 6px rgba(var(--v-theme-on-code), 0.1);
     border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  }
+}
+.rotating {
+  animation: rotate 1s linear infinite; // 添加旋转动画
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 </style>

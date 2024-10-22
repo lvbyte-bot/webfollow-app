@@ -5,7 +5,7 @@ import {
 } from 'vue-router'
 
 const routes = [{
-    path: '',
+    path: '/',
     component: () => import('@/views/Home.vue'),
     children: [{
         path: '/:type/:id',
@@ -15,9 +15,9 @@ const routes = [{
         path: '/:type',
         component: () => import('@/views/Items.vue'),
         props: true
-    },{
+    }, {
         path: '/',
-        component: () => import('@/views/Items.vue'),
+        component: () => import('@/views/Welcome.vue'),
     }]
 }]
 
