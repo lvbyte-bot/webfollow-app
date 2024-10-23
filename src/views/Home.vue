@@ -2,22 +2,21 @@
   <v-responsive>
     <v-app>
       <v-navigation-drawer rail>
-        <v-list-item class="my-2" prepend-avatar="/logo.svg" title="webfollow">
+        <v-list-item class="my-2" prepend-avatar="/logo.svg" title="webfollow" @click="router.push('/')">
         </v-list-item>
         <v-divider></v-divider>
 
-        <v-list density="compact" nav>
           <v-list-item
+           class="mt-1"
             prepend-icon="mdi-plus"
             title="添加"
-            value="plus"
           ></v-list-item>
           <v-list-item
+          class="mt-1"
             prepend-icon="mdi-download"
-            title="下载"
             value="app"
+            @click="router.push('/download')"
           ></v-list-item>
-        </v-list>
       </v-navigation-drawer>
       <v-main>
         <div class="cols">

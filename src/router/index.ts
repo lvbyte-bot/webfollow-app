@@ -18,6 +18,9 @@ const routes = [{
     }, {
         path: '/',
         component: () => import('@/views/Welcome.vue'),
+    }, {
+        path: '/download',
+        component: () => import('@/views/Download.vue'),
     }]
 }]
 

@@ -1,15 +1,18 @@
 <template>
-  <v-empty-state v-if="appStore.loading" height="100vh">
+  <div class="d-flex justify-space-between ma-3">
+    <div></div>
+    <v-btn prepend-icon="mdi-download" variant="text" to="/download"
+      >下载app</v-btn
+    >
+  </div>
+
+  <v-empty-state v-if="appStore.loading">
     <v-icon size="x-large" :class="{ rotating: appStore.loading }"
       >mdi-loading</v-icon
     >
     <p class="mt-5">正在为你准备中...</p>
   </v-empty-state>
-  <v-empty-state
-    v-else
-    icon="mdi-book-open-page-variant-outline"
-    height="100vh"
-  >
+  <v-empty-state v-else icon="mdi-book-open-page-variant-outline">
     <v-btn variant="text" to="/all"> 开始吧 </v-btn>
   </v-empty-state>
 </template>
