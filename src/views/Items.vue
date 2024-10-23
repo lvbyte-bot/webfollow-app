@@ -26,7 +26,7 @@
     </div>
   </v-scale-transition>
   <!-- items -->
-  <div class="main-warp" ref="main">
+  <div class="main-warp" ref="mainRef">
     <v-container class="top-sider">
       <v-toolbar>
         <div class="v-toolbar-title v-app-bar-title">
@@ -127,9 +127,9 @@ import { FeedItem } from "@/service/types";
 import { useScroll } from "@/utils/scrollListener";
 const props = defineProps(["type", "id"]);
 
-const main = ref();
+const mainRef = ref();
 
-const { isBottom } = useScroll(main);
+const { isBottom } = useScroll(mainRef);
 
 const store = useItemsStore();
 const app = useAppStore();
@@ -190,7 +190,7 @@ function openReader(item: any) {
 }
 watch(props, () => {
   initData(0);
-  main.value.scrollTo(0, 0);
+  mainRef.value.scrollTo(0, 0);
 });
 watch(onlyUnread, () => initData(0));
 const show = ref(false);

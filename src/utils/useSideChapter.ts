@@ -49,7 +49,7 @@ export function useSideChapter(markdownContent: string, el: any, tocEl: any) {
                         setTimeout(() => {
                             tocConainer.querySelectorAll('.toc-link').forEach((link: any) => link.classList.remove('active'));
                             this.classList.add('active');
-                        }, 300);
+                        }, 1000);
 
                     }
                 });

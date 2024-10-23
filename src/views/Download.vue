@@ -58,6 +58,7 @@
         <div class="line">支持离线使用</div>
         <div class="line">跨平台，多客户端</div>
         <div class="line">网页端支持图文混排</div>
+        <div class="line">网页端支持章节导航</div>
         <div class="line">一月仅需6元，学生3元一月</div>
         <a href="" class="download-link">点击购买</a>
       </v-card-text>
