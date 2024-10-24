@@ -46,7 +46,7 @@ export const useBaseStore = defineStore('base', () => {
     }
 
     onMounted(async () => {
-        initData(await listUnreadIds(), await listSavedIds())
+        // initData(await listUnreadIds(), await listSavedIds())
     })
 
     async function initData(urids: number[], sids: number[]) {

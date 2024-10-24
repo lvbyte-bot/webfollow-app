@@ -42,18 +42,40 @@ export async function sync() {
     })
     // 同步items
     let lastId = await itemRepo.maxId()
-    lastId = lastId ? lastId : -1
-    let hasNext: boolean = true
-    let fItems: any[] = []
-    while (hasNext) {
-        fItems = (await items({ since_id: lastId })).items
-        hasNext = fItems.length == 50
-        for (let item of fItems) {
-            await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url })
+    if (lastId) {
+        let hasNext: boolean = true
+        let fItems: any[] = []
+        while (hasNext) {
+            fItems = (await items({ since_id: lastId })).items
+            hasNext = fItems.length == 50
+            for (let item of fItems) {
+                await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url })
+            }
+            lastId = await itemRepo.maxId()
         }
-        lastId = await itemRepo.maxId()
+    } else {
+        const sids = await listSavedIds()
+        const uids = await listUnreadIds()
+        const syncItemIds = new Set([...uids, ...sids])
+        for (let with_ids of idsto50str(Array.from(syncItemIds))) {
+            let fItems = (await items({ with_ids })).items
+            for (let item of fItems) {
+                await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url })
+            }
+        }
     }
 
+
+}
+function idsto50str(array: number[]): string[] {
+    const chunkSize = 50; // 每个块的大小
+    const chunks = array.reduce((acc, _, index) => {
+        if (index % chunkSize === 0) acc.push([]); // 创建新块
+        acc[acc.length - 1].push(array[index]); // 添加到当前块
+        return acc;
+    }, [] as number[][]); // 使用 reduce 创建块
+
+    return chunks.map(chunk => chunk.join(','));
 }
 
 /**
@@ -133,7 +155,8 @@ export async function sumUnread(feedId: number, unReadItemIds: Set<number>): Pro
  * @returns 未阅读的itemid
  */
 export async function listUnreadIds(): Promise<number[]> {
-    return (await listUnreadItemIds()).unread_item_ids.split(',').map((id: string) => Number(id))
+    const idstr = (await listUnreadItemIds()).unread_item_ids
+    return idstr.length ? idstr.split(',').map((id: string) => Number(id)) : []
 }
 
 /**
@@ -141,7 +164,8 @@ export async function listUnreadIds(): Promise<number[]> {
  * @returns 已保存的itemid
  */
 export async function listSavedIds(): Promise<number[]> {
-    return (await listSavedItemIds()).saved_item_ids.split(',').map((id: string) => Number(id))
+    const idstr = (await listSavedItemIds()).saved_item_ids
+    return idstr.length ? idstr.split(',').map((id: string) => Number(id)) : []
 }
 
 /**

@@ -1,6 +1,6 @@
 <!-- src/views/Download.vue -->
 <template>
-  <div class="download-page">
+  <div class="page">
     <h3>下载APP</h3>
     <v-card class="mt-5">
       <v-card-title>
@@ -201,12 +201,6 @@ export default {
 </script>
 
 <style scoped>
-.download-page {
-  /* text-align: center; */
-  padding: 3rem;
-  max-width: 960px;
-  margin: 0 auto;
-}
 .line {
   line-height: 1.8rem;
 }

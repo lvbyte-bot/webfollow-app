@@ -5,7 +5,7 @@ import { useFeedsStore } from './feeds'
 import { useItemsStore } from './items'
 import { sync as sync2local } from '@/service'
 import { clearIndexedDB } from '@/utils/dbHelper'
-import { computed, Ref, watch, ref } from 'vue'
+import { computed, Ref, watch, ref, onMounted } from 'vue'
 export const useAppStore = defineStore('app', () => {
     const {
         saved_item_ids, unread_item_ids, read, unread, save, unsave, refresh
@@ -30,6 +30,7 @@ export const useAppStore = defineStore('app', () => {
 
     async function reloadBuild() {
         await clearIndexedDB()
+        saved_item_ids.clear()
         unread_item_ids.clear()
         setTimeout(async () => {
             auth.value = JSON.parse(localStorage.getItem('auth') || '{"username":"guest"}')
@@ -43,6 +44,9 @@ export const useAppStore = defineStore('app', () => {
     const unReadQty = computed(() => unread_item_ids.size)
     watch(unReadQty, () => {
         document.title = `(${unReadQty.value})Webfollow`
+    })
+    onMounted(() => {
+        sync()
     })
     return { reloadBuild, sync, loading, read, unread, save, unsave, savedQty, unReadQty, auth }
 })

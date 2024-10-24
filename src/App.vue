@@ -1,14 +1,7 @@
 <template>
   <router-view />
 </template>
-<script setup>
-import { useAppStore } from "@/store";
-import { onMounted } from "vue";
-const appStore = useAppStore();
-onMounted(async () => {
-  await appStore.sync();
-});
-</script>
+<script setup></script>
 <style>
 :root {
   font-size: 14px;
@@ -23,5 +16,11 @@ html {
 }
 #app .v-list-group {
   --prepend-width: 1rem;
+}
+.page {
+  /* text-align: center; */
+  padding: 3rem;
+  max-width: 960px;
+  margin: 0 auto;
 }
 </style>

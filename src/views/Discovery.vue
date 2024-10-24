@@ -1,12 +1,13 @@
 <template>
-  <v-container>
-    <v-card title="添加订阅">
+  <div class="page">
+    <h3>添加订阅</h3>
+    <v-card prepend-icon="mdi-rss" class="mt-5">
       <v-card-text>
         <v-text-field v-model="value" label="网址" required></v-text-field>
         <v-btn color="primary" :loading="loading" @click="add"> 添加 </v-btn>
       </v-card-text>
     </v-card>
-  </v-container>
+  </div>
 </template>
 
 <script setup lang="ts">

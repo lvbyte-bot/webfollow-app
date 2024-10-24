@@ -5,7 +5,7 @@
             <div class="sidebar-top">
                 <v-list-item prepend-icon="mdi-inbox" value="all" title="全部文章" to="/all">
                     <template v-slot:append>
-                        <small v-if="appStore.savedQty" v-text="appStore.unReadQty"></small> </template></v-list-item>
+                        <small v-if="appStore.unReadQty" v-text="appStore.unReadQty"></small> </template></v-list-item>
                 <v-list-item prepend-icon="mdi-format-list-bulleted" value="next" title="稍后阅读" to="/next">
                     <template v-slot:append>
                         <small v-if="appStore.savedQty" v-text="appStore.savedQty"></small>
@@ -100,7 +100,6 @@
 import { ref, onMounted, onBeforeUnmount, Ref } from "vue";
 import { useFeedsStore, useAppStore } from "@/store";
 import { useDisplay } from "vuetify";
-import { extFeed } from '@/api'
 
 const { mobile } = useDisplay();
 const feedStore = useFeedsStore();
@@ -151,8 +150,7 @@ async function onUpdate() {
         alert('请选择分组')
     }
     const group_id = feedStore.groups.filter(g=>g.title==currentItem.value.groupName)[0].id
-    await extFeed({ feed_id: currentItem.value.id, group_id, feed_url: currentItem.value.url, as: 'update' })
-    await feedStore.refresh()
+    await feedStore.updateFeed(currentItem.value.id, group_id)
     loading.value = false
     editable.value=false
 }
@@ -161,7 +159,6 @@ async function onUpdate() {
 
 async function onDelete() {
     loading.value = true
-    await extFeed({ feed_id: currentItem.value.id, as: 'remove' })
     await feedStore.deleteFeed(currentItem.value.id)
     loading.value = false
     deleteDialog.value=false

@@ -12,6 +12,7 @@ import {
     listSubscription,
     sumUnread
 } from '@/service'
+import { extFeed } from '@/api'
 import {
     useBaseStore
 } from './base'
@@ -93,6 +94,7 @@ export const useFeedsStore = defineStore('feeds', () => {
     })
 
     async function deleteFeed(id: number) {
+        await extFeed({ feed_id: id, as: 'remove' })
         await feedRepo.del(id);
         (await itemRepo.listAll(item => item.feedId == id)).forEach(item => {
             itemRepo.del(item.id)
@@ -100,10 +102,21 @@ export const useFeedsStore = defineStore('feeds', () => {
         await refresh()
     }
 
+    async function updateFeed(id: number, groupId: number) {
+        const feed = await feedRepo.get(id)
+        if (feed) {
+            await extFeed({ feed_id: id, group_id: groupId, feed_url: feed.url, as: 'update' })
+            feed.groupId = groupId
+            await feedRepo.save(feed)
+            await refresh()
+        }
+    }
+
     return {
         groups,
         feeds,
         deleteFeed,
+        updateFeed,
         nextUnReadUrl,
         refresh,
         readUrls
