@@ -13,7 +13,8 @@ export interface SubscriptionFeed {
     url: string,
     siteUrl: string,
     unreadQty: number,
-    icon?: string
+    icon?: string,
+    groupId?: number
 }
 
 export enum ItemType { BASIC, IMAGE, VIDEO, PODCAST }

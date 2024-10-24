@@ -1,6 +1,14 @@
+import exp from "constants";
 import {
     request
 } from "../utils/http";
+
+export function login(token: string) {
+    return request({
+        'api': '1',
+        api_key: token
+    })
+}
 
 export function groups() {
     return request({
@@ -26,7 +34,7 @@ export function items(params: object) {
 }
 
 
-export function favicons(params: object) :Promise<any>{
+export function favicons(params: object): Promise<any> {
     return request(Object.assign({
         'favicons': '0'
     }, params))
@@ -53,5 +61,13 @@ export function listSavedItemIds() {
 export function mark(params: object) {
     return request(Object.assign({
         mark: 'item'
+    }, params))
+}
+
+// 扩宽接口 {as: create update remove feed_url, group_id, feed_id}
+
+export function extFeed(params: object) {
+    return request(Object.assign({
+        feeds: '0'
     }, params))
 }

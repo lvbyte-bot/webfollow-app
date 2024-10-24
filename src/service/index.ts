@@ -12,6 +12,10 @@ export enum Marked { ITEM, FEED, GROUP }
 
 const feedsCache: any = {}
 
+export async function getItemTotal(): Promise<number> {
+    return await itemRepo.count()
+}
+
 /**
  * 刷新同步数据到本地
  */
@@ -93,24 +97,26 @@ export async function listItem(id: any, type: LsItemType, page: number = 0, only
  * 
  * @returns 
  */
-export async function listSubscription(): Promise<Subscription[] | undefined> {
+export async function listSubscription(): Promise<[Subscription[], Group[], Feed[]] | undefined> {
     const groups: Group[] = await groupRepo.getAll();
     const feeds: Feed[] = await feedRepo.getAll()
     let all: Subscription[] = groups.map(g => ({ id: g.id, title: g.title, feeds: [] }))
-    all.push({ id: -1, title: '未分类', feeds: [] })
+    if (feeds.filter(f => !f.groupId).length > 0) {
+        all.push({ id: -1, title: '未分类', feeds: [] })
+    }
     let gid2group: any = {}
     all.forEach(item => {
         gid2group[item.id] = item
     })
     feeds.forEach(f => {
-        const sf: SubscriptionFeed = { id: f.id, title: f.title, url: f.url, unreadQty: 0, siteUrl: f.siteUrl, icon: getBaseUrl(f.siteUrl) + "/favicon.ico" }
+        const sf: SubscriptionFeed = { id: f.id, title: f.title, url: f.url, unreadQty: 0, siteUrl: f.siteUrl, groupId: f.groupId, icon: getBaseUrl(f.siteUrl) + "/favicon.ico" }
         if (f.groupId) {
             gid2group[f.groupId].feeds.push(sf)
         } else {
             gid2group[-1].feeds.push(sf)
         }
     })
-    return all
+    return [all, groups, feeds]
 }
 
 /**

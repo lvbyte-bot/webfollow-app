@@ -1,3 +1,4 @@
+const version = 1;
 
 export interface DbStore {
     id: number
@@ -5,7 +6,7 @@ export interface DbStore {
 
 export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
     const dbName = 'WebFollowDatabase';
-    const version = 1;
+
     let db: IDBDatabase | null = null;
 
     // 打开数据库
@@ -273,6 +274,66 @@ export function checkDBExists(dbName: string = 'WebFollowDatabase'): Promise<boo
         request.onerror = () => {
             // 数据库不存在
             resolve(false);
+        };
+    });
+}
+
+
+export function clearIndexedDB(dbName: string = 'WebFollowDatabase'): Promise<void> {
+    return new Promise((resolve, reject) => {
+        const request: IDBOpenDBRequest = indexedDB.open(dbName, version);
+
+        request.onsuccess = (event: Event) => {
+            const db: IDBDatabase = (event.target as IDBOpenDBRequest).result;
+
+            // 获取所有对象存储的名称
+            const objectStoreNames: DOMStringList = db.objectStoreNames;
+
+            console.log(objectStoreNames)
+
+            // 开始一个事务
+            const transaction: IDBTransaction = db.transaction(objectStoreNames, 'readwrite');
+
+            // 清空每个对象存储
+            const clearPromises: Promise<void>[] = [];
+            for (let i = 0; i < objectStoreNames.length; i++) {
+                const storeName: string | null = objectStoreNames.item(i)
+                if (storeName) {
+                    const objectStore: IDBObjectStore = transaction.objectStore(storeName);
+                    const clearRequest: any = objectStore.clear();
+
+                    const clearPromise = new Promise<void>((resolve, reject) => {
+                        clearRequest.onsuccess = () => {
+                            console.log(`对象存储 ${storeName} 已清空`);
+                            resolve();
+                        };
+
+                        clearRequest.onerror = (error: Event) => {
+                            console.error(`清空对象存储 ${storeName} 时出错:`, error);
+                            reject(error);
+                        };
+                    });
+
+                    clearPromises.push(clearPromise);
+                }
+
+            }
+
+            transaction.oncomplete = () => {
+                console.log('所有对象存储已清空');
+                db.close();
+                resolve(); // 事务完成，解析 Promise
+            };
+
+            transaction.onerror = (error: Event) => {
+                console.error('事务出错:', error);
+                reject(error); // 事务出错，拒绝 Promise
+            };
+        };
+
+        request.onerror = (error: Event) => {
+            console.error('打开数据库时出错:', error);
+            reject(error); // 打开数据库出错，拒绝 Promise
         };
     });
 }

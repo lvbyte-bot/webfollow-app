@@ -15,6 +15,7 @@
           class="mt-1"
           prepend-icon="mdi-plus"
           title="添加"
+          @click="router.push('/subscribe')"
         ></v-list-item>
         <v-list-item
           class="mt-1"
@@ -22,6 +23,11 @@
           value="app"
           @click="router.push('/download')"
         ></v-list-item>
+        <v-list-item class="bottom" to="/login">
+          <v-avatar color="primary" :title="appStore.auth.username">
+            {{ appStore.auth.username.substring(0, 2) }}
+          </v-avatar>
+        </v-list-item>
       </v-navigation-drawer>
       <v-navigation-drawer v-if="mobile" v-model="show">
         <SideBar></SideBar>
@@ -39,14 +45,6 @@
           <router-view></router-view>
         </div>
       </v-main>
-
-      <!-- <v-dialog v-model="title" max-width="500">
-        <v-card>
-          <v-card-title>
-            {{ title }}
-          </v-card-title>
-        </v-card>
-      </v-dialog> -->
     </v-app>
   </v-responsive>
 </template>
@@ -55,7 +53,9 @@ import SideBar from "./sub/SideBar.vue";
 import { useDisplay } from "vuetify";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
+import { useAppStore } from "@/store";
 
+const appStore = useAppStore();
 const { mobile } = useDisplay();
 const router = useRouter();
 const title = ref("");
@@ -83,5 +83,9 @@ const show = ref(false);
   position: absolute;
   top: 0;
   z-index: 10000;
+}
+.bottom {
+  position: absolute;
+  bottom: 1rem;
 }
 </style>

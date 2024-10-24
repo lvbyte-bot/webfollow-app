@@ -17,11 +17,13 @@ import {
 } from './base'
 import { useRoute } from 'vue-router'
 import { Subscription } from '@/service/types'
+import { feedRepo, Group, itemRepo } from '@/repository'
 
 export const useFeedsStore = defineStore('feeds', () => {
     const {
         unread_item_ids
     } = useBaseStore()
+    const groups: Ref<Group[]> = ref([])
     const route = useRoute()
     const subscriptions: Ref<Subscription[] | undefined> = ref([])
 
@@ -53,8 +55,13 @@ export const useFeedsStore = defineStore('feeds', () => {
     }
 
     async function refresh() {
-        subscriptions.value = await listSubscription()
-        await initFeeds()
+        const data = await listSubscription()
+        if (data) {
+            subscriptions.value = data[0]
+            groups.value = data[1]
+            await initFeeds()
+        }
+
     }
 
     watch(route, () => {
@@ -85,8 +92,18 @@ export const useFeedsStore = defineStore('feeds', () => {
         watch(unread_item_ids, initFeeds)
     })
 
+    async function deleteFeed(id: number) {
+        await feedRepo.del(id);
+        (await itemRepo.listAll(item => item.feedId == id)).forEach(item => {
+            itemRepo.del(item.id)
+        })
+        await refresh()
+    }
+
     return {
+        groups,
         feeds,
+        deleteFeed,
         nextUnReadUrl,
         refresh,
         readUrls
