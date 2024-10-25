@@ -45,10 +45,6 @@ const appStore = useAppStore();
 const router = useRouter();
 const itemsTotal = ref(0);
 
-declare namespace CryptoJS {
-  function MD5(str: string): string;
-}
-
 const snackbar = ref(false);
 const message = ref("");
 const username = ref("");

@@ -72,7 +72,7 @@ export const useFeedsStore = defineStore('feeds', () => {
         setTimeout(() => {
             nextUnReadUrl.value = getNextUnReadUrl(route.fullPath)
         }, 500);
-        console.log(feeds)
+        // console.log(feeds)
     })
 
     function getNextUnReadUrl(currentUrl: string): string {

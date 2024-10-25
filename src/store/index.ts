@@ -8,6 +8,9 @@ import { clearIndexedDB } from '@/utils/dbHelper'
 import { computed, Ref, watch, ref, onMounted, reactive, Reactive } from 'vue'
 import { PageRoute, TopNav } from './types'
 import { LsItemType } from '@/service/types'
+
+
+
 export const useAppStore = defineStore('app', () => {
     const {
         saved_item_ids, unread_item_ids, read, unread, save, unsave, refresh
@@ -27,7 +30,7 @@ export const useAppStore = defineStore('app', () => {
             await sync2local()
             await refreshFeed()
             await refreshItems()
-            console.log('sync end')
+            log('sync end')
             loading.value = false
         })
         initNav(pageRoute)

@@ -5,3 +5,9 @@ declare module "*.vue" {
   const component: DefineComponent<{}, {}, any>;
   export default component;
 }
+
+declare function log(...args: any): void
+
+declare namespace CryptoJS {
+  function MD5(str: string): string;
+}

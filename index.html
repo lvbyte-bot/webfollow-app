@@ -7,6 +7,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Webfollow</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script>
+    function log(...args) {
+      console.log("%cWebFollow", "padding:5px 8px;border-radius:3px;background:#ff7a61;color:#fff;font-size:1em;", ...args)
+    }
+    if (!window.location.host.includes("local")) {
+      var _hmt = _hmt || [];
+      (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?392ac0df04b6b46eb9cc5a38c42b8004";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+      })();
+    }
+  </script>
 </head>
 
 <body>

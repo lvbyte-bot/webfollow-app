@@ -13,11 +13,9 @@
         <div class="text-center mx-auto">
           <v-btn color="primary" :loading="loading" @click="add"> 添加 </v-btn>
         </div>
-        <p>
-          <v-btn variant="text" href="https://toprss.webfollow.cc/"
-            >看看别人都订阅了啥</v-btn
-          >
-        </p>
+        <v-card-actions>
+          <v-btn href="https://toprss.webfollow.cc/">看看别人都订阅了啥</v-btn>
+        </v-card-actions>
       </v-card-text>
     </v-card>
   </div>

@@ -11,7 +11,7 @@ export function useSideChapter(markdownContent: string, el: any, tocEl: any) {
         }
     })
     let topLevel = 1
-    console.log('topLevel', topLevel)
+    // console.log('topLevel', topLevel)
     if (levels) {
         topLevel = Math.min(...levels)
     }
