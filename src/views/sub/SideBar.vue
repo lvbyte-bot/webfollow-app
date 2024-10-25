@@ -40,7 +40,7 @@
         </v-list>
 
         <div v-if="mobile" class="plus mx-auto">
-            <v-btn color="surface-variant" icon="mdi-plus"></v-btn>
+            <v-btn color="surface-variant" to="subscribe" icon="mdi-plus"></v-btn>
         </div>
     </div>
 
@@ -58,7 +58,8 @@
             <v-card-text>
                 <v-form ref="form">
                     <v-text-field label="标题" disabled required v-model="currentItem.title"></v-text-field>
-
+                    <v-text-field label="rss地址" disabled required v-model="currentItem.url"></v-text-field>
+                    <v-text-field label="网站地址" disabled required v-model="currentItem.siteUrl"></v-text-field>
                     <v-select label="分组" v-model="currentItem.groupName" required :items="feedStore.groups.map(g => g.title)"
                         :rules="[v => !!v || '分组是必填']"></v-select>
 

@@ -81,7 +81,7 @@ const show = ref(false);
 }
 .toogle {
   position: absolute;
-  top: 0;
+  top: 30vh;
   z-index: 10000;
 }
 .bottom {

@@ -14,7 +14,7 @@
         <v-btn size="small" color="surface-variant" icon="mdi-chevron-down" title="下一篇文章"></v-btn> -->
         <div id="chapters" class="chapter-list"></div>
       </div>
-      <v-container class="pa-0 pl-16">
+      <v-container class="pa-0 pl-10">
         <image-reader :item="currentItem" v-if="currentItem.type == 'IMAGE'" />
         <basic-reader
           :item="currentItem"

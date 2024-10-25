@@ -45,8 +45,9 @@ export const useAppStore = defineStore('app', () => {
     watch(unReadQty, () => {
         document.title = `(${unReadQty.value})Webfollow`
     })
-    onMounted(() => {
-        sync()
+    onMounted(async () => {
+        await sync()
+        document.title = `(${unReadQty.value})Webfollow`
     })
     return { reloadBuild, sync, loading, read, unread, save, unsave, savedQty, unReadQty, auth }
 })

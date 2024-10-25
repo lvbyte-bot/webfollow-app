@@ -3,7 +3,7 @@
     <h3>添加订阅</h3>
     <v-card prepend-icon="mdi-rss" class="mt-5">
       <v-card-text>
-        <v-text-field v-model="value" label="网址" required></v-text-field>
+        <v-text-field v-model="value" label="RSS网址" required></v-text-field>
         <v-btn color="primary" :loading="loading" @click="add"> 添加 </v-btn>
       </v-card-text>
     </v-card>
@@ -19,13 +19,17 @@ const appStore = useAppStore();
 const loading = ref(false);
 
 async function add() {
-  loading.value = true;
-  await extFeed({ group_id: 0, feed_url: value.value, as: "create" });
-  value.value = "";
+  try {
+    loading.value = true;
+    await extFeed({ group_id: 0, feed_url: value.value, as: "create" });
+    value.value = "";
+    setTimeout(() => {
+      appStore.sync();
+    }, 3000);
+  } catch (e) {
+    alert("添加失败，请检查源是添加或是否可访问");
+  }
   loading.value = false;
-  setTimeout(() => {
-    appStore.sync();
-  }, 3000);
 }
 
 const value = ref("");

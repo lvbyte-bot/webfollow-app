@@ -2,13 +2,26 @@ import { onMounted } from "vue";
 
 export function useSideChapter(markdownContent: string, el: any, tocEl: any) {
     const lines = markdownContent.split('\n');
+    const levels: number[] = lines.map(line => {
+        if (line.match(/^#+\s/)) {
+            const g = line.match(/^#+/)
+            return g ? g[0].length : 1
+        } else {
+            return 6
+        }
+    })
+    let topLevel = 1
+    console.log('topLevel', topLevel)
+    if (levels) {
+        topLevel = Math.min(...levels)
+    }
     const toc = lines.reduce((acc: string[], line, index, array) => {
         if (line.match(/^#+\s/)) {
             // 处理 #、##、### 等格式的标题
             const g = line.match(/^#+/)
             const level = g ? g[0].length : 1;
             const title = line.replace(/^#+\s/, '');
-            acc.push(`<li style="margin-left: ${level - 1}em;" class="toc-link" data-id="chapter${acc.length}">
+            acc.push(`<li style="margin-left: ${level - topLevel}rem;" class="toc-link" data-id="chapter${acc.length}">
                         ${title}
                       </li>`);
         } else if (line.match(/^-{2,}$/) && index > 0 && !array[index - 1].match(/^#+\s/)) {
@@ -61,7 +74,7 @@ export function useSideChapter(markdownContent: string, el: any, tocEl: any) {
                 headings.forEach((heading: any, index: number) => {
                     const headingTop = heading.offsetTop;
                     const headingEnd = index == headings.length - 1 ? container.scrollHeight : headings[index + 1].offsetTop;
-                    console.log(scrollPosition, headingTop, headingEnd)
+                    // console.log(scrollPosition, headingTop, headingEnd)
                     if (scrollPosition >= headingTop && scrollPosition < headingEnd) {
                         tocConainer.querySelectorAll('.toc-link').forEach((link: any) => link.classList.remove('active'));
                         tocConainer.querySelectorAll('.toc-link')[index].classList.add('active');

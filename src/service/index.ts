@@ -268,7 +268,7 @@ function map(item: Item): FeedItem {
     const html = md2html(item.description)
     const imgs = extImgs(html)
     const thumbnail: string | undefined = imgs && imgs.length > 0 ? imgs[0] : undefined
-    const text = extText(item.description)
+    const text = extText(html)
     const type: string = ItemType[imgs.length > 5 && imgs.length * 50 > text.length ? ItemType.IMAGE : ItemType.BASIC]
     const summary: string = text && text.length > 36 ? text.substring(0, 36) : text
     const d: number = item.pubDate * 1000

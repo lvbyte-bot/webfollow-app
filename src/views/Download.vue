@@ -60,7 +60,12 @@
         <div class="line">网页端支持图文混排</div>
         <div class="line">网页端支持章节导航</div>
         <div class="line">一月仅需6元，学生3元一月</div>
-        <a href="" class="download-link">点击购买</a>
+        <a
+          target="_blank"
+          href="https://zhidayingxiao.cn/to/06g6yb"
+          class="download-link"
+          >点击购买</a
+        >
       </v-card-text>
     </v-card>
     <v-dialog v-model="dialog" width="auto">
