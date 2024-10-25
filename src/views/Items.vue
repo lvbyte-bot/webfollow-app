@@ -66,7 +66,7 @@
               : 'mdi-format-list-bulleted'
           "
           :title="itemView == 'card' ? '卡片视图' : '列表视图'"
-          @click="itemView = itemView == 'text' ? 'card' : 'text'"
+          @click="changeItemView(itemView == 'text' ? 'card' : 'text')"
         >
         </v-btn>
       </v-toolbar>
@@ -132,12 +132,17 @@ const mainRef = ref();
 const { isBottom } = useScroll(mainRef);
 
 const store = useItemsStore();
-const app = useAppStore();
+const appStore = useAppStore();
 const feedStore = useFeedsStore();
 const currentItem: Ref<FeedItem | undefined> = ref(undefined);
 const onlyUnread = ref(true);
 const loading = ref(false);
-const itemView = ref("card");
+const itemView = ref(localStorage.getItem("layout") || "card");
+
+function changeItemView(view: string) {
+  localStorage.setItem("layout", view);
+  itemView.value = view;
+}
 
 let page = 0;
 
@@ -174,14 +179,16 @@ function initData(page0: number = 0) {
 
 async function refresh() {
   loading.value = true;
-  await app.sync();
+  await appStore.sync();
   loading.value = false;
 }
 
 async function markRead() {
-  await app.read(
+  console.log(appStore.lastRefeshTime);
+  await appStore.read(
     Number(props.id),
-    props.type == "f" ? Marked.FEED : Marked.GROUP
+    props.type == "f" ? Marked.FEED : Marked.GROUP,
+    appStore.lastRefeshTime
   );
 }
 function openReader(item: any) {

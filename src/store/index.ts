@@ -13,7 +13,8 @@ export const useAppStore = defineStore('app', () => {
     const { refresh: refreshFeed } = useFeedsStore()
     const { refreshItems } = useItemsStore()
     const loading: Ref<boolean> = ref(false)
-    const auth: Ref<any> = ref(JSON.parse(localStorage.getItem('auth') || '{"username":"guest"}'))
+    const lastRefeshTime = ref(0);
+    const authInfo: Ref<any> = ref(JSON.parse(localStorage.getItem('auth') || '{"username":"guest"}'))
 
     async function sync() {
 
@@ -25,7 +26,7 @@ export const useAppStore = defineStore('app', () => {
             console.log('sync end')
             loading.value = false
         })
-
+        lastRefeshTime.value = new Date().getTime()
     }
 
     async function reloadBuild() {
@@ -33,7 +34,7 @@ export const useAppStore = defineStore('app', () => {
         saved_item_ids.clear()
         unread_item_ids.clear()
         setTimeout(async () => {
-            auth.value = JSON.parse(localStorage.getItem('auth') || '{"username":"guest"}')
+            authInfo.value = JSON.parse(localStorage.getItem('auth') || '{"username":"guest"}')
             await refreshFeed()
             await sync()
         }, 1000);
@@ -49,7 +50,7 @@ export const useAppStore = defineStore('app', () => {
         await sync()
         document.title = `(${unReadQty.value})Webfollow`
     })
-    return { reloadBuild, sync, loading, read, unread, save, unsave, savedQty, unReadQty, auth }
+    return { reloadBuild, sync, loading, read, unread, save, unsave, savedQty, unReadQty, authInfo, lastRefeshTime }
 })
 
 export { useFeedsStore, useItemsStore };
