@@ -6,17 +6,18 @@ import {
     ref,
     computed,
     Ref,
+    reactive,
+    Reactive,
 } from 'vue'
 import {
     listItem,
-    LsItemType,
-    getNav
 } from '@/service'
 
 import {
     useBaseStore
 } from './base'
-import { FeedItem } from '@/service/types'
+import { FeedItem, LsItemType } from '@/service/types'
+import { PageRoute } from './types'
 
 export const useItemsStore = defineStore('items', () => {
     const {
@@ -26,8 +27,8 @@ export const useItemsStore = defineStore('items', () => {
     const data: Ref<FeedItem[] | undefined> = ref([])
 
     const isLast: Ref<boolean | undefined> = ref(false)
-
-    const nav: Ref<any> = ref({})
+    //  用于导航栏变动
+    const pageRoute: Reactive<PageRoute> = reactive({ type: LsItemType.ALL, id: 0 })
 
     let cacheLoadParams: any = {}
 
@@ -44,7 +45,8 @@ export const useItemsStore = defineStore('items', () => {
         cacheLoadParams = { id, type, page, onlyUnread }
         id = type == LsItemType.SAVED ? saved_item_ids : id
         id = type == LsItemType.ALL ? null : id
-        nav.value = await getNav(id, type);
+        pageRoute.id = id
+        pageRoute.type = type
         const r = await listItem(id, type, page, onlyUnread, unread_item_ids)
         r?.data.forEach((item) => data.value?.push(item))
         isLast.value = r?.isLast
@@ -59,8 +61,8 @@ export const useItemsStore = defineStore('items', () => {
     return {
         items,
         isLast,
-        nav,
         loadData,
-        refreshItems
+        refreshItems,
+        pageRoute
     }
 })

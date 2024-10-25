@@ -1,20 +1,24 @@
 // stores/counter.js
-import { defineStore } from 'pinia'
+import { defineStore, storeToRefs } from 'pinia'
 import { useBaseStore } from './base'
 import { useFeedsStore } from './feeds'
 import { useItemsStore } from './items'
 import { sync as sync2local } from '@/service'
 import { clearIndexedDB } from '@/utils/dbHelper'
-import { computed, Ref, watch, ref, onMounted } from 'vue'
+import { computed, Ref, watch, ref, onMounted, reactive, Reactive } from 'vue'
+import { PageRoute, TopNav } from './types'
+import { LsItemType } from '@/service/types'
 export const useAppStore = defineStore('app', () => {
     const {
         saved_item_ids, unread_item_ids, read, unread, save, unsave, refresh
     } = useBaseStore()
     const { refresh: refreshFeed } = useFeedsStore()
-    const { refreshItems } = useItemsStore()
+    const { feeds } = storeToRefs(useFeedsStore())
+    const { refreshItems, pageRoute } = useItemsStore()
     const loading: Ref<boolean> = ref(false)
     const lastRefeshTime = ref(0);
     const authInfo: Ref<any> = ref(JSON.parse(localStorage.getItem('auth') || '{"username":"guest"}'))
+    const nav: Reactive<TopNav> = reactive({ title: 'loading' })
 
     async function sync() {
 
@@ -26,6 +30,7 @@ export const useAppStore = defineStore('app', () => {
             console.log('sync end')
             loading.value = false
         })
+        initNav(pageRoute)
         lastRefeshTime.value = new Date().getTime()
     }
 
@@ -50,7 +55,48 @@ export const useAppStore = defineStore('app', () => {
         await sync()
         document.title = `(${unReadQty.value})Webfollow`
     })
-    return { reloadBuild, sync, loading, read, unread, save, unsave, savedQty, unReadQty, authInfo, lastRefeshTime }
+    // 都是为了更新nav
+    watchAll([pageRoute, feeds, unReadQty, savedQty], () => initNav(pageRoute))
+
+    function initNav(v: PageRoute) {
+        switch (v.type) {
+            case LsItemType.ALL:
+                nav.title = '全部文章'
+                nav.qty = unReadQty.value
+                return
+            case LsItemType.SAVED:
+                nav.title = '稍后阅读'
+                nav.qty = savedQty.value
+                return
+            case LsItemType.GROUP:
+                const ga = feeds?.value?.filter(g => g.id == v.id)
+                if (ga?.length) {
+                    nav.title = ga[0].title
+                    nav.qty = ga[0].unreadQty
+                }
+                return
+            case LsItemType.FEED:
+                let fs = feeds?.value?.flatMap(g => g.feeds).filter(f => f.id == v.id)
+                if (fs?.length) {
+                    nav.title = fs[0].title
+                    nav.qty = fs[0].unreadQty
+                }
+                return
+        }
+    }
+
+
+    return { reloadBuild, sync, loading, read, unread, save, unsave, savedQty, unReadQty, authInfo, lastRefeshTime, nav }
 })
 
+
+
 export { useFeedsStore, useItemsStore };
+
+type wathRef = Ref<any> | Reactive<any>
+
+function watchAll(wathers: wathRef[], call: () => void) {
+    wathers.forEach(w => {
+        watch(w, call)
+    })
+}

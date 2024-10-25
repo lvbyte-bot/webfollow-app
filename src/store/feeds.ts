@@ -10,7 +10,7 @@ import {
 } from 'vue'
 import {
     listSubscription,
-    sumUnread
+    sumUnread,
 } from '@/service'
 import { extFeed } from '@/api'
 import {
@@ -22,7 +22,7 @@ import { feedRepo, Group, itemRepo } from '@/repository'
 
 export const useFeedsStore = defineStore('feeds', () => {
     const {
-        unread_item_ids
+        unread_item_ids,
     } = useBaseStore()
     const groups: Ref<Group[]> = ref([])
     const route = useRoute()
@@ -52,7 +52,6 @@ export const useFeedsStore = defineStore('feeds', () => {
                 readUrls.push({ url: '/f/' + f.id, unreadQty: f.unreadQty })
             })
         })
-
     }
 
     async function refresh() {
@@ -73,6 +72,7 @@ export const useFeedsStore = defineStore('feeds', () => {
         setTimeout(() => {
             nextUnReadUrl.value = getNextUnReadUrl(route.fullPath)
         }, 500);
+        console.log(feeds)
     })
 
     function getNextUnReadUrl(currentUrl: string): string {
@@ -111,6 +111,9 @@ export const useFeedsStore = defineStore('feeds', () => {
             await refresh()
         }
     }
+
+
+
 
     return {
         groups,

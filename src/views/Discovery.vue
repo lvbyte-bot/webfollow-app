@@ -1,10 +1,18 @@
 <template>
   <div class="page">
     <h3>添加订阅</h3>
-    <v-card prepend-icon="mdi-rss" class="mt-5">
-      <v-card-text>
-        <v-text-field v-model="value" label="RSS网址" required></v-text-field>
-        <v-btn color="primary" :loading="loading" @click="add"> 添加 </v-btn>
+    <v-card prepend-icon="mdi-rss" title="订阅" class="mt-5">
+      <v-card-text class="mt-3">
+        <v-text-field
+          v-model="value"
+          label="RSS网址"
+          required
+          @keyup.enter="add"
+        ></v-text-field>
+
+        <div class="text-center mx-auto">
+          <v-btn color="primary" :loading="loading" @click="add"> 添加 </v-btn>
+        </div>
       </v-card-text>
     </v-card>
   </div>

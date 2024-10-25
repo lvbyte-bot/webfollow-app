@@ -2,11 +2,11 @@ import { groupRepo, feedRepo, itemRepo, Feed, Group, Item, isDbExists, Page } fr
 
 import { groups, items, feeds, listUnreadItemIds, listSavedItemIds, mark } from '../api'
 
-import { FeedItem, ItemType, Subscription, SubscriptionFeed } from './types';
+import { FeedItem, ItemType, Subscription, SubscriptionFeed, LsItemType } from './types';
 
 import { html2md, md2html } from '@/utils/mdUtils';
 
-export enum LsItemType { GROUP, FEED, SAVED, ALL }
+
 
 export enum Marked { ITEM, FEED, GROUP }
 
@@ -242,18 +242,6 @@ export async function unsave(id: number): Promise<any> {
         as: 'unsaved',
         mark: 'item'
     })
-}
-
-export async function getNav(id: any, type: LsItemType): Promise<any> {
-    if (type == LsItemType.SAVED) {
-        return { title: '稍后阅读' }
-    } else if (type == LsItemType.ALL) {
-        return { title: '全部文章' }
-    } else if (type == LsItemType.GROUP) {
-        return await groupRepo.get(id)
-    } else if (type == LsItemType.FEED) {
-        return await feedRepo.get(id)
-    }
 }
 
 function filterItem(item: Item, feedIds: Set<number>, onlyUnread: boolean = false, unReadItemIds: Set<number>): boolean {

@@ -19,6 +19,9 @@ export interface SubscriptionFeed {
 
 export enum ItemType { BASIC, IMAGE, VIDEO, PODCAST }
 
+
+export enum LsItemType { GROUP, FEED, SAVED, ALL }
+
 export interface FeedItem extends Item {
     isRead?: boolean,
     isSaved?: boolean,

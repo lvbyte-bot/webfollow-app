@@ -25,8 +25,8 @@
           <v-btn disabled variant="text" icon title="调整字体">
             <v-icon> mdi-format-size</v-icon>
           </v-btn>
-          <v-btn variant="text" icon title="更多">
-            <v-icon> mdi-dots-vertical</v-icon>
+          <v-btn variant="text" icon title="打开原网站" :href="item.link">
+            <v-icon> mdi-open-in-new</v-icon>
           </v-btn>
         </div>
       </div>

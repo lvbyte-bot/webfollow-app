@@ -24,8 +24,8 @@
           @click="router.push('/download')"
         ></v-list-item>
         <v-list-item class="bottom" to="/login">
-          <v-avatar color="primary" :title="appStore.auth.username">
-            {{ appStore.auth.username.substring(0, 2) }}
+          <v-avatar color="primary" :title="appStore.authInfo.username">
+            {{ appStore.authInfo.username.substring(0, 2) }}
           </v-avatar>
         </v-list-item>
       </v-navigation-drawer>

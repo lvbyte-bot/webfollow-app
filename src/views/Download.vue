@@ -63,7 +63,7 @@
         <a
           target="_blank"
           href="https://zhidayingxiao.cn/to/06g6yb"
-          class="download-link"
+          class="download-link v-btn v-btn--density-default"
           >点击购买</a
         >
       </v-card-text>

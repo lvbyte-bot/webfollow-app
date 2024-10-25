@@ -30,7 +30,11 @@
     <v-container class="top-sider">
       <v-toolbar>
         <div class="v-toolbar-title v-app-bar-title">
-          {{ (store.nav && store.nav.title) || "未分类" }}
+          {{ (appStore.nav && appStore.nav.title) || "未分类" }}
+          <small
+            class="mx-3 text-medium-emphasis"
+            v-text="appStore.nav.qty"
+          ></small>
         </div>
         <!-- <v-spacer></v-spacer> -->
 
@@ -73,20 +77,25 @@
     </v-container>
 
     <v-container class="mx-auto items-warp">
-      <v-row v-if="itemView == 'card'">
-        <v-col v-for="item in store.items" :key="item.id">
-          <Item :item="item" @click="openReader(item)" :type="type"></Item>
-        </v-col>
-      </v-row>
-      <template v-else>
-        <TextItem
-          v-for="item in store.items"
-          :item="item"
-          @click="openReader(item)"
-          :type="type"
-          :key="item.id"
-        ></TextItem>
+      <!-- <v-scroll-y-transition> -->
+      <template v-if="store.items?.length">
+        <v-row v-if="itemView == 'card'">
+          <v-col v-for="item in store.items" :key="item.id">
+            <Item :item="item" @click="openReader(item)" :type="type"></Item>
+          </v-col>
+        </v-row>
+        <template v-else>
+          <TextItem
+            v-for="item in store.items"
+            :item="item"
+            @click="openReader(item)"
+            :type="type"
+            :key="item.id"
+          ></TextItem>
+        </template>
       </template>
+      <!-- </v-scroll-y-transition> -->
+
       <template v-if="store.isLast">
         <v-empty-state
           icon="mdi-book-open-page-variant-outline"
@@ -97,7 +106,7 @@
             <template #prepend>
               <v-icon color="primary"> mdi-circle-medium </v-icon>
             </template>
-            点击打开下一个未读的feed
+            点击打开下一个未读的订阅源
           </v-btn>
         </v-empty-state>
         <v-empty-state
@@ -120,10 +129,9 @@ import PodcastReader from "./reader/PodcastReader.vue";
 import Item from "./item/CardItem.vue";
 import TextItem from "./item/TextItem.vue";
 import { onMounted, watch } from "vue";
-import { LsItemType, Marked } from "@/service";
-
+import { Marked } from "@/service";
 import { useItemsStore, useAppStore, useFeedsStore } from "@/store";
-import { FeedItem } from "@/service/types";
+import { FeedItem, LsItemType } from "@/service/types";
 import { useScroll } from "@/utils/scrollListener";
 const props = defineProps(["type", "id"]);
 
