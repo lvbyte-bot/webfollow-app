@@ -3,15 +3,22 @@ import { onMounted, onUnmounted, ref, Ref, nextTick } from "vue";
 import { debound } from './debound'
 
 export function useScroll(el: any): any {
-
+    let observer: MutationObserver
     onMounted(() => {
         nextTick(() => {
-            el.value.addEventListener('scroll', handleScroll);
+            el.value?.addEventListener('scroll', handleScroll);
         })
+
+        observer = new MutationObserver(debound(() => {
+            isBottom.value = false
+        }, 300));
+        const config = { childList: true, subtree: true };
+        observer.observe(el.value, config);
     })
     onUnmounted(() => {
         nextTick(() => {
-            el.value.removeEventListener('scroll', handleScroll);
+            observer?.disconnect();
+            el.value?.removeEventListener('scroll', handleScroll);
         })
     })
 
