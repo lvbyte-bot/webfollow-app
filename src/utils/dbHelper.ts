@@ -289,7 +289,7 @@ export function clearIndexedDB(dbName: string = 'WebFollowDatabase'): Promise<vo
             // 获取所有对象存储的名称
             const objectStoreNames: DOMStringList = db.objectStoreNames;
 
-            console.log(objectStoreNames)
+            // console.log(objectStoreNames)
 
             // 开始一个事务
             const transaction: IDBTransaction = db.transaction(objectStoreNames, 'readwrite');

@@ -16,7 +16,7 @@ export const useAppStore = defineStore('app', () => {
         saved_item_ids, unread_item_ids, read, unread, save, unsave, refresh
     } = useBaseStore()
     const { refresh: refreshFeed } = useFeedsStore()
-    const { feeds } = storeToRefs(useFeedsStore())
+    const { subscriptions } = storeToRefs(useFeedsStore())
     const { refreshItems, pageRoute } = useItemsStore()
     const loading: Ref<boolean> = ref(false)
     const lastRefeshTime = ref(0);
@@ -57,9 +57,12 @@ export const useAppStore = defineStore('app', () => {
     onMounted(async () => {
         await sync()
         document.title = `(${unReadQty.value})Webfollow`
+        setTimeout(() => {
+            watchAll([pageRoute, subscriptions, unReadQty, savedQty], () => initNav(pageRoute))
+        }, 1000);
+        // 都是为了更新nav
     })
-    // 都是为了更新nav
-    watchAll([pageRoute, feeds, unReadQty, savedQty], () => initNav(pageRoute))
+
 
     function initNav(v: PageRoute) {
         switch (v.type) {
@@ -72,14 +75,14 @@ export const useAppStore = defineStore('app', () => {
                 nav.qty = savedQty.value
                 return
             case LsItemType.GROUP:
-                const ga = feeds?.value?.filter(g => g.id == v.id)
+                const ga = subscriptions?.value?.filter(g => g.id == v.id)
                 if (ga?.length) {
                     nav.title = ga[0].title
                     nav.qty = ga[0].unreadQty
                 }
                 return
             case LsItemType.FEED:
-                let fs = feeds?.value?.flatMap(g => g.feeds).filter(f => f.id == v.id)
+                let fs = subscriptions?.value?.flatMap(g => g.feeds).filter(f => f.id == v.id)
                 if (fs?.length) {
                     nav.title = fs[0].title
                     nav.qty = fs[0].unreadQty

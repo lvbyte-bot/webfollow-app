@@ -59,7 +59,7 @@ const handleLogin = async () => {
   const token = CryptoJS.MD5(username.value + ":" + password.value).toString(); // 更新为使用 window.CryptoJS
   const r = await login(token);
   if (r.auth !== 1) {
-    showMessage(r.error);
+    showMessage("登录失败");
   } else {
     localStorage.setItem(
       "auth",
