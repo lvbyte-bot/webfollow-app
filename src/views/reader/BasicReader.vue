@@ -2,14 +2,7 @@
   <div class="ovf" ref="readerRef">
     <div class="px-1">
       <div class="top-sider">
-        <div>
-          <div class="title">
-            <a :href="item.link" :title="item.title">{{ item.title }}</a>
-          </div>
-          <small class="text-caption">
-            {{ getSubtitle() }}
-          </small>
-        </div>
+        <div></div>
         <div>
           <!-- <v-btn disabled variant="text" :icon="item.isRead ? 'mdi-radiobox-blank' : 'mdi-radiobox-marked'" title="阅读">
           </v-btn> -->
@@ -32,6 +25,13 @@
       </div>
       <v-container>
         <slot>
+          <div class="title">
+            <v-list-item
+              :href="item.link"
+              :title="item.title"
+              :subtitle="getSubtitle()"
+            ></v-list-item>
+          </div>
           <div class="toc-list" ref="tocRef"></div>
           <div id="content" class="content" v-html="item.html"></div>
         </slot>
@@ -89,14 +89,10 @@ function getSubtitle() {
   top: 0;
   z-index: 10;
   background-color: rgb(var(--v-theme-background));
-  display: grid;
-  grid-template-columns: 1fr 195px;
-  // justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0.3rem;
-  > *:first-child {
-    margin-left: 1rem;
-  }
   > *:last-child {
     min-width: 195px;
   }
@@ -112,8 +108,16 @@ function getSubtitle() {
   text-overflow: ellipsis;
 }
 .title {
-  font-size: 20px;
-  // line-height: 48px;
+  margin-bottom: 1rem;
+}
+:deep(.title) .v-list-item-title {
+  font-size: 18px;
+  line-height: 3rem;
+}
+.v-list-item {
+  padding: 1.5rem;
+  max-width: 1050px;
+  margin: 0 auto;
 }
 .content {
   max-width: 1024px;

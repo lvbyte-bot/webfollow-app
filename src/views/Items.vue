@@ -276,6 +276,10 @@ const show = ref(false);
   background-color: rgba(var(--v-theme-background), 0.1);
   max-height: calc(100vh - 100px);
   overflow: auto;
+
+  img {
+    height: 1.3rem;
+  }
   ul {
     list-style: none;
     font-size: 12px;
@@ -284,9 +288,11 @@ const show = ref(false);
       cursor: pointer;
     }
     li {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      > * {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
       &:hover {
         color: rgba(var(--v-theme-on-code), 0.9);
       }
