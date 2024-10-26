@@ -56,8 +56,12 @@ class Repo<T extends DbStore> {
     async getAll(): Promise<T[]> {
         return getAll(this.storename)
     }
-    async listAll(conditionFn: (item: T) => boolean): Promise<T[]> {
-        return await listAll(this.storename, conditionFn)
+    async listAll(conditionFn: ((item: T) => boolean) | undefined): Promise<T[]> {
+        if (conditionFn) {
+            return await listAll(this.storename, conditionFn)
+        } else {
+            return getAll(this.storename)
+        }
     }
     async findAll(conditionFn: (item: T) => boolean, page: number = 0, size: number = 50): Promise<Page<T>> {
         const data = await findAll(this.storename, conditionFn, size, page)

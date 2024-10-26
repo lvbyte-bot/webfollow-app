@@ -26,18 +26,19 @@ export const useFeedsStore = defineStore('feeds', () => {
     } = useBaseStore()
     const groups: Ref<Group[]> = ref([])
     const route = useRoute()
-    const subscriptions: Ref<Subscription[] | undefined> = ref([])
+    const data: Ref<Subscription[] | undefined> = ref([])
 
-    const feeds: Ref<Subscription[] | undefined> = ref([])
+    const subscriptions: Ref<Subscription[] | undefined> = ref([])
     const nextUnReadUrl = ref('')
 
     let readUrls: any[] = []
 
     async function initFeeds() {
-        feeds.value = await Promise.all(subscriptions.value?.map(async g => {
+        const items = await itemRepo.listAll(undefined)
+        subscriptions.value = await Promise.all(data.value?.map(async g => {
             try {
                 await Promise.all(g.feeds.map(async f => {
-                    f.unreadQty = await sumUnread(f.id, unread_item_ids)
+                    f.unreadQty = await sumUnread(items, f.id, unread_item_ids)
                 }));
                 g.unreadQty = g.feeds.map(f => f.unreadQty).reduce((x, y) => x + y)
                 return g
@@ -46,7 +47,7 @@ export const useFeedsStore = defineStore('feeds', () => {
             }
         }) || [])
         readUrls = [{ url: '/all' }, { url: '/next' }]
-        feeds.value.forEach(g => {
+        subscriptions.value.forEach(g => {
             readUrls.push({ url: '/c/' + g.id, unreadQty: g.unreadQty })
             g.feeds.forEach(f => {
                 readUrls.push({ url: '/f/' + f.id, unreadQty: f.unreadQty })
@@ -55,10 +56,10 @@ export const useFeedsStore = defineStore('feeds', () => {
     }
 
     async function refresh() {
-        const data = await listSubscription()
-        if (data) {
-            subscriptions.value = data[0]
-            groups.value = data[1]
+        const r = await listSubscription()
+        if (r) {
+            data.value = r[0]
+            groups.value = r[1]
             await initFeeds()
         }
 
@@ -68,7 +69,7 @@ export const useFeedsStore = defineStore('feeds', () => {
         nextUnReadUrl.value = getNextUnReadUrl(route.fullPath)
     })
 
-    watch(feeds, () => {
+    watch(subscriptions, () => {
         setTimeout(() => {
             nextUnReadUrl.value = getNextUnReadUrl(route.fullPath)
         }, 500);
@@ -117,7 +118,7 @@ export const useFeedsStore = defineStore('feeds', () => {
 
     return {
         groups,
-        feeds,
+        subscriptions,
         deleteFeed,
         updateFeed,
         nextUnReadUrl,

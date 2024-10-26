@@ -13,20 +13,20 @@
                 </v-list-item>
             </div>
             <v-list-subheader>FEEDS</v-list-subheader>
-            <v-list-group v-for="item in feedStore.feeds" :key="'c/' + item.id">
+            <v-list-group v-for="gItem in feedStore.subscriptions" :key="'c/' + gItem.id">
                 <template v-slot:activator="{ isOpen, props }">
-                    <v-list-item v-bind="props" :title="item.title">
+                    <v-list-item v-bind="props" :title="gItem.title">
                         <template #prepend>
                             <v-icon :icon="isOpen ? 'mdi-chevron-up' : ' mdi-chevron-down'">
                             </v-icon>
                         </template>
                         <template #append>
-                            <small v-if="item.unreadQty" v-text="item.unreadQty"></small>
+                            <small v-if="gItem.unreadQty" v-text="gItem.unreadQty"></small>
                         </template>
                     </v-list-item>
                 </template>
-                <v-list-item title="全部" :value="'/c/' + item.id" :to="'/c/' + item.id"> </v-list-item>
-                <v-list-item v-for="subItem in item.feeds" :key="subItem.id" :title="subItem.title" :value="subItem.id"
+                <v-list-item title="全部" :value="'/c/' + gItem.id" :to="'/c/' + gItem.id"> </v-list-item>
+                <v-list-item v-for="subItem in gItem.feeds" :key="gItem.id+'-'+subItem.id" :title="subItem.title" :value="gItem.id+'-'+subItem.id"
                     :to="'/f/' + subItem.id" @contextmenu.prevent="showContextMenu($event, subItem)">
                     <template #prepend>
                         <img :src="subItem.icon" onerror="this.src='/logo.svg'" width="18">
