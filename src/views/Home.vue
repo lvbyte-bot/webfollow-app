@@ -23,11 +23,16 @@
           value="app"
           @click="router.push('/download')"
         ></v-list-item>
-        <v-list-item class="bottom" to="/login">
-          <v-avatar color="primary" :title="appStore.authInfo.username">
-            {{ appStore.authInfo.username.substring(0, 2) }}
-          </v-avatar>
-        </v-list-item>
+        <div class="bottom">
+          <v-list-item to="/login">
+            <v-avatar color="primary" :title="appStore.authInfo.username">
+              {{ appStore.authInfo.username.substring(0, 2) }}
+            </v-avatar>
+          </v-list-item>
+          <v-list-item class="mt-3" href="https://i.webfollow.cc">
+            回到老版
+          </v-list-item>
+        </div>
       </v-navigation-drawer>
       <v-navigation-drawer v-if="mobile" v-model="show">
         <SideBar></SideBar>

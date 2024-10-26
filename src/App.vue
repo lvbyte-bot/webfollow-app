@@ -19,8 +19,10 @@ html {
 }
 .page {
   /* text-align: center; */
-  padding: 3rem;
+  padding: 3rem 1rem;
   max-width: 960px;
   margin: 0 auto;
+  overflow: auto;
+  max-height: 100vh;
 }
 </style>
