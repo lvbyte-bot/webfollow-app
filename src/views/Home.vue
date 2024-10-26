@@ -1,7 +1,7 @@
 <template>
   <v-responsive>
     <v-app>
-      <v-navigation-drawer rail>
+      <v-navigation-drawer v-if="!mobile" rail>
         <v-list-item
           class="my-2"
           prepend-avatar="/logo.svg"

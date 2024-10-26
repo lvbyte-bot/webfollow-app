@@ -25,4 +25,7 @@ html {
   overflow: auto;
   max-height: 100vh;
 }
+.v-navigation-drawer .v-list {
+  overflow: auto !important;
+}
 </style>

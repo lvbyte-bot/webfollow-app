@@ -6,13 +6,17 @@
     >
   </div>
 
-  <v-empty-state v-if="appStore.loading">
+  <v-empty-state height="100vh" v-if="appStore.loading">
     <v-icon size="x-large" :class="{ rotating: appStore.loading }"
       >mdi-loading</v-icon
     >
     <p class="mt-5">正在为你准备中...</p>
   </v-empty-state>
-  <v-empty-state v-else icon="mdi-book-open-page-variant-outline">
+  <v-empty-state
+    height="100vh"
+    v-else
+    icon="mdi-book-open-page-variant-outline"
+  >
     <v-btn variant="text" to="/all"> 开始吧 </v-btn>
   </v-empty-state>
 </template>

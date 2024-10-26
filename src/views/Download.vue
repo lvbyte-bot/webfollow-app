@@ -11,10 +11,10 @@
         <div class="line">
           支持fever的应用填入网址: https://api.webfollow.cc/plugins/fever/
         </div>
-        <div class="line">
+        <!-- <div class="line">
           支持googleReader的应用填入网址:
           https://api.webfollow.cc/plugins/greader/
-        </div>
+        </div> -->
         <div class="line">试用账号 guest/123456</div>
       </v-card-text>
     </v-card>
@@ -78,11 +78,11 @@
           <br />
           https://api.webfollow.cc/plugins/fever/
           <br />
-          <br />
+          <!-- <br />
           在支持 googleReader api的地方填写
           <br />
           https://api.webfollow.cc/plugins/greader/
-          <br />
+          <br />-->
           <br />
           <p>输入账号：guest 密码：123456</p>
         </v-card-text>
