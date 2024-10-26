@@ -29,7 +29,7 @@
               {{ appStore.authInfo.username.substring(0, 2) }}
             </v-avatar>
           </v-list-item>
-          <v-list-item class="mt-3" href="https://i.webfollow.cc">
+          <v-list-item class="mt-3 pa-3" href="https://i.webfollow.cc">
             回到老版
           </v-list-item>
         </div>
