@@ -40,7 +40,7 @@
         </v-list>
 
         <div v-if="mobile" class="plus mx-auto">
-            <v-btn color="surface-variant" to="subscribe" icon="mdi-plus"></v-btn>
+            <v-btn color="surface-variant" to="/subscribe" icon="mdi-plus"></v-btn>
             <v-btn class="ml-2" variant="flat" to="/download">下载app</v-btn>
         </div>
     </div>
