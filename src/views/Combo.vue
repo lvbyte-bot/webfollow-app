@@ -32,12 +32,12 @@ export default {
       packages: [
         {
           name: "Pro一月",
-          lines: ["最高500个订阅", "支持离线阅读", "支持app阅读器"],
+          lines: ["最高1000个订阅", "支持离线阅读", "支持app阅读器"],
           price: 6,
         },
         {
           name: "Pro一年",
-          lines: ["最高500个订阅", "支持离线阅读", "支持app阅读器"],
+          lines: ["最高1000个订阅", "支持离线阅读", "支持app阅读器"],
           price: 36,
         },
       ],
