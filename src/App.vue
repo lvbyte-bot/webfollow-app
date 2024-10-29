@@ -25,6 +25,11 @@ html {
   overflow: auto;
   max-height: 100vh;
 }
+.page h3 {
+  text-align: center;
+  padding: 2rem;
+  font-size: 18px;
+}
 .v-navigation-drawer .v-list {
   overflow: auto !important;
 }

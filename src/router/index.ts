@@ -25,6 +25,9 @@ const routes = [{
         path: '/download',
         component: () => import('@/views/Download.vue'),
     }, {
+        path: '/combo',
+        component: () => import('@/views/Combo.vue'),
+    }, {
         path: '/login',
         component: () => import('@/views/Login.vue'),
     }]

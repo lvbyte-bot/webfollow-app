@@ -17,7 +17,17 @@
     v-else
     icon="mdi-book-open-page-variant-outline"
   >
-    <v-btn variant="text" to="/all"> 开始吧 </v-btn>
+    <div class="text-center">
+      <v-btn variant="text" to="/all"> 开始吧 </v-btn>
+      <br />
+      <v-btn
+        v-if="appStore.authInfo.username == 'guest'"
+        class="mt-3"
+        variant="text"
+        to="/combo"
+        >目前用户是Guest,点击查看套餐</v-btn
+      >
+    </div>
   </v-empty-state>
 </template>
 <script setup>

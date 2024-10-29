@@ -2,7 +2,7 @@
 <template>
   <div class="page">
     <h3>下载APP</h3>
-    <v-card class="mt-5">
+    <!-- <v-card class="mt-5">
       <v-card-title>
         <v-icon size="small"> mdi-account-box-outline</v-icon>
         升级会员
@@ -13,7 +13,7 @@
         <div class="line">跨平台，多客户端</div>
         <div class="line">网页端支持图文混排</div>
         <div class="line">网页端支持章节导航</div>
-        <div class="line">一月仅需3元</div>
+        <div class="line">一年仅需36元</div>
         <a
           target="_blank"
           href="https://item.taobao.com/item.htm?ft=t&id=847155285226&skuId=5797611030189&spm=a21dvs.23580594.0.0.1d292c1bqz25TM"
@@ -21,7 +21,7 @@
           >开通会员</a
         >
       </v-card-text>
-    </v-card>
+    </v-card> -->
     <v-card class="mt-5">
       <v-card-title>
         <v-icon size="small"> mdi-import</v-icon>
@@ -68,7 +68,9 @@
         </v-expansion-panels>
       </v-card-text>
     </v-card>
-
+    <div class="text-center mt-3">
+      <v-btn variant="text" to="/combo">点击查看套餐</v-btn>
+    </div>
     <v-dialog v-model="dialog" width="auto">
       <v-card max-width="400" prepend-icon="mdi-tune" title="使用教程">
         <v-card-text>

@@ -19,10 +19,17 @@
         ></v-list-item>
         <v-list-item
           class="mt-1"
+          prepend-icon="mdi-professional-hexagon"
+          value="combo"
+          @click="router.push('/combo')"
+        ></v-list-item>
+        <v-list-item
+          class="mt-1"
           prepend-icon="mdi-download"
           value="app"
           @click="router.push('/download')"
         ></v-list-item>
+
         <div class="bottom">
           <v-list-item to="/login">
             <v-avatar color="primary" :title="appStore.authInfo.username">
