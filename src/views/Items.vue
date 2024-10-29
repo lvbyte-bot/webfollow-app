@@ -100,7 +100,7 @@
         <v-empty-state
           icon="mdi-book-open-page-variant-outline"
           v-if="feedStore.nextUnReadUrl"
-          height="100vh"
+          height="calc(100vh - 64px)"
         >
           <v-btn variant="text" :to="feedStore.nextUnReadUrl">
             <template #prepend>
@@ -111,8 +111,8 @@
         </v-empty-state>
         <v-empty-state
           v-else
+          height="50vh"
           icon=" mdi-book-open-outline"
-          height="100vh"
           text="我是有底线的"
         >
         </v-empty-state>
@@ -213,6 +213,8 @@ const show = ref(false);
 <style lang="scss" scoped>
 .items-warp {
   position: relative;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .cover {
@@ -288,6 +290,9 @@ const show = ref(false);
       cursor: pointer;
     }
     li {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       > * {
         white-space: nowrap;
         overflow: hidden;

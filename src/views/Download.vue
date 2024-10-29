@@ -4,8 +4,28 @@
     <h3>下载APP</h3>
     <v-card class="mt-5">
       <v-card-title>
+        <v-icon size="small"> mdi-account-box-outline</v-icon>
+        升级会员
+      </v-card-title>
+      <v-card-text>
+        <div class="line">拥有自己独享的账号</div>
+        <div class="line">支持离线使用</div>
+        <div class="line">跨平台，多客户端</div>
+        <div class="line">网页端支持图文混排</div>
+        <div class="line">网页端支持章节导航</div>
+        <div class="line">一月仅需3元</div>
+        <a
+          target="_blank"
+          href="https://item.taobao.com/item.htm?ft=t&id=847155285226&skuId=5797611030189&spm=a21dvs.23580594.0.0.1d292c1bqz25TM"
+          class="download-link v-btn v-btn--density-default"
+          >开通会员</a
+        >
+      </v-card-text>
+    </v-card>
+    <v-card class="mt-5">
+      <v-card-title>
         <v-icon size="small"> mdi-import</v-icon>
-        试用账号
+        免费试用
       </v-card-title>
       <v-card-text>
         <div class="line">
@@ -48,26 +68,7 @@
         </v-expansion-panels>
       </v-card-text>
     </v-card>
-    <v-card class="mt-5">
-      <v-card-title>
-        <v-icon size="small"> mdi-account-box-outline</v-icon>
-        升级会员
-      </v-card-title>
-      <v-card-text>
-        <div class="line">拥有自己独享的账号</div>
-        <div class="line">支持离线使用</div>
-        <div class="line">跨平台，多客户端</div>
-        <div class="line">网页端支持图文混排</div>
-        <div class="line">网页端支持章节导航</div>
-        <div class="line">一月仅需6元，学生3元一月</div>
-        <a
-          target="_blank"
-          href="https://zhidayingxiao.cn/to/06g6yb"
-          class="download-link v-btn v-btn--density-default"
-          >点击购买</a
-        >
-      </v-card-text>
-    </v-card>
+
     <v-dialog v-model="dialog" width="auto">
       <v-card max-width="400" prepend-icon="mdi-tune" title="使用教程">
         <v-card-text>
