@@ -1,4 +1,4 @@
-import { Feed, Item } from '../repository'
+import { Item } from '../repository'
 
 export interface Subscription {
     id: number,
