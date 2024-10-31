@@ -1,4 +1,4 @@
-import { onMounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import { md2html } from "./mdUtils";
 
 export function useSideChapter(markdownContent: string, el: any, tocEl: any) {
@@ -35,10 +35,13 @@ export function useSideChapter(markdownContent: string, el: any, tocEl: any) {
         return acc;
     }, []).join('');
 
+    let scroll: any = null
+    let container: any = null
+
     onMounted(() => {
 
         setTimeout(() => {
-            const container = el.value
+            container = el.value
             const tocConainer = tocEl.value()
             tocConainer.innerHTML = '<ul>' + toc + '</ul>'
             // 为每个章节添加 id
@@ -68,9 +71,7 @@ export function useSideChapter(markdownContent: string, el: any, tocEl: any) {
                     }
                 });
             });
-
-            // 监听滚动事件以激活对应章节
-            container.addEventListener('scroll', () => {
+            scroll = () => {
                 let scrollPosition = container.scrollTop + 80;
                 headings.forEach((heading: any, index: number) => {
                     const headingTop = heading.offsetTop;
@@ -81,7 +82,13 @@ export function useSideChapter(markdownContent: string, el: any, tocEl: any) {
                         tocConainer.querySelectorAll('.toc-link')[index].classList.add('active');
                     }
                 });
-            });
+            }
+            // 监听滚动事件以激活对应章节
+            container.addEventListener('scroll', scroll);
         }, 1000);
+    })
+
+    onUnmounted(() => {
+        container.removeEventListener('scroll', scroll)
     })
 }

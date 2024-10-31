@@ -31,5 +31,5 @@ export interface FeedItem extends Item {
     imgs?: string[],
     type: ItemType | string,
     html: string,
-    feed?: Feed
+    feed?: SubscriptionFeed
 }

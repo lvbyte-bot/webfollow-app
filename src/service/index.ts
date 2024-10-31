@@ -38,7 +38,7 @@ export async function sync() {
     })
     data.feeds.forEach((f: any) => {
         feedRepo.save({ id: f.id, title: f.title, url: f.url, siteUrl: f.site_url, groupId: fid2gid[f.id + ''] })
-        feedsCache[f.id] = f
+        // feedsCache[f.id] = f
     })
     // 同步items
     let lastId = await itemRepo.maxId()
@@ -139,6 +139,7 @@ export async function listSubscription(): Promise<[Subscription[], Group[], Feed
         } else {
             gid2group[-1].feeds.push(sf)
         }
+        feedsCache[f.id] = sf
     })
     return [all, groups, feeds]
 }

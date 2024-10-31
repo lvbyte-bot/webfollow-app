@@ -83,7 +83,7 @@ const show = ref(false);
     border-right: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
     overflow: auto;
     resize: horizontal;
-    min-width: 300px;
+    min-width: 260px;
     max-width: 36vw;
   }
 }

@@ -27,7 +27,7 @@
   </v-scale-transition>
   <!-- items -->
   <div class="main-warp" ref="mainRef">
-    <div class="top-sider">
+    <v-container class="top-sider">
       <v-toolbar>
         <div class="v-toolbar-title v-app-bar-title">
           {{ (appStore.nav && appStore.nav.title) || "未分类" }}
@@ -74,9 +74,9 @@
         >
         </v-btn>
       </v-toolbar>
-    </div>
+    </v-container>
 
-    <div class="mx-auto items-warp">
+    <v-container class="mx-auto items-warp">
       <!-- <v-scroll-y-transition> -->
       <template v-if="store.items?.length">
         <v-row v-if="itemView == 'card'">
@@ -117,7 +117,7 @@
         >
         </v-empty-state>
       </template>
-    </div>
+    </v-container>
   </div>
 </template>
 <script setup lang="ts">
@@ -270,7 +270,7 @@ const show = ref(false);
   border-radius: 0.5rem;
   display: inline-block;
   top: 100px;
-  color: rgba(var(--v-theme-on-code), 0.3);
+  color: rgba(var(--v-theme-on-code), 0.5);
   margin-bottom: 3rem;
   max-width: 150px;
   overflow: hidden;
@@ -303,12 +303,12 @@ const show = ref(false);
     }
   }
   .active {
-    color: rgba(var(--v-theme-on-code), 0.9);
+    color: rgb(var(--v-theme-on-code));
   }
   &:hover {
     max-width: none;
     background-color: rgb(var(--v-theme-background));
-    box-shadow: 6px 6px 6px rgba(var(--v-theme-on-code), 0.1);
+    box-shadow: 3px 3px 2px rgba(var(--v-theme-on-code), 0.1);
     border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
   }
 }

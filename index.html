@@ -37,6 +37,13 @@
     function log(...args) {
       console.log("%cWebFollow", "padding:5px 8px;border-radius:3px;background:#ff7a61;color:#fff;font-size:1em;", ...args)
     }
+    function setTitle(total) {
+      if (total) {
+        document.title = `(${total})WebFollow - 在线 RSS 阅读器`
+      } else {
+        document.title = `WebFollow - 在线 RSS 阅读器`
+      }
+    }
     if (!window.location.host.includes("local")) {
       var _hmt = _hmt || [];
       (function () {

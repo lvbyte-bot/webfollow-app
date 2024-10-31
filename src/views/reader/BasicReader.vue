@@ -2,7 +2,16 @@
   <div class="ovf" ref="readerRef">
     <div class="px-1">
       <div class="top-sider">
-        <div></div>
+        <div class="ml-15">
+          <v-expand-x-transition>
+            <v-card-title
+              style="max-width: 40vw"
+              class="text-truncate"
+              v-if="scrollTop > 120 && !mobile"
+              >{{ item.title }} | <small v-text="getSource()"></small>
+            </v-card-title>
+          </v-expand-x-transition>
+        </div>
         <div>
           <!-- <v-btn disabled variant="text" :icon="item.isRead ? 'mdi-radiobox-blank' : 'mdi-radiobox-marked'" title="阅读">
           </v-btn> -->
@@ -15,8 +24,14 @@
           <v-btn disabled variant="text" icon title="加载网页原文">
             <v-icon> mdi-book-open-outline</v-icon>
           </v-btn>
-          <v-btn disabled variant="text" icon title="调整字体">
-            <v-icon> mdi-format-size</v-icon>
+          <v-btn
+            variant="text"
+            icon
+            :title="item.feed?.title"
+            :to="'/f/' + item?.feed?.id"
+          >
+          <img :src=" item?.feed?.icon" onerror="this.src='/logo.svg'" width="18">
+          </img>
           </v-btn>
           <v-btn variant="text" icon title="打开原网站" :href="item.link">
             <v-icon> mdi-open-in-new</v-icon>
@@ -46,6 +61,8 @@ import { Marked } from "@/service";
 import { FeedItem } from "@/service/types";
 
 import { useSideChapter } from "@/utils/useSideChapter";
+import { useScroll } from "@/utils/scroll";
+import { useDisplay } from "vuetify";
 
 const readerRef = ref();
 const tocRef = ref();
@@ -54,6 +71,8 @@ const props = defineProps<{
   item: FeedItem;
 }>();
 
+const { scrollTop } = useScroll(readerRef);
+const { mobile } = useDisplay();
 useSideChapter(props.item.description, readerRef, {
   value: () => document.getElementById("chapters"),
 });
@@ -74,8 +93,23 @@ function toggleSaved() {
 }
 
 function getSubtitle() {
-  const source = props.item.author + " - " + props.item.feed?.title;
-  return `${source} | ${props.item.datestr}`;
+  const options: any = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false, // 24小时制
+  };
+  const formattedDate = new Date(props.item.pubDate * 1000).toLocaleString(
+    "zh-CN",
+    options
+  );
+  return `${getSource()} | ${formattedDate}`;
+}
+function getSource() {
+  return props.item.author + " - " + props.item.feed?.title;
 }
 </script>
 <style lang="scss" scoped>
@@ -112,23 +146,22 @@ function getSubtitle() {
 }
 :deep(.title) .v-list-item-title {
   font-size: 18px;
-  line-height: 3rem;
+  margin-bottom: 1rem;
 }
 .v-list-item {
   padding: 1.5rem;
-  max-width: 1050px;
+  max-width: 760px;
   margin: 0 auto;
 }
 .content {
-  max-width: 1024px;
+  max-width: 730px;
   margin: 0 auto;
 }
 </style>
 <style>
 .content {
   padding: 0.5rem;
-  line-height: 2rem;
-
+  line-height: 3rem;
   * {
     max-width: 100%;
   }
