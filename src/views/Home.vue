@@ -84,6 +84,7 @@ const show = ref(false);
     overflow: auto;
     resize: horizontal;
     min-width: 260px;
+    width: 280px;
     max-width: 36vw;
   }
 }
