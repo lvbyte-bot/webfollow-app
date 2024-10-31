@@ -258,7 +258,7 @@ const show = ref(false);
 <style lang="scss">
 .main-warp {
   height: 100vh;
-  overflow-y: auto;
+  overflow-y: scroll;
 }
 
 .v-toolbar {

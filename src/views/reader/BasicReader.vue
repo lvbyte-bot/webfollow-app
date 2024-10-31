@@ -2,7 +2,7 @@
   <div class="ovf" ref="readerRef">
     <div class="px-1">
       <div class="top-sider">
-        <div class="ml-15">
+        <div class="ml-12">
           <v-expand-x-transition>
             <v-card-title
               style="max-width: 40vw"
