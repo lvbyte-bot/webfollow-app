@@ -10,11 +10,11 @@
           @click="show = false"
           title="关闭"
         ></v-btn>
+        <div id="chapters" class="chapter-list"></div>
         <!-- <v-btn size="small" color="surface-variant" icon="mdi-chevron-up" title="上一篇文章"></v-btn>
         <v-btn size="small" color="surface-variant" icon="mdi-chevron-down" title="下一篇文章"></v-btn> -->
-        <div id="chapters" class="chapter-list"></div>
       </div>
-      <v-container class="pa-0 pl-10">
+      <div>
         <image-reader :item="currentItem" v-if="currentItem.type == 'IMAGE'" />
         <basic-reader
           :item="currentItem"
@@ -22,12 +22,12 @@
         />
         <podcast-reader v-else-if="currentItem.type == 'PODCAST'" />
         <video-reader v-else />
-      </v-container>
+      </div>
     </div>
   </v-scale-transition>
   <!-- items -->
   <div class="main-warp" ref="mainRef">
-    <v-container class="top-sider">
+    <div class="top-sider">
       <v-toolbar>
         <div class="v-toolbar-title v-app-bar-title">
           {{ (appStore.nav && appStore.nav.title) || "未分类" }}
@@ -74,9 +74,9 @@
         >
         </v-btn>
       </v-toolbar>
-    </v-container>
+    </div>
 
-    <v-container class="mx-auto items-warp">
+    <div class="mx-auto items-warp">
       <!-- <v-scroll-y-transition> -->
       <template v-if="store.items?.length">
         <v-row v-if="itemView == 'card'">
@@ -111,13 +111,13 @@
         </v-empty-state>
         <v-empty-state
           v-else
-          height="50vh"
+          height="calc(100vh - 64px)"
           icon=" mdi-book-open-outline"
           text="我是有底线的"
         >
         </v-empty-state>
       </template>
-    </v-container>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -272,7 +272,7 @@ const show = ref(false);
   top: 100px;
   color: rgba(var(--v-theme-on-code), 0.3);
   margin-bottom: 3rem;
-  max-width: 160px;
+  max-width: 150px;
   overflow: hidden;
   border: 1px solid rgba(var(--v-border-color), 0);
   background-color: rgba(var(--v-theme-background), 0.1);
@@ -286,13 +286,11 @@ const show = ref(false);
     list-style: none;
     font-size: 12px;
     line-height: 24px;
-    li:hover {
-      cursor: pointer;
-    }
     li {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+
       > * {
         white-space: nowrap;
         overflow: hidden;
@@ -300,6 +298,7 @@ const show = ref(false);
       }
       &:hover {
         color: rgba(var(--v-theme-on-code), 0.9);
+        cursor: pointer;
       }
     }
   }

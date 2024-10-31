@@ -62,7 +62,8 @@ export async function sync() {
             for (let item of fItems) {
                 await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url })
             }
-            document.title = `(${await itemRepo.count()})WebFollow`
+            const total = await itemRepo.count()
+            setTitle(total)
         }
     }
 

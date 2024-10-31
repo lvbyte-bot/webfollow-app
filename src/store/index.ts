@@ -52,11 +52,11 @@ export const useAppStore = defineStore('app', () => {
     const savedQty = computed(() => saved_item_ids.size)
     const unReadQty = computed(() => unread_item_ids.size)
     watch(unReadQty, () => {
-        document.title = `(${unReadQty.value})Webfollow`
+        setTitle(unReadQty.value)
     })
     onMounted(async () => {
         await sync()
-        document.title = `(${unReadQty.value})Webfollow`
+        setTitle(unReadQty.value)
         setTimeout(() => {
             watchAll([pageRoute, subscriptions, unReadQty, savedQty], () => initNav(pageRoute))
         }, 1000);
