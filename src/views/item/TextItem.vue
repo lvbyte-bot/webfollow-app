@@ -19,6 +19,17 @@
       <div class="buttons">
         <v-btn
           size="small"
+          variant="text"
+          icon
+          :title="item.isRead ? '未读' : '已读'"
+          @click.stop="toggleRead"
+        >
+          <v-icon>{{
+            item.isRead ? "mdi-radiobox-blank" : "mdi-radiobox-marked"
+          }}</v-icon>
+        </v-btn>
+        <v-btn
+          size="small"
           icon="mdi-open-in-new"
           variant="text"
           title="打开原文"
@@ -52,6 +63,14 @@ function toggleSaved() {
     store.unsave(props.item.id);
   } else {
     store.save(props.item.id);
+  }
+}
+
+function toggleRead() {
+  if (props.item.isRead) {
+    store.unread(props.item.id);
+  } else {
+    store.read(props.item.id);
   }
 }
 

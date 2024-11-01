@@ -11,7 +11,7 @@ export const useBaseStore = defineStore('base', () => {
     const saved_item_ids: Reactive<Set<number>> = reactive(new Set(JSON.parse(localStorage.getItem('sids') || "[]")))
     const unread_item_ids: Reactive<Set<number>> = reactive(new Set(JSON.parse(localStorage.getItem('urids') || "[]")))
 
-    async function read(id: number, marked: Marked, before?: number) {
+    async function read(id: number, marked: Marked = Marked.ITEM, before?: number) {
         await read0(id, marked, before)
         if (marked == Marked.ITEM) {
             unread_item_ids.delete(id)
@@ -22,7 +22,7 @@ export const useBaseStore = defineStore('base', () => {
         setItem('urids', unread_item_ids)
     }
 
-    async function unread(id: number, marked: Marked, before?: number) {
+    async function unread(id: number, marked: Marked = Marked.ITEM, before?: number) {
         await unread0(id, marked, before)
         if (marked == Marked.ITEM) {
             unread_item_ids.add(id)

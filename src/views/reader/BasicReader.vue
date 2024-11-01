@@ -2,16 +2,18 @@
   <div class="ovf" ref="readerRef">
     <div class="px-1">
       <div class="top-sider">
-        <div class="ml-12">
-          <v-expand-x-transition>
-            <v-card-title
-              style="max-width: 40vw"
-              class="text-truncate"
-              v-if="scrollTop > 120 && !mobile"
-              >{{ item.title }} | <small v-text="getSource()"></small>
-            </v-card-title>
-          </v-expand-x-transition>
+        <div style="margin-left: 180px;">
+          
         </div>
+        <v-expand-x-transition>
+          <v-card-title
+            style="max-width: 730px"
+            class="text-truncate"
+            v-if="scrollTop > 120 && !mobile"
+            >{{ item.title }} | <small v-text="getSource()"></small>
+          </v-card-title>
+        </v-expand-x-transition>
+        
         <div>
           <!-- <v-btn disabled variant="text" :icon="item.isRead ? 'mdi-radiobox-blank' : 'mdi-radiobox-marked'" title="阅读">
           </v-btn> -->
@@ -82,7 +84,7 @@ watch(description,()=>{
     readerRef.value.scrollTop=0
   }, 100);
   if (!props.item.isRead) {
-    appStore.read(Number(props.item.id), Marked.ITEM);
+    appStore.read(Number(props.item.id));
   }
 })
 
@@ -90,7 +92,7 @@ const appStore = useAppStore();
 
 onMounted(async () => {
   if (!props.item.isRead) {
-    appStore.read(Number(props.item.id), Marked.ITEM);
+    appStore.read(Number(props.item.id));
   }
 });
 
