@@ -81,6 +81,9 @@ watch(description,()=>{
   setTimeout(() => {
     readerRef.value.scrollTop=0
   }, 100);
+  if (!props.item.isRead) {
+    appStore.read(Number(props.item.id), Marked.ITEM);
+  }
 })
 
 const appStore = useAppStore();
