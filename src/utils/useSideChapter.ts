@@ -23,7 +23,7 @@ export function useSideChapter(markdownContent: string, el: any, chapterEl: any)
             const level = g ? g[0].length : 1;
             const title = line.replace(/^#+\s/, '');
             acc.push(`<li style="margin-left: ${level - topLevel}rem;" class="toc-link " data-id="chapter${acc.length}">
-                        ${getInnerText(title)}
+                        ${md2html(title)}
                       </li>`);
         } else if (line.match(/^-{2,}$/) && index > 0 && !array[index - 1].match(/^#+\s/)) {
             // 处理 --- 格式的标题（前一行为标题文本）
