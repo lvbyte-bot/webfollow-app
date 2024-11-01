@@ -1,7 +1,7 @@
 <template>
   <!-- reader -->
   <v-scale-transition>
-    <div class="cover" v-if="show && currentItem?.title">
+    <div class="cover" v-show="show">
       <div class="cover-action">
         <v-btn
           size="small"
@@ -15,13 +15,14 @@
         <v-btn size="small" color="surface-variant" icon="mdi-chevron-down" title="下一篇文章"></v-btn> -->
       </div>
       <div>
-        <image-reader :item="currentItem" v-if="currentItem.type == 'IMAGE'" />
+        <image-reader :item="currentItem" v-if="currentItem?.type == 'IMAGE'" />
         <basic-reader
+          v-else-if="currentItem?.type == 'BASIC'"
           :item="currentItem"
-          v-else-if="currentItem.type == 'BASIC'"
         />
-        <podcast-reader v-else-if="currentItem.type == 'PODCAST'" />
-        <video-reader v-else />
+
+        <podcast-reader v-else-if="currentItem?.type == 'PODCAST'" />
+        <video-reader v-else-if="currentItem.type == 'VIDEO'" />
       </div>
     </div>
   </v-scale-transition>
@@ -142,7 +143,19 @@ const { isBottom } = useScroll(mainRef);
 const store = useItemsStore();
 const appStore = useAppStore();
 const feedStore = useFeedsStore();
-const currentItem: Ref<FeedItem | undefined> = ref(undefined);
+const currentItem: Ref<FeedItem> = ref({
+  id: 0,
+  title: "",
+  description: "",
+  type: "",
+  html: "",
+  summary: "",
+  datestr: "",
+  feedId: 0,
+  author: "",
+  pubDate: 0,
+  link: "",
+});
 const onlyUnread = ref(true);
 const loading = ref(false);
 const itemView = ref(localStorage.getItem("layout") || "card");
@@ -233,7 +246,7 @@ const show = ref(false);
     padding: 1rem;
     display: grid;
     grid-template-columns: 1fr;
-    grid-gap: 1rem;
+    grid-gap: 0.5rem;
   }
 }
 
@@ -269,8 +282,8 @@ const show = ref(false);
   padding: 1rem;
   border-radius: 0.5rem;
   display: inline-block;
-  top: 100px;
-  color: rgba(var(--v-theme-on-code), 0.5);
+  top: 0;
+  color: rgba(var(--v-theme-on-code), 0.3);
   margin-bottom: 3rem;
   max-width: 150px;
   overflow: hidden;

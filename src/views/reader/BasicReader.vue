@@ -55,7 +55,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted, watch,ref } from "vue";
 import { useAppStore } from "@/store";
 import { Marked } from "@/service";
 import { FeedItem } from "@/service/types";
@@ -65,30 +65,37 @@ import { useScroll } from "@/utils/scroll";
 import { useDisplay } from "vuetify";
 
 const readerRef = ref();
-const tocRef = ref();
 
 const props = defineProps<{
-  item: FeedItem;
+  item: FeedItem ;
 }>();
-
 const { scrollTop } = useScroll(readerRef);
 const { mobile } = useDisplay();
-useSideChapter(props.item.description, readerRef, {
+const description = computed(()=>props.item.description)
+
+useSideChapter(description, readerRef, {
   value: () => document.getElementById("chapters"),
 });
 
-const store = useAppStore();
+watch(description,()=>{
+  setTimeout(() => {
+    readerRef.value.scrollTop=0
+  }, 100);
+})
+
+const appStore = useAppStore();
+
 onMounted(async () => {
   if (!props.item.isRead) {
-    store.read(Number(props.item.id), Marked.ITEM);
+    appStore.read(Number(props.item.id), Marked.ITEM);
   }
 });
 
 function toggleSaved() {
   if (props.item.isSaved) {
-    store.unsave(props.item.id);
+    appStore.unsave(props.item.id);
   } else {
-    store.save(props.item.id);
+    appStore.save(props.item.id);
   }
 }
 
