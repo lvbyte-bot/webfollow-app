@@ -3,16 +3,36 @@
   <v-scale-transition>
     <div class="cover" v-show="show">
       <div class="cover-action">
-        <v-btn
-          size="small"
-          variant="text"
-          icon="mdi-close"
-          @click="show = false"
-          title="关闭"
-        ></v-btn>
+        <div>
+          <v-btn
+            size="small"
+            variant="text"
+            icon="mdi-close"
+            @click="show = false"
+            title="关闭"
+            class="mr-2"
+          ></v-btn>
+
+          <v-btn
+            :disabled="currentItemIndex == 0"
+            variant="text"
+            size="small"
+            icon="mdi-chevron-up"
+            title="上一篇文章"
+            @click="openReader(currentItemIndex - 1, undefined)"
+            class="mr-2"
+          ></v-btn>
+          <v-btn
+            :disabled="currentItemIndex + 1 == store.items?.length"
+            variant="text"
+            size="small"
+            icon="mdi-chevron-down"
+            title="下一篇文章"
+            @click="openReader(currentItemIndex + 1, undefined)"
+          ></v-btn>
+        </div>
+
         <div id="chapters" class="chapter-list"></div>
-        <!-- <v-btn size="small" color="surface-variant" icon="mdi-chevron-up" title="上一篇文章"></v-btn>
-        <v-btn size="small" color="surface-variant" icon="mdi-chevron-down" title="下一篇文章"></v-btn> -->
       </div>
       <div>
         <image-reader :item="currentItem" v-if="currentItem?.type == 'IMAGE'" />
@@ -81,15 +101,19 @@
       <!-- <v-scroll-y-transition> -->
       <template v-if="store.items?.length">
         <v-row v-if="itemView == 'card'">
-          <v-col v-for="item in store.items" :key="item.id">
-            <Item :item="item" @click="openReader(item)" :type="type"></Item>
+          <v-col v-for="(item, index) in store.items" :key="item.id">
+            <Item
+              :item="item"
+              @click="openReader(index, item)"
+              :type="type"
+            ></Item>
           </v-col>
         </v-row>
         <template v-else>
           <TextItem
-            v-for="item in store.items"
+            v-for="(item, index) in store.items"
             :item="item"
-            @click="openReader(item)"
+            @click="openReader(index, item)"
             :type="type"
             :key="item.id"
           ></TextItem>
@@ -143,6 +167,7 @@ const { isBottom } = useScroll(mainRef);
 const store = useItemsStore();
 const appStore = useAppStore();
 const feedStore = useFeedsStore();
+
 const currentItem: Ref<FeedItem> = ref({
   id: 0,
   title: "",
@@ -156,7 +181,10 @@ const currentItem: Ref<FeedItem> = ref({
   pubDate: 0,
   link: "",
 });
+const currentItemIndex = ref(0);
+
 const onlyUnread = ref(true);
+const show = ref(false);
 const loading = ref(false);
 const itemView = ref(localStorage.getItem("layout") || "card");
 
@@ -212,16 +240,20 @@ async function markRead() {
     appStore.lastRefeshTime
   );
 }
-function openReader(item: any) {
+function openReader(index: number, item: any | undefined) {
   show.value = true;
-  currentItem.value = item;
+  currentItemIndex.value = index;
+  if (item) {
+    currentItem.value = item;
+  } else if (store.items) {
+    currentItem.value = store.items[index];
+  }
 }
 watch(props, () => {
   initData(0);
   mainRef.value.scrollTo(0, 0);
 });
 watch(onlyUnread, () => initData(0));
-const show = ref(false);
 </script>
 <style lang="scss" scoped>
 .items-warp {
@@ -246,7 +278,7 @@ const show = ref(false);
     padding: 1rem;
     display: grid;
     grid-template-columns: 1fr;
-    grid-gap: 0.5rem;
+    grid-gap: 1rem;
   }
 }
 
@@ -281,17 +313,15 @@ const show = ref(false);
   position: sticky;
   padding: 1rem;
   border-radius: 0.5rem;
-  display: inline-block;
-  top: 0;
+  top: 100;
   color: rgba(var(--v-theme-on-code), 0.3);
   margin-bottom: 3rem;
   max-width: 150px;
   overflow: hidden;
   border: 1px solid rgba(var(--v-border-color), 0);
   background-color: rgba(var(--v-theme-background), 0.1);
-  max-height: calc(100vh - 100px);
+  max-height: calc(100vh - 150px);
   overflow: auto;
-
   img {
     height: 1.3rem;
   }
@@ -323,6 +353,12 @@ const show = ref(false);
     background-color: rgb(var(--v-theme-background));
     box-shadow: 3px 3px 2px rgba(var(--v-theme-on-code), 0.1);
     border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  }
+}
+@media (max-width: 1050px) {
+  .chapter-list {
+    display: none;
+    background: rgb(var(--v-theme-background));
   }
 }
 </style>
