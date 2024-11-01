@@ -12,6 +12,7 @@ import 'vuetify/styles'
 import {
     createVuetify
 } from 'vuetify'
+import { VBtn } from 'vuetify/components'
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
@@ -25,8 +26,11 @@ export default createVuetify({
             },
         },
     },
+    aliases: {
+        CBtn: VBtn
+    },
     defaults: {
-        VBtn: {
+        CBtn: {
             variant: 'text',
             size: '40px'
         },

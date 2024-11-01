@@ -18,15 +18,15 @@
           <!-- <v-btn disabled variant="text" :icon="item.isRead ? 'mdi-radiobox-blank' : 'mdi-radiobox-marked'" title="阅读">
           </v-btn> -->
 
-          <v-btn  variant="text" icon title="稍后阅读" @click="toggleSaved"  class="mr-2">
+          <c-btn  variant="text" icon title="稍后阅读" @click="toggleSaved"  class="mr-2">
             <v-icon>{{
               item.isSaved ? "mdi-playlist-minus" : "mdi-playlist-plus"
             }}</v-icon>
-          </v-btn>
-          <v-btn disabled variant="text" icon title="加载网页原文"  class="mr-2">
+          </c-btn>
+          <c-btn disabled variant="text" icon title="加载网页原文"  class="mr-2">
             <v-icon> mdi-book-open-outline</v-icon>
-          </v-btn>
-          <v-btn
+          </c-btn>
+          <c-btn
             variant="text"
             icon
             :title="item.feed?.title"
@@ -35,10 +35,10 @@
           >
           <img :src=" item?.feed?.icon" onerror="this.src='/logo.svg'" width="18">
           </img>
-          </v-btn>
-          <v-btn  variant="text" icon title="打开原网站" :href="item.link">
+          </c-btn>
+          <c-btn  variant="text" icon title="打开原网站" :href="item.link">
             <v-icon> mdi-open-in-new</v-icon>
-          </v-btn>
+          </c-btn>
         </div>
       </div>
       <v-container>

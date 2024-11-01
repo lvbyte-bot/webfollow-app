@@ -4,29 +4,29 @@
     <div class="cover" v-show="show">
       <div class="cover-action">
         <div>
-          <v-btn
+          <c-btn
             variant="text"
             icon="mdi-close"
             @click="show = false"
             title="关闭"
             class="mr-2"
-          ></v-btn>
+          ></c-btn>
 
-          <v-btn
+          <c-btn
             :disabled="currentItemIndex == 0"
             variant="text"
             icon="mdi-chevron-up"
             title="上一篇文章"
             @click="openReader(currentItemIndex - 1, undefined)"
             class="mr-2"
-          ></v-btn>
-          <v-btn
+          ></c-btn>
+          <c-btn
             :disabled="currentItemIndex + 1 == store.items?.length"
             variant="text"
             icon="mdi-chevron-down"
             title="下一篇文章"
             @click="openReader(currentItemIndex + 1, undefined)"
-          ></v-btn>
+          ></c-btn>
         </div>
 
         <div id="chapters" class="chapter-list"></div>
@@ -56,14 +56,14 @@
         </div>
         <!-- <v-spacer></v-spacer> -->
 
-        <v-btn
+        <c-btn
           :icon="onlyUnread ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'"
           :title="onlyUnread ? '只看未读' : '看全部'"
           @click="onlyUnread = !onlyUnread"
           class="mr-2"
         >
-        </v-btn>
-        <v-btn
+        </c-btn>
+        <c-btn
           :disabled="
             (id == '-1' && type == 'c') || type == 'next' || type == 'all'
           "
@@ -73,9 +73,9 @@
           class="mr-2"
         >
           <v-icon> mdi-checkbox-multiple-marked-circle-outline</v-icon>
-        </v-btn>
+        </c-btn>
 
-        <v-btn
+        <c-btn
           icon
           title="刷新"
           @click="refresh"
@@ -83,8 +83,8 @@
           class="mr-2"
         >
           <v-icon>{{ loading ? "mdi-loading" : "mdi-reload" }}</v-icon>
-        </v-btn>
-        <v-btn
+        </c-btn>
+        <c-btn
           :icon="
             itemView == 'card'
               ? 'mdi-card-bulleted-outline'
@@ -93,7 +93,7 @@
           :title="itemView == 'card' ? '卡片视图' : '列表视图'"
           @click="changeItemView(itemView == 'text' ? 'card' : 'text')"
         >
-        </v-btn>
+        </c-btn>
       </v-toolbar>
     </v-container>
 
@@ -278,7 +278,7 @@ watch(onlyUnread, () => initData(0));
     padding: 0.8rem;
     display: grid;
     grid-template-columns: 1fr;
-    grid-gap: 1rem;
+    grid-gap: 2rem;
   }
 }
 
