@@ -1,13 +1,13 @@
 <template>
   <div class="ovf" ref="readerRef">
     <div class="px-1">
-      <div class="top-sider">
-        <div style="margin-left: 180px;">
+      <div class="top-sider v-toolbar__content">
+        <div style="margin-left: 170px;">
           
         </div>
         <v-expand-x-transition>
           <v-card-title
-            style="max-width: 730px"
+            style="max-width: 730px;"
             class="text-truncate"
             v-if="scrollTop > 120 && !mobile"
             >{{ item.title }} | <small v-text="getSource()"></small>
@@ -18,12 +18,12 @@
           <!-- <v-btn disabled variant="text" :icon="item.isRead ? 'mdi-radiobox-blank' : 'mdi-radiobox-marked'" title="阅读">
           </v-btn> -->
 
-          <v-btn variant="text" icon title="稍后阅读" @click="toggleSaved">
+          <v-btn  variant="text" icon title="稍后阅读" @click="toggleSaved"  class="mr-2">
             <v-icon>{{
               item.isSaved ? "mdi-playlist-minus" : "mdi-playlist-plus"
             }}</v-icon>
           </v-btn>
-          <v-btn disabled variant="text" icon title="加载网页原文">
+          <v-btn disabled variant="text" icon title="加载网页原文"  class="mr-2">
             <v-icon> mdi-book-open-outline</v-icon>
           </v-btn>
           <v-btn
@@ -31,11 +31,12 @@
             icon
             :title="item.feed?.title"
             :to="'/f/' + item?.feed?.id"
+             class="mr-2"
           >
           <img :src=" item?.feed?.icon" onerror="this.src='/logo.svg'" width="18">
           </img>
           </v-btn>
-          <v-btn variant="text" icon title="打开原网站" :href="item.link">
+          <v-btn  variant="text" icon title="打开原网站" :href="item.link">
             <v-icon> mdi-open-in-new</v-icon>
           </v-btn>
         </div>
@@ -59,7 +60,6 @@
 <script setup lang="ts">
 import { computed, onMounted, watch,ref } from "vue";
 import { useAppStore } from "@/store";
-import { Marked } from "@/service";
 import { FeedItem } from "@/service/types";
 
 import { useSideChapter } from "@/utils/useSideChapter";
@@ -139,6 +139,8 @@ function getSource() {
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0.3rem;
+  border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  height: 64px;
   > *:last-child {
     min-width: 195px;
   }

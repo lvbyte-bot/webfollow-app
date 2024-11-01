@@ -25,4 +25,10 @@ export default createVuetify({
             },
         },
     },
+    defaults: {
+        VBtn: {
+            variant: 'text',
+            size: '40px'
+        },
+    },
 })

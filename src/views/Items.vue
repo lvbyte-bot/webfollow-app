@@ -5,7 +5,6 @@
       <div class="cover-action">
         <div>
           <v-btn
-            size="small"
             variant="text"
             icon="mdi-close"
             @click="show = false"
@@ -16,7 +15,6 @@
           <v-btn
             :disabled="currentItemIndex == 0"
             variant="text"
-            size="small"
             icon="mdi-chevron-up"
             title="上一篇文章"
             @click="openReader(currentItemIndex - 1, undefined)"
@@ -25,7 +23,6 @@
           <v-btn
             :disabled="currentItemIndex + 1 == store.items?.length"
             variant="text"
-            size="small"
             icon="mdi-chevron-down"
             title="下一篇文章"
             @click="openReader(currentItemIndex + 1, undefined)"
@@ -63,6 +60,7 @@
           :icon="onlyUnread ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'"
           :title="onlyUnread ? '只看未读' : '看全部'"
           @click="onlyUnread = !onlyUnread"
+          class="mr-2"
         >
         </v-btn>
         <v-btn
@@ -72,6 +70,7 @@
           icon
           title="标记为已读"
           @click="markRead"
+          class="mr-2"
         >
           <v-icon> mdi-checkbox-multiple-marked-circle-outline</v-icon>
         </v-btn>
@@ -81,6 +80,7 @@
           title="刷新"
           @click="refresh"
           :class="{ rotating: loading }"
+          class="mr-2"
         >
           <v-icon>{{ loading ? "mdi-loading" : "mdi-reload" }}</v-icon>
         </v-btn>
@@ -275,7 +275,7 @@ watch(onlyUnread, () => initData(0));
     top: 0;
     left: 0;
     z-index: 100;
-    padding: 1rem;
+    padding: 0.8rem;
     display: grid;
     grid-template-columns: 1fr;
     grid-gap: 1rem;
@@ -295,6 +295,7 @@ watch(onlyUnread, () => initData(0));
   top: 0;
   z-index: 10;
   padding: 0 1rem 0 0;
+  border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
 }
 .rotating .v-icon {
   animation: rotate 1s linear infinite;
@@ -311,7 +312,7 @@ watch(onlyUnread, () => initData(0));
 }
 .chapter-list {
   position: sticky;
-  padding: 1rem;
+  padding: 0.5rem;
   border-radius: 0.5rem;
   top: 100;
   color: rgba(var(--v-theme-on-code), 0.3);
