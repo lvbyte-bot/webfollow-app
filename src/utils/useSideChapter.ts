@@ -54,15 +54,14 @@ export function useSideChapter(markdownContent: Ref<string>, el: any, chapterEl:
                     link.addEventListener('click', toChapter);
                 });
                 scroll = () => {
+                    const lis = chapterContainer.querySelectorAll('.toc-link')
+                    lis.forEach((link: any) => link.classList.remove('active'));
                     let scrollPosition = container.scrollTop + 80;
                     headings.forEach((heading: any, index: number) => {
                         const headingTop = heading.offsetTop;
                         const headingEnd = index == headings.length - 1 ? container.scrollHeight : headings[index + 1].offsetTop;
-                        // console.log(scrollPosition, headingTop, headingEnd)
                         if (scrollPosition >= headingTop && scrollPosition < headingEnd) {
-                            const lis = chapterContainer.querySelectorAll('.toc-link')
-                            lis.forEach((link: any) => link.classList.remove('active'));
-                            if (lis.length > index + 1) {
+                            if (lis.length > index) {
                                 lis[index].classList.add('active');
                             }
                         }
@@ -76,6 +75,12 @@ export function useSideChapter(markdownContent: Ref<string>, el: any, chapterEl:
                 chapterContainer.innerHTML = ''
             }
         }
+        if (scroll) {
+            container.removeEventListener('scroll', scroll);
+        }
+        setTimeout(() => {
+            container.addEventListener('scroll', scroll);
+        }, 500)
     }
 
 
@@ -111,10 +116,6 @@ export function useSideChapter(markdownContent: Ref<string>, el: any, chapterEl:
             changeCapterEl()
         })
         changeCapterEl()
-        // 监听滚动事件以激活对应章节
-        setTimeout(() => {
-            container.addEventListener('scroll', scroll);
-        }, 300)
     })
 
     onUnmounted(() => {

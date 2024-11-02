@@ -39,7 +39,7 @@ export function useImgPreview() {
 
     const handleImageClick = (event: any) => {
         const target = event.target as HTMLImageElement;
-        console.log(target)
+        // console.log(target)
         if (target.tagName === 'IMG') {
             openPreview(target.src); // 点击图片时打开预览
         }
