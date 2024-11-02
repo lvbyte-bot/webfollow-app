@@ -31,7 +31,7 @@
 
         <div id="chapters" class="chapter-list"></div>
       </div>
-      <div>
+      <div class="reader-warp">
         <image-reader :item="currentItem" v-if="currentItem?.type == 'IMAGE'" />
         <basic-reader
           v-else-if="currentItem?.type == 'BASIC'"

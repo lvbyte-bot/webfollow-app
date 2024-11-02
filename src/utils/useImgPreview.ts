@@ -40,7 +40,7 @@ export function useImgPreview() {
     const handleImageClick = (event: any) => {
         const target = event.target as HTMLImageElement;
         // console.log(target)
-        if (target.tagName === 'IMG') {
+        if (target.tagName === 'IMG' && !target.classList.contains('noclick')) {
             openPreview(target.src); // 点击图片时打开预览
         }
     };
@@ -50,14 +50,14 @@ export function useImgPreview() {
     };
 
     onMounted(() => {
-        const d = document.querySelector('.cover')
+        const d = document.querySelector('.reader-warp')
         if (d) {
             d.addEventListener('click', handleImageClick);
         }
     });
 
     onBeforeUnmount(() => {
-        const d = document.querySelector('.cover')
+        const d = document.querySelector('.reader-warp')
         if (d) {
             d.removeEventListener('click', handleImageClick);
         }

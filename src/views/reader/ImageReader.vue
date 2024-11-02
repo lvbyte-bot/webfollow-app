@@ -1,5 +1,5 @@
 <template>
-  <v-card flat >
+  <v-card flat>
     <div class="grid">
       <div class="image-reader">
         <!-- <v-img
@@ -17,11 +17,10 @@
           @slideChange="onSlideChange"
         >
           <swiper-slide v-for="(image, index) in allImages" :key="index">
-              <img cover :width="300"   :src="image" />
+            <img cover :width="300" :src="image" />
           </swiper-slide>
         </swiper>
         <!-- <img v-for="(image, index) in allImages" class="img" :key="index" :src="image" /> -->
-
       </div>
       <div class="image-no">
         <basic-reader :item="item"></basic-reader>
@@ -68,7 +67,6 @@ export default {
 </script>
 
 <style scoped>
-
 .grid {
   height: 100%;
   display: grid;
@@ -109,7 +107,7 @@ export default {
 :deep(.swiper-button-next),
 :deep(.swiper-button-prev) {
   color: #fff;
-  background-color: rgba(var(--v-theme-surface-variant),.6);
+  background-color: rgba(var(--v-theme-surface-variant), 0.6);
   padding: 20px;
   border-radius: 50%;
 }
@@ -124,8 +122,8 @@ export default {
 .ovf {
   overflow: auto;
 }
-.swiper-slide-active{
-  img{
+.swiper-slide-active {
+  img {
     display: block;
   }
 }
@@ -149,6 +147,12 @@ export default {
     text-align: center;
     margin: 0 auto;
     width: 80%;
+  }
+  .v-card-title {
+    display: none;
+  }
+  .bar-left {
+    width: 10px;
   }
 }
 </style>

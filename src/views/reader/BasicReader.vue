@@ -2,7 +2,7 @@
   <div class="ovf" ref="readerRef">
     <div class="px-1">
       <div class="top-sider v-toolbar__content">
-        <div style="margin-left: 170px;">
+        <div class="bar-left">
           
         </div>
         <v-expand-x-transition>
@@ -33,7 +33,7 @@
             :to="'/f/' + item?.feed?.id"
              class="mr-2"
           >
-          <img :src=" item?.feed?.icon" onerror="this.src='/logo.svg'" width="18">
+          <img class="noclick" :src=" item?.feed?.icon" onerror="this.src='/logo.svg'" style="width:18px">
           </img>
           </c-btn>
           <c-btn  variant="text" icon title="打开原网站" :href="item.link">
@@ -187,5 +187,8 @@ pre {
   color: rgb(var(--v-theme-code));
   padding: 1rem;
   border-radius: 0.5rem;
+}
+.bar-left{
+  width: 180px;
 }
 </style>
