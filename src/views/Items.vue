@@ -158,12 +158,13 @@ import { Marked } from "@/service";
 import { useItemsStore, useAppStore, useFeedsStore } from "@/store";
 import { FeedItem, LsItemType } from "@/service/types";
 import { useScroll } from "@/utils/scrollListener";
+import { useImgPreview } from "@/utils/useImgPreview";
 const props = defineProps(["type", "id"]);
 
 const mainRef = ref();
 
 const { isBottom } = useScroll(mainRef);
-
+useImgPreview(mainRef);
 const store = useItemsStore();
 const appStore = useAppStore();
 const feedStore = useFeedsStore();
