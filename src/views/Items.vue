@@ -164,7 +164,7 @@ const props = defineProps(["type", "id"]);
 const mainRef = ref();
 
 const { isBottom } = useScroll(mainRef);
-useImgPreview(mainRef);
+useImgPreview();
 const store = useItemsStore();
 const appStore = useAppStore();
 const feedStore = useFeedsStore();
