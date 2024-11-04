@@ -6,7 +6,8 @@
 :root {
   font-size: 14px;
   --swiper-navigation-size: 20px !important;
-  --sidbar-bg: 249, 250, 251;
+  --sidbar-bg: 248, 250, 253;
+  --v-overlay-opacity: 0.9;
 }
 html {
   background-color: #fff;
