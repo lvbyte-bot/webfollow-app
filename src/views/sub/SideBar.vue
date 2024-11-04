@@ -171,7 +171,8 @@ async function onDelete() {
     position: relative;
     max-height: 100vh;
     overflow: auto;
-    background-color: rgb(var(--v-theme-background));
+    /* background-color: rgb(var(--v-theme-background)); */
+    background-color: transparent;
     padding-top: 0;
 }
 
@@ -180,7 +181,7 @@ async function onDelete() {
     position: sticky;
     top: 0;
     z-index: 10;
-    background-color: rgb(var(--v-theme-background));
+    background-color: rgb(var(--sidbar-bg)); /** rgb(var(--v-theme-background)); */
     border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
 }
 

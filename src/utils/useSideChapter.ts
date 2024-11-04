@@ -79,7 +79,9 @@ export function useSideChapter(markdownContent: Ref<string>, el: any, chapterEl:
             container.removeEventListener('scroll', scroll);
         }
         setTimeout(() => {
-            container.addEventListener('scroll', scroll);
+            if (scroll) {
+                container.addEventListener('scroll', scroll);
+            }
         }, 500)
     }
 

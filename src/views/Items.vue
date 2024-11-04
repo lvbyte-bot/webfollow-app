@@ -295,7 +295,7 @@ watch(onlyUnread, () => initData(0));
   position: sticky !important;
   top: 0;
   z-index: 10;
-  padding: 0 1rem 0 0;
+  padding: 0 1rem 0 1rem;
   border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
 }
 .rotating .v-icon {
@@ -313,8 +313,8 @@ watch(onlyUnread, () => initData(0));
 }
 .chapter-list {
   position: sticky;
-  padding: 0.5rem;
-  border-radius: 0.5rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 0.3rem;
   top: 100;
   color: rgba(var(--v-theme-on-code), 0.3);
   margin-bottom: 3rem;

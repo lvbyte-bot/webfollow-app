@@ -32,7 +32,7 @@
 
         <div class="bottom">
           <v-list-item to="/login">
-            <v-avatar color="primary" :title="appStore.authInfo.username">
+            <v-avatar color="secondary" :title="appStore.authInfo.username">
               {{ appStore.authInfo.username.substring(0, 2) }}
             </v-avatar>
           </v-list-item>
@@ -41,7 +41,7 @@
           </v-list-item>
         </div>
       </v-navigation-drawer>
-      <v-navigation-drawer v-if="mobile" v-model="show">
+      <v-navigation-drawer class="sidebar-warp" v-if="mobile" v-model="show">
         <SideBar></SideBar>
       </v-navigation-drawer>
       <v-main :class="{ cols: !mobile }">
@@ -100,5 +100,11 @@ const show = ref(false);
 .bottom {
   position: absolute;
   bottom: 1rem;
+}
+.sidebar-warp :deep(.sidebar) {
+  --sidbar-bg: var(--v-theme-background);
+}
+:deep(.sidebar) {
+  background-color: rgb(var(--sidbar-bg));
 }
 </style>

@@ -15,7 +15,7 @@
             <v-btn
               size="small"
               color="primary"
-              href="https://item.taobao.com/item.htm?ft=t&id=847155285226&skuId=5797611030189&spm=a21dvs.23580594.0.0.1d292c1bqz25TM"
+              href="https://zhidayingxiao.cn/to/06g6yb"
               >选择此套餐</v-btn
             >
           </v-card-text>

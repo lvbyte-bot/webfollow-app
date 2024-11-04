@@ -6,10 +6,12 @@
 :root {
   font-size: 14px;
   --swiper-navigation-size: 20px !important;
+  --sidbar-bg: 249, 250, 251;
 }
 html {
   background-color: #fff;
   overflow-y: hidden !important;
+  color: #3d315b;
 }
 #app .v-list-item__spacer {
   width: 1rem;

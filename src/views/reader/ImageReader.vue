@@ -11,13 +11,15 @@
         <swiper
           :modules="modules"
           :space-between="30"
+          :slides-per-view="1"
           navigation
           pagination
           @swiper="onSwiper"
           @slideChange="onSlideChange"
+          ref="swiperRef"
         >
           <swiper-slide v-for="(image, index) in allImages" :key="index">
-            <img cover :width="300" :src="image" />
+            <img :width="300" :src="image" />
           </swiper-slide>
         </swiper>
         <!-- <img v-for="(image, index) in allImages" class="img" :key="index" :src="image" /> -->
@@ -30,6 +32,7 @@
 </template>
 
 <script>
+import { ref } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -48,6 +51,7 @@ export default {
   data() {
     return {
       modules: [Navigation, Pagination],
+      swiper: undefined,
     };
   },
   computed: {
@@ -55,12 +59,17 @@ export default {
       return this.item.imgs;
     },
   },
+  watch: {
+    item() {
+      this.swiper.slideTo(0);
+    },
+  },
   methods: {
     onSwiper(swiper) {
-      // console.log(swiper);
+      this.swiper = swiper;
     },
-    onSlideChange() {
-      console.log("slide change");
+    onSlideChange(v) {
+      // console.log("slide change");
     },
   },
 };
