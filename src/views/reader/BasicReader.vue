@@ -73,7 +73,7 @@ const props = defineProps<{
 }>();
 const { scrollTop } = useScroll(readerRef);
 const { mobile } = useDisplay();
-const description = computed(()=>props.item.description)
+const description = computed(()=>props.item?.description||'')
 
 useSideChapter(description, readerRef, {
   value: () => document.getElementById("chapters"),

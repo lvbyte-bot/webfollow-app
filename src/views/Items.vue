@@ -38,7 +38,10 @@
           :item="currentItem"
         />
 
-        <podcast-reader v-else-if="currentItem?.type == 'PODCAST'" />
+        <podcast-reader
+          :item="currentItem"
+          v-else-if="currentItem?.type == 'PODCAST'"
+        />
         <video-reader v-else-if="currentItem.type == 'VIDEO'" />
       </div>
     </div>

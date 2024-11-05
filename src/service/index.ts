@@ -49,7 +49,7 @@ export async function sync() {
             fItems = (await items({ since_id: lastId })).items
             hasNext = fItems.length == 50
             for (let item of fItems) {
-                await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url })
+                await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
             }
             lastId = await itemRepo.maxId()
         }
@@ -60,7 +60,7 @@ export async function sync() {
         for (let with_ids of idsto50str(Array.from(syncItemIds))) {
             let fItems = (await items({ with_ids })).items
             for (let item of fItems) {
-                await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url })
+                await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
             }
             const total = await itemRepo.count()
             setTitle(total)
@@ -260,7 +260,10 @@ function map(item: Item): FeedItem {
     const imgs = extImgs(html)
     const thumbnail: string | undefined = imgs && imgs.length > 0 ? imgs[0] : undefined
     const text = extText(html)
-    const type: string = ItemType[imgs.length > 5 && imgs.length * 50 > text.length ? ItemType.IMAGE : ItemType.BASIC]
+    let type: string = ItemType[imgs.length > 5 && imgs.length * 50 > text.length ? ItemType.IMAGE : ItemType.BASIC]
+    if (item.enclosure) {
+        type = ItemType[ItemType.PODCAST]
+    }
     const summary: string = text && text.length > 36 ? text.substring(0, 36) : text
     const d: number = item.pubDate * 1000
     const datestr: string = formatDate(d)

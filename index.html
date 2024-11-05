@@ -33,6 +33,63 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Webfollow</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <style>
+    @keyframes r {
+      0% {
+        transform: rotateX(0deg);
+      }
+
+      30% {
+        transform: rotateZ(0deg);
+      }
+
+      36% {
+        transform: rotateZ(180deg);
+      }
+
+      60% {
+        transform: rotateZ(360deg);
+      }
+
+      100% {
+        transform: rotateZ(360deg);
+      }
+    }
+
+    @keyframes r-text {
+      0% {
+        opacity: .1;
+      }
+
+      30% {
+        opacity: .5;
+      }
+
+      36% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      80% {
+        opacity: .5;
+      }
+
+      100% {
+        opacity: .1;
+      }
+    }
+
+    .loading-logo {
+      animation: r 2s infinite;
+    }
+
+    .loding-text {
+      animation: r-text 3s infinite;
+    }
+  </style>
   <script>
     function log(...args) {
       console.log("%cWebFollow", "padding:5px 8px;border-radius:3px;background:#ff7a61;color:#fff;font-size:1em;", ...args)
@@ -58,6 +115,10 @@
 
 <body>
   <div id="app"></div>
+  <div id="loading" style="text-align: center; margin-top: 36vh;">
+    <img class="loading-logo" style="width: 5rem;" src="/logo.svg" alt="">
+    <p class="loding-text">加载中....</p>
+  </div>
   <script type="module" src="/src/main.ts"></script>
 </body>
 
