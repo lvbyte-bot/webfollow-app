@@ -31,7 +31,7 @@
                 label="feverURL"
                 required
               ></v-text-field>
-              <v-btn type="submit" color="primary">登录</v-btn>
+              <v-btn block type="submit" color="primary">登录</v-btn>
             </v-form>
           </v-card-text>
           <v-card-subtitle>
