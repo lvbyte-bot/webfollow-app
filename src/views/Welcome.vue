@@ -1,9 +1,17 @@
 <template>
   <div class="d-flex justify-space-between ma-3">
-    <div></div>
-    <v-btn prepend-icon="mdi-download" variant="text" to="/download"
-      >下载app</v-btn
-    >
+    <div>
+      <v-btn prepend-icon="mdi-download" variant="text" to="/download"
+        >下载app</v-btn
+      >
+    </div>
+    <div class="d-flex align-center">
+      <a href="https://github.com/weekend-project-space/webfollow-app">
+        <img
+          src="https://img.shields.io/github/stars/weekend-project-space/webfollow-app.svg?style=social&amp;label=Stars"
+          alt=""
+      /></a>
+    </div>
   </div>
 
   <v-empty-state height="100vh" v-if="appStore.loading">

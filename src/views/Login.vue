@@ -17,6 +17,20 @@
                 type="password"
                 required
               ></v-text-field>
+              <a @click="showUrl = !showUrl"
+                ><small
+                  >我有自建的RSS后端服务且支持fever,点击填写fever URL</small
+                ></a
+              >
+
+              <br />
+              <br />
+              <v-text-field
+                v-if="showUrl"
+                v-model="url"
+                label="feverURL"
+                required
+              ></v-text-field>
               <v-btn type="submit" color="primary">登录</v-btn>
             </v-form>
           </v-card-text>
@@ -49,6 +63,8 @@ const snackbar = ref(false);
 const message = ref("");
 const username = ref("");
 const password = ref("");
+const url = ref("");
+const showUrl = ref(false);
 
 const showMessage = (msg: string) => {
   message.value = msg; // 设置提示信息
@@ -56,6 +72,13 @@ const showMessage = (msg: string) => {
 };
 
 const handleLogin = async () => {
+  if (url.value) {
+    if (url.value.indexOf("https") != 0) {
+      showMessage("api url 必须是https");
+      return;
+    }
+    localStorage.setItem("url", url.value);
+  }
   const token = CryptoJS.MD5(username.value + ":" + password.value).toString(); // 更新为使用 window.CryptoJS
   const r = await login(token);
   if (r.auth !== 1) {

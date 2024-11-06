@@ -8,7 +8,7 @@
           :src="allImages[0].url"
           cover
         /> -->
-        <swiper
+        <Swiper
           :modules="modules"
           :space-between="30"
           :slides-per-view="1"
@@ -18,10 +18,10 @@
           @slideChange="onSlideChange"
           ref="swiperRef"
         >
-          <swiper-slide v-for="(image, index) in allImages" :key="index">
+          <Swiper-slide v-for="(image, index) in allImages" :key="index">
             <img :width="300" :src="image" />
-          </swiper-slide>
-        </swiper>
+          </Swiper-slide>
+        </Swiper>
         <!-- <img v-for="(image, index) in allImages" class="img" :key="index" :src="image" /> -->
       </div>
       <div class="image-no">
@@ -31,8 +31,8 @@
   </v-card>
 </template>
 
-<script>
-import { ref } from "vue";
+<script lang="ts" setup>
+import { ref, watch, computed } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -40,38 +40,38 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import BasicReader from "./BasicReader.vue";
 
-export default {
-  name: "ImageReader",
-  props: ["item"],
-  components: {
-    Swiper,
-    SwiperSlide,
-    BasicReader,
-  },
-  data() {
-    return {
-      modules: [Navigation, Pagination],
-      swiper: undefined,
-    };
-  },
-  computed: {
-    allImages() {
-      return this.item.imgs;
-    },
-  },
-  watch: {
-    item() {
-      this.swiper.slideTo(0);
-    },
-  },
-  methods: {
-    onSwiper(swiper) {
-      this.swiper = swiper;
-    },
-    onSlideChange(v) {
-      // console.log("slide change");
-    },
-  },
+// 定义 props
+const props = defineProps<{
+  item: { imgs: string[] };
+}>();
+
+// 定义 emits（如果需要的话）
+const emit = defineEmits();
+
+// 定义数据
+const modules = [Navigation, Pagination];
+const swiper = ref<any>({});
+
+// 计算属性
+const allImages = computed(() => {
+  return props.item.imgs;
+});
+
+// 监听器
+watch(
+  () => props.item,
+  () => {
+    swiper.value.slideTo(0);
+  }
+);
+
+// 方法
+const onSwiper = (swiperInstance: any) => {
+  swiper.value = swiperInstance;
+};
+
+const onSlideChange = (v: any) => {
+  // console.log("slide change");
 };
 </script>
 

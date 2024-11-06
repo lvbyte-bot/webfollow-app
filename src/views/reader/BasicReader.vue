@@ -23,9 +23,9 @@
               item.isSaved ? "mdi-playlist-minus" : "mdi-playlist-plus"
             }}</v-icon>
           </c-btn>
-          <c-btn disabled variant="text" icon title="加载网页原文"  class="mr-2">
+          <!-- <c-btn disabled variant="text" icon title="加载网页原文"  class="mr-2">
             <v-icon> mdi-book-open-outline</v-icon>
-          </c-btn>
+          </c-btn> -->
           <c-btn
             variant="text"
             icon
@@ -142,7 +142,8 @@ function getSource() {
   border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
   height: 64px;
   > *:last-child {
-    min-width: 195px;
+    // min-width: 195px;
+    min-width: 130px;
   }
   a {
     text-decoration: none;
@@ -189,6 +190,6 @@ pre {
   border-radius: 0.5rem;
 }
 .bar-left{
-  width: 180px;
+  width: 150px;
 }
 </style>
