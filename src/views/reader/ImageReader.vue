@@ -18,9 +18,9 @@
           @slideChange="onSlideChange"
           ref="swiperRef"
         >
-          <Swiper-slide v-for="(image, index) in allImages" :key="index">
+          <SwiperSlide v-for="(image, index) in allImages" :key="index">
             <img :width="300" :src="image" />
-          </Swiper-slide>
+          </SwiperSlide>
         </Swiper>
         <!-- <img v-for="(image, index) in allImages" class="img" :key="index" :src="image" /> -->
       </div>
@@ -70,7 +70,7 @@ const onSwiper = (swiperInstance: any) => {
   swiper.value = swiperInstance;
 };
 
-const onSlideChange = (v: any) => {
+const onSlideChange = (_: any) => {
   // console.log("slide change");
 };
 </script>
