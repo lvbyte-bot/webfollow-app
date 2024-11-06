@@ -126,6 +126,16 @@
 
       <template v-if="store.isLast">
         <v-empty-state
+          v-if="type == 'f' && store.isLast && store.items?.length == 0"
+        >
+          <v-btn variant="text" @click="pullFeedItems" :disabled="loading">
+            <template #prepend>
+              <v-icon> mdi-database-arrow-down-outline </v-icon>
+            </template>
+            加载归档
+          </v-btn>
+        </v-empty-state>
+        <v-empty-state
           icon="mdi-book-open-page-variant-outline"
           v-if="feedStore.nextUnReadUrl"
           height="calc(100vh - 64px)"
@@ -234,6 +244,16 @@ async function refresh() {
   loading.value = true;
   await appStore.sync();
   loading.value = false;
+}
+
+async function pullFeedItems() {
+  if (props.type == "f") {
+    loading.value = true;
+    await store.pullFeedItems(Number(props.id));
+    onlyUnread.value = false;
+    initData();
+    loading.value = false;
+  }
 }
 
 async function markRead() {

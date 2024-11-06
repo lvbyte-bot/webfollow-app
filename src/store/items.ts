@@ -11,6 +11,7 @@ import {
 } from 'vue'
 import {
     listItem,
+    syncFeedItem,
 } from '@/service'
 
 import {
@@ -58,11 +59,16 @@ export const useItemsStore = defineStore('items', () => {
         }
     }
 
+    async function pullFeedItems(feedId: number) {
+        await syncFeedItem(feedId)
+    }
+
     return {
         items,
         isLast,
         loadData,
         refreshItems,
+        pullFeedItems,
         pageRoute
     }
 })

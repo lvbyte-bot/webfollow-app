@@ -69,15 +69,29 @@ export async function sync() {
 
 
 }
-function idsto50str(array: number[]): string[] {
-    const chunkSize = 50; // 每个块的大小
-    const chunks = array.reduce((acc, _, index) => {
-        if (index % chunkSize === 0) acc.push([]); // 创建新块
-        acc[acc.length - 1].push(array[index]); // 添加到当前块
-        return acc;
-    }, [] as number[][]); // 使用 reduce 创建块
 
-    return chunks.map(chunk => chunk.join(','));
+/**
+ * 只同步feed
+ * @param feedId 
+ */
+export async function syncFeedItem(feedId: number) {
+    const sum = (await itemRepo.listAll(item => item.feedId == feedId)).length
+    let hasNext: boolean = true
+    let fItems: any[] = []
+    let lastId = 0;
+    while (hasNext) {
+        const r = (await items({ feed_ids: feedId, since_id: lastId }))
+        console.log(sum, r.total_items)
+        if (r.total_items == sum) {
+            return
+        }
+        fItems = r.items
+        hasNext = fItems.length == 50
+        for (let item of fItems) {
+            await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
+            lastId = item.id > lastId ? item.id : lastId
+        }
+    }
 }
 
 /**
@@ -313,4 +327,15 @@ function getBaseUrl(url: string) {
     } catch {
         return url
     }
+}
+
+function idsto50str(array: number[]): string[] {
+    const chunkSize = 50; // 每个块的大小
+    const chunks = array.reduce((acc, _, index) => {
+        if (index % chunkSize === 0) acc.push([]); // 创建新块
+        acc[acc.length - 1].push(array[index]); // 添加到当前块
+        return acc;
+    }, [] as number[][]); // 使用 reduce 创建块
+
+    return chunks.map(chunk => chunk.join(','));
 }
