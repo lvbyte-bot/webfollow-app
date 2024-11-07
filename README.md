@@ -2,6 +2,10 @@
 
 > RSS reader suppot fever api
 
+## Demo
+
+[online](https://webfollow.cc)
+
 ## Preview
 
 ![](./doc/text-reader.png)
@@ -20,10 +24,6 @@ npm install
 ```
 npm run dev
 ```
-
-## Demo
-
-[webfollow.cc](https://webfollow.cc)
 
 ## Notice
 
