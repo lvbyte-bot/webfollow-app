@@ -9,6 +9,9 @@
   --sidbar-bg: 248, 250, 253;
   --v-overlay-opacity: 0.9;
 }
+.v-theme--dark {
+  --sidbar-bg: 11, 12, 13;
+}
 html {
   background-color: #fff;
   overflow-y: hidden !important;

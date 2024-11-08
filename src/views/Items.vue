@@ -131,7 +131,7 @@
         </template>
       </template>
 
-      <template v-if="store.isLast">
+      <template v-if="store.isLast && !loading">
         <v-empty-state
           v-if="type == 'f' && store.isLast && store.items?.length == 0"
         >
@@ -230,21 +230,23 @@ async function loadData(
   page: number = 0,
   onlyUnread: boolean = false
 ) {
-  store.loadData(id, type, page, onlyUnread);
+  await store.loadData(id, type, page, onlyUnread);
 }
 
-function initData(page0: number = 0) {
+async function initData(page0: number = 0) {
+  loading.value = true;
   page = page0;
   show.value = false;
   if (props.type == "f") {
-    loadData(Number(props.id), LsItemType.FEED, page, onlyUnread.value);
+    await loadData(Number(props.id), LsItemType.FEED, page, onlyUnread.value);
   } else if (props.type == "c") {
-    loadData(Number(props.id), LsItemType.GROUP, page, onlyUnread.value);
+    await loadData(Number(props.id), LsItemType.GROUP, page, onlyUnread.value);
   } else if (props.type == "next") {
-    loadData(null, LsItemType.SAVED, page, onlyUnread.value);
+    await loadData(null, LsItemType.SAVED, page, onlyUnread.value);
   } else if (props.type == "all") {
-    loadData(null, LsItemType.ALL, page, onlyUnread.value);
+    await loadData(null, LsItemType.ALL, page, onlyUnread.value);
   }
+  loading.value = false;
 }
 
 async function refresh() {

@@ -33,7 +33,7 @@ export const useAppStore = defineStore('app', () => {
             log('sync end')
             loading.value = false
         })
-        initNav(pageRoute)
+        setTimeout(() => initNav(pageRoute), 1000)
         lastRefeshTime.value = new Date().getTime()
     }
 
@@ -58,13 +58,14 @@ export const useAppStore = defineStore('app', () => {
         await sync()
         setTitle(unReadQty.value)
         setTimeout(() => {
-            watchAll([pageRoute, subscriptions, unReadQty, savedQty], () => initNav(pageRoute))
+            watchAll([pageRoute, subscriptions, savedQty], () => initNav(pageRoute))
         }, 1000);
         // 都是为了更新nav
     })
 
 
     function initNav(v: PageRoute) {
+        console.log(v)
         switch (v.type) {
             case LsItemType.ALL:
                 nav.title = '全部文章'
