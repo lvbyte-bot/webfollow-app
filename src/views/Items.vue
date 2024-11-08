@@ -62,7 +62,7 @@
         <c-btn
           :icon="onlyUnread ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'"
           :title="onlyUnread ? '只看未读' : '看全部'"
-          @click="onlyUnread = !onlyUnread"
+          @click="changeOnlyUnread(!onlyUnread)"
           class="mr-2"
         >
         </c-btn>
@@ -257,14 +257,12 @@ async function pullFeedItems() {
   if (props.type == "f") {
     loading.value = true;
     await store.pullFeedItems(Number(props.id));
-    onlyUnread.value = false;
-    initData();
+    changeOnlyUnread(false);
     loading.value = false;
   }
 }
 
 async function markRead() {
-  console.log(appStore.lastRefeshTime);
   await appStore.read(
     Number(props.id),
     props.type == "f" ? Marked.FEED : Marked.GROUP,
@@ -280,11 +278,15 @@ function openReader(index: number, item: any | undefined) {
     currentItem.value = store.items[index];
   }
 }
+
+async function changeOnlyUnread(onlyUnread0: boolean) {
+  onlyUnread.value = onlyUnread0;
+  await initData(0);
+}
 watch(props, () => {
   initData(0);
   mainRef.value.scrollTo(0, 0);
 });
-watch(onlyUnread, () => initData(0));
 </script>
 <style lang="scss" scoped>
 .items-warp {
