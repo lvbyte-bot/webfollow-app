@@ -1,7 +1,10 @@
 <template>
   <v-responsive>
     <v-app>
-      <v-navigation-drawer color="#222" v-if="!mobile" rail>
+      <v-navigation-drawer class="sidebar-warp" v-if="mobile" v-model="show">
+        <SideBar></SideBar>
+      </v-navigation-drawer>
+      <v-navigation-drawer color="#222" v-else :model-value="!hideSide" rail>
         <v-list-item
           class="my-2"
           prepend-avatar="/logo.svg"
@@ -31,20 +34,12 @@
         ></v-list-item>
 
         <div class="bottom">
-          <v-list-item to="/login">
-            <v-avatar color="secondary" :title="appStore.authInfo.username">
-              {{ appStore.authInfo.username.substring(0, 2) }}
-            </v-avatar>
-          </v-list-item>
           <v-list-item class="mt-3 pa-3" href="https://i.webfollow.cc">
             回到老版
           </v-list-item>
         </div>
       </v-navigation-drawer>
-      <v-navigation-drawer class="sidebar-warp" v-if="mobile" v-model="show">
-        <SideBar></SideBar>
-      </v-navigation-drawer>
-      <v-main :class="{ cols: !mobile }">
+      <v-main :class="{ cols: !mobile && !hideSide }">
         <v-btn
           size="small"
           class="toogle ma-1"
@@ -52,8 +47,39 @@
           v-if="mobile && !show"
           @click="show = !show"
         ></v-btn>
-        <SideBar v-else-if="!mobile"></SideBar>
+        <v-scale-transition>
+          <SideBar v-if="!mobile && !hideSide">
+            <template #top>
+              <div class="mb-2 d-flex justify-space-between align-center">
+                <c-btn
+                  variant="text"
+                  icon="mdi-backburger"
+                  @click="hideSide = !hideSide"
+                  title="关闭边栏"
+                ></c-btn>
+                <c-btn to="/login" icon>
+                  <v-avatar
+                    size="26px"
+                    color="secondary"
+                    :title="appStore.authInfo.username"
+                  >
+                    {{ appStore.authInfo.username.substring(0, 2) }}
+                  </v-avatar>
+                </c-btn>
+              </div>
+            </template>
+          </SideBar>
+        </v-scale-transition>
         <div class="flexible">
+          <div v-if="hideSide && !mobile" class="ma-3 menu-warp">
+            <c-btn
+              variant="text"
+              icon="mdi-menu"
+              title="打开边栏"
+              @click="hideSide = !hideSide"
+            ></c-btn>
+          </div>
+
           <router-view></router-view>
         </div>
       </v-main>
@@ -71,6 +97,7 @@ const appStore = useAppStore();
 const { mobile } = useDisplay();
 const router = useRouter();
 const title = ref("");
+const hideSide = ref(false);
 
 const show = ref(false);
 </script>
@@ -106,5 +133,9 @@ const show = ref(false);
 }
 :deep(.sidebar) {
   background-color: rgb(var(--sidbar-bg));
+}
+.menu-warp {
+  position: absolute;
+  top: 0;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <v-list-item :class="{ 'hover-bg': true }">
+  <v-list-item :class="{ 'hover-bg': true, readly: item.isRead }">
     <template v-slot:prepend>
       <v-icon :color="item.isRead ? 'grey' : 'primary'">
         {{ item.isRead ? "" : "mdi-circle-medium" }}
@@ -84,6 +84,12 @@ function getSubtitle() {
 </script>
 
 <style scoped>
+.readly {
+  opacity: 0.8;
+}
+.readly .v-list-item-title {
+  font-weight: 300;
+}
 .hover-bg:hover {
   background-color: rgba(var(--v-theme-surface-variant), 0.1);
 }
@@ -108,6 +114,7 @@ function getSubtitle() {
 .v-list-item-title {
   flex: 1;
   min-width: 0;
+  font-weight: 600;
 }
 .v-list-item--density-default {
   min-height: 48px;

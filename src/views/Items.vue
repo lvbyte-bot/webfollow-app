@@ -101,10 +101,18 @@
     </v-container>
 
     <v-container class="mx-auto items-warp">
-      <!-- <v-scroll-y-transition> -->
       <template v-if="store.items?.length">
         <v-row v-if="itemView == 'card'">
-          <v-col v-for="(item, index) in store.items" :key="item.id">
+          <v-col
+            cols="12"
+            sm="12"
+            md="4"
+            lg="3"
+            xl="2"
+            xxl="1"
+            v-for="(item, index) in store.items"
+            :key="item.id"
+          >
             <Item
               :item="item"
               @click="openReader(index, item)"
@@ -122,7 +130,6 @@
           ></TextItem>
         </template>
       </template>
-      <!-- </v-scroll-y-transition> -->
 
       <template v-if="store.isLast">
         <v-empty-state
@@ -323,6 +330,9 @@ watch(onlyUnread, () => initData(0));
 }
 .rotating .v-icon {
   animation: rotate 1s linear infinite;
+}
+.reader-warp {
+  font-size: 16px;
 }
 </style>
 <style lang="scss">

@@ -176,19 +176,27 @@ function getSource() {
 <style>
 .content {
   padding: 0.5rem;
-  line-height: 3rem;
+  line-height: 2rem;
   * {
     max-width: 100%;
   }
+  h1,h2,h3,h4{
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+  p{
+    padding: 0.8rem 0;
+  }
+  pre {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    background-color: rgba(var(--v-theme-on-code), 0.9);
+    color: rgb(var(--v-theme-code));
+    padding: 1rem;
+    border-radius: 0.5rem;
+  }
 }
-pre {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  background-color: rgba(var(--v-theme-on-code), 0.9);
-  color: rgb(var(--v-theme-code));
-  padding: 1rem;
-  border-radius: 0.5rem;
-}
+
 .bar-left{
   width: 150px;
 }

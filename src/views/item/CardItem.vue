@@ -1,8 +1,9 @@
 <template>
-  <v-card flat max-width="480px">
+  <v-card flat>
     <v-img
       v-if="item.thumbnail"
       class="align-end text-white"
+      max-height="200px"
       :src="
         item.thumbnail
           ? item.thumbnail

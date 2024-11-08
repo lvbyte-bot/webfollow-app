@@ -3,9 +3,12 @@
     <div class="sidebar" v-bind="$attrs">
         <v-list nav class="sidebar-list">
             <div class="sidebar-top">
+                <slot name="top"></slot>
                 <v-list-item prepend-icon="mdi-inbox" value="all" title="全部文章" to="/all">
                     <template v-slot:append>
-                        <small v-if="appStore.unReadQty" v-text="appStore.unReadQty"></small> </template></v-list-item>
+                        <small v-if="appStore.unReadQty" v-text="appStore.unReadQty"></small> 
+                    </template>
+                </v-list-item>
                 <v-list-item prepend-icon="mdi-format-list-bulleted" value="next" title="稍后阅读" to="/next">
                     <template v-slot:append>
                         <small v-if="appStore.savedQty" v-text="appStore.savedQty"></small>
