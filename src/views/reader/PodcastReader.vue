@@ -1,6 +1,6 @@
 <template>
-  <v-card flat height="100vh">
-    <div class="grid">
+  <div class="grid">
+    <div>
       <div class="podcat-reader">
         <div class="warp">
           <div class="glass">
@@ -14,11 +14,11 @@
           </div>
         </div>
       </div>
-      <div class="ovf">
-        <basic-reader :item="item"></basic-reader>
-      </div>
     </div>
-  </v-card>
+    <div>
+      <basic-reader :item="item"></basic-reader>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -32,17 +32,17 @@ defineProps<{
 
 <style scoped>
 .grid {
-  height: 100%;
   display: grid;
+  grid-gap: 1rem;
   grid-template-columns: minmax(20vw, 1fr) 2fr;
 }
 .podcat-reader {
+  width: 100%;
+  position: sticky;
+  top: calc(64px + 16px);
   padding: 1rem;
-  &:first-child {
-    margin-top: 64px;
-  }
   .warp {
-    height: 100%;
+    height: calc(100vh - 64px - 4rem);
     border-radius: 1rem;
     background: linear-gradient(
       to right bottom,

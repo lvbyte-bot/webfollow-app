@@ -1,13 +1,7 @@
 <template>
-  <v-card flat>
-    <div class="grid">
+  <div class="grid">
+    <div>
       <div class="image-reader">
-        <!-- <v-img
-          :aspect-ratio="1"
-          class="bg-white"
-          :src="allImages[0].url"
-          cover
-        /> -->
         <Swiper
           :modules="modules"
           :space-between="30"
@@ -22,13 +16,12 @@
             <img :width="300" :src="image" />
           </SwiperSlide>
         </Swiper>
-        <!-- <img v-for="(image, index) in allImages" class="img" :key="index" :src="image" /> -->
-      </div>
-      <div class="image-no">
-        <basic-reader :item="item"></basic-reader>
       </div>
     </div>
-  </v-card>
+    <div class="image-no">
+      <basic-reader :item="item"></basic-reader>
+    </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -70,15 +63,14 @@ const onSwiper = (swiperInstance: any) => {
   swiper.value = swiperInstance;
 };
 
-const onSlideChange = (_: any) => {
-  // console.log("slide change");
-};
+const onSlideChange = (_: any) => {};
 </script>
 
 <style scoped>
 .grid {
   height: 100%;
   display: grid;
+  grid-gap: 1rem;
   grid-template-columns: minmax(40vw, 5fr) minmax(20vw, 3fr);
 }
 
@@ -89,12 +81,13 @@ const onSlideChange = (_: any) => {
 }
 
 .image-reader {
-  height: 100%;
+  position: sticky;
+  top: calc(64px + 16px);
 }
 
 .swiper {
   border-radius: 8px;
-  height: 100vh;
+  height: calc(100vh - 64px - 2rem);
   padding: 1rem;
 }
 
@@ -136,18 +129,6 @@ const onSlideChange = (_: any) => {
     display: block;
   }
 }
-/* .swiper-wrapper {
-  display: grid;
-  justify-content: center;
-  align-items: center;
-
-  .img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  } 
-}*/
 </style>
 <style lang="scss">
 .image-no {

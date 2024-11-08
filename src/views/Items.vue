@@ -2,8 +2,11 @@
   <!-- reader -->
   <v-scale-transition>
     <div class="cover" v-show="show">
-      <div class="cover-action">
-        <div>
+      <Reader :item="currentItem">
+        <template #prepend>
+          <div id="chapters" class="chapter-list"></div>
+        </template>
+        <template #prepend-bar>
           <c-btn
             variant="text"
             icon="mdi-close"
@@ -11,7 +14,6 @@
             title="关闭"
             class="mr-2"
           ></c-btn>
-
           <c-btn
             :disabled="currentItemIndex == 0"
             variant="text"
@@ -27,23 +29,8 @@
             title="下一篇文章"
             @click="openReader(currentItemIndex + 1, undefined)"
           ></c-btn>
-        </div>
-
-        <div id="chapters" class="chapter-list"></div>
-      </div>
-      <div class="reader-warp">
-        <image-reader :item="currentItem" v-if="currentItem?.type == 'IMAGE'" />
-        <basic-reader
-          v-else-if="currentItem?.type == 'BASIC'"
-          :item="currentItem"
-        />
-
-        <podcast-reader
-          :item="currentItem"
-          v-else-if="currentItem?.type == 'PODCAST'"
-        />
-        <video-reader v-else-if="currentItem.type == 'VIDEO'" />
-      </div>
+        </template>
+      </Reader>
     </div>
   </v-scale-transition>
   <!-- items -->
@@ -167,10 +154,8 @@
 </template>
 <script setup lang="ts">
 import { ref, Ref } from "vue";
-import BasicReader from "./reader/BasicReader.vue";
-import ImageReader from "./reader/ImageReader.vue";
-import VideoReader from "./reader/VideoReader.vue";
-import PodcastReader from "./reader/PodcastReader.vue";
+
+import Reader from "./reader/Index.vue";
 import Item from "./item/CardItem.vue";
 import TextItem from "./item/TextItem.vue";
 import { onMounted, watch } from "vue";
@@ -285,6 +270,7 @@ async function changeOnlyUnread(onlyUnread0: boolean) {
   onlyUnread.value = onlyUnread0;
   await initData(0);
 }
+
 watch(props, () => {
   initData(0);
   mainRef.value.scrollTo(0, 0);
@@ -349,16 +335,16 @@ watch(props, () => {
   background-color: rgb(var(--v-theme-background)) !important;
 }
 .chapter-list {
-  position: sticky;
+  position: absolute;
   padding: 0.5rem 0.8rem;
   border-radius: 0.3rem;
-  top: 100;
+  top: 100px;
+  z-index: 100;
   color: rgba(var(--v-theme-on-code), 0.3);
   margin-bottom: 3rem;
   max-width: 150px;
   overflow: hidden;
   border: 1px solid rgba(var(--v-border-color), 0);
-  background-color: rgba(var(--v-theme-background), 0.1);
   max-height: calc(100vh - 150px);
   overflow: auto;
   img {
