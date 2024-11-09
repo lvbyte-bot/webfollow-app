@@ -25,13 +25,13 @@ export function useSideChapter(markdownContent: Ref<string>, el: any, chapterEl:
                 const level = g ? g[0].length : 1;
                 const title = line.replace(/^#+\s/, '');
                 acc.push(`<li style="margin-left: ${level - topLevel}rem;" class="toc-link " data-id="chapter${acc.length}">
-                            ${md2html(title)}
+                            ${getText(title)}
                           </li>`);
             } else if (line.match(/^-{2,}$/) && index > 0 && !array[index - 1].match(/^#+\s/)) {
                 // 处理 --- 格式的标题（前一行为标题文本）
                 const title = array[index - 1];
                 acc.push(`<li style="margin-left: 0em;" class="toc-link " data-id="chapter${acc.length}">
-                            ${getInnerText(title)}
+                            ${getText(title)}
                           </li>`);
             }
             return acc;
@@ -128,8 +128,9 @@ export function useSideChapter(markdownContent: Ref<string>, el: any, chapterEl:
 }
 
 
-function getInnerText(mdstr: string): string {
+function getText(mdstr: string): string {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = md2html(mdstr);
-    return tempDiv.innerText
+    const els = tempDiv.querySelector('p')?.childNodes
+    return Array.from(els || []).map((el: any) => el.tagName?.toLowerCase() == 'img' ? el.outerHTML : el.textContent).join(' ')
 }
