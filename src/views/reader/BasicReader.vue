@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="basic-reader">
     <div class="title">
       <v-list-item
         :href="item.link"
@@ -59,6 +59,9 @@ function getSource() {
 .content {
   max-width: 730px;
   margin: 0 auto;
+}
+.basic-reader {
+  background-color: rgb(var(--v-theme-background));
 }
 </style>
 <style>

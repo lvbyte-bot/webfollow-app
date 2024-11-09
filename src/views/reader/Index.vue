@@ -4,14 +4,15 @@
         <div class="bar-left">
           <slot name="prepend-bar"></slot>
         </div>
-        <v-expand-x-transition>
+        <div class="text-center">
+        <v-dialog-transition>
           <v-card-title
-            style="max-width: 730px;"
-            class="text-truncate"
-            v-if="scrollTop > 120 && !mobile"
+            class="text-truncate "
+            v-show="scrollTop > 120 && !mobile"
             >{{ item.title }} | <small v-text="getSource()"></small>
           </v-card-title>
-        </v-expand-x-transition>
+        </v-dialog-transition>
+      </div>
         <div>
           <slot name="append-bar">
             <c-btn  variant="text" :color="readerType=='default'?'':'primary'"  title="内嵌网页" icon=" mdi-apple-safari" @click="readerType=(readerType=='default'?'HTML':'default')">
@@ -139,8 +140,8 @@ function getSource() {
   top: 0;
   z-index: 10;
   background-color: rgb(var(--v-theme-background));
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto minmax(5vw, 1fr) auto;
   align-items: center;
   padding: 0.5rem 0.3rem;
   border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));

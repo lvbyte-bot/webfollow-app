@@ -72,7 +72,7 @@
             </SideBar>
           </div>
         </v-slide-x-transition>
-        <div class="flexible">
+        <div class="flexible" :class="{ hideside: mobile && !show }">
           <div v-if="hideSide && !mobile" class="ma-3 menu-warp">
             <c-btn
               variant="text"
@@ -81,7 +81,6 @@
               @click="hideSide = !hideSide"
             ></c-btn>
           </div>
-
           <router-view></router-view>
         </div>
       </v-main>
@@ -120,9 +119,7 @@ const show = ref(false);
 .hideside {
   grid-template-columns: 1fr;
 }
-.flexible {
-  flex: 1;
-}
+
 .toogle {
   position: absolute;
   top: 30vh;
@@ -141,5 +138,18 @@ const show = ref(false);
 .menu-warp {
   position: absolute;
   top: 0;
+  z-index: 100;
+  background-color: rgb(var(--sidbar-bg));
+  border-radius: 50%;
+}
+</style>
+<style lang="scss">
+.flexible {
+  flex: 1;
+}
+.hideside {
+  .top-sider .v-app-bar-title {
+    margin-left: 3rem;
+  }
 }
 </style>
