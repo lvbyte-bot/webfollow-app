@@ -30,6 +30,18 @@
       ></v-icon>
       <v-spacer></v-spacer>
       <v-btn
+          class="button"
+          size="small"
+          variant="text"
+          icon
+          :title="item.feed?.title"
+          :to="'/f/' + item?.feed?.id"
+          @click.stop="()=>{}"
+        >
+        <img class="noclick" :src=" item?.feed?.icon" onerror="this.src='/logo.svg'" style="width:16px">
+        </img>
+      </v-btn>
+      <v-btn
         class="button"
         size="small"
         variant="text"
