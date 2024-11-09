@@ -211,7 +211,7 @@ const currentItemIndex = ref(0);
 const onlyUnread = ref(true);
 const show = ref(false);
 const loading = ref(false);
-const itemView = ref(localStorage.getItem("layout") || "magazine");
+const itemView = ref(localStorage.getItem("layout") || "text");
 
 function changeItemView() {
   let view = "text";
