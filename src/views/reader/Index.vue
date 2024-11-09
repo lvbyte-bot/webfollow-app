@@ -1,6 +1,6 @@
 <template>
   <div class="overflow" ref="readerRef">
-      <div class="top-sider v-toolbar__content">
+      <div class="top-sider v-toolbar__content px-2">
         <div class="bar-left">
           <slot name="prepend-bar"></slot>
         </div>
@@ -14,6 +14,19 @@
         </v-expand-x-transition>
         <div>
           <slot name="append-bar">
+            <c-btn  variant="text" :color="readerType=='defalut'?'':'primary'"  title="内嵌网页" icon=" mdi-apple-safari" @click="readerType=readerType=='defalut'?'HTML':'defalut'">
+            </c-btn>
+            <c-btn
+              size="small"
+              variant="text"
+              icon
+              :title="item.isRead ? '未读' : '已读'"
+              @click.stop="toggleRead"
+            >
+              <v-icon>{{
+                item.isRead ? "mdi-radiobox-blank" : "mdi-radiobox-marked"
+              }}</v-icon>
+            </c-btn>
             <c-btn  variant="text" icon title="稍后阅读" @click="toggleSaved"  class="mr-2">
               <v-icon>{{
                 item.isSaved ? "mdi-playlist-minus" : "mdi-playlist-plus"
@@ -24,10 +37,9 @@
               icon
               :title="item.feed?.title"
               :to="'/f/' + item?.feed?.id"
-              class="mr-2"
             >
-            <img class="noclick" :src=" item?.feed?.icon" onerror="this.src='/logo.svg'" style="width:18px">
-            </img>
+              <img class="noclick" :src=" item?.feed?.icon" onerror="this.src='/logo.svg'" style="width:18px">
+              </img>
             </c-btn>
             <c-btn  variant="text" icon title="打开原网站" :href="item.link">
               <v-icon> mdi-open-in-new</v-icon>
@@ -38,7 +50,8 @@
       <v-container>
         <slot name="prepend"></slot>
         <slot>
-        <image-reader :item="item" v-if="item?.type == 'IMAGE'" />
+        <iframe class="iframe" v-if="readerType=='HTML'" :src="item.link" frameborder="0"  referrerpolicy="origin" sandbox="allow-same-origin allow-popups allow-downloads allow-forms allow-scripts"></iframe>
+        <image-reader :item="item" v-else-if="item?.type == 'IMAGE'" />
         <basic-reader
           v-else-if="item?.type == 'BASIC'"
           :item="item"
@@ -73,6 +86,7 @@ const props = defineProps<{
 const { scrollTop } = useScroll(readerRef);
 const { mobile } = useDisplay();
 const description = computed(()=>props.item?.description||'')
+const readerType = ref('default')
 
 useSideChapter(description, readerRef, {
   value: () => document.getElementById("chapters"),
@@ -103,6 +117,14 @@ function toggleSaved() {
   }
 }
 
+function toggleRead() {
+  if (props.item.isRead) {
+    appStore.unread(props.item.id);
+  } else {
+    appStore.read(props.item.id);
+  }
+}
+
 function getSource() {
   return props.item.author + " - " + props.item.feed?.title;
 }
@@ -123,9 +145,8 @@ function getSource() {
   padding: 0.5rem 0.3rem;
   border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
   height: 64px;
-  > *:last-child {
-    // min-width: 195px;
-    min-width: 130px;
+  > *  {
+    min-width: 210px;
   }
   a {
     text-decoration: none;
@@ -140,5 +161,11 @@ function getSource() {
 }
 .title {
   margin-bottom: 1rem;
+}
+.iframe{
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 102px);
+  z-index: 10;
 }
 </style>

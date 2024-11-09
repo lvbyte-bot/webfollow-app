@@ -339,7 +339,7 @@ watch(props, () => {
   padding: 0.5rem 0.8rem;
   border-radius: 0.3rem;
   top: 100px;
-  z-index: 100;
+  z-index: 1;
   color: rgba(var(--v-theme-on-code), 0.3);
   margin-bottom: 3rem;
   max-width: 150px;
@@ -380,7 +380,7 @@ watch(props, () => {
     border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
   }
 }
-@media (max-width: 1050px) {
+@media (max-width: 1280px) {
   .chapter-list {
     display: none;
     background: rgb(var(--v-theme-background));
