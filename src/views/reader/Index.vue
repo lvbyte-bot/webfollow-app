@@ -47,7 +47,7 @@
           </slot>
         </div>
       </div>
-      <v-container>
+      <v-container class="reader-warp">
         <slot name="prepend"></slot>
         <slot>
         <iframe class="iframe" v-if="readerType=='HTML'" :src="item.link" frameborder="0"  referrerpolicy="origin" sandbox="allow-same-origin allow-popups allow-downloads allow-forms allow-scripts"></iframe>
