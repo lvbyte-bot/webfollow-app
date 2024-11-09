@@ -179,6 +179,7 @@ async function onDelete() {
     /* background-color: rgb(var(--v-theme-background)); */
     background-color: transparent;
     padding-top: 0;
+    min-height: 100vh;
 }
 
 .sidebar-top {
