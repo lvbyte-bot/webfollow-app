@@ -46,15 +46,17 @@
             <v-btn color="surface-variant" to="/subscribe" icon="mdi-plus"></v-btn>
             <v-btn class="ml-2" variant="flat" to="/download">下载app</v-btn>
         </div>
+
+        <v-card v-show="contextMenuVisible" style="position: fixed; z-index: 10000"
+            :style="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }">
+            <v-list nav>
+                <v-list-item prepend-icon="mdi-pencil-box-outline" @click="handleAction('edit')">编辑订阅源</v-list-item>
+                <v-list-item prepend-icon="mdi-delete-outline" @click="handleAction('delete')">取消订阅</v-list-item>
+            </v-list>
+        </v-card>
     </div>
 
-    <v-card v-show="contextMenuVisible" style="position: fixed; z-index: 10000"
-        :style="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }">
-        <v-list nav>
-            <v-list-item prepend-icon="mdi-pencil-box-outline" @click="handleAction('edit')">编辑订阅源</v-list-item>
-            <v-list-item prepend-icon="mdi-delete-outline" @click="handleAction('delete')">取消订阅</v-list-item>
-        </v-list>
-    </v-card>
+   
 
 
     <v-dialog v-model="editable" max-width="500">

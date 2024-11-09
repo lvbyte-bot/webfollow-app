@@ -39,7 +39,7 @@
           </v-list-item>
         </div>
       </v-navigation-drawer>
-      <v-main :class="{ cols: !mobile && !hideSide }">
+      <v-main :class="{ cols: !mobile, hideside: hideSide }">
         <v-btn
           size="small"
           class="toogle ma-1"
@@ -47,29 +47,31 @@
           v-if="mobile && !show"
           @click="show = !show"
         ></v-btn>
-        <v-scale-transition>
-          <SideBar v-if="!mobile && !hideSide">
-            <template #top>
-              <div class="mb-2 d-flex justify-space-between align-center">
-                <c-btn
-                  variant="text"
-                  icon="mdi-backburger"
-                  @click="hideSide = !hideSide"
-                  title="关闭边栏"
-                ></c-btn>
-                <c-btn to="/login" icon>
-                  <v-avatar
-                    size="26px"
-                    color="secondary"
-                    :title="appStore.authInfo.username"
-                  >
-                    {{ appStore.authInfo.username.substring(0, 2) }}
-                  </v-avatar>
-                </c-btn>
-              </div>
-            </template>
-          </SideBar>
-        </v-scale-transition>
+        <v-slide-x-transition>
+          <div v-show="!mobile && !hideSide">
+            <SideBar>
+              <template #top>
+                <div class="mb-2 d-flex justify-space-between align-center">
+                  <c-btn
+                    variant="text"
+                    icon="mdi-backburger"
+                    @click="hideSide = !hideSide"
+                    title="关闭边栏"
+                  ></c-btn>
+                  <c-btn to="/login" icon>
+                    <v-avatar
+                      size="26px"
+                      color="secondary"
+                      :title="appStore.authInfo.username"
+                    >
+                      {{ appStore.authInfo.username.substring(0, 2) }}
+                    </v-avatar>
+                  </c-btn>
+                </div>
+              </template>
+            </SideBar>
+          </div>
+        </v-slide-x-transition>
         <div class="flexible">
           <div v-if="hideSide && !mobile" class="ma-3 menu-warp">
             <c-btn
@@ -115,7 +117,9 @@ const show = ref(false);
     max-width: 36vw;
   }
 }
-
+.hideside {
+  grid-template-columns: 1fr;
+}
 .flexible {
   flex: 1;
 }
