@@ -14,7 +14,7 @@
         </v-expand-x-transition>
         <div>
           <slot name="append-bar">
-            <c-btn  variant="text" :color="readerType=='defalut'?'':'primary'"  title="内嵌网页" icon=" mdi-apple-safari" @click="readerType=readerType=='defalut'?'HTML':'defalut'">
+            <c-btn  variant="text" :color="readerType=='default'?'':'primary'"  title="内嵌网页" icon=" mdi-apple-safari" @click="readerType=(readerType=='default'?'HTML':'default')">
             </c-btn>
             <c-btn
               size="small"
@@ -85,7 +85,7 @@ const props = defineProps<{
 }>();
 const { scrollTop } = useScroll(readerRef);
 const { mobile } = useDisplay();
-const description = computed(()=>props.item?.description||'')
+const description = computed(()=>readerType.value=='default'?(props.item?.description||''):'')
 const readerType = ref('default')
 
 useSideChapter(description, readerRef, {
@@ -132,7 +132,7 @@ function getSource() {
 <style lang="scss" scoped>
 .overflow {
   height: 100vh;
-  overflow-y: auto;
+  overflow-y: scroll;
 }
 .top-sider {
   position: sticky !important;
