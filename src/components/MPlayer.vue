@@ -1,14 +1,14 @@
 src/components/MPlayer.vue
 <template>
   <v-card flat maxWidth="300px">
-    <v-img :src="imgSrc" class="d-flex align-center">
+    <v-img :src="imgSrc" cover max-height="480px" class="d-flex align-center">
       <div class="d-flex justify-center">
         <!-- 播放暂停按钮 -->
         <v-btn @click="togglePlay" :icon="isPlaying ? 'mdi-pause' : 'mdi-play'">
         </v-btn>
       </div>
     </v-img>
-    <v-card-title :title="title"> {{ title }}</v-card-title>
+    <v-card-title class="my-5" :title="title"> {{ title }}</v-card-title>
     <v-card-subtitle class="text-center">{{ subtitle }}</v-card-subtitle>
     <v-card-text>
       <audio
