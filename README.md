@@ -8,6 +8,7 @@
 
 ## Preview
 
+![](./doc/col-view.png)
 ![](./doc/text-reader.png)
 ![](./doc/podcast-reader.png)
 ![](./doc/img-reader.png)
