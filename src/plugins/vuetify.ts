@@ -26,6 +26,14 @@ export default createVuetify({
                     info: '#E74C3C'
                 },
             },
+            dark: {
+                colors: {
+                    primary: '#27AE60',
+                    secondary: '#F39C12',
+                    success: '#8E44AD',
+                    info: '#E74C3C'
+                },
+            },
         },
     },
     aliases: {
