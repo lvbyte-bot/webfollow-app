@@ -42,7 +42,7 @@
               <img class="noclick" :src=" item?.feed?.icon" onerror="this.src='/logo.svg'" style="width:18px">
               </img>
             </c-btn>
-            <c-btn  variant="text" icon title="打开原网站" :href="item.link">
+            <c-btn  variant="text" icon title="查看原文" :href="item.link">
               <v-icon> mdi-open-in-new</v-icon>
             </c-btn>
           </slot>
