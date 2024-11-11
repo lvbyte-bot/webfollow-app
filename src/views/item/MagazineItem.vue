@@ -4,21 +4,26 @@
       <v-icon :color="item.isRead ? 'grey' : 'primary'">
         {{ item.isRead ? "" : "mdi-circle-medium" }}
       </v-icon>
-
-      <div class="desc">
-        <div class="text-body-2 text-truncate text-medium-emphasis mb-2">
-          <router-link :to="'/f/' + item.feedId" @click.stop="">
-            {{ item.feed?.title }}</router-link
-          >
-        </div>
-        <p class="text-truncate mb-2 title">{{ item.title }}</p>
-        <p class="text-body-2 text-medium-emphasis">{{ item.summary }}</p>
-      </div>
       <div>
-        <div class="text-body-2 text-medium-emphasis mb-2 text-right">
-          {{ item.datestr }}
+        <div class="magazine-one mb-2">
+          <div class="text-body-2 text-truncate text-medium-emphasis">
+            <router-link :to="'/f/' + item.feedId" @click.stop="">
+              {{ item.feed?.title }}</router-link
+            >
+          </div>
+          <div class="text-body-2 text-medium-emphasis text-right">
+            {{ item.datestr }}
+          </div>
         </div>
-        <v-img :src="item.thumbnail" cover height="80px"></v-img>
+        <div class="magazine-sec" :class="{ nomagazinethumb: !item.thumbnail }">
+          <div class="desc">
+            <p class="text-truncate mb-2 title">{{ item.title }}</p>
+            <p class="text-body-2 text-medium-emphasis">{{ item.summary }}</p>
+          </div>
+          <div v-if="item.thumbnail">
+            <v-img :src="item.thumbnail" cover height="80px"></v-img>
+          </div>
+        </div>
       </div>
     </div>
   </v-list-item>
@@ -35,12 +40,24 @@ defineProps(["item"]);
 }
 .magazine {
   display: grid;
-  grid-template-columns: 1rem auto minmax(6rem, 1fr);
+  grid-template-columns: 1rem auto;
   align-items: center;
   grid-gap: 1rem;
   .v-img {
     border-radius: 0.5rem;
   }
+}
+.magazine-one {
+  display: grid;
+  grid-template-columns: auto 6rem;
+}
+.magazine-sec {
+  display: grid;
+  grid-template-columns: auto minmax(6rem, 1fr);
+  grid-gap: 0.5rem;
+}
+.nomagazinethumb {
+  grid-template-columns: 1fr;
 }
 .text-right {
   text-align: right;
