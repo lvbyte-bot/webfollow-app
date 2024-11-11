@@ -44,7 +44,6 @@
             v-text="appStore.nav.qty"
           ></small>
         </div>
-        <!-- <v-spacer></v-spacer> -->
         <div>
           <c-btn
             :icon="onlyUnread ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'"
@@ -55,7 +54,10 @@
           </c-btn>
           <c-btn
             :disabled="
-              (id == '-1' && type == 'c') || type == 'next' || type == 'all'
+              (id == '-1' && type == 'c') ||
+              type == 'next' ||
+              type == 'all' ||
+              store.items?.filter((o) => !o.isRead).length == 0
             "
             icon
             title="标记为已读"
