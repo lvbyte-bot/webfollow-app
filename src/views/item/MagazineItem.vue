@@ -6,7 +6,7 @@
       </v-icon>
 
       <div class="desc">
-        <div class="text-body-2 text-medium-emphasis mb-2">
+        <div class="text-body-2 text-truncate text-medium-emphasis mb-2">
           <router-link :to="'/f/' + item.feedId" @click.stop="">
             {{ item.feed?.title }}</router-link
           >

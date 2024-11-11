@@ -71,7 +71,8 @@ const onSlideChange = (_: any) => {};
   height: 100%;
   display: grid;
   grid-gap: 1rem;
-  grid-template-columns: minmax(40vw, 5fr) minmax(20vw, 3fr);
+  grid-template-columns: minmax(20vw, 5fr) minmax(15vw, 3fr);
+  background: rgb(var(--v-theme-background));
 }
 
 .image-reader-card {
