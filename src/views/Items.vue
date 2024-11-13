@@ -263,7 +263,7 @@ async function loadData(
     autoRefresh = setTimeout(() => {
       log("autoRefresh");
       initData();
-    }, general.value.refreshInterval * 100);
+    }, general.value.refreshInterval * 1000);
   }
   await store.loadData(id, type, page, onlyUnread);
 }
