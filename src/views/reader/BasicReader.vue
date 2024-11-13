@@ -67,7 +67,7 @@ function getSource() {
 <style>
 .content {
   padding: 0.5rem;
-  line-height: 2rem;
+  line-height: var(--line-height);
   * {
     max-width: 100%;
   }
@@ -75,7 +75,7 @@ function getSource() {
   h2,
   h3,
   h4 {
-    margin-top: 2rem;
+    margin-top: var(--line-height);
     margin-bottom: 1rem;
   }
   p {
@@ -88,6 +88,7 @@ function getSource() {
     color: rgb(var(--v-theme-code));
     padding: 1rem;
     border-radius: 0.5rem;
+    font-family: var(--code-font);
   }
 }
 

@@ -1,5 +1,8 @@
 <template>
-  <div class="main-warp" :class="{ 'main-col': itemView == 'magazine' }">
+  <div
+    class="main-warp"
+    :class="{ 'main-col': general.defaultView == 'magazine' }"
+  >
     <!-- reader -->
     <v-dialog-transition>
       <div class="cover" v-show="show">
@@ -78,16 +81,16 @@
           </c-btn>
           <c-btn
             :icon="
-              itemView == 'card'
+              general.defaultView == 'card'
                 ? 'mdi-view-gallery-outline'
-                : itemView == 'magazine'
+                : general.defaultView == 'magazine'
                 ? 'mdi-view-column-outline'
                 : 'mdi-view-list-outline'
             "
             :title="
-              itemView == 'card'
+              general.defaultView == 'card'
                 ? '卡片视图'
-                : itemView == 'magazine'
+                : general.defaultView == 'magazine'
                 ? '三栏视图'
                 : '列表视图'
             "
@@ -99,7 +102,7 @@
 
       <v-container class="mx-auto items-warp">
         <template v-if="store.items?.length">
-          <v-row v-if="itemView == 'card'">
+          <v-row v-if="general.defaultView == 'card'">
             <v-col
               cols="12"
               sm="12"
@@ -117,7 +120,7 @@
               ></Item>
             </v-col>
           </v-row>
-          <template v-else-if="itemView == 'magazine'">
+          <template v-else-if="general.defaultView == 'magazine'">
             <MagazineItem
               v-for="(item, index) in store.items"
               :item="item"
@@ -173,7 +176,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, Ref } from "vue";
+import { computed, ref, Ref } from "vue";
 
 import Reader from "./reader/Index.vue";
 import Item from "./item/CardItem.vue";
@@ -181,7 +184,13 @@ import TextItem from "./item/TextItem.vue";
 import MagazineItem from "./item/MagazineItem.vue";
 import { onMounted, watch } from "vue";
 import { Marked } from "@/service";
-import { useItemsStore, useAppStore, useFeedsStore } from "@/store";
+import { storeToRefs } from "pinia";
+import {
+  useItemsStore,
+  useAppStore,
+  useFeedsStore,
+  useSettingsStore,
+} from "@/store";
 import { FeedItem, LsItemType } from "@/service/types";
 import { useScroll } from "@/utils/scrollListener";
 import { useImgPreview } from "@/utils/useImgPreview";
@@ -210,23 +219,22 @@ const currentItem: Ref<FeedItem> = ref({
 });
 const currentItemIndex = ref(0);
 
-const onlyUnread = ref(true);
 const show = ref(false);
 const loading = ref(false);
-const itemView = ref(localStorage.getItem("layout") || "text");
+const settingsStore = useSettingsStore();
+const { general } = storeToRefs(settingsStore);
+const onlyUnread = computed(() => general.value.hideReadArticles);
 
 function changeItemView() {
-  let view = "text";
-  if (itemView.value == "text") {
-    view = "card";
-  } else if (itemView.value == "card") {
-    view = "magazine";
+  if (general.value.defaultView == "text") {
+    general.value.defaultView = "card";
+  } else if (general.value.defaultView == "card") {
+    general.value.defaultView = "magazine";
   } else {
-    view = "text";
+    general.value.defaultView = "text";
   }
-  localStorage.setItem("layout", view);
   mainRef.value.style.width = "";
-  itemView.value = view;
+  settingsStore.saveToLocalStorage();
 }
 
 let page = 0;
@@ -239,19 +247,30 @@ watch(isBottom, (v) => {
 
 onMounted(initData);
 
+let autoRefresh: any;
+
 async function loadData(
   id: any,
   type: LsItemType,
   page: number = 0,
   onlyUnread: boolean = false
 ) {
+  // 自动刷新功能
+  if (general.value.autoRefresh) {
+    if (autoRefresh) {
+      clearTimeout(autoRefresh);
+    }
+    autoRefresh = setTimeout(() => {
+      log("autoRefresh");
+      initData();
+    }, general.value.refreshInterval * 100);
+  }
   await store.loadData(id, type, page, onlyUnread);
 }
 
 async function initData(page0: number = 0) {
   loading.value = true;
   page = page0;
-
   if (props.type == "f") {
     await loadData(Number(props.id), LsItemType.FEED, page, onlyUnread.value);
   } else if (props.type == "c") {
@@ -297,7 +316,8 @@ function openReader(index: number, item: any | undefined) {
 }
 
 async function changeOnlyUnread(onlyUnread0: boolean) {
-  onlyUnread.value = onlyUnread0;
+  general.value.hideReadArticles = onlyUnread0;
+  settingsStore.saveToLocalStorage();
   await initData(0);
 }
 
@@ -362,7 +382,10 @@ watch(props, () => {
   animation: rotate 1s linear infinite;
 }
 .reader-warp {
-  font-size: 16px;
+  font-size: 1.2em;
+}
+.main-warp {
+  font-size: var(--font-size);
 }
 </style>
 <style lang="scss">

@@ -7,15 +7,21 @@
   font-size: 14px;
   --swiper-navigation-size: 20px !important;
   --sidbar-bg: 248, 250, 253;
-  --v-overlay-opacity: 0.9;
+  --v-overlay-opacity: 0.7;
+  --v-theme-primary: var(--theme-color) !important;
 }
 .v-theme--dark {
-  --sidbar-bg: 11, 12, 13;
+  --sidbar-bg: 41, 41, 45;
+  --v-overlay-opacity: 0.9;
+  --v-theme-primary: var(--theme-color) !important;
+}
+.v-theme--light {
+  --v-theme-primary: var(--theme-color) !important;
 }
 html {
   background-color: #fff;
   overflow-y: hidden !important;
-  color: #3d315b;
+  font-family: var(--font-family) !important;
 }
 #app .v-list-item__spacer {
   width: 1rem;

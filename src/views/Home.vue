@@ -1,10 +1,10 @@
 <template>
   <v-responsive>
-    <v-app>
+    <v-app :theme="appearance.themeMode">
       <v-navigation-drawer class="sidebar-warp" v-if="mobile" v-model="show">
         <SideBar></SideBar>
       </v-navigation-drawer>
-      <v-navigation-drawer color="#222" v-else :model-value="!hideSide" rail>
+      <v-navigation-drawer color="#29292d" v-else :model-value="!hideSide" rail>
         <v-list-item
           class="my-2"
           prepend-avatar="/logo.svg"
@@ -58,7 +58,7 @@
                     @click="hideSide = !hideSide"
                     title="关闭边栏"
                   ></c-btn>
-                  <c-btn to="/login" icon>
+                  <c-btn @click="settingable = true" icon>
                     <v-avatar
                       size="26px"
                       color="secondary"
@@ -84,21 +84,29 @@
           <router-view></router-view>
         </div>
       </v-main>
+      <v-dialog max-width="960px" v-model="settingable">
+        <Settings @onclose="settingable = false"></Settings>
+      </v-dialog>
     </v-app>
   </v-responsive>
 </template>
 <script setup async>
-import SideBar from "./sub/SideBar.vue";
 import { useDisplay } from "vuetify";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
-import { useAppStore } from "@/store";
+import { storeToRefs } from "pinia";
+import { useAppStore, useSettingsStore } from "@/store";
+import Settings from "./settings/Settings.vue";
+import SideBar from "./sub/SideBar.vue";
 
 const appStore = useAppStore();
+const settingsStore = useSettingsStore();
 const { mobile } = useDisplay();
+const { appearance } = storeToRefs(settingsStore);
 const router = useRouter();
 const title = ref("");
 const hideSide = ref(false);
+const settingable = ref(false);
 
 const show = ref(false);
 </script>

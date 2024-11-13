@@ -8,6 +8,7 @@ import { clearIndexedDB } from '@/utils/dbHelper'
 import { computed, Ref, watch, ref, onMounted, reactive, Reactive } from 'vue'
 import { PageRoute, TopNav } from './types'
 import { LsItemType } from '@/service/types'
+export { useSettingsStore } from './settings'
 
 
 
