@@ -29,7 +29,7 @@ export const useSettingsStore = defineStore('settings', () => {
     const general = ref<GeneralSettings>({
         startPage: 'all',
         defaultView: 'magazine',
-        hideReadArticles: false,
+        hideReadArticles: true,
         autoRefresh: false,
         refreshInterval: 30 * 60
     })
@@ -82,7 +82,7 @@ export const useSettingsStore = defineStore('settings', () => {
         general.value = {
             startPage: 'all',
             defaultView: 'magazine',
-            hideReadArticles: false,
+            hideReadArticles: true,
             autoRefresh: false,
             refreshInterval: 30 * 60
         }
