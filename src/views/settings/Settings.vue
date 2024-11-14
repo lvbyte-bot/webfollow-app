@@ -65,8 +65,13 @@ import { useSettingsStore, useAppStore } from "@/store";
 import { ref, computed } from "vue";
 import SettingsGeneral from "./sub/SettingsGeneral.vue";
 import SettingsAppearance from "./sub/SettingsAppearance.vue";
+import SettingsAbout from "./sub/SettingsAbout.vue";
 const settingsStore = useSettingsStore();
-const comps: any = { general: SettingsGeneral, appearance: SettingsAppearance };
+const comps: any = {
+  general: SettingsGeneral,
+  appearance: SettingsAppearance,
+  about: SettingsAbout,
+};
 const appStore = useAppStore();
 
 const currentSection = ref("general");
@@ -76,6 +81,7 @@ const menuItems = [
   // { key: "notification", label: "通知设置", icon: "mdi-bell" },
   // { key: "privacy", label: "隐私设置", icon: "mdi-shield-lock" },
   { key: "appearance", label: "外观设置", icon: "mdi-palette" },
+  { key: "about", label: "关于", icon: "mdi-information" },
   // { key: "security", label: "安全设置", icon: "mdi-security" },
 ];
 
