@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { onMounted, ref } from 'vue'
+import { onBeforeMount, onMounted, ref, } from 'vue'
 
 interface GeneralSettings {
     startPage: 'all' | 'next' | 'firstfolder'
@@ -101,8 +101,11 @@ export const useSettingsStore = defineStore('settings', () => {
         saveToLocalStorage()
     }
 
-    onMounted(() => {
+    onBeforeMount(() => {
         loadFromLocalStorage()
+    })
+
+    onMounted(() => {
         updateCSSVariables()
     })
 
