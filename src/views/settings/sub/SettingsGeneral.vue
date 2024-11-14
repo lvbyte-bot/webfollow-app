@@ -21,7 +21,7 @@
             <template v-slot:label>
               <div class="d-flex align-center">
                 列表视图
-                <v-icon class="ml-2">mdi-format-list-bulleted</v-icon>
+                <v-icon class="ml-2">mdi-view-list-outline</v-icon>
               </div>
             </template>
           </v-radio>
@@ -29,15 +29,15 @@
             <template v-slot:label>
               <div class="d-flex align-center">
                 卡片视图
-                <v-icon class="ml-2">mdi-view-grid</v-icon>
+                <v-icon class="ml-2">mdi-view-gallery-outline</v-icon>
               </div>
             </template>
           </v-radio>
           <v-radio label="杂志视图" value="magazine">
             <template v-slot:label>
               <div class="d-flex align-center">
-                杂志视图
-                <v-icon class="ml-2">mdi-newspaper</v-icon>
+                三栏视图
+                <v-icon class="ml-2">mdi-view-column-outline </v-icon>
               </div>
             </template>
           </v-radio>

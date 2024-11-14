@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { onMounted, ref } from 'vue'
 
 interface GeneralSettings {
-    startPage: 'all' | 'favorite' | 'first'
+    startPage: 'all' | 'next' | 'firstfolder'
     defaultView: 'text' | 'card' | 'magazine'
     hideReadArticles: boolean
     autoRefresh: boolean
@@ -59,7 +59,6 @@ export const useSettingsStore = defineStore('settings', () => {
         // 更新主题颜色
         root.style.setProperty('--theme-color', appearance.value.themeColor)
 
-        console.log('updateCSSVariables---')
     }
 
     function saveToLocalStorage() {

@@ -97,7 +97,7 @@ watch(description,()=>{
   setTimeout(() => {
     readerRef.value.scrollTop=0
   }, 100);
-  if (!props.item.isRead) {
+  if (!props.item.isRead&&props.item.id) {
     appStore.read(Number(props.item.id));
   }
 })
@@ -105,7 +105,7 @@ watch(description,()=>{
 const appStore = useAppStore();
 
 onMounted(async () => {
-  if (!props.item.isRead) {
+  if (!props.item.isRead&&props.item.id) {
     appStore.read(Number(props.item.id));
   }
 });

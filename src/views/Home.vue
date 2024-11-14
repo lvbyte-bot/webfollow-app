@@ -1,6 +1,6 @@
 <template>
   <v-responsive>
-    <v-app :theme="appearance.themeMode">
+    <v-app :theme="themeMode">
       <v-navigation-drawer class="sidebar-warp" v-if="mobile" v-model="show">
         <SideBar></SideBar>
       </v-navigation-drawer>
@@ -92,23 +92,73 @@
 </template>
 <script setup async>
 import { useDisplay } from "vuetify";
-import { useRouter } from "vue-router";
-import { ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { onMounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
-import { useAppStore, useSettingsStore } from "@/store";
+import { useAppStore, useSettingsStore, useFeedsStore } from "@/store";
 import Settings from "./settings/Settings.vue";
 import SideBar from "./sub/SideBar.vue";
 
 const appStore = useAppStore();
 const settingsStore = useSettingsStore();
+const feedStore = useFeedsStore();
 const { mobile } = useDisplay();
 const { appearance } = storeToRefs(settingsStore);
 const router = useRouter();
+const route = useRoute();
 const title = ref("");
 const hideSide = ref(false);
 const settingable = ref(false);
 
 const show = ref(false);
+
+const themeMode = ref(appearance.value.themeMode);
+
+// 监听系统主题变化
+watch(
+  () => window.matchMedia("(prefers-color-scheme: dark)").matches,
+  (isDark) => {
+    if (appearance.value.themeMode == "system") {
+      themeMode.value = isDark ? "dark" : "light";
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => appearance.value.themeMode,
+  () => {
+    themeMode.value = appearance.value.themeMode;
+    if (appearance.value.themeMode == "system") {
+      const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      themeMode.value = isDark ? "dark" : "light";
+    }
+  }
+);
+
+onMounted(() => {
+  // 默认启动页
+  let startPage = settingsStore.general.startPage;
+  if (route.fullPath == "/") {
+    if (startPage == "all") {
+      router.push("/all");
+    } else if (startPage == "next") {
+      router.push("/next");
+    } else {
+      if (feedStore.subscriptions.length) {
+        const gid = feedStore.subscriptions[0].id;
+        router.push("/c/" + gid);
+      } else {
+        setTimeout(() => {
+          if (feedStore.subscriptions.length) {
+            const gid = feedStore.subscriptions[0].id;
+            router.push("/c/" + gid);
+          }
+        }, 1500);
+      }
+    }
+  }
+});
 </script>
 <style lang="scss" scoped>
 .cols {
