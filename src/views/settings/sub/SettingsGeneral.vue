@@ -17,7 +17,7 @@
       <v-card-title>默认视图</v-card-title>
       <v-card-text>
         <v-radio-group v-model="data.defaultView">
-          <v-radio label="列表视图" value="list">
+          <v-radio label="列表视图" value="text">
             <template v-slot:label>
               <div class="d-flex align-center">
                 列表视图
