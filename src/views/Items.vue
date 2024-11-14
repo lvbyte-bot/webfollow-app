@@ -67,7 +67,7 @@
             @click="markRead"
             class="mr-2"
           >
-            <v-icon> mdi-checkbox-multiple-marked-circle-outline</v-icon>
+            <v-icon>mdi-read</v-icon>
           </c-btn>
 
           <c-btn

@@ -81,7 +81,7 @@ export async function syncFeedItem(feedId: number) {
     let lastId = 0;
     while (hasNext) {
         const r = (await items({ feed_ids: feedId, since_id: lastId }))
-        console.log(sum, r.total_items)
+        // console.log(sum, r.total_items)
         if (r.total_items == sum) {
             return
         }

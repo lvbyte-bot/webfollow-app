@@ -1,11 +1,20 @@
 <template>
   <div class="basic-reader">
     <div class="title">
-      <v-list-item
-        :href="item.link"
-        :title="item.title"
-        :subtitle="getSubtitle()"
-      ></v-list-item>
+      <v-list-item :href="item.link" :title="item.title">
+        <template #subtitle>
+          <router-link
+            @click.stop=""
+            class="a"
+            title="前往订阅源"
+            :to="'/f/' + item?.feed?.id"
+            v-text="props.item.feed?.title"
+          ></router-link>
+          <span v-text="getSource()"></span>
+
+          <span v-text="getDate()"></span>
+        </template>
+      </v-list-item>
     </div>
     <div class="toc-list" ref="tocRef"></div>
     <div id="content" class="content" v-html="item.html"></div>
@@ -18,7 +27,7 @@ const props = defineProps<{
   item: FeedItem;
 }>();
 
-function getSubtitle() {
+function getDate() {
   const options: any = {
     year: "numeric",
     month: "long",
@@ -32,10 +41,10 @@ function getSubtitle() {
     "zh-CN",
     options
   );
-  return `${getSource()} | ${formattedDate}`;
+  return ` | ${formattedDate}`;
 }
 function getSource() {
-  return props.item.author + " - " + props.item.feed?.title;
+  return " - " + props.item.author;
 }
 </script>
 <style lang="scss" scoped>
@@ -62,6 +71,14 @@ function getSource() {
 }
 .basic-reader {
   background-color: rgb(var(--v-theme-background));
+}
+.a {
+  color: rgb(var(--v-theme-surface-variant));
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+    color: rgb(var(--v-theme-success));
+  }
 }
 </style>
 <style>
