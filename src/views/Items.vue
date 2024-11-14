@@ -101,6 +101,14 @@
       </div>
 
       <v-container class="mx-auto items-warp">
+        <v-expand-y-transition>
+          <div v-show="loading" class="ma-6 text-center">
+            <div class="rotating">
+              <v-icon>mdi-loading</v-icon>
+            </div>
+            <div class="mt-2 text-body-2">正在刷新...</div>
+          </div>
+        </v-expand-y-transition>
         <template v-if="store.items?.length">
           <v-row v-if="general.defaultView == 'card'">
             <v-col
@@ -271,6 +279,7 @@ async function loadData(
 async function initData(page0: number = 0) {
   loading.value = true;
   page = page0;
+  log(onlyUnread.value);
   if (props.type == "f") {
     await loadData(Number(props.id), LsItemType.FEED, page, onlyUnread.value);
   } else if (props.type == "c") {
