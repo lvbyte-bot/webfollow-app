@@ -2,7 +2,7 @@
 
 const key: string = '352E55075E6B8487D6BC55B6463B9141'
 
-const url: string = localStorage.getItem('url') || 'https://api.webfollow.cc/plugins/fever/'
+const url: string = '/fever/'//localStorage.getItem('url') || 'https://api.webfollow.cc/plugins/fever/'
 
 export async function request(params0: any, options: any = {
     method: "POST",
@@ -15,9 +15,9 @@ export async function request(params0: any, options: any = {
     // options.body = param2From(params)
     const paramsStr = params2str(params);
     const fullUrl = `${url}?${paramsStr}`;
-    if (options.body) {
-        options.body = param2From(options.body)
-    }
+    // if (options.body) {
+    //     options.body = param2From(options.body)
+    // }
     const response = await fetch(fullUrl, options)
     if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -33,10 +33,10 @@ function params2str(params: object): string {
         .join('&');
 }
 
-function param2From(params: object): FormData {
-    const formData = new FormData();
-    Object.entries(params)
-        .filter(([_, value]) => value)
-        .forEach(([key, value]) => formData.append(key, value));
-    return formData
-}
+// function param2From(params: object): FormData {
+//     const formData = new FormData();
+//     Object.entries(params)
+//         .filter(([_, value]) => value)
+//         .forEach(([key, value]) => formData.append(key, value));
+//     return formData
+// }

@@ -65,8 +65,9 @@ export function mark(params: object) {
 
 // 扩宽接口 {as: create update remove feed_url, group_id, feed_id}
 
-export function extFeed(params: object) {
+export function extFeed(params: object, options = {}) {
+    //
     return request(Object.assign({
         feeds: '0'
-    }, params))
+    }, params), options)
 }

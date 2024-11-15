@@ -10,7 +10,7 @@ import { PageRoute, TopNav } from './types'
 import { LsItemType } from '@/service/types'
 export { useSettingsStore } from './settings'
 
-
+type SyncType = '' | 'sync2local'
 
 export const useAppStore = defineStore('app', () => {
     const {
@@ -24,16 +24,25 @@ export const useAppStore = defineStore('app', () => {
     const authInfo: Ref<any> = ref(JSON.parse(localStorage.getItem('auth') || '{"username":"guest"}'))
     const nav: Reactive<TopNav> = reactive({ title: 'loading' })
 
-    async function sync() {
+    async function sync(type: SyncType = '') {
 
-        await refresh(async () => {
+        if (type == '') {
+            await refresh(async () => {
+                loading.value = true
+                await sync2local()
+                await refreshFeed()
+                await refreshItems()
+                log('sync end')
+                loading.value = false
+            })
+        } else if (type = 'sync2local') {
             loading.value = true
             await sync2local()
             await refreshFeed()
-            await refreshItems()
             log('sync end')
             loading.value = false
-        })
+        }
+
         setTimeout(() => initNav(pageRoute), 1000)
         lastRefeshTime.value = new Date().getTime()
     }

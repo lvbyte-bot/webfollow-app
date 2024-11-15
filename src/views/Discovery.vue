@@ -1,23 +1,46 @@
 <template>
   <div class="page">
     <h3>添加订阅</h3>
-    <v-card prepend-icon="mdi-rss" title="订阅" class="mt-5">
-      <v-card-text class="mt-3">
-        <v-text-field
-          v-model="value"
-          label="RSS网址"
-          required
-          @keyup.enter="add"
-        ></v-text-field>
+    <v-tabs v-model="tab" align-tabs="center">
+      <v-tab value="rss">导入RSS</v-tab>
+      <v-tab value="ompl">导入OMPL</v-tab>
+    </v-tabs>
 
-        <div class="text-center mx-auto">
-          <v-btn color="primary" :loading="loading" @click="add"> 添加 </v-btn>
-        </div>
-        <v-card-actions>
-          <v-btn href="https://toprss.webfollow.cc/">看看别人都订阅了啥</v-btn>
-        </v-card-actions>
-      </v-card-text>
-    </v-card>
+    <v-card-text class="mt-6">
+      <v-tabs-window v-model="tab">
+        <v-tabs-window-item value="rss">
+          <v-text-field
+            v-model="value"
+            label="RSS网址"
+            required
+            @keyup.enter="add"
+          ></v-text-field>
+          <div class="text-center mx-auto">
+            <v-btn color="primary" :loading="loading" @click="add">
+              添加
+            </v-btn>
+          </div>
+        </v-tabs-window-item>
+
+        <v-tabs-window-item value="ompl">
+          <v-file-input
+            v-model="omplFile"
+            label="选择OMPL文件"
+            accept=".opml"
+            @change="importOmpl"
+            required
+          ></v-file-input>
+          <div class="text-center mx-auto">
+            <v-btn color="primary" :loading="loading" @click="importOmpl">
+              导入OMPL
+            </v-btn>
+          </div>
+        </v-tabs-window-item>
+      </v-tabs-window>
+    </v-card-text>
+    <v-card-actions>
+      <v-btn href="https://toprss.webfollow.cc/">看看别人都订阅了啥</v-btn>
+    </v-card-actions>
   </div>
 </template>
 
@@ -28,6 +51,9 @@ import { useAppStore } from "@/store";
 
 const appStore = useAppStore();
 const loading = ref(false);
+const value = ref("");
+const omplFile = ref(null); // 用于存储OMPL文件
+const tab = ref("rss"); // 默认选中导入RSS选项卡
 
 async function add() {
   try {
@@ -43,7 +69,33 @@ async function add() {
   loading.value = false;
 }
 
-const value = ref("");
+async function importOmpl() {
+  if (!omplFile.value) {
+    alert("请先选择OMPL文件");
+    return;
+  }
+
+  try {
+    loading.value = true;
+    const formData = new FormData();
+    formData.append("file", omplFile.value);
+    await extFeed(
+      { group_id: 0, as: "import_opml" },
+      {
+        body: formData,
+        method: "POST",
+      }
+    );
+    omplFile.value = null; // 清空文件输入
+    setTimeout(() => {
+      appStore.sync("sync2local");
+    }, 2000);
+  } catch (e) {
+    console.log(e);
+    alert("导入失败，请检查OMPL文件是否正确");
+  }
+  loading.value = false;
+}
 </script>
 
 <style scoped>

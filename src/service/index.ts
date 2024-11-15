@@ -20,9 +20,9 @@ export async function getItemTotal(): Promise<number> {
  * 刷新同步数据到本地
  */
 export async function sync() {
-    await isDbExists()
+    await isDbExists();
 
-    await groupRepo.count();
+    // await groupRepo.count();
     // console.log(await favicons({id:1}));
     // 同步group
     (await groups()).groups.forEach((g: any) => {
