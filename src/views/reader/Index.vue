@@ -4,7 +4,7 @@
       <div class="prepend-bar">
         <slot name="prepend-bar"></slot>
       </div>
-      <div class="top-sider-title mx-auto">
+      <div class="top-sider-title mx-auto w-100">
         <v-dialog-transition>
           <v-card-title
             class="text-truncate"
