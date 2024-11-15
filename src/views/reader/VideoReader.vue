@@ -24,6 +24,12 @@
         class="iframe"
         :src="videoUrl()"
         frameborder="0"
+        allow="fullscreen;"
+        allowfullscreen="allowfullscreen"
+        mozallowfullscreen="mozallowfullscreen"
+        msallowfullscreen="msallowfullscreen"
+        oallowfullscreen="oallowfullscreen"
+        webkitallowfullscreen="webkitallowfullscreen"
       ></iframe>
       <div class="mt-6" v-html="item.html"></div>
     </div>
