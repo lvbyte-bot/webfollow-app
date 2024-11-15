@@ -5,7 +5,11 @@
         <!-- 左侧导航菜单 -->
         <v-col cols="3" class="pr-0">
           <v-list rounded>
-            <v-list-item subtitle="hello webfollow" title="guest" class="mb-6">
+            <v-list-item
+              subtitle="hello webfollow"
+              :title="appStore.authInfo.username"
+              class="mb-6"
+            >
               <template #prepend>
                 <v-avatar
                   size="36px"
