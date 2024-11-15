@@ -2,7 +2,7 @@
 
 const key: string = '352E55075E6B8487D6BC55B6463B9141'
 
-const url: string = '/fever/'//localStorage.getItem('url') || 'https://api.webfollow.cc/plugins/fever/'
+const url: string = localStorage.getItem('url') || 'https://api.webfollow.cc/plugins/fever/'
 
 export async function request(params0: any, options: any = {
     method: "POST",
