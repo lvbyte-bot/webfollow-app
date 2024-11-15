@@ -1,7 +1,7 @@
 <template>
   <v-list-item class="magazine-item py-3">
     <div class="magazine">
-      <v-icon :color="item.isRead ? 'grey' : 'primary'">
+      <v-icon :color="item.isRead ? '-' : 'primary'">
         {{ item.isRead ? "" : "mdi-circle-medium" }}
       </v-icon>
       <div>

@@ -65,10 +65,6 @@ function getSource() {
   max-width: 760px;
   margin: 0 auto;
 }
-.content {
-  max-width: 730px;
-  margin: 0 auto;
-}
 .basic-reader {
   background-color: rgb(var(--v-theme-background));
 }
@@ -82,33 +78,6 @@ function getSource() {
 }
 </style>
 <style>
-.content {
-  padding: 0.5rem;
-  line-height: var(--line-height);
-  * {
-    max-width: 100%;
-  }
-  h1,
-  h2,
-  h3,
-  h4 {
-    margin-top: var(--line-height);
-    margin-bottom: 1rem;
-  }
-  p {
-    padding: 0.8rem 0;
-  }
-  pre {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    background-color: rgba(var(--v-theme-on-code), 0.9);
-    color: rgb(var(--v-theme-code));
-    padding: 1rem;
-    border-radius: 0.5rem;
-    font-family: var(--code-font);
-  }
-}
-
 .bar-left {
   width: 150px;
 }

@@ -272,11 +272,16 @@ function filterItem0(item: Item, itemIdFilter: (id: any) => boolean, onlyUnread:
 function map(item: Item): FeedItem {
     const html = md2html(item.description)
     const imgs = extImgs(html)
-    const thumbnail: string | undefined = imgs && imgs.length > 0 ? imgs[0] : undefined
+    let thumbnail: string | undefined = imgs && imgs.length > 0 ? imgs[0] : undefined
     const text = extText(html)
     let type: string = ItemType[imgs.length > 5 && imgs.length * 50 > text.length ? ItemType.IMAGE : ItemType.BASIC]
     if (item.enclosure) {
         type = ItemType[ItemType.PODCAST]
+        const strs = item.enclosure.split('.')
+        if (strs.length && strs[strs.length - 1] == 'jpg') {
+            type = ItemType[ItemType.VIDEO]
+            thumbnail = item.enclosure
+        }
     }
     const summary: string = text && text.length > 36 ? text.substring(0, 36) : text
     const d: number = item.pubDate * 1000

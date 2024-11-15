@@ -74,9 +74,8 @@
         ></iframe>
         <image-reader :item="item" v-else-if="item?.type == 'IMAGE'" />
         <basic-reader v-else-if="item?.type == 'BASIC'" :item="item" />
-
         <podcast-reader :item="item" v-else-if="item?.type == 'PODCAST'" />
-        <video-reader v-else-if="item.type == 'VIDEO'" />
+        <video-reader :item="item" v-else-if="item.type == 'VIDEO'" />
       </slot>
     </v-container>
   </div>
@@ -188,5 +187,34 @@ function getSource() {
   width: 100%;
   height: calc(100vh - 102px);
   z-index: 10;
+}
+
+:deep(.reader-warp) .content {
+  max-width: 730px;
+  margin: 0 auto;
+  padding: 0.5rem;
+  line-height: var(--line-height);
+  * {
+    max-width: 100%;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin-top: var(--line-height);
+    margin-bottom: 1rem;
+  }
+  p {
+    padding: 0.8rem 0;
+  }
+  pre {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    background-color: rgba(var(--v-theme-on-code), 0.9);
+    color: rgb(var(--v-theme-code));
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-family: var(--code-font);
+  }
 }
 </style>
