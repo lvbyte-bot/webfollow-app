@@ -91,7 +91,7 @@ async function importOmpl() {
       appStore.sync("sync2local");
     }, 2000);
   } catch (e) {
-    console.log(e);
+    // console.log(e);
     alert("导入失败，请检查OMPL文件是否正确");
   }
   loading.value = false;

@@ -279,7 +279,7 @@ async function loadData(
 async function initData(page0: number = 0) {
   loading.value = true;
   page = page0;
-  log(onlyUnread.value);
+  // log(onlyUnread.value);
   if (props.type == "f") {
     await loadData(Number(props.id), LsItemType.FEED, page, onlyUnread.value);
   } else if (props.type == "c") {

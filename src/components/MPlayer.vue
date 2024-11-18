@@ -92,7 +92,7 @@ const setDuration = () => {
 };
 
 const seek = () => {
-  console.log(currentTime.value);
+  // console.log(currentTime.value);
   if (audio.value) {
     audio.value.currentTime = currentTime.value;
   }
