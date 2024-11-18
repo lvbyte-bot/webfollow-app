@@ -102,7 +102,29 @@
 
       <v-container class="mx-auto items-warp">
         <v-expand-y-transition>
-          <div v-show="loading" class="ma-6 text-center">
+          <v-alert
+            class="my-3"
+            v-show="appStore.nav.isFailure"
+            border="top"
+            border-color="warning"
+          >
+            <div class="d-flex justify-space-between mb-3">
+              <v-icon class="mr-3">mdi-alert-circle-outline</v-icon>
+              此订阅源有问题。请检查并在必要时重新订阅。
+              <v-btn
+                class="ml-3"
+                size="small"
+                variant="text"
+                :href="appStore.nav.url"
+              >
+                查看订阅源
+              </v-btn>
+            </div>
+          </v-alert>
+          <div
+            v-show="!appStore.nav.isFailure && loading"
+            class="ma-6 text-center"
+          >
             <div class="rotating">
               <v-icon>mdi-loading</v-icon>
             </div>

@@ -29,12 +29,14 @@
                     </v-list-item>
                 </template>
                 <v-list-item title="全部" :value="'/c/' + gItem.id" :to="'/c/' + gItem.id"> </v-list-item>
-                <v-list-item v-for="subItem in gItem.feeds" :key="gItem.id+'-'+subItem.id" :title="subItem.title" :value="gItem.id+'-'+subItem.id"
+                <v-list-item v-for="subItem in gItem.feeds" :key="gItem.id+'-'+subItem.id" :value="gItem.id+'-'+subItem.id" :class="subItem.isFailure?'text-red-accent-3':''"
                     :to="'/f/' + subItem.id" @contextmenu.prevent="showContextMenu($event, subItem)">
                     <template #prepend>
                         <img :src="subItem.icon" onerror="this.src='/logo.svg'" width="18">
                         </img>
                     </template>
+                    <v-list-item-title  v-text="subItem.title">
+                    </v-list-item-title>
                     <template v-slot:append>
                         <small v-if="subItem.unreadQty" v-text="subItem.unreadQty"></small>
                     </template>

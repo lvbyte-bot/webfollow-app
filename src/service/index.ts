@@ -1,6 +1,6 @@
 import { groupRepo, feedRepo, itemRepo, Feed, Group, Item, isDbExists, Page } from '../repository'
 
-import { groups, items, feeds, listUnreadItemIds, listSavedItemIds, mark } from '../api'
+import { groups, items, feeds, listUnreadItemIds, listSavedItemIds, ext, mark } from '../api'
 
 import { FeedItem, ItemType, Subscription, SubscriptionFeed, LsItemType } from './types';
 
@@ -182,6 +182,15 @@ export async function listUnreadIds(): Promise<number[]> {
  */
 export async function listSavedIds(): Promise<number[]> {
     const idstr = (await listSavedItemIds()).saved_item_ids
+    return idstr.length ? idstr.split(',').map((id: string) => Number(id)) : []
+}
+
+/**
+ * 
+ * @returns 出现错误的feed
+ */
+export async function listFailFeedIds(): Promise<number[]> {
+    const idstr = (await ext('fail_feed_ids')).fail_feed_ids
     return idstr.length ? idstr.split(',').map((id: string) => Number(id)) : []
 }
 

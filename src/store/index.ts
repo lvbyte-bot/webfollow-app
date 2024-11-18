@@ -75,6 +75,7 @@ export const useAppStore = defineStore('app', () => {
 
 
     function initNav(v: PageRoute) {
+        nav.isFailure = false
         switch (v.type) {
             case LsItemType.ALL:
                 nav.title = '全部文章'
@@ -96,6 +97,8 @@ export const useAppStore = defineStore('app', () => {
                 if (fs?.length) {
                     nav.title = fs[0].title
                     nav.qty = fs[0].unreadQty
+                    nav.isFailure = fs[0].isFailure
+                    nav.url = fs[0].url
                 }
                 return
         }

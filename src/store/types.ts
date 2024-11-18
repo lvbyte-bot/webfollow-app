@@ -4,7 +4,9 @@ import {
 
 export interface TopNav {
     title?: string,
-    qty?: number
+    qty?: number,
+    isFailure?: boolean
+    url?: string
 }
 
 export interface PageRoute {

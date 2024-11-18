@@ -23,6 +23,7 @@ import { feedRepo, Group, itemRepo } from '@/repository'
 export const useFeedsStore = defineStore('feeds', () => {
     const {
         unread_item_ids,
+        fail_feed_ids
     } = useBaseStore()
     const groups: Ref<Group[]> = ref([])
     const route = useRoute()
@@ -34,11 +35,14 @@ export const useFeedsStore = defineStore('feeds', () => {
     let readUrls: any[] = []
 
     async function initFeeds() {
+        // init  subscriptions
+        const efids = new Set(fail_feed_ids)
         const items = await itemRepo.listAll(undefined)
         subscriptions.value = await Promise.all(data.value?.map(async g => {
             try {
                 await Promise.all(g.feeds.map(async f => {
                     f.unreadQty = await sumUnread(items, f.id, unread_item_ids)
+                    f.isFailure = efids.has(f.id)
                 }));
                 g.unreadQty = g.feeds.map(f => f.unreadQty).reduce((x, y) => x + y)
                 return g
@@ -46,6 +50,7 @@ export const useFeedsStore = defineStore('feeds', () => {
                 return g
             }
         }) || [])
+        // init readUrls
         readUrls = [{ url: '/all' }, { url: '/next' }]
         subscriptions.value.forEach(g => {
             readUrls.push({ url: '/c/' + g.id, unreadQty: g.unreadQty })

@@ -4,7 +4,7 @@ export interface Subscription {
     id: number,
     title: string,
     unreadQty?: number
-    feeds: any[]
+    feeds: SubscriptionFeed[]
 }
 
 export interface SubscriptionFeed {
@@ -13,6 +13,7 @@ export interface SubscriptionFeed {
     url: string,
     siteUrl: string,
     unreadQty: number,
+    isFailure?: boolean,
     icon?: string,
     groupId?: number
 }
