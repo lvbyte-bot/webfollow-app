@@ -39,7 +39,7 @@
     </v-dialog-transition>
     <!-- items -->
     <div class="main-container" ref="mainRef">
-      <div class="top-sider">
+      <div class="top-bar">
         <div class="v-toolbar-title v-app-bar-title text-truncate">
           {{ (appStore.nav && appStore.nav.title) || "未分类" }}
           <small
@@ -122,7 +122,7 @@
             </div>
           </v-alert>
           <div
-            v-show="!appStore.nav.isFailure && loading"
+            v-show="!appStore.nav.isFailure && (loading || appStore.loading)"
             class="ma-6 text-center"
           >
             <div class="rotating">
@@ -393,7 +393,7 @@ watch(props, () => {
     transform: rotate(360deg);
   }
 }
-.top-sider {
+.top-bar {
   position: sticky !important;
   top: 0;
   z-index: 10;
@@ -402,7 +402,7 @@ watch(props, () => {
   grid-template-columns: 1fr auto;
   align-items: center;
   padding: 0 1rem 0 1rem;
-  border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  // border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
 
   height: 64px;
   &:last-child {
@@ -494,9 +494,9 @@ watch(props, () => {
     resize: horizontal;
     min-width: 360px;
     max-width: 36vw;
-    width: 360px;
+    width: 380px;
     background-color: rgb(var(--sidbar-bg));
-    .top-sider {
+    .top-bar {
       background-color: rgb(var(--sidbar-bg));
     }
   }

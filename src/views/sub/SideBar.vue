@@ -190,7 +190,7 @@ async function onDelete() {
     top: 0;
     z-index: 10;
     background-color: rgb(var(--sidbar-bg)); /** rgb(var(--v-theme-background)); */
-    border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+    /* border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)); */
 }
 
 .plus {
