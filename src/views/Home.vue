@@ -206,7 +206,7 @@ onMounted(() => {
   flex: 1;
 }
 .hideside {
-  .top-sider .v-app-bar-title {
+  .top-bar .v-app-bar-title {
     margin-left: 3rem;
   }
 }

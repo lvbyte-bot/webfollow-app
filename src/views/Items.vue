@@ -108,7 +108,7 @@
             border="top"
             border-color="warning"
           >
-            <div class="d-flex justify-space-between mb-3">
+            <div class="d-flex justify-space-between">
               <v-icon class="mr-3">mdi-alert-circle-outline</v-icon>
               此订阅源有问题。请检查并在必要时重新订阅。
               <v-btn

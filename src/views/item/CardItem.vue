@@ -4,74 +4,78 @@
       v-if="item.thumbnail"
       class="align-end text-white"
       max-height="200px"
+      width="100%"
+      :title="item.title"
       :src="
         item.thumbnail
           ? item.thumbnail
           : 'http://img.netbian.com/file/2024/0515/191947LFJ2P.jpg'
       "
     >
-      <v-card-title class="bg-cover" v-text="item.title"></v-card-title>
+  
     </v-img>
-    <template v-else>
-      <v-card-title v-text="item.title"></v-card-title>
-    </template>
+    <p class="text-truncate mt-3 mx-3 text-body-2" >
 
-    <v-card-subtitle class="pt-4">
-      {{ getSubtitle() }}
-    </v-card-subtitle>
-    <v-card-text>
-      <p class="color-surface" v-text="item.summary"></p>
-    </v-card-text>
-    <v-card-actions>
       <v-icon
-        class="ml-1"
+        v-if="!item.isRead"
+        style="margin-left: -5px;"
         color="primary"
         :icon="item.isRead ? '' : 'mdi-circle-medium'"
       ></v-icon>
-      <v-spacer></v-spacer>
-      <v-btn
-          class="button"
-          size="small"
-          variant="text"
-          icon
-          :title="item.feed?.title"
-          :to="'/f/' + item?.feed?.id"
-          @click.stop="()=>{}"
-        >
-        <img class="noclick" :src=" item?.feed?.icon" onerror="this.src='/logo.svg'" style="width:16px">
+      <span v-text="item.title"></span>
+      <div class="mt-2 d-flex">
+        <div class="mr-2">
+          <img  :src=" item?.feed?.icon" onerror="this.src='/logo.svg'" style="width:1rem">
         </img>
-      </v-btn>
-      <v-btn
-        class="button"
-        size="small"
-        variant="text"
-        icon
-        :title="item.isRead ? '未读' : '已读'"
-        @click.stop="toggleRead"
-      >
-        <v-icon>{{
-          item.isRead ? "mdi-radiobox-blank" : "mdi-radiobox-marked"
-        }}</v-icon>
-      </v-btn>
-      <v-btn
-        class="button"
-        icon="mdi-open-in-new"
-        variant="text"
-        title="打开原文"
-        :href="item.link"
-      ></v-btn>
-      <v-btn
-        class="button"
-        variant="text"
-        icon
-        title="稍后阅读"
-        @click.stop="toggleSaved"
-      >
-        <v-icon>{{
-          item.isSaved ? "mdi-playlist-minus" : "mdi-playlist-plus"
-        }}</v-icon>
-      </v-btn>
-    </v-card-actions>
+        </div>
+        {{ getSubtitle() }}
+      </div>
+    </p>
+    <v-card-actions class="bg-cover">
+     <v-spacer></v-spacer>
+     <v-btn
+         class="button"
+         size="small"
+         variant="text"
+         icon
+         :title="item.feed?.title"
+         :to="'/f/' + item?.feed?.id"
+         @click.stop="()=>{}"
+       >
+       <img class="noclick" :src=" item?.feed?.icon" onerror="this.src='/logo.svg'" style="width:16px">
+       </img>
+     </v-btn>
+     <v-btn
+       class="button"
+       size="small"
+       variant="text"
+       icon
+       :title="item.isRead ? '未读' : '已读'"
+       @click.stop="toggleRead"
+     >
+       <v-icon>{{
+         item.isRead ? "mdi-radiobox-blank" : "mdi-radiobox-marked"
+       }}</v-icon>
+     </v-btn>
+     <v-btn
+       class="button"
+       icon="mdi-open-in-new"
+       variant="text"
+       title="打开原文"
+       :href="item.link"
+     ></v-btn>
+     <v-btn
+       class="button"
+       variant="text"
+       icon
+       title="稍后阅读"
+       @click.stop="toggleSaved"
+     >
+       <v-icon>{{
+         item.isSaved ? "mdi-playlist-minus" : "mdi-playlist-plus"
+       }}</v-icon>
+     </v-btn>
+   </v-card-actions>
   </v-card>
 </template>
 <script setup lang="ts">
@@ -107,8 +111,14 @@ function getSubtitle() {
 </script>
 <style scoped>
 .bg-cover {
-  background-color: rgba(var(--v-theme-surface-variant), 0.8);
+  background-color: rgba(var(--v-theme-background), .8);
+  position: absolute;
+  width: 100%;
+  padding: 0;
+  bottom:  0;
+  opacity: 0;
 }
+
 .v-card .button {
   opacity: 0;
   transition: opacity 0.3s;
@@ -118,6 +128,9 @@ function getSubtitle() {
 }
 
 .v-card:hover .button {
+  opacity: 1;
+}
+.v-card:hover .bg-cover {
   opacity: 1;
 }
 </style>
