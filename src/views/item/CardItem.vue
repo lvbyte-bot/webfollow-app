@@ -14,7 +14,7 @@
     >
   
     </v-img>
-    <p class="text-truncate mt-3 mx-3 text-body-2" >
+    <p class="text-truncate mt-3 mx-3 text-body" >
 
       <v-icon
         v-if="!item.isRead"
@@ -23,7 +23,7 @@
         :icon="item.isRead ? '' : 'mdi-circle-medium'"
       ></v-icon>
       <span v-text="item.title"></span>
-      <div class="mt-2 d-flex">
+      <div class="my-2 d-flex text-body-2">
         <div class="mr-2">
           <img  :src=" item?.feed?.icon" onerror="this.src='/logo.svg'" style="width:1rem">
         </img>
@@ -111,12 +111,13 @@ function getSubtitle() {
 </script>
 <style scoped>
 .bg-cover {
-  background-color: rgba(var(--v-theme-background), .8);
+  background-color: rgba(var(--v-theme-background), .9);
   position: absolute;
   width: 100%;
   padding: 0;
   bottom:  0;
   opacity: 0;
+  min-height: 64px;
 }
 
 .v-card .button {
