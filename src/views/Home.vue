@@ -4,7 +4,7 @@
       <v-navigation-drawer class="sidebar-warp" v-if="mobile" v-model="show">
         <SideBar></SideBar>
       </v-navigation-drawer>
-      <v-navigation-drawer color="#29292d" v-else :model-value="!hideSide" rail>
+      <v-navigation-drawer v-else :model-value="!hideSide" rail>
         <v-list-item
           class="my-2"
           prepend-avatar="/logo.svg"

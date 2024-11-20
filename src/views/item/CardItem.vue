@@ -14,7 +14,7 @@
     >
   
     </v-img>
-    <p class="text-truncate mt-3 mx-3 text-body" >
+    <div class="text-truncate mt-3 mx-3 text-body" >
 
       <v-icon
         v-if="!item.isRead"
@@ -30,7 +30,7 @@
         </div>
         {{ getSubtitle() }}
       </div>
-    </p>
+    </div>
     <v-card-actions class="bg-cover">
      <v-spacer></v-spacer>
      <v-btn
@@ -59,6 +59,7 @@
      </v-btn>
      <v-btn
        class="button"
+       size="small"
        icon="mdi-open-in-new"
        variant="text"
        title="打开原文"
@@ -66,6 +67,7 @@
      ></v-btn>
      <v-btn
        class="button"
+       size="small"
        variant="text"
        icon
        title="稍后阅读"
@@ -118,6 +120,7 @@ function getSubtitle() {
   bottom:  0;
   opacity: 0;
   min-height: 64px;
+  padding: 1rem;
 }
 
 .v-card .button {

@@ -29,6 +29,9 @@ html {
 #app .v-list-group {
   --prepend-width: 1rem;
 }
+#app .v-list-item--density-default.v-list-item--one-line {
+  min-height: calc(2rem + 4px);
+}
 .page {
   /* text-align: center; */
   padding: 1rem 1rem;

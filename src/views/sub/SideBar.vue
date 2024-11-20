@@ -16,7 +16,8 @@
                 </v-list-item>
             </div>
             <v-list-subheader>FEEDS</v-list-subheader>
-            <v-list-group v-for="gItem in feedStore.subscriptions" :key="'c/' + gItem.id">
+            <template v-for="gItem in feedStore.subscriptions">
+            <v-list-group   v-if="gItem.feeds.length">
                 <template v-slot:activator="{ isOpen, props }">
                     <v-list-item v-bind="props" :title="gItem.title">
                         <template #prepend>
@@ -32,7 +33,7 @@
                 <v-list-item v-for="subItem in gItem.feeds" :key="gItem.id+'-'+subItem.id" :value="gItem.id+'-'+subItem.id" :class="subItem.isFailure?'text-red-accent-3':''"
                     :to="'/f/' + subItem.id" @contextmenu.prevent="showContextMenu($event, subItem)">
                     <template #prepend>
-                        <img :src="subItem.icon" onerror="this.src='/logo.svg'" width="18">
+                        <img :src="subItem.icon" onerror="this.src='/logo.svg'" width="16">
                         </img>
                     </template>
                     <v-list-item-title  v-text="subItem.title">
@@ -42,6 +43,7 @@
                     </template>
                 </v-list-item>
             </v-list-group>
+            </template>
         </v-list>
 
         <div v-if="mobile" class="plus mx-auto">
