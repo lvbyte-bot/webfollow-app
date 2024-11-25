@@ -142,6 +142,8 @@ onMounted(() => {
   if (route.fullPath == "/") {
     if (startPage == "all") {
       router.push("/all");
+    } else if (startPage == "recom") {
+      router.push("/recom");
     } else if (startPage == "next") {
       router.push("/next");
     } else {

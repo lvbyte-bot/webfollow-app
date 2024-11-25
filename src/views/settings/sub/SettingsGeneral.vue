@@ -7,6 +7,7 @@
         <v-radio-group v-model="data.startPage">
           <v-radio label="全部文章" value="all"></v-radio>
           <v-radio label="稍后阅读" value="next"></v-radio>
+          <v-radio label="猜你喜欢" value="recom"></v-radio>
           <v-radio label="第一个文件夹" value="firstfolder"></v-radio>
         </v-radio-group>
       </v-card-text>
