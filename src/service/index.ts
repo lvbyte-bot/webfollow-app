@@ -6,11 +6,19 @@ import { FeedItem, ItemType, Subscription, SubscriptionFeed, LsItemType } from '
 
 import { html2md, md2html } from '@/utils/mdUtils';
 
+import { readItem } from './recommend';
+
 
 
 export enum Marked { ITEM, FEED, GROUP }
 
 const feedsCache: any = {}
+
+let ranks = {}
+
+export function setRanks(ranks0: any) {
+    ranks = ranks0
+}
 
 export async function getItemTotal(): Promise<number> {
     return await itemRepo.count()
@@ -124,10 +132,14 @@ export async function listItem(id: any, type: LsItemType, page: number = 0, only
         case LsItemType.ALL:
             res = (await itemRepo.findAll(item => filterItem0(item, () => true, onlyUnread, unReadItemIds), page))
             break
+        case LsItemType.RECOMMEND:
+            // const ranks = { 366: 0.1, 117: 0.5 }//listRank({ 132: -1 })
+            res = await itemRepo.findTimeAll(Math.floor(new Date().getTime() / 1000) - 3600 * 24 * 3, ranks, item => filterItem0(item, () => true, onlyUnread, unReadItemIds), page)
+            break
         default:
             throw Error('error')
     }
-    res.data.sort((x: Item, y: Item) => y.pubDate - x.pubDate)
+    res.data.sort((x: Item, y: Item) => x.rank && y.rank ? x.rank - y.rank : y.pubDate - x.pubDate)
     return { data: res.data.map(map), isLast: res.isLast }
 }
 
@@ -201,7 +213,10 @@ export async function listFailFeedIds(): Promise<number[]> {
  * @param before 时间戳
  * @returns 
  */
-export async function read(id: number, marked: Marked, before?: number): Promise<any> {
+export async function read(id: number, marked: Marked, before?: number, feedId?: number): Promise<any> {
+    if (marked == Marked.ITEM && feedId) {
+        readItem(feedId, id)
+    }
     if (id == -1 && marked == Marked.GROUP) {
         return Promise.all((await feedRepo.getAll()).map(item => item.id).map(id => {
             return mark({

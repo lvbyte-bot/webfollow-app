@@ -18,5 +18,6 @@ export interface Item extends DbStore {
     description: string;
     pubDate: number;
     link: string;
-    enclosure?: string
+    enclosure?: string,
+    rank?: number
 }

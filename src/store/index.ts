@@ -3,7 +3,8 @@ import { defineStore, storeToRefs } from 'pinia'
 import { useBaseStore } from './base'
 import { useFeedsStore } from './feeds'
 import { useItemsStore } from './items'
-import { sync as sync2local } from '@/service'
+import { sync as sync2local, setRanks } from '@/service'
+import { ranks as getRanks } from '@/service/recommend'
 import { clearIndexedDB } from '@/utils/dbHelper'
 import { computed, Ref, watch, ref, onMounted, reactive, Reactive } from 'vue'
 import { PageRoute, TopNav } from './types'
@@ -14,7 +15,7 @@ type SyncType = '' | 'sync2local'
 
 export const useAppStore = defineStore('app', () => {
     const {
-        saved_item_ids, unread_item_ids, read, unread, save, unsave, refresh
+        saved_item_ids, unread_item_ids, read, unread, save, unsave, refresh, clearFailFeedIds
     } = useBaseStore()
     const { refresh: refreshFeed } = useFeedsStore()
     const { subscriptions } = storeToRefs(useFeedsStore())
@@ -25,24 +26,29 @@ export const useAppStore = defineStore('app', () => {
     const nav: Reactive<TopNav> = reactive({ title: 'loading' })
 
     async function sync(type: SyncType = '') {
-
+        lastRefeshTime.value = new Date().getTime()
         if (type == '') {
             await refresh(async () => {
                 loading.value = true
                 await sync2local()
                 await refreshFeed()
+                setRanks(await getRanks())
                 await refreshItems()
                 log('sync end')
                 loading.value = false
+            }, async () => {
+                setRanks(await getRanks())
+                await refreshItems()
             })
+
         } else if (type = 'sync2local') {
             loading.value = true
             await sync2local()
+            setRanks(await getRanks())
             await refreshFeed()
             log('sync end')
             loading.value = false
         }
-
         setTimeout(() => initNav(pageRoute), 1000)
         lastRefeshTime.value = new Date().getTime()
     }
@@ -51,6 +57,9 @@ export const useAppStore = defineStore('app', () => {
         await clearIndexedDB()
         saved_item_ids.clear()
         unread_item_ids.clear()
+        clearFailFeedIds()
+        localStorage.removeItem('app-settings')
+        localStorage.removeItem('readfeeds')
         setTimeout(async () => {
             authInfo.value = JSON.parse(localStorage.getItem('auth') || '{"username":"guest"}')
             await refreshFeed()
@@ -92,6 +101,10 @@ export const useAppStore = defineStore('app', () => {
                     nav.qty = ga[0].unreadQty
                 }
                 return
+            case LsItemType.RECOMMEND:
+                nav.title = '猜你喜欢'
+                nav.qty = unReadQty.value
+                return
             case LsItemType.FEED:
                 let fs = subscriptions?.value?.flatMap(g => g.feeds).filter(f => f.id == v.id)
                 if (fs?.length) {
@@ -103,6 +116,7 @@ export const useAppStore = defineStore('app', () => {
                 return
         }
     }
+
 
 
     return { reloadBuild, sync, loading, read, unread, save, unsave, savedQty, unReadQty, authInfo, lastRefeshTime, nav }

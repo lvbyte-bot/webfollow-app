@@ -40,15 +40,15 @@ export const useItemsStore = defineStore('items', () => {
     }))
 
     async function loadData(id: any, type: LsItemType, page: number = 0, onlyUnread: boolean = false) {
-        if (page == 0) {
-            data.value = []
-        }
         cacheLoadParams = { id, type, page, onlyUnread }
         id = type == LsItemType.SAVED ? saved_item_ids : id
         id = type == LsItemType.ALL ? null : id
         pageRoute.id = id
         pageRoute.type = type
         const r = await listItem(id, type, page, onlyUnread, unread_item_ids)
+        if (page == 0) {
+            data.value = []
+        }
         r?.data.forEach((item) => data.value?.push(item))
         isLast.value = r?.isLast
     }

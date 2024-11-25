@@ -237,7 +237,6 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
             const transaction = db!.transaction(storeName, 'readonly');
             const store = transaction.objectStore(storeName);
             const countRequest = store.count();
-
             countRequest.onsuccess = () => {
                 resolve(countRequest.result);
             };
@@ -248,6 +247,15 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
         });
     }
 
+
+
+    async function openStore(storeName: string): Promise<IDBObjectStore> {
+        const db = await openDatabase()
+        const transaction = db.transaction([storeName], 'readonly');
+        return transaction.objectStore(storeName);
+    }
+
+
     return {
         create,
         read,
@@ -257,7 +265,8 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
         findAll,
         listAll,
         whereOne,
-        count
+        count,
+        openStore
     };
 }
 
@@ -334,6 +343,48 @@ export function clearIndexedDB(dbName: string = 'WebFollowDatabase'): Promise<vo
         request.onerror = (error: Event) => {
             console.error('打开数据库时出错:', error);
             reject(error); // 打开数据库出错，拒绝 Promise
+        };
+    });
+}
+
+
+export async function withCursor<T>(
+    request: IDBRequest<IDBCursorWithValue | null>,
+    processItem: (item: T, cursor: IDBCursorWithValue | null) => [T | null, boolean],
+    sortFn?: (a: T, b: T) => number
+): Promise<T[]> {
+    return new Promise((resolve, reject) => {
+        const result: T[] = [];
+        request.onsuccess = function (event) {
+            const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
+            if (cursor) {
+                const [item, hasNext] = processItem(cursor.value, cursor);
+                if (item) {
+                    result.push(item)
+                }
+                if (hasNext) {
+                    cursor.continue();
+                }
+            } else {
+                if (sortFn) {
+                    result.sort(sortFn);
+                }
+                resolve(result);
+            }
+        };
+        request.onerror = () => {
+            reject('Error processing cursor');
+        };
+    });
+}
+
+export async function getOne<T>(request: IDBRequest<T>): Promise<T> {
+    return new Promise((resolve, reject) => {
+        request.onsuccess = function () {
+            resolve(request.result)
+        };
+        request.onerror = () => {
+            reject('Error processing cursor');
         };
     });
 }

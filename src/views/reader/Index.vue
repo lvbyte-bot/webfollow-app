@@ -91,6 +91,7 @@ import BasicReader from "./BasicReader.vue";
 import ImageReader from "./ImageReader.vue";
 import VideoReader from "./VideoReader.vue";
 import PodcastReader from "./PodcastReader.vue";
+import { Marked } from "@/service";
 
 const readerRef = ref();
 
@@ -108,20 +109,33 @@ useSideChapter(description, readerRef, {
   value: () => document.getElementById("chapters"),
 });
 
-watch(description, () => {
-  setTimeout(() => {
-    readerRef.value.scrollTop = 0;
-  }, 100);
-  if (!props.item.isRead && props.item.id) {
-    appStore.read(Number(props.item.id));
+watch(
+  () => props.item.id,
+  () => {
+    setTimeout(() => {
+      readerRef.value.scrollTop = 0;
+    }, 100);
+    if (!props.item.isRead && props.item.id) {
+      appStore.read(
+        Number(props.item.id),
+        Marked.ITEM,
+        appStore.lastRefeshTime,
+        props.item.feedId
+      );
+    }
   }
-});
+);
 
 const appStore = useAppStore();
 
 onMounted(async () => {
   if (!props.item.isRead && props.item.id) {
-    appStore.read(Number(props.item.id));
+    appStore.read(
+      Number(props.item.id),
+      Marked.ITEM,
+      appStore.lastRefeshTime,
+      props.item.feedId
+    );
   }
 });
 

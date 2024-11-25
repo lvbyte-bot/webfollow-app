@@ -12,8 +12,8 @@ export const useBaseStore = defineStore('base', () => {
     const unread_item_ids: Reactive<Set<number>> = reactive(new Set(JSON.parse(localStorage.getItem('urids') || "[]")))
     const fail_feed_ids: Reactive<Set<number>> = reactive(new Set(JSON.parse(localStorage.getItem('efids') || "[]")))
 
-    async function read(id: number, marked: Marked = Marked.ITEM, before?: number) {
-        await read0(id, marked, before)
+    async function read(id: number, marked: Marked = Marked.ITEM, before?: number, feedId?: number) {
+        await read0(id, marked, before, feedId)
         if (marked == Marked.ITEM) {
             unread_item_ids.delete(id)
         } else {
@@ -46,6 +46,10 @@ export const useBaseStore = defineStore('base', () => {
         setItem('sids', saved_item_ids)
     }
 
+    function clearFailFeedIds() {
+        fail_feed_ids.clear()
+        localStorage.removeItem('efids')
+    }
 
     async function initData(urids: number[], sids: number[], efids: number[]) {
         sids.forEach((item: number) => saved_item_ids.add(item));
@@ -56,7 +60,7 @@ export const useBaseStore = defineStore('base', () => {
         localStorage.setItem('efids', JSON.stringify(efids))
     }
 
-    async function refresh(cb: () => {}) {
+    async function refresh(cb: () => {}, emptCb: () => {}) {
         const d = await listUnreadIds()
         // 非标准接口
         let fids: number[] = []
@@ -70,10 +74,12 @@ export const useBaseStore = defineStore('base', () => {
             saved_item_ids.clear()
             initData(d, await listSavedIds(), fids)
             await cb()
+        } else {
+            await emptCb()
         }
 
     }
 
-    return { saved_item_ids, unread_item_ids, fail_feed_ids, read, unread, save, unsave, refresh }
+    return { saved_item_ids, unread_item_ids, fail_feed_ids, read, unread, save, unsave, refresh, clearFailFeedIds }
 })
 

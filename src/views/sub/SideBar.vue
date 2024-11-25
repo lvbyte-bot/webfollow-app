@@ -14,6 +14,11 @@
                         <small v-if="appStore.savedQty" v-text="appStore.savedQty"></small>
                     </template>
                 </v-list-item>
+                <v-list-item prepend-icon=" mdi-rocket-launch-outline" value="recom" title="猜你喜欢" to="/recom">
+                    <template v-slot:append>
+                        <small v-if="appStore.unReadQty" v-text="appStore.unReadQty"></small>
+                    </template>
+                </v-list-item>
             </div>
             <v-list-subheader>FEEDS</v-list-subheader>
             <template v-for="gItem in feedStore.subscriptions">

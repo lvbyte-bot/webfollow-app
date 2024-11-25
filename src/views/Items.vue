@@ -310,6 +310,8 @@ async function initData(page0: number = 0) {
     await loadData(null, LsItemType.SAVED, page, onlyUnread.value);
   } else if (props.type == "all") {
     await loadData(null, LsItemType.ALL, page, onlyUnread.value);
+  } else if (props.type == "recom") {
+    await loadData(null, LsItemType.RECOMMEND, page, onlyUnread.value);
   }
   loading.value = false;
 }
