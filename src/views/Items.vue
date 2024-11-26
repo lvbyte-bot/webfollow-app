@@ -50,13 +50,15 @@
         </div>
         <div>
           <c-btn
-            :disabled="
-              (id == '-1' && type == 'c') ||
-              type == 'next' ||
-              type == 'all' ||
-              type == 'recom' ||
-              store.items?.filter((o) => !o.isRead).length == 0
+            v-show="
+              !(
+                (id == '-1' && type == 'c') ||
+                type == 'next' ||
+                type == 'all' ||
+                type == 'recom'
+              )
             "
+            :disabled="store.items?.filter((o) => !o.isRead).length == 0"
             icon
             title="标记为已读"
             @click="markRead"
