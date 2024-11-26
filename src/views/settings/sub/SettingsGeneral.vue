@@ -5,6 +5,7 @@
       <v-card-title>开始页</v-card-title>
       <v-card-text>
         <v-radio-group v-model="data.startPage">
+          <v-radio label="首页" value="home"></v-radio>
           <v-radio label="全部文章" value="all"></v-radio>
           <v-radio label="稍后阅读" value="next"></v-radio>
           <v-radio label="猜你喜欢" value="recom"></v-radio>
