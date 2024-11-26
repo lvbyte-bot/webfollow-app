@@ -44,6 +44,7 @@
           {{ (appStore.nav && appStore.nav.title) || "未分类" }}
           <small
             class="mx-3 text-medium-emphasis"
+            v-if="appStore.nav.qty"
             v-text="appStore.nav.qty"
           ></small>
         </div>
