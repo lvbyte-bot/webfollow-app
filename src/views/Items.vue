@@ -504,4 +504,14 @@ watch(props, () => {
     }
   }
 }
+@media (max-width: 760px) {
+  .main-col {
+    display: block;
+    .main-container {
+      width: 100%;
+      max-width: 100%;
+      resize: none;
+    }
+  }
+}
 </style>

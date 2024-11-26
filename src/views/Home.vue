@@ -39,14 +39,7 @@
           </v-list-item>
         </div>
       </v-navigation-drawer>
-      <v-main :class="{ cols: !mobile, hideside: hideSide }">
-        <v-btn
-          size="small"
-          class="toogle ma-1"
-          icon="mdi-menu"
-          v-if="mobile && !show"
-          @click="show = !show"
-        ></v-btn>
+      <v-main :class="{ cols: !mobile, hideside: hideSide || mobile }">
         <v-slide-x-transition>
           <div v-show="!mobile && !hideSide">
             <SideBar>
@@ -72,15 +65,21 @@
             </SideBar>
           </div>
         </v-slide-x-transition>
-        <div class="flexible" :class="{ hideside: mobile && !show }">
-          <div v-if="hideSide && !mobile" class="ma-3 menu-warp">
-            <c-btn
-              variant="text"
-              icon="mdi-menu"
-              title="打开边栏"
-              @click="hideSide = !hideSide"
-            ></c-btn>
-          </div>
+        <div class="flexible">
+          <c-btn
+            v-if="hideSide && !mobile"
+            class="ma-3 menu-warp"
+            variant="text"
+            icon="mdi-menu"
+            title="打开边栏"
+            @click="hideSide = !hideSide"
+          ></c-btn>
+          <c-btn
+            class="ma-3 menu-warp"
+            icon="mdi-menu"
+            v-if="mobile"
+            @click="show = !show"
+          ></c-btn>
           <router-view></router-view>
         </div>
       </v-main>
