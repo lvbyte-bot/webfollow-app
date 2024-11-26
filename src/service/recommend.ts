@@ -29,7 +29,7 @@ function listRank(feedItemCounts: any): any {
     for (let feedId in feeds) {
         let readQty = feeds[feedId]
         if (readQty) {
-            const rank = (readQty > feedItemCounts[feedId] ? 0 : (1 - readQty / feedItemCounts[feedId])) * 8 + (readQty / total) * 2
+            const rank = 10 - (readQty > feedItemCounts[feedId] ? 1 : (readQty / feedItemCounts[feedId])) * 7 - (readQty > total ? 1 : readQty / total) * 3
             feedranks[feedId] = rank
         }
     }

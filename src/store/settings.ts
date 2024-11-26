@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { onBeforeMount, onMounted, ref, } from 'vue'
 
 interface GeneralSettings {
-    startPage: 'all' | 'next' | 'firstfolder'
+    startPage: 'all' | 'next' | 'firstfolder' | 'recom'
     defaultView: 'text' | 'card' | 'magazine'
     hideReadArticles: boolean
     autoRefresh: boolean
