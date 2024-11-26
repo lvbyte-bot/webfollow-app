@@ -50,13 +50,6 @@
         </div>
         <div>
           <c-btn
-            :icon="onlyUnread ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'"
-            :title="onlyUnread ? '只看未读' : '看全部'"
-            @click="changeOnlyUnread(!onlyUnread)"
-            class="mr-2"
-          >
-          </c-btn>
-          <c-btn
             :disabled="
               (id == '-1' && type == 'c') ||
               type == 'next' ||
@@ -80,6 +73,13 @@
             class="mr-2"
           >
             <v-icon>{{ loading ? "mdi-loading" : "mdi-reload" }}</v-icon>
+          </c-btn>
+          <c-btn
+            :icon="onlyUnread ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'"
+            :title="onlyUnread ? '只看未读' : '看全部'"
+            @click="changeOnlyUnread(!onlyUnread)"
+            class="mr-2"
+          >
           </c-btn>
           <c-btn
             :icon="
