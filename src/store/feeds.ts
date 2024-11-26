@@ -51,7 +51,7 @@ export const useFeedsStore = defineStore('feeds', () => {
             }
         }) || [])
         // init readUrls
-        readUrls = [{ url: '/all' }, { url: '/next' }]
+        readUrls = [{ url: '/all' }, { url: '/next' }, { url: '/recom' }]
         subscriptions.value.forEach(g => {
             readUrls.push({ url: '/c/' + g.id, unreadQty: g.unreadQty })
             g.feeds.forEach(f => {

@@ -60,6 +60,7 @@
               (id == '-1' && type == 'c') ||
               type == 'next' ||
               type == 'all' ||
+              type == 'recom' ||
               store.items?.filter((o) => !o.isRead).length == 0
             "
             icon
