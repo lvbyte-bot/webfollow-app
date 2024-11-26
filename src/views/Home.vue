@@ -145,6 +145,8 @@ onMounted(() => {
       router.push("/recom");
     } else if (startPage == "next") {
       router.push("/next");
+    } else if (startPage == "home") {
+      // skip
     } else {
       if (feedStore.subscriptions.length) {
         const gid = feedStore.subscriptions[0].id;
