@@ -2,6 +2,22 @@
 
 > RSS reader suppot fever api
 
+- Strive to be the best reader experience
+- 致力成为体验最佳的阅读器
+
+## Feature
+
+- [x] text-reader
+- [x] podcast-reader
+- [x] img-reader
+- [x] video-reader
+- [x] column-view
+- [x] list-view
+- [x] card-view
+- [x] fever api
+- [x] data in local
+- [x] recommend
+
 ## Demo
 
 [online](https://webfollow.cc)
@@ -11,6 +27,7 @@
 ![](./doc/col-view.png)
 ![](./doc/text-reader.png)
 ![](./doc/podcast-reader.png)
+![](./doc/video-reader.png)
 ![](./doc/img-reader.png)
 ![](./doc/feed-items.png)
 ![](./doc/login.png)
