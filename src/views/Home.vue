@@ -34,18 +34,24 @@
         ></v-list-item>
 
         <div class="bottom">
-          <v-list-item
-            prepend-icon="mdi-playlist-music-outline"
-            value="play"
-            @click="showPlayList = !showPlayList"
-          ></v-list-item>
+          <v-list-item value="play" @click="showPlayList = !showPlayList">
+            <template #prepend>
+              <v-icon :class="{ spinner: playListStore.isPlaying }">
+                {{
+                  playListStore.isPlaying
+                    ? "mdi-music-circle-outline"
+                    : "mdi-headphones"
+                }}
+              </v-icon>
+            </template>
+          </v-list-item>
           <v-list-item class="mt-3" href="https://i.webfollow.cc">
             回到老版
           </v-list-item>
         </div>
       </v-navigation-drawer>
       <v-navigation-drawer width="320" temporary v-model="showPlayList">
-        <PlayList :item="{}"></PlayList>
+        <PlayList></PlayList>
       </v-navigation-drawer>
       <v-main :class="{ cols: !mobile, hideside: hideSide || mobile }">
         <v-slide-x-transition>
@@ -102,7 +108,12 @@ import { useDisplay } from "vuetify";
 import { useRoute, useRouter } from "vue-router";
 import { onMounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
-import { useAppStore, useSettingsStore, useFeedsStore } from "@/store";
+import {
+  useAppStore,
+  useSettingsStore,
+  useFeedsStore,
+  usePlayListStore,
+} from "@/store";
 import Settings from "./settings/Settings.vue";
 import SideBar from "./sub/SideBar.vue";
 import PlayList from "./sub/PlayList.vue";
@@ -110,6 +121,7 @@ import PlayList from "./sub/PlayList.vue";
 const appStore = useAppStore();
 const settingsStore = useSettingsStore();
 const feedStore = useFeedsStore();
+const playListStore = usePlayListStore();
 const { mobile } = useDisplay();
 const { appearance } = storeToRefs(settingsStore);
 const router = useRouter();
@@ -221,5 +233,19 @@ onMounted(() => {
   .top-bar .v-app-bar-title {
     margin-left: 3rem;
   }
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.spinner {
+  animation: rotate 2s linear infinite;
+}
+.spinner-2 {
+  animation: rotate 20s linear infinite;
 }
 </style>

@@ -1,7 +1,14 @@
 <template>
   <div class="play-list-warp">
     <div>
-      <div class="podcat-reader">
+      <v-empty-state
+        icon="mdi-headphones"
+        v-if="!store.currentPlaying"
+        height="480px"
+        text="听你喜爱的内容"
+      >
+      </v-empty-state>
+      <div v-show="store.currentPlaying" class="podcat-reader">
         <div class="warp">
           <div class="glass">
             <MPlayer
@@ -73,25 +80,19 @@ onMounted(() => {
     border-radius: 1rem;
     background: linear-gradient(
       to right bottom,
-      rgb(95, 234, 131),
-      rgb(65, 184, 131)
+      rgba(var(--v-theme-primary), 0.6),
+      rgba(var(--v-theme-primary), 1)
     );
   }
   .glass {
     height: 100%;
     display: flex;
     align-items: center;
-    padding: 20px;
-    color: white;
-    font-size: 20px;
+    padding: 1rem;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 1rem;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-  }
-  .v-card {
-    margin: 0 auto;
-    background-color: transparent;
   }
 }
 </style>

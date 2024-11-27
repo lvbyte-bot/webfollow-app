@@ -79,8 +79,8 @@ function togglePlay() {
     border-radius: 1rem;
     background: linear-gradient(
       to right bottom,
-      rgb(95, 234, 131),
-      rgb(65, 184, 131)
+      rgba(var(--v-theme-primary), 0.6),
+      rgba(var(--v-theme-primary), 1)
     );
   }
   .glass {
