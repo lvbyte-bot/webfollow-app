@@ -1,72 +1,97 @@
 src/components/MPlayer.vue
 <template>
-  <v-card flat maxWidth="300px">
-    <v-img :src="imgSrc" cover max-height="480px" class="d-flex align-center">
-      <div class="d-flex justify-center">
-        <!-- 播放暂停按钮 -->
-        <v-btn @click="togglePlay" :icon="isPlaying ? 'mdi-pause' : 'mdi-play'">
-        </v-btn>
-      </div>
+  <div class="play">
+    <v-img
+      :src="modelValue?.thumbil"
+      cover
+      max-height="160px"
+      max-width="160px"
+      class="d-flex align-center mx-auto"
+      :class="{ 'spinner-2': isPlaying }"
+      style="border-radius: 50%"
+    >
     </v-img>
-    <v-card-title class="my-5" :title="title"> {{ title }}</v-card-title>
-    <v-card-subtitle class="text-center">{{ subtitle }}</v-card-subtitle>
+
     <v-card-text>
+      <p class="text-body-1" v-text="modelValue?.title"></p>
+      <p
+        class="text-center text-subtitle-2 my-2"
+        v-text="modelValue?.subtitle"
+      ></p>
       <audio
         ref="audio"
         @timeupdate="updateProgress"
         @loadedmetadata="setDuration"
         @ended="onEnded"
-        :src="src"
+        :src="modelValue?.url || ''"
+        controls
+        hidden
       ></audio>
 
-      <p class="mt-3 text-center">
-        当前时间: {{ formatTime(currentTime) }} / {{ formatTime(duration) }}
-      </p>
-      <!-- 播放进度条 -->
       <v-slider
         v-model="currentTime"
         :max="duration"
         @update:modelValue="seek"
+        hide-details
       ></v-slider>
-      <p class="text-center">
+      <div class="d-flex align-center justify-space-between">
+        <span>{{ formatTime(currentTime) }}</span>
+        <span> {{ formatTime(duration) }}</span>
+      </div>
+      <div class="d-flex justify-center mt-3">
+        <!-- 播放暂停按钮 -->
+        <v-btn
+          @click="togglePlay"
+          :icon="isPlaying ? 'mdi-pause' : 'mdi-play'"
+          color="primary"
+        >
+        </v-btn>
+      </div>
+      <!-- <p class="text-center">
         音量: <span>{{ (volume * 100).toFixed(0) }}%</span>
       </p>
 
-      <!-- 音量控制 -->
       <v-slider
         v-model="volume"
         min="0"
         max="1"
         step="0.01"
         @update:modelValue="changeVolume"
-      ></v-slider>
+      ></v-slider> -->
     </v-card-text>
-  </v-card>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, watch } from "vue";
+import { ref, defineProps, watch, onMounted } from "vue";
+import { Audio } from "@/store/playlist";
 
 const props = defineProps<{
-  src: string;
-  imgSrc: string;
-  title: string;
-  subtitle: string;
+  modelValue: Audio | null;
 }>();
+
+const emit = defineEmits(["update:modelValue", "onplay"]);
 
 const isPlaying = ref(false);
 const currentTime = ref(0);
 const duration = ref(0);
-const volume = ref(0.8); // 音量从 0 到 1
+// const volume = ref(0.8);
 const audio = ref<HTMLAudioElement | null>(null);
 
 watch(
-  () => props.src,
+  () => props.modelValue?.url,
   () => {
     isPlaying.value = false;
-    currentTime.value = 0;
+    currentTime.value = props.modelValue?.currentTime || 0;
   }
 );
+
+onMounted(() => {
+  if (audio.value) {
+    audio.value.currentTime = props.modelValue?.currentTime || 0;
+    currentTime.value = audio.value.currentTime;
+  }
+});
 
 const togglePlay = () => {
   if (audio.value) {
@@ -76,12 +101,15 @@ const togglePlay = () => {
       audio.value.play();
     }
     isPlaying.value = !isPlaying.value;
+    emit("onplay", isPlaying.value);
   }
 };
 
 const updateProgress = () => {
   if (audio.value) {
     currentTime.value = audio.value.currentTime;
+    const item = { ...props.modelValue, currentTime: currentTime.value };
+    emit("update:modelValue", item);
   }
 };
 
@@ -92,17 +120,19 @@ const setDuration = () => {
 };
 
 const seek = () => {
-  console.log(currentTime.value);
+  // console.log(currentTime.value);
   if (audio.value) {
     audio.value.currentTime = currentTime.value;
+    const item = { ...props.modelValue, currentTime: currentTime.value };
+    emit("update:modelValue", item);
   }
 };
 
-const changeVolume = () => {
-  if (audio.value) {
-    audio.value.volume = volume.value;
-  }
-};
+// const changeVolume = () => {
+//   if (audio.value) {
+//     audio.value.volume = volume.value;
+//   }
+// };
 
 const onEnded = () => {
   isPlaying.value = false;
@@ -113,4 +143,11 @@ const formatTime = (value: number) => {
   const seconds = Math.floor(value % 60);
   return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 };
+
+defineExpose({ togglePlay });
 </script>
+<style lang="css" scoped>
+.play {
+  width: 100%;
+}
+</style>

@@ -14,9 +14,15 @@
                         <small v-if="appStore.savedQty" v-text="appStore.savedQty"></small>
                     </template>
                 </v-list-item>
+                <v-list-item prepend-icon=" mdi-rocket-launch-outline" value="recom" title="猜你喜欢" to="/recom">
+                    <template v-slot:append>
+                        <small v-if="appStore.unReadQty" v-text="appStore.unReadQty"></small>
+                    </template>
+                </v-list-item>
             </div>
             <v-list-subheader>FEEDS</v-list-subheader>
-            <v-list-group v-for="gItem in feedStore.subscriptions" :key="'c/' + gItem.id">
+            <template v-for="gItem in feedStore.subscriptions">
+            <v-list-group   v-if="gItem.feeds.length">
                 <template v-slot:activator="{ isOpen, props }">
                     <v-list-item v-bind="props" :title="gItem.title">
                         <template #prepend>
@@ -29,17 +35,20 @@
                     </v-list-item>
                 </template>
                 <v-list-item title="全部" :value="'/c/' + gItem.id" :to="'/c/' + gItem.id"> </v-list-item>
-                <v-list-item v-for="subItem in gItem.feeds" :key="gItem.id+'-'+subItem.id" :title="subItem.title" :value="gItem.id+'-'+subItem.id"
+                <v-list-item v-for="subItem in gItem.feeds" :key="gItem.id+'-'+subItem.id" :value="gItem.id+'-'+subItem.id" :class="subItem.isFailure?'text-red-accent-3':''"
                     :to="'/f/' + subItem.id" @contextmenu.prevent="showContextMenu($event, subItem)">
                     <template #prepend>
-                        <img :src="subItem.icon" onerror="this.src='/logo.svg'" width="18">
+                        <img :src="subItem.icon" onerror="this.src='/logo.svg'" width="16">
                         </img>
                     </template>
+                    <v-list-item-title  v-text="subItem.title">
+                    </v-list-item-title>
                     <template v-slot:append>
                         <small v-if="subItem.unreadQty" v-text="subItem.unreadQty"></small>
                     </template>
                 </v-list-item>
             </v-list-group>
+            </template>
         </v-list>
 
         <div v-if="mobile" class="plus mx-auto">
@@ -188,7 +197,7 @@ async function onDelete() {
     top: 0;
     z-index: 10;
     background-color: rgb(var(--sidbar-bg)); /** rgb(var(--v-theme-background)); */
-    border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+    /* border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)); */
 }
 
 .plus {

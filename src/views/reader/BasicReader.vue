@@ -1,11 +1,20 @@
 <template>
   <div class="basic-reader">
     <div class="title">
-      <v-list-item
-        :href="item.link"
-        :title="item.title"
-        :subtitle="getSubtitle()"
-      ></v-list-item>
+      <v-list-item :href="item.link" :title="item.title">
+        <template #subtitle>
+          <router-link
+            @click.stop=""
+            class="a"
+            title="前往订阅源"
+            :to="'/f/' + item?.feed?.id"
+            v-text="props.item.feed?.title"
+          ></router-link>
+          <span v-text="getSource()"></span>
+
+          <span v-text="getDate()"></span>
+        </template>
+      </v-list-item>
     </div>
     <div class="toc-list" ref="tocRef"></div>
     <div id="content" class="content" v-html="item.html"></div>
@@ -18,7 +27,7 @@ const props = defineProps<{
   item: FeedItem;
 }>();
 
-function getSubtitle() {
+function getDate() {
   const options: any = {
     year: "numeric",
     month: "long",
@@ -32,10 +41,10 @@ function getSubtitle() {
     "zh-CN",
     options
   );
-  return `${getSource()} | ${formattedDate}`;
+  return ` | ${formattedDate}`;
 }
 function getSource() {
-  return props.item.author + " - " + props.item.feed?.title;
+  return " - " + props.item.author;
 }
 </script>
 <style lang="scss" scoped>
@@ -56,41 +65,19 @@ function getSource() {
   max-width: 760px;
   margin: 0 auto;
 }
-.content {
-  max-width: 730px;
-  margin: 0 auto;
-}
 .basic-reader {
   background-color: rgb(var(--v-theme-background));
 }
-</style>
-<style>
-.content {
-  padding: 0.5rem;
-  line-height: 2rem;
-  * {
-    max-width: 100%;
-  }
-  h1,
-  h2,
-  h3,
-  h4 {
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-  }
-  p {
-    padding: 0.8rem 0;
-  }
-  pre {
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    background-color: rgba(var(--v-theme-on-code), 0.9);
-    color: rgb(var(--v-theme-code));
-    padding: 1rem;
-    border-radius: 0.5rem;
+.a {
+  color: rgb(var(--v-theme-surface-variant));
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+    color: rgb(var(--v-theme-success));
   }
 }
-
+</style>
+<style>
 .bar-left {
   width: 150px;
 }

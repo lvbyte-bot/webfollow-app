@@ -3,18 +3,22 @@ import { defineStore, storeToRefs } from 'pinia'
 import { useBaseStore } from './base'
 import { useFeedsStore } from './feeds'
 import { useItemsStore } from './items'
-import { sync as sync2local } from '@/service'
+import { usePlayListStore } from './playlist'
+import { sync as sync2local, setRanks } from '@/service'
+import { ranks as getRanks } from '@/service/recommend'
 import { clearIndexedDB } from '@/utils/dbHelper'
 import { computed, Ref, watch, ref, onMounted, reactive, Reactive } from 'vue'
 import { PageRoute, TopNav } from './types'
 import { LsItemType } from '@/service/types'
+export { useSettingsStore } from './settings'
 
-
+type SyncType = '' | 'sync2local'
 
 export const useAppStore = defineStore('app', () => {
     const {
-        saved_item_ids, unread_item_ids, read, unread, save, unsave, refresh
+        saved_item_ids, unread_item_ids, read, unread, save, unsave, refresh, clearFailFeedIds
     } = useBaseStore()
+    const { clear } = usePlayListStore()
     const { refresh: refreshFeed } = useFeedsStore()
     const { subscriptions } = storeToRefs(useFeedsStore())
     const { refreshItems, pageRoute } = useItemsStore()
@@ -23,16 +27,30 @@ export const useAppStore = defineStore('app', () => {
     const authInfo: Ref<any> = ref(JSON.parse(localStorage.getItem('auth') || '{"username":"guest"}'))
     const nav: Reactive<TopNav> = reactive({ title: 'loading' })
 
-    async function sync() {
+    async function sync(type: SyncType = '') {
+        lastRefeshTime.value = new Date().getTime()
+        if (type == '') {
+            await refresh(async () => {
+                loading.value = true
+                await sync2local()
+                await refreshFeed()
+                setRanks(await getRanks())
+                await refreshItems()
+                log('sync end')
+                loading.value = false
+            }, async () => {
+                setRanks(await getRanks())
+                await refreshItems()
+            })
 
-        await refresh(async () => {
+        } else if (type = 'sync2local') {
             loading.value = true
             await sync2local()
+            setRanks(await getRanks())
             await refreshFeed()
-            await refreshItems()
             log('sync end')
             loading.value = false
-        })
+        }
         setTimeout(() => initNav(pageRoute), 1000)
         lastRefeshTime.value = new Date().getTime()
     }
@@ -41,6 +59,10 @@ export const useAppStore = defineStore('app', () => {
         await clearIndexedDB()
         saved_item_ids.clear()
         unread_item_ids.clear()
+        clearFailFeedIds()
+        localStorage.removeItem('app-settings')
+        localStorage.removeItem('readfeeds')
+        clear()
         setTimeout(async () => {
             authInfo.value = JSON.parse(localStorage.getItem('auth') || '{"username":"guest"}')
             await refreshFeed()
@@ -65,6 +87,7 @@ export const useAppStore = defineStore('app', () => {
 
 
     function initNav(v: PageRoute) {
+        nav.isFailure = false
         switch (v.type) {
             case LsItemType.ALL:
                 nav.title = '全部文章'
@@ -81,15 +104,22 @@ export const useAppStore = defineStore('app', () => {
                     nav.qty = ga[0].unreadQty
                 }
                 return
+            case LsItemType.RECOMMEND:
+                nav.title = '猜你喜欢'
+                nav.qty = unReadQty.value
+                return
             case LsItemType.FEED:
                 let fs = subscriptions?.value?.flatMap(g => g.feeds).filter(f => f.id == v.id)
                 if (fs?.length) {
                     nav.title = fs[0].title
                     nav.qty = fs[0].unreadQty
+                    nav.isFailure = fs[0].isFailure
+                    nav.url = fs[0].url
                 }
                 return
         }
     }
+
 
 
     return { reloadBuild, sync, loading, read, unread, save, unsave, savedQty, unReadQty, authInfo, lastRefeshTime, nav }
@@ -97,7 +127,7 @@ export const useAppStore = defineStore('app', () => {
 
 
 
-export { useFeedsStore, useItemsStore };
+export { useFeedsStore, useItemsStore, usePlayListStore };
 
 type wathRef = Ref<any> | Reactive<any>
 

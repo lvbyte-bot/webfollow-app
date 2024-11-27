@@ -1,5 +1,8 @@
 <template>
-  <div class="main-warp" :class="{ 'main-col': itemView == 'magazine' }">
+  <div
+    class="main-warp"
+    :class="{ 'main-col': general.defaultView == 'magazine' }"
+  >
     <!-- reader -->
     <v-dialog-transition>
       <div class="cover" v-show="show">
@@ -36,35 +39,32 @@
     </v-dialog-transition>
     <!-- items -->
     <div class="main-container" ref="mainRef">
-      <div class="top-sider">
+      <div class="top-bar">
         <div class="v-toolbar-title v-app-bar-title text-truncate">
           {{ (appStore.nav && appStore.nav.title) || "未分类" }}
           <small
             class="mx-3 text-medium-emphasis"
+            v-if="appStore.nav.qty"
             v-text="appStore.nav.qty"
           ></small>
         </div>
         <div>
           <c-btn
-            :icon="onlyUnread ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'"
-            :title="onlyUnread ? '只看未读' : '看全部'"
-            @click="changeOnlyUnread(!onlyUnread)"
-            class="mr-2"
-          >
-          </c-btn>
-          <c-btn
-            :disabled="
-              (id == '-1' && type == 'c') ||
-              type == 'next' ||
-              type == 'all' ||
-              store.items?.filter((o) => !o.isRead).length == 0
+            v-show="
+              !(
+                (id == '-1' && type == 'c') ||
+                type == 'next' ||
+                type == 'all' ||
+                type == 'recom'
+              )
             "
+            :disabled="store.items?.filter((o) => !o.isRead).length == 0"
             icon
             title="标记为已读"
             @click="markRead"
             class="mr-2"
           >
-            <v-icon> mdi-checkbox-multiple-marked-circle-outline</v-icon>
+            <v-icon>mdi-read</v-icon>
           </c-btn>
 
           <c-btn
@@ -77,17 +77,24 @@
             <v-icon>{{ loading ? "mdi-loading" : "mdi-reload" }}</v-icon>
           </c-btn>
           <c-btn
+            :icon="onlyUnread ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'"
+            :title="onlyUnread ? '只看未读' : '看全部'"
+            @click="changeOnlyUnread(!onlyUnread)"
+            class="mr-2"
+          >
+          </c-btn>
+          <c-btn
             :icon="
-              itemView == 'card'
+              general.defaultView == 'card'
                 ? 'mdi-view-gallery-outline'
-                : itemView == 'magazine'
+                : general.defaultView == 'magazine'
                 ? 'mdi-view-column-outline'
                 : 'mdi-view-list-outline'
             "
             :title="
-              itemView == 'card'
+              general.defaultView == 'card'
                 ? '卡片视图'
-                : itemView == 'magazine'
+                : general.defaultView == 'magazine'
                 ? '三栏视图'
                 : '列表视图'
             "
@@ -98,8 +105,38 @@
       </div>
 
       <v-container class="mx-auto items-warp">
+        <v-expand-y-transition>
+          <v-alert
+            class="my-3"
+            v-show="appStore.nav.isFailure"
+            border="top"
+            border-color="warning"
+          >
+            <div class="d-flex justify-space-between">
+              <v-icon class="mr-3">mdi-alert-circle-outline</v-icon>
+              此订阅源有问题。请检查并在必要时重新订阅。
+              <v-btn
+                class="ml-3"
+                size="small"
+                variant="text"
+                :href="appStore.nav.url"
+              >
+                查看订阅源
+              </v-btn>
+            </div>
+          </v-alert>
+          <div
+            v-show="!appStore.nav.isFailure && (loading || appStore.loading)"
+            class="ma-6 text-center"
+          >
+            <div class="rotating">
+              <v-icon>mdi-loading</v-icon>
+            </div>
+            <div class="mt-2 text-body-2">正在刷新...</div>
+          </div>
+        </v-expand-y-transition>
         <template v-if="store.items?.length">
-          <v-row v-if="itemView == 'card'">
+          <v-row v-if="general.defaultView == 'card'">
             <v-col
               cols="12"
               sm="12"
@@ -117,7 +154,7 @@
               ></Item>
             </v-col>
           </v-row>
-          <template v-else-if="itemView == 'magazine'">
+          <template v-else-if="general.defaultView == 'magazine'">
             <MagazineItem
               v-for="(item, index) in store.items"
               :item="item"
@@ -173,7 +210,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, Ref } from "vue";
+import { computed, ref, Ref } from "vue";
 
 import Reader from "./reader/Index.vue";
 import Item from "./item/CardItem.vue";
@@ -181,7 +218,13 @@ import TextItem from "./item/TextItem.vue";
 import MagazineItem from "./item/MagazineItem.vue";
 import { onMounted, watch } from "vue";
 import { Marked } from "@/service";
-import { useItemsStore, useAppStore, useFeedsStore } from "@/store";
+import { storeToRefs } from "pinia";
+import {
+  useItemsStore,
+  useAppStore,
+  useFeedsStore,
+  useSettingsStore,
+} from "@/store";
 import { FeedItem, LsItemType } from "@/service/types";
 import { useScroll } from "@/utils/scrollListener";
 import { useImgPreview } from "@/utils/useImgPreview";
@@ -210,23 +253,22 @@ const currentItem: Ref<FeedItem> = ref({
 });
 const currentItemIndex = ref(0);
 
-const onlyUnread = ref(true);
 const show = ref(false);
 const loading = ref(false);
-const itemView = ref(localStorage.getItem("layout") || "text");
+const settingsStore = useSettingsStore();
+const { general } = storeToRefs(settingsStore);
+const onlyUnread = computed(() => general.value.hideReadArticles);
 
 function changeItemView() {
-  let view = "text";
-  if (itemView.value == "text") {
-    view = "card";
-  } else if (itemView.value == "card") {
-    view = "magazine";
+  if (general.value.defaultView == "text") {
+    general.value.defaultView = "card";
+  } else if (general.value.defaultView == "card") {
+    general.value.defaultView = "magazine";
   } else {
-    view = "text";
+    general.value.defaultView = "text";
   }
-  localStorage.setItem("layout", view);
   mainRef.value.style.width = "";
-  itemView.value = view;
+  settingsStore.saveToLocalStorage();
 }
 
 let page = 0;
@@ -239,19 +281,31 @@ watch(isBottom, (v) => {
 
 onMounted(initData);
 
+let autoRefresh: any;
+
 async function loadData(
   id: any,
   type: LsItemType,
   page: number = 0,
   onlyUnread: boolean = false
 ) {
+  // 自动刷新功能
+  if (general.value.autoRefresh) {
+    if (autoRefresh) {
+      clearTimeout(autoRefresh);
+    }
+    autoRefresh = setTimeout(() => {
+      log("autoRefresh");
+      initData();
+    }, general.value.refreshInterval * 1000);
+  }
   await store.loadData(id, type, page, onlyUnread);
 }
 
 async function initData(page0: number = 0) {
   loading.value = true;
   page = page0;
-
+  // log(onlyUnread.value);
   if (props.type == "f") {
     await loadData(Number(props.id), LsItemType.FEED, page, onlyUnread.value);
   } else if (props.type == "c") {
@@ -260,6 +314,8 @@ async function initData(page0: number = 0) {
     await loadData(null, LsItemType.SAVED, page, onlyUnread.value);
   } else if (props.type == "all") {
     await loadData(null, LsItemType.ALL, page, onlyUnread.value);
+  } else if (props.type == "recom") {
+    await loadData(null, LsItemType.RECOMMEND, page, onlyUnread.value);
   }
   loading.value = false;
 }
@@ -297,7 +353,8 @@ function openReader(index: number, item: any | undefined) {
 }
 
 async function changeOnlyUnread(onlyUnread0: boolean) {
-  onlyUnread.value = onlyUnread0;
+  general.value.hideReadArticles = onlyUnread0;
+  settingsStore.saveToLocalStorage();
   await initData(0);
 }
 
@@ -342,7 +399,7 @@ watch(props, () => {
     transform: rotate(360deg);
   }
 }
-.top-sider {
+.top-bar {
   position: sticky !important;
   top: 0;
   z-index: 10;
@@ -351,7 +408,7 @@ watch(props, () => {
   grid-template-columns: 1fr auto;
   align-items: center;
   padding: 0 1rem 0 1rem;
-  border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  // border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
 
   height: 64px;
   &:last-child {
@@ -362,7 +419,10 @@ watch(props, () => {
   animation: rotate 1s linear infinite;
 }
 .reader-warp {
-  font-size: 16px;
+  font-size: 1.2em;
+}
+.main-warp {
+  font-size: var(--font-size);
 }
 </style>
 <style lang="scss">
@@ -440,10 +500,20 @@ watch(props, () => {
     resize: horizontal;
     min-width: 360px;
     max-width: 36vw;
-    width: 360px;
+    width: 380px;
     background-color: rgb(var(--sidbar-bg));
-    .top-sider {
+    .top-bar {
       background-color: rgb(var(--sidbar-bg));
+    }
+  }
+}
+@media (max-width: 760px) {
+  .main-col {
+    display: block;
+    .main-container {
+      width: 100%;
+      max-width: 100%;
+      resize: none;
     }
   }
 }

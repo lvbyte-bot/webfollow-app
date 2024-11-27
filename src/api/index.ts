@@ -65,8 +65,19 @@ export function mark(params: object) {
 
 // 扩宽接口 {as: create update remove feed_url, group_id, feed_id}
 
-export function extFeed(params: object) {
-    return request(Object.assign({
-        feeds: '0'
-    }, params))
+export function extFeed(params: object, options = {}) {
+    return ext('feeds', params, options)
+}
+
+
+type extType = 'fail_feed_ids' | 'feeds'
+
+/**
+ * 扩展接口
+ * @param params 
+ * @param options 
+ * @returns 
+ */
+export function ext(type: extType, params = {}, options = {}) {
+    return request(Object.assign({ [type]: '0' }, params), options)
 }

@@ -1,14 +1,14 @@
 <template>
   <v-list-item class="magazine-item py-3">
     <div class="magazine">
-      <v-icon :color="item.isRead ? 'grey' : 'primary'">
+      <v-icon :color="item.isRead ? '-' : 'primary'">
         {{ item.isRead ? "" : "mdi-circle-medium" }}
       </v-icon>
       <div>
         <div class="magazine-one mb-2">
           <div class="text-body-2 text-truncate text-medium-emphasis">
             <router-link :to="'/f/' + item.feedId" @click.stop="">
-              {{ item.feed?.title }}</router-link
+              {{ getSource() }}</router-link
             >
           </div>
           <div class="text-body-2 text-medium-emphasis text-right">
@@ -30,7 +30,15 @@
 </template>
 
 <script setup lang="ts">
-defineProps(["item"]);
+const props = defineProps(["item", "type"]);
+
+function getSource() {
+  const source =
+    props.type === "f"
+      ? props.item.author || props.item.feed?.title
+      : props.item.feed?.title;
+  return source;
+}
 </script>
 
 <style lang="scss" scoped>

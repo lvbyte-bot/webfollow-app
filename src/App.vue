@@ -7,21 +7,30 @@
   font-size: 14px;
   --swiper-navigation-size: 20px !important;
   --sidbar-bg: 248, 250, 253;
-  --v-overlay-opacity: 0.9;
+  --v-overlay-opacity: 0.7;
+  --v-theme-primary: var(--theme-color) !important;
 }
 .v-theme--dark {
-  --sidbar-bg: 11, 12, 13;
+  --sidbar-bg: 41, 41, 45;
+  --v-overlay-opacity: 0.9;
+  --v-theme-primary: var(--theme-color) !important;
+}
+.v-theme--light {
+  --v-theme-primary: var(--theme-color) !important;
 }
 html {
   background-color: #fff;
   overflow-y: hidden !important;
-  color: #3d315b;
+  font-family: var(--font-family) !important;
 }
 #app .v-list-item__spacer {
   width: 1rem;
 }
 #app .v-list-group {
   --prepend-width: 1rem;
+}
+#app .v-list-item--density-default.v-list-item--one-line {
+  min-height: calc(2rem + 4px);
 }
 .page {
   /* text-align: center; */
@@ -42,24 +51,24 @@ html {
 
 /* 滚动条整体区域 */
 ::-webkit-scrollbar {
-  width: 6px; /* 纵向滚动条的宽度 */
-  height: 6px; /* 横向滚动条的高度 */
+  width: 6px;
+  height: 6px;
 }
 
 /* 滚动条轨道 */
 ::-webkit-scrollbar-track {
-  background: transparent; /* 滚动条轨道背景 */
-  border-radius: 3px; /* 圆角边框 */
+  background: transparent;
+  border-radius: 3px;
 }
 
 /* 滚动条滑块 */
 ::-webkit-scrollbar-thumb {
-  background: #ccc; /* 滚动条滑块颜色 */
-  border-radius: 3px; /* 圆角边框 */
+  background: rgba(var(--v-theme-on-code), 0.1); /* 滚动条滑块颜色 */
+  border-radius: 3px;
 }
 
 /* 滚动条滑块悬停效果 */
 ::-webkit-scrollbar-thumb:hover {
-  background: #999; /* 悬停时滑块的颜色 */
+  background: rgba(var(--v-theme-on-code), 0.3); /* 悬停时滑块的颜色 */
 }
 </style>
