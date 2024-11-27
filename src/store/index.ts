@@ -3,6 +3,7 @@ import { defineStore, storeToRefs } from 'pinia'
 import { useBaseStore } from './base'
 import { useFeedsStore } from './feeds'
 import { useItemsStore } from './items'
+import { usePlayListStore } from './playlist'
 import { sync as sync2local, setRanks } from '@/service'
 import { ranks as getRanks } from '@/service/recommend'
 import { clearIndexedDB } from '@/utils/dbHelper'
@@ -17,6 +18,7 @@ export const useAppStore = defineStore('app', () => {
     const {
         saved_item_ids, unread_item_ids, read, unread, save, unsave, refresh, clearFailFeedIds
     } = useBaseStore()
+    const { clear } = usePlayListStore()
     const { refresh: refreshFeed } = useFeedsStore()
     const { subscriptions } = storeToRefs(useFeedsStore())
     const { refreshItems, pageRoute } = useItemsStore()
@@ -60,6 +62,7 @@ export const useAppStore = defineStore('app', () => {
         clearFailFeedIds()
         localStorage.removeItem('app-settings')
         localStorage.removeItem('readfeeds')
+        clear()
         setTimeout(async () => {
             authInfo.value = JSON.parse(localStorage.getItem('auth') || '{"username":"guest"}')
             await refreshFeed()

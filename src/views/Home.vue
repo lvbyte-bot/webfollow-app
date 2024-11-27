@@ -34,10 +34,18 @@
         ></v-list-item>
 
         <div class="bottom">
-          <v-list-item class="mt-3 pa-3" href="https://i.webfollow.cc">
+          <v-list-item
+            prepend-icon="mdi-playlist-music-outline"
+            value="play"
+            @click="showPlayList = !showPlayList"
+          ></v-list-item>
+          <v-list-item class="mt-3" href="https://i.webfollow.cc">
             回到老版
           </v-list-item>
         </div>
+      </v-navigation-drawer>
+      <v-navigation-drawer width="320" temporary v-model="showPlayList">
+        <PlayList :item="{}"></PlayList>
       </v-navigation-drawer>
       <v-main :class="{ cols: !mobile, hideside: hideSide || mobile }">
         <v-slide-x-transition>
@@ -97,6 +105,7 @@ import { storeToRefs } from "pinia";
 import { useAppStore, useSettingsStore, useFeedsStore } from "@/store";
 import Settings from "./settings/Settings.vue";
 import SideBar from "./sub/SideBar.vue";
+import PlayList from "./sub/PlayList.vue";
 
 const appStore = useAppStore();
 const settingsStore = useSettingsStore();
@@ -108,6 +117,7 @@ const route = useRoute();
 const title = ref("");
 const hideSide = ref(false);
 const settingable = ref(false);
+const showPlayList = ref(false);
 
 const show = ref(false);
 
@@ -187,6 +197,7 @@ onMounted(() => {
 .bottom {
   position: absolute;
   bottom: 1rem;
+  width: 100%;
 }
 .sidebar-warp :deep(.sidebar) {
   --sidbar-bg: var(--v-theme-background);

@@ -4,13 +4,22 @@
       <div class="podcat-reader">
         <div class="warp">
           <div class="glass">
-            <MPlayer
-              v-if="item.enclosure"
-              :src="item.enclosure"
-              :img-src="item.thumbnail || ''"
-              :title="item.title"
-              :subtitle="item.feed?.title || ''"
-            ></MPlayer>
+            <v-img
+              :src="item.thumbnail"
+              cover
+              max-height="300px"
+              max-width="300px"
+              class="d-flex align-center mx-auto"
+            >
+              <div class="d-flex justify-center">
+                <!-- 播放暂停按钮 -->
+                <v-btn
+                  @click="togglePlay"
+                  :icon="curretIsPlaying ? 'mdi-pause' : 'mdi-play'"
+                >
+                </v-btn>
+              </div>
+            </v-img>
           </div>
         </div>
       </div>
@@ -23,11 +32,35 @@
 
 <script lang="ts" setup>
 import BasicReader from "./BasicReader.vue";
-import MPlayer from "@/components/MPlayer.vue";
 import { FeedItem } from "@/service/types";
-defineProps<{
+import { usePlayListStore } from "@/store/playlist";
+import { computed } from "vue";
+
+const props = defineProps<{
   item: FeedItem;
 }>();
+const store = usePlayListStore();
+
+const curretIsPlaying = computed(() =>
+  store.currentPlaying?.id == props.item.id ? store.isPlaying : false
+);
+
+function togglePlay() {
+  const item = props.item;
+  if (store.currentPlaying?.id == item.id) {
+    store.togglePlaying();
+  } else {
+    store.play({
+      id: item.id,
+      url: item.enclosure,
+      thumbil: item.thumbnail || "",
+      title: item.title,
+      subtitle: item.feed?.title || "",
+      feedId: item.feedId,
+      currentTime: 0,
+    });
+  }
+}
 </script>
 
 <style scoped>
