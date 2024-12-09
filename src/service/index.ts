@@ -49,32 +49,51 @@ export async function sync() {
         // feedsCache[f.id] = f
     })
     // 同步items
-    let lastId = await itemRepo.maxId()
-    if (lastId) {
-        let hasNext: boolean = true
-        let fItems: any[] = []
-        while (hasNext) {
-            fItems = (await items({ since_id: lastId })).items
-            hasNext = fItems.length == 50
-            for (let item of fItems) {
-                await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
-            }
-            lastId = await itemRepo.maxId()
-        }
-    } else {
-        const sids = await listSavedIds()
-        const uids = await listUnreadIds()
-        const syncItemIds = new Set([...uids, ...sids])
-        for (let with_ids of idsto50str(Array.from(syncItemIds))) {
-            let fItems = (await items({ with_ids })).items
-            for (let item of fItems) {
-                await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
-            }
-            const total = await itemRepo.count()
-            setTitle(total)
-        }
+    // let lastId = await itemRepo.maxId()
+    // if (lastId) {
+    //     let hasNext: boolean = true
+    //     let fItems: any[] = []
+    //     while (hasNext) {
+    //         fItems = (await items({ since_id: lastId })).items
+    //         hasNext = fItems.length == 50
+    //         for (let item of fItems) {
+    //             await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
+    //         }
+    //         lastId = await itemRepo.maxId()
+    //     }
+    // } else {
+    //     const sids = await listSavedIds()
+    //     const uids = await listUnreadIds()
+    //     const syncItemIds = new Set([...uids, ...sids])
+    //     for (let with_ids of idsto50str(Array.from(syncItemIds))) {
+    //         let fItems = (await items({ with_ids })).items
+    //         for (let item of fItems) {
+    //             await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
+    //         }
+    //         const total = await itemRepo.count()
+    //         setTitle(total)
+    //     }
+    // }
+    const sids = await listSavedIds()
+    const uids = await listUnreadIds()
+    const syncItemIds = new Set([...uids, ...sids])
+    const localMaxId = await itemRepo.maxId()
+    const remoteIds = Array.from(syncItemIds)
+    if (localMaxId >= Math.max(...remoteIds)) {
+        return
     }
-
+    let total = 0
+    for (let with_ids of idsto50str(Array.from(syncItemIds))) {
+        let fItems = (await items({ with_ids })).items
+        for (let item of fItems) {
+            await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
+        }
+        total = total + 50
+        if (total > syncItemIds.size) {
+            total = syncItemIds.size
+        }
+        setTitle(total)
+    }
 
 }
 
