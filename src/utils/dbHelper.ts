@@ -247,7 +247,25 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
         });
     }
 
+    // 检查ID是否存在
+    function exists(storeName: string, id: number): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            openDatabase().then(db => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
 
+                const request = store.count(id);
+
+                request.onsuccess = function () {
+                    resolve(request.result > 0);
+                };
+
+                request.onerror = function (event) {
+                    reject('Error checking existence: ' + (event.target as IDBRequest).error?.message);
+                };
+            });
+        });
+    }
 
     async function openStore(storeName: string): Promise<IDBObjectStore> {
         const db = await openDatabase()
@@ -266,6 +284,7 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
         listAll,
         whereOne,
         count,
+        exists,
         openStore
     };
 }

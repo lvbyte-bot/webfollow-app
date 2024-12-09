@@ -8,7 +8,7 @@ const { create,
     update,
     remove,
     getAll,
-    listAll, findAll, count, whereOne, openStore
+    listAll, findAll, count, whereOne, openStore, exists
 } = IndexedDB(db => {
     // 创建 Groups 对象存储
     if (!db.objectStoreNames.contains('groups')) {
@@ -73,6 +73,9 @@ class Repo<T extends DbStore> {
     }
     async maxId(): Promise<number> {
         return (await whereOne(this.storename, (x: T, y: T) => (x.id > (y ? y.id : 0)) ? x : y))?.id;
+    }
+    async existsId(id: number): Promise<boolean> {
+        return exists(this.storename, id)
     }
 }
 

@@ -82,8 +82,9 @@ export async function sync() {
     if (localMaxId >= Math.max(...remoteIds)) {
         return
     }
-    let total = 0
-    for (let with_ids of idsto50str(Array.from(syncItemIds))) {
+    let syncItemIdArray = await remoteIds.filter(async (id) => ! await itemRepo.existsId(id))
+    let total = remoteIds.length - syncItemIdArray.length
+    for (let with_ids of idsto50str(syncItemIdArray)) {
         let fItems = (await items({ with_ids })).items
         for (let item of fItems) {
             await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
