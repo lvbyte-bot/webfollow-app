@@ -438,7 +438,8 @@ watch(props, () => {
   position: absolute;
   padding: 0.5rem 0.8rem;
   border-radius: 0.3rem;
-  top: 100px;
+  top: 80px;
+  left: calc(50% + 370px);
   z-index: 1;
   color: rgba(var(--v-theme-on-code), 0.3);
   margin-bottom: 3rem;
@@ -475,9 +476,10 @@ watch(props, () => {
   }
   &:hover {
     max-width: none;
-    background-color: rgb(var(--v-theme-background));
-    box-shadow: 3px 3px 2px rgba(var(--v-theme-on-code), 0.1);
-    border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+    color: rgba(var(--v-theme-on-code), 0.6);
+    // background-color: rgb(var(--v-theme-background));
+    // box-shadow: 3px 3px 2px rgba(var(--v-theme-on-code), 0.1);
+    // border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
   }
 }
 @media (max-width: 1280px) {

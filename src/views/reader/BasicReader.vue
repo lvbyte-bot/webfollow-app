@@ -11,12 +11,11 @@
             v-text="props.item.feed?.title"
           ></router-link>
           <span v-text="getSource()"></span>
-
           <span v-text="getDate()"></span>
         </template>
       </v-list-item>
     </div>
-    <div class="toc-list" ref="tocRef"></div>
+    <slot></slot>
     <div id="content" class="content" v-html="item.html"></div>
   </div>
 </template>

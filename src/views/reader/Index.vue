@@ -34,15 +34,6 @@
             @click="readerType = readerType == 'default' ? 'HTML' : 'default'"
           >
           </c-btn>
-          <!-- <c-btn
-              variant="text"
-              icon
-              :title="item.feed?.title"
-              :to="'/f/' + item?.feed?.id"
-            >
-              <img class="noclick" :src=" item?.feed?.icon" onerror="this.src='/logo.svg'" style="width:18px">
-              </img>
-            </c-btn> -->
           <c-btn
             size="small"
             variant="text"
@@ -54,10 +45,6 @@
               item.isRead ? "mdi-radiobox-blank" : "mdi-radiobox-marked"
             }}</v-icon>
           </c-btn>
-
-          <!-- <c-btn  variant="text" icon title="查看原文" :href="item.link">
-              <v-icon> mdi-open-in-new</v-icon>
-            </c-btn> -->
         </slot>
       </div>
     </div>
