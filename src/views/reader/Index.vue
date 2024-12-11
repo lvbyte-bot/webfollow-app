@@ -1,6 +1,9 @@
 <template>
   <div class="overflow" ref="readerRef">
-    <div class="top-sider v-toolbar__content px-2">
+    <div
+      class="top-sider v-toolbar__content px-2"
+      :class="{ 'top-sider-border': scrollTop > 120 && !mobile }"
+    >
       <div class="prepend-bar">
         <slot name="prepend-bar"></slot>
       </div>
@@ -49,7 +52,6 @@
       </div>
     </div>
     <v-container class="reader-warp">
-      <slot name="prepend"></slot>
       <slot>
         <iframe
           class="iframe"
@@ -60,7 +62,13 @@
           sandbox="allow-same-origin allow-popups allow-downloads allow-forms allow-scripts"
         ></iframe>
         <image-reader :item="item" v-else-if="item?.type == 'IMAGE'" />
-        <basic-reader v-else-if="item?.type == 'BASIC'" :item="item" />
+        <basic-reader
+          v-else-if="item?.type == 'BASIC'"
+          :item="item"
+          :reader-ref="readerRef"
+        >
+          <slot name="prepend"></slot>
+        </basic-reader>
         <podcast-reader :item="item" v-else-if="item?.type == 'PODCAST'" />
         <video-reader :item="item" v-else-if="item.type == 'VIDEO'" />
       </slot>
@@ -68,10 +76,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, watch, ref } from "vue";
+import { onMounted, watch, ref } from "vue";
 import { useAppStore } from "@/store";
 import { FeedItem } from "@/service/types";
-import { useSideChapter } from "@/utils/useSideChapter";
+// import { useSideChapter } from "@/utils/useSideChapter";
 import { useScroll } from "@/utils/scroll";
 import { useDisplay } from "vuetify";
 import BasicReader from "./BasicReader.vue";
@@ -87,14 +95,14 @@ const props = defineProps<{
 }>();
 const { scrollTop } = useScroll(readerRef);
 const { mobile } = useDisplay();
-const description = computed(() =>
-  readerType.value == "default" ? props.item?.description || "" : ""
-);
+// const description = computed(() =>
+//   readerType.value == "default" ? props.item?.description || "" : ""
+// );
 const readerType = ref("default");
 
-useSideChapter(description, readerRef, {
-  value: () => document.getElementById("chapters"),
-});
+// useSideChapter(description, readerRef, {
+//   value: () => document.getElementById("chapters"),
+// });
 
 watch(
   () => props.item.id,
@@ -160,7 +168,7 @@ function getSource() {
   grid-template-columns: auto minmax(5vw, 1fr) auto;
   align-items: center;
   padding: 0.5rem 0.3rem;
-  border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  border-bottom: 1px solid rgba(var(--v-border-color), 0);
   height: 64px;
   > * {
     min-width: 120px;
@@ -174,7 +182,9 @@ function getSource() {
     text-align: center;
   }
 }
-
+.top-sider-border {
+  border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+}
 .text-overflow {
   white-space: nowrap;
   overflow: hidden;

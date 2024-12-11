@@ -15,17 +15,25 @@
         </template>
       </v-list-item>
     </div>
-    <slot></slot>
-    <div id="content" class="content" v-html="item.html"></div>
+    <div class="chapter-warp">
+      <slot></slot>
+    </div>
+    <div class="content" v-html="item.html"></div>
   </div>
 </template>
 <script setup lang="ts">
+import { computed, Ref } from "vue";
 import { FeedItem } from "@/service/types";
-
+import { useSideChapter } from "@/utils/useSideChapter";
 const props = defineProps<{
   item: FeedItem;
+  readerRef: Ref;
 }>();
-
+const description = computed(() => props.item?.description || "");
+const readerRef = computed(() => props.readerRef);
+useSideChapter(description, readerRef, {
+  value: () => document.getElementById("chapters"),
+});
 function getDate() {
   const options: any = {
     year: "numeric",
@@ -74,6 +82,13 @@ function getSource() {
     text-decoration: underline;
     color: rgb(var(--v-theme-success));
   }
+}
+.chapter-warp {
+  float: left;
+  position: sticky;
+  top: 80px;
+  left: calc(50% + 370px);
+  max-width: 210px;
 }
 </style>
 <style>

@@ -435,11 +435,8 @@ watch(props, () => {
   background-color: rgb(var(--v-theme-background)) !important;
 }
 .chapter-list {
-  position: absolute;
   padding: 0.5rem 0.8rem;
-  border-radius: 0.3rem;
-  top: 80px;
-  left: calc(50% + 370px);
+  border-radius: 0.5rem;
   z-index: 1;
   color: rgba(var(--v-theme-on-code), 0.3);
   margin-bottom: 3rem;

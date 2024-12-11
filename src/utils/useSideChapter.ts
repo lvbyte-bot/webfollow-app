@@ -39,8 +39,10 @@ export function useSideChapter(markdownContent: Ref<string>, el: any, chapterEl:
 
         chapterContainer = chapterEl.value()
         if (chapters) {
-            chapterContainer.innerHTML = ''
-            chapterContainer.style['display'] = 'block'
+            if (chapterContainer) {
+                chapterContainer.innerHTML = ''
+                chapterContainer.style['display'] = 'block'
+            }
             setTimeout(() => {
                 container = el.value
                 chapterContainer.innerHTML = '<ul>' + chapters + '</ul>'
@@ -112,10 +114,12 @@ export function useSideChapter(markdownContent: Ref<string>, el: any, chapterEl:
 
     onMounted(() => {
         watch(markdownContent, () => {
-            chapterContainer.querySelectorAll('.toc-link').forEach((link: Element) => {
+            chapterContainer?.querySelectorAll('.toc-link').forEach((link: Element) => {
                 link.removeEventListener('click', toChapter);
             });
-            changeCapterEl()
+            if (chapterContainer) {
+                changeCapterEl()
+            }
         })
         changeCapterEl()
     })
@@ -124,6 +128,9 @@ export function useSideChapter(markdownContent: Ref<string>, el: any, chapterEl:
         if (scroll) {
             container.removeEventListener('scroll', scroll)
         }
+        chapterContainer?.querySelectorAll('.toc-link').forEach((link: Element) => {
+            link.removeEventListener('click', toChapter);
+        });
     })
 }
 
