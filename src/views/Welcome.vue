@@ -33,7 +33,7 @@
         class="mt-3"
         variant="text"
         to="/combo"
-        >目前用户是Guest,点击查看套餐</v-btn
+        >目前是测试用户,如正式使用请查看套餐</v-btn
       >
     </div>
   </v-empty-state>
