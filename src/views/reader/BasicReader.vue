@@ -27,7 +27,7 @@ import { FeedItem } from "@/service/types";
 import { useSideChapter } from "@/utils/useSideChapter";
 const props = defineProps<{
   readonly item: FeedItem;
-  readonly readerRef: Ref<any, any>;
+  readonly readerRef: Ref<any, any> | null;
 }>();
 const description = computed(() => props.item?.description || "");
 const readerRef = computed(() => props.readerRef);
@@ -69,7 +69,7 @@ function getSource() {
 }
 .v-list-item {
   padding: 1.5rem;
-  max-width: 760px;
+  max-width: 692px;
   margin: 0 auto;
 }
 .basic-reader {
@@ -87,7 +87,7 @@ function getSource() {
   float: left;
   position: sticky;
   top: 80px;
-  left: calc(50% + 370px);
+  left: calc(50% + 340px);
   max-width: 210px;
 }
 </style>

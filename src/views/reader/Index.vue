@@ -182,7 +182,7 @@ function getSource() {
   height: 64px;
   > * {
     min-width: 120px;
-    max-width: 760px;
+    max-width: 680px;
   }
   a {
     text-decoration: none;
@@ -211,7 +211,7 @@ function getSource() {
 }
 
 :deep(.reader-warp) .content {
-  max-width: 730px;
+  max-width: 664px;
   margin: 0 auto;
   padding: 0.5rem;
   line-height: var(--line-height);

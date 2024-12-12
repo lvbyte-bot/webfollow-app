@@ -288,7 +288,7 @@ const entryList = computed(() =>
 function getSurroundingElements(
   array: FeedItem[],
   currentItem0: FeedItem,
-  range = 4
+  range = 7
 ) {
   let index = 0;
   for (let i = 0; i < array.length; i++) {
@@ -472,10 +472,10 @@ watch(props, () => {
 }
 .entry-list {
   position: absolute;
-  top: 160px;
-  left: 0;
-  width: 360px;
-  max-width: 360px;
+  top: 10rem;
+  left: 0.5rem;
+  width: 300px;
+  max-width: 300px;
 }
 </style>
 <style lang="scss">
@@ -492,9 +492,9 @@ watch(props, () => {
   padding: 0.5rem 0.8rem;
   border-radius: 0.5rem;
   z-index: 1;
-  color: rgba(var(--v-theme-on-code), 0.3);
+  color: rgba(var(--v-theme-on-code), 0.26);
   margin-bottom: 3rem;
-  max-width: 150px;
+  // max-width: 150px;
   overflow: hidden;
   border: 1px solid rgba(var(--v-border-color), 0);
   max-height: calc(100vh - 150px);
@@ -527,14 +527,15 @@ watch(props, () => {
   }
   &:hover {
     max-width: none;
-    color: rgba(var(--v-theme-on-code), 0.6);
+    color: rgba(var(--v-theme-on-code), 0.5);
     // background-color: rgb(var(--v-theme-background));
     // box-shadow: 3px 3px 2px rgba(var(--v-theme-on-code), 0.1);
     // border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
   }
 }
 @media (max-width: 1280px) {
-  .chapter-list {
+  .chapter-list,
+  .entry-list {
     display: none;
     background: rgb(var(--v-theme-background));
   }
