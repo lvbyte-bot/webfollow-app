@@ -51,7 +51,9 @@
         </slot>
       </div>
     </div>
+    <slot name="top"></slot>
     <v-container class="reader-warp">
+      <slot name="prepend"></slot>
       <slot>
         <iframe
           class="iframe"
@@ -67,7 +69,7 @@
           :item="item"
           :reader-ref="readerRef"
         >
-          <slot name="prepend"></slot>
+          <slot name="chapter"></slot>
         </basic-reader>
         <podcast-reader :item="item" v-else-if="item?.type == 'PODCAST'" />
         <video-reader :item="item" v-else-if="item.type == 'VIDEO'" />

@@ -7,7 +7,7 @@
     <v-dialog-transition>
       <div class="cover" v-show="show">
         <Reader :item="currentItem">
-          <template #prepend>
+          <template #chapter>
             <div id="chapters" class="chapter-list"></div>
           </template>
           <template #prepend-bar>
@@ -33,6 +33,27 @@
               title="下一篇文章"
               @click="openReader(currentItemIndex + 1, undefined)"
             ></c-btn>
+          </template>
+          <template #top>
+            <div
+              class="entry-list"
+              v-if="!mobile && general.defaultView != 'magazine'"
+            >
+              <ul>
+                <li
+                  v-for="item in entryList"
+                  @click="openReader(-1, item)"
+                  :class="{ active: item.id == currentItem.id }"
+                  :key="item.id"
+                  :title="item.title"
+                >
+                  <v-icon :color="item.isRead ? 'grey' : 'primary'">
+                    {{ item.isRead ? "" : "mdi-circle-medium" }}
+                  </v-icon>
+                  {{ item.title }}
+                </li>
+              </ul>
+            </div>
           </template>
         </Reader>
       </div>
@@ -219,6 +240,7 @@ import MagazineItem from "./item/MagazineItem.vue";
 import { onMounted, watch } from "vue";
 import { Marked } from "@/service";
 import { storeToRefs } from "pinia";
+import { useDisplay } from "vuetify";
 import {
   useItemsStore,
   useAppStore,
@@ -234,6 +256,7 @@ const mainRef = ref();
 
 const { isBottom } = useScroll(mainRef);
 useImgPreview();
+const { mobile } = useDisplay();
 const store = useItemsStore();
 const appStore = useAppStore();
 const feedStore = useFeedsStore();
@@ -258,6 +281,29 @@ const loading = ref(false);
 const settingsStore = useSettingsStore();
 const { general } = storeToRefs(settingsStore);
 const onlyUnread = computed(() => general.value.hideReadArticles);
+const entryList = computed(() =>
+  getSurroundingElements(store.items || [], currentItem.value)
+);
+
+function getSurroundingElements(
+  array: FeedItem[],
+  currentItem0: FeedItem,
+  range = 4
+) {
+  let index = 0;
+  for (let i = 0; i < array.length; i++) {
+    if (currentItem0.id == array[i].id) {
+      index = i;
+      if (currentItemIndex.value < 0) {
+        currentItemIndex.value = index;
+      }
+      continue;
+    }
+  }
+  const start = Math.max(0, index - range);
+  const end = Math.min(array.length, index + range + 1);
+  return array.slice(start, end);
+}
 
 function changeItemView() {
   if (general.value.defaultView == "text") {
@@ -424,6 +470,13 @@ watch(props, () => {
 .main-warp {
   font-size: var(--font-size);
 }
+.entry-list {
+  position: absolute;
+  top: 160px;
+  left: 0;
+  width: 360px;
+  max-width: 360px;
+}
 </style>
 <style lang="scss">
 .main-container {
@@ -434,7 +487,8 @@ watch(props, () => {
 .v-toolbar {
   background-color: rgb(var(--v-theme-background)) !important;
 }
-.chapter-list {
+.chapter-list,
+.entry-list {
   padding: 0.5rem 0.8rem;
   border-radius: 0.5rem;
   z-index: 1;
