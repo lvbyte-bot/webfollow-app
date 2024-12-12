@@ -19,13 +19,14 @@
       </div>
     </div>
     <div class="image-no">
-      <basic-reader :item="item"></basic-reader>
+      <basic-reader :item="item" :reader-ref="readerRef"></basic-reader>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed, Ref } from "vue";
+import { FeedItem } from "@/service/types";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -35,7 +36,8 @@ import BasicReader from "./BasicReader.vue";
 
 // 定义 props
 const props = defineProps<{
-  item: { imgs: string[] };
+  readonly item: FeedItem;
+  readonly readerRef: Ref<any, any>;
 }>();
 
 // 定义 emits（如果需要的话）

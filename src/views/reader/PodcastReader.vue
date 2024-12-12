@@ -25,7 +25,7 @@
       </div>
     </div>
     <div>
-      <basic-reader :item="item"></basic-reader>
+      <basic-reader :item="item" :reader-ref="readerRef"></basic-reader>
     </div>
   </div>
 </template>
@@ -34,10 +34,11 @@
 import BasicReader from "./BasicReader.vue";
 import { FeedItem } from "@/service/types";
 import { usePlayListStore } from "@/store/playlist";
-import { computed } from "vue";
+import { computed, Ref } from "vue";
 
 const props = defineProps<{
-  item: FeedItem;
+  readonly item: FeedItem;
+  readonly readerRef: Ref<any, any>;
 }>();
 const store = usePlayListStore();
 

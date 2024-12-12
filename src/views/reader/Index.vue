@@ -63,7 +63,11 @@
           referrerpolicy="origin"
           sandbox="allow-same-origin allow-popups allow-downloads allow-forms allow-scripts"
         ></iframe>
-        <image-reader :item="item" v-else-if="item?.type == 'IMAGE'" />
+        <image-reader
+          v-else-if="item?.type == 'IMAGE'"
+          :item="item"
+          :reader-ref="readerRef"
+        />
         <basic-reader
           v-else-if="item?.type == 'BASIC'"
           :item="item"
@@ -71,7 +75,11 @@
         >
           <slot name="chapter"></slot>
         </basic-reader>
-        <podcast-reader :item="item" v-else-if="item?.type == 'PODCAST'" />
+        <podcast-reader
+          v-else-if="item?.type == 'PODCAST'"
+          :item="item"
+          :reader-ref="readerRef"
+        />
         <video-reader :item="item" v-else-if="item.type == 'VIDEO'" />
       </slot>
     </v-container>

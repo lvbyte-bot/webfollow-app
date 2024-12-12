@@ -26,8 +26,8 @@ import { computed, Ref } from "vue";
 import { FeedItem } from "@/service/types";
 import { useSideChapter } from "@/utils/useSideChapter";
 const props = defineProps<{
-  item: FeedItem;
-  readerRef: Ref;
+  readonly item: FeedItem;
+  readonly readerRef: Ref<any, any>;
 }>();
 const description = computed(() => props.item?.description || "");
 const readerRef = computed(() => props.readerRef);
