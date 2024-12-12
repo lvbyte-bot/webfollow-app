@@ -161,7 +161,10 @@ function toggleRead() {
 }
 
 function getSource() {
-  return props.item.feed?.title + " - " + props.item.author;
+  return (
+    props.item.feed?.title +
+    (props.item.author ? " - " + props.item.author : "")
+  );
 }
 </script>
 <style lang="scss" scoped>

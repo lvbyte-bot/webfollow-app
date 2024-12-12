@@ -1,8 +1,9 @@
 <template>
   <div class="basic-reader">
-    <div class="title">
-      <v-list-item :href="item.link" :title="item.title">
-        <template #subtitle>
+    <div class="title-container">
+      <a class="title-warp" :href="item.link">
+        <p class="text-h4 title">{{ item.title }}</p>
+        <p class="text-subtitle-2 mb-2">
           <router-link
             @click.stop=""
             class="a"
@@ -11,9 +12,9 @@
             v-text="props.item.feed?.title"
           ></router-link>
           <span v-text="getSource()"></span>
-          <span v-text="getDate()"></span>
-        </template>
-      </v-list-item>
+        </p>
+        <p class="text-subtitle-2 text-body-2" v-text="getDate()"></p>
+      </a>
     </div>
     <div class="chapter-warp">
       <slot></slot>
@@ -48,10 +49,10 @@ function getDate() {
     "zh-CN",
     options
   );
-  return ` | ${formattedDate}`;
+  return `${formattedDate}`;
 }
 function getSource() {
-  return " - " + props.item.author;
+  return props.item.author ? " - " + props.item.author : "";
 }
 </script>
 <style lang="scss" scoped>
@@ -60,18 +61,28 @@ function getSource() {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.title {
-  margin-bottom: 1rem;
-}
-:deep(.title) .v-list-item-title {
-  font-size: 18px;
-  margin-bottom: 1rem;
-}
-.v-list-item {
-  padding: 1.5rem;
+.title-container {
+  margin: 0 auto 2rem;
+  text-align: center;
   max-width: 692px;
-  margin: 0 auto;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  &:hover {
+    background-color: rgb(var(--v-theme-surface-light));
+  }
+  a {
+    text-decoration: none;
+    color: rgb(var(--v-theme-surface-variant));
+  }
+  .title-warp {
+    text-align: start;
+  }
+  .title {
+    margin-bottom: 1rem;
+    line-height: 3rem;
+  }
 }
+
 .basic-reader {
   background-color: rgb(var(--v-theme-background));
 }
