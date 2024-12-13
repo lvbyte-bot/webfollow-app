@@ -17,6 +17,7 @@
 - [x] fever api
 - [x] data in local
 - [x] recommend
+- [x] llm summary
 
 ## Demo
 
