@@ -93,12 +93,6 @@
         <video-reader :item="item" v-else-if="item.type == 'VIDEO'" />
       </slot>
     </v-container>
-    <v-container v-if="summary" class="mt-4">
-      <v-card>
-        <v-card-title>AI 总结</v-card-title>
-        <v-card-text>{{ summary }}</v-card-text>
-      </v-card>
-    </v-container>
   </div>
 </template>
 <script setup lang="ts">
