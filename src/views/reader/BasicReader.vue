@@ -19,13 +19,23 @@
     <div class="chapter-warp">
       <slot></slot>
     </div>
+    <div class="summary content" v-if="summary || summarizing">
+      <div class="mb-2">
+        <v-icon size="small" class="mr-2">mdi-auto-fix</v-icon>
+        AI 总结
+      </div>
+      <v-skeleton-loader v-if="summarizing" type="article"></v-skeleton-loader>
+      <div v-else v-html="md2html(summary || '')"></div>
+    </div>
     <div class="content" v-html="item.html"></div>
   </div>
 </template>
 <script setup lang="ts">
-import { computed, Ref } from "vue";
+import { computed, Ref, inject } from "vue";
 import { FeedItem } from "@/service/types";
 import { useSideChapter } from "@/utils/useSideChapter";
+import { summarySymbol, summarizingSymbol } from "./InjectionSymbols";
+import { md2html } from "@/utils/mdUtils";
 const props = defineProps<{
   readonly item: FeedItem;
   readonly readerRef: Ref<any, any> | null;
@@ -54,6 +64,8 @@ function getDate() {
 function getSource() {
   return props.item.author ? " - " + props.item.author : "";
 }
+const summary: string | undefined = inject(summarySymbol);
+const summarizing: boolean | undefined = inject(summarizingSymbol);
 </script>
 <style lang="scss" scoped>
 .text-overflow {
@@ -101,9 +113,20 @@ function getSource() {
   left: calc(50% + 340px);
   max-width: 210px;
 }
+.summary {
+  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  padding: 1rem !important;
+  border-radius: 0.5rem;
+}
 </style>
-<style>
+<style lang="scss">
 .bar-left {
   width: 150px;
+}
+.summary {
+  ol,
+  ul {
+    padding-inline-start: 1rem;
+  }
 }
 </style>

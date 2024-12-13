@@ -20,6 +20,16 @@
         <slot name="append-bar">
           <c-btn
             variant="text"
+            icon="mdi-auto-fix"
+            :loading="summarizing"
+            :disabled="!canSummarize"
+            title="AI 总结"
+            @click="generateSummary"
+            class="mr-2"
+          >
+          </c-btn>
+          <c-btn
+            variant="text"
             icon
             title="稍后阅读"
             @click="toggleSaved"
@@ -83,11 +93,17 @@
         <video-reader :item="item" v-else-if="item.type == 'VIDEO'" />
       </slot>
     </v-container>
+    <v-container v-if="summary" class="mt-4">
+      <v-card>
+        <v-card-title>AI 总结</v-card-title>
+        <v-card-text>{{ summary }}</v-card-text>
+      </v-card>
+    </v-container>
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, watch, ref } from "vue";
-import { useAppStore } from "@/store";
+import { onMounted, watch, ref, computed, provide } from "vue";
+import { useAppStore, useSettingsStore } from "@/store";
 import { FeedItem } from "@/service/types";
 // import { useSideChapter } from "@/utils/useSideChapter";
 import { useScroll } from "@/utils/scroll";
@@ -97,6 +113,7 @@ import ImageReader from "./ImageReader.vue";
 import VideoReader from "./VideoReader.vue";
 import PodcastReader from "./PodcastReader.vue";
 import { Marked } from "@/service";
+import { summarySymbol, summarizingSymbol } from "./InjectionSymbols";
 
 const readerRef = ref();
 
@@ -105,20 +122,14 @@ const props = defineProps<{
 }>();
 const { scrollTop } = useScroll(readerRef);
 const { mobile } = useDisplay();
-// const description = computed(() =>
-//   readerType.value == "default" ? props.item?.description || "" : ""
-// );
 const readerType = ref("default");
-
-// useSideChapter(description, readerRef, {
-//   value: () => document.getElementById("chapters"),
-// });
 
 watch(
   () => props.item.id,
   () => {
     setTimeout(() => {
       readerRef.value.scrollTop = 0;
+      summary.value = "";
     }, 100);
     if (!props.item.isRead && props.item.id) {
       appStore.read(
@@ -132,6 +143,64 @@ watch(
 );
 
 const appStore = useAppStore();
+const settingsStore = useSettingsStore();
+
+const summarizing = ref(false);
+const summary = ref<string | null>(null);
+
+// 检查是否可以使用 AI
+const canSummarize = computed(() => {
+  const settings = settingsStore.integrated;
+  return (
+    settings.isApiValid &&
+    settings.selectedModel &&
+    settings.apiKey &&
+    props.item?.description
+  );
+});
+
+async function generateSummary() {
+  if (summarizing.value) return;
+
+  const settings = settingsStore.integrated;
+  summarizing.value = true;
+
+  try {
+    const response = await fetch(settings.apiUrl + "/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${settings.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: settings.selectedModel,
+        messages: [
+          {
+            role: "system",
+            content: settings.summaryPrompt,
+          },
+          {
+            role: "user",
+            content: props.item.description,
+          },
+        ],
+        temperature: 0.7,
+        max_tokens: 500,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`API 请求失败: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    summary.value = data.choices[0].message.content;
+  } catch (error: any) {
+    alert("生成总结失败：" + error.message);
+  } finally {
+    summarizing.value = false;
+  }
+}
 
 onMounted(async () => {
   if (!props.item.isRead && props.item.id) {
@@ -166,6 +235,9 @@ function getSource() {
     (props.item.author ? " - " + props.item.author : "")
   );
 }
+
+provide(summarySymbol, summary);
+provide(summarizingSymbol, summarizing);
 </script>
 <style lang="scss" scoped>
 .overflow {
