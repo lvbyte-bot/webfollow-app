@@ -493,7 +493,7 @@ watch(props, () => {
   border-radius: 0.5rem;
   z-index: 1;
   color: rgba(var(--v-theme-on-code), 0.26);
-  margin-bottom: 3rem;
+  // margin-bottom: 3rem;
   // max-width: 150px;
   overflow: hidden;
   border: 1px solid rgba(var(--v-border-color), 0);
@@ -534,7 +534,6 @@ watch(props, () => {
   }
 }
 @media (max-width: 1280px) {
-  .chapter-list,
   .entry-list {
     display: none;
     background: rgb(var(--v-theme-background));

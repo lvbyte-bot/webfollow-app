@@ -118,6 +118,16 @@ const summarizing: boolean | undefined = inject(summarizingSymbol);
   padding: 1rem !important;
   border-radius: 0.5rem;
 }
+@media (max-width: 1280px) {
+  .chapter-warp {
+    top: 60px;
+    float: none;
+    background: rgb(var(--v-theme-background));
+    border-radius: 0.5rem;
+    max-height: 30vh;
+    overflow: auto;
+  }
+}
 </style>
 <style lang="scss">
 .bar-left {
