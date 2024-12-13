@@ -18,9 +18,19 @@ interface AppearanceSettings {
     density: 'comfortable' | 'compact' | 'default'
 }
 
+interface IntegratedSettings {
+    apiUrl: string;
+    apiKey: string;
+    summaryPrompt: string;
+    isApiValid?: boolean;
+    lastTestTime?: string;
+    selectedModel?: string;
+}
+
 interface SettingsState {
     general: GeneralSettings
     appearance: AppearanceSettings
+    integrated: IntegratedSettings
 }
 
 
@@ -41,6 +51,15 @@ export const useSettingsStore = defineStore('settings', () => {
         codeFont: 'mono',
         fontSize: 14,
         density: 'default'
+    })
+
+    const integrated = ref<IntegratedSettings>({
+        apiUrl: 'https://api.openai.com/v1',
+        apiKey: '',
+        summaryPrompt: '请用简洁的语言总结这篇文章的主要内容，突出核心观点和关键信息。',
+        isApiValid: false,
+        lastTestTime: '',
+        selectedModel: 'gpt-4o-mini'
     })
 
     function updateCSSVariables() {
@@ -64,7 +83,8 @@ export const useSettingsStore = defineStore('settings', () => {
     function saveToLocalStorage() {
         localStorage.setItem('app-settings', JSON.stringify({
             general: general.value,
-            appearance: appearance.value
+            appearance: appearance.value,
+            integrated: integrated.value
         }))
         updateCSSVariables()
     }
@@ -75,6 +95,7 @@ export const useSettingsStore = defineStore('settings', () => {
             const parsed: SettingsState = JSON.parse(settings)
             general.value = { ...general.value, ...parsed.general }
             appearance.value = { ...appearance.value, ...parsed.appearance }
+            integrated.value = { ...integrated.value, ...parsed.integrated }
         }
     }
 
@@ -101,6 +122,18 @@ export const useSettingsStore = defineStore('settings', () => {
         saveToLocalStorage()
     }
 
+    function resetIntegratedSettings() {
+        integrated.value = {
+            apiUrl: 'https://api.openai.com/v1',
+            apiKey: '',
+            summaryPrompt: '请用简洁的语言总结这篇文章的主要内容，突出核心观点和关键信息。',
+            isApiValid: false,
+            lastTestTime: '',
+            selectedModel: 'gpt-4o-mini',
+        }
+        saveToLocalStorage()
+    }
+
     onBeforeMount(() => {
         loadFromLocalStorage()
     })
@@ -112,8 +145,10 @@ export const useSettingsStore = defineStore('settings', () => {
     return {
         general,
         appearance,
+        integrated,
         saveToLocalStorage,
         resetGeneralSettings,
-        resetAppearanceSettings
+        resetAppearanceSettings,
+        resetIntegratedSettings
     }
 })
