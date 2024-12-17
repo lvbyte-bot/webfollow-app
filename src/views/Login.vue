@@ -63,7 +63,7 @@ const snackbar = ref(false);
 const message = ref("");
 const username = ref("");
 const password = ref("");
-const url = ref("");
+const url = ref(localStorage.getItem("url") || "");
 const showUrl = ref(false);
 
 const showMessage = (msg: string) => {
@@ -78,18 +78,24 @@ const handleLogin = async () => {
       return;
     }
     localStorage.setItem("url", url.value);
+  } else {
+    localStorage.removeItem("url");
   }
   const token = CryptoJS.MD5(username.value + ":" + password.value).toString(); // 更新为使用 window.CryptoJS
-  const r = await login(token);
-  if (r.auth !== 1) {
-    showMessage("登录失败");
-  } else {
-    localStorage.setItem(
-      "auth",
-      JSON.stringify({ username: username.value, token })
-    );
-    appStore.reloadBuild();
-    router.push("/");
+  try {
+    const r = await login(token);
+    if (r.auth !== 1) {
+      showMessage("登录失败");
+    } else {
+      localStorage.setItem(
+        "auth",
+        JSON.stringify({ username: username.value, token })
+      );
+      appStore.reloadBuild();
+      router.push("/");
+    }
+  } catch (e) {
+    showMessage("登录失败 请检查账号及路径或CORS, err:" + e);
   }
 };
 

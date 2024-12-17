@@ -2,7 +2,7 @@
 
 const key: string = '352E55075E6B8487D6BC55B6463B9141'
 
-const url: string = localStorage.getItem('url') || 'https://api.webfollow.cc/plugins/fever/'
+// const url: string = localStorage.getItem('url') || 'https://api.webfollow.cc/plugins/fever/'
 
 export async function request(params0: any, options: any = {
     method: "POST",
@@ -12,18 +12,19 @@ export async function request(params0: any, options: any = {
     const params = Object.assign({
         api_key,
     }, params0)
-    // options.body = param2From(params)
     const paramsStr = params2str(params);
-    const fullUrl = `${url}?${paramsStr}`;
-    // if (options.body) {
-    //     options.body = param2From(options.body)
-    // }
-    const response = await fetch(fullUrl, options)
-    if (!response.ok) {
-        throw new Error('Network response was not ok');
-    } else {
-        return response.json()
+    const fullUrl = `${localStorage.getItem('url') || 'https://api.webfollow.cc/plugins/fever/'}?${paramsStr}`;
+    try {
+        const response = await fetch(fullUrl, options)
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        } else {
+            return response.json()
+        }
+    } catch (e) {
+        throw e;
     }
+
 }
 
 function params2str(params: object): string {
