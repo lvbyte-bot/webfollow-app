@@ -132,6 +132,11 @@ const onSlideChange = (_: any) => {};
     display: block;
   }
 }
+@media (max-width: 760px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
 <style lang="scss">
 .image-no {

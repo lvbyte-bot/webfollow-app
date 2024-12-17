@@ -502,8 +502,8 @@ watch(props, () => {
   // max-width: 150px;
   overflow: hidden;
   border: 1px solid rgba(var(--v-border-color), 0);
-  max-height: calc(100vh - 150px);
-  overflow: auto;
+  // max-height: calc(100vh - 150px);
+  // overflow: auto;
   img {
     height: 1.3rem;
   }

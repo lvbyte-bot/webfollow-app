@@ -101,4 +101,12 @@ function togglePlay() {
     background-color: transparent;
   }
 }
+@media (max-width: 760px) {
+  .grid {
+    grid-template-columns: 1fr;
+    .warp {
+      height: 30vh;
+    }
+  }
+}
 </style>
