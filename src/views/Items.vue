@@ -428,6 +428,7 @@ watch(props, () => {
   width: 100%;
   height: 100%;
   z-index: 100;
+  background-color: rgb(var(--v-theme-background));
 
   .cover-action {
     position: absolute;

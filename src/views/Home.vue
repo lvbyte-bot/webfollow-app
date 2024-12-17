@@ -96,6 +96,21 @@
           ></c-btn>
           <router-view></router-view>
         </div>
+        <v-btn
+          v-show="mobile"
+          icon
+          color="primary"
+          class="podcast-player"
+          @click="showPlayList = !showPlayList"
+        >
+          <v-icon :class="{ spinner: playListStore.isPlaying }">
+            {{
+              playListStore.isPlaying
+                ? "mdi-music-circle-outline"
+                : "mdi-headphones"
+            }}
+          </v-icon>
+        </v-btn>
       </v-main>
       <v-dialog max-width="960px" v-model="settingable">
         <Settings @onclose="settingable = false"></Settings>
@@ -223,6 +238,11 @@ onMounted(() => {
   z-index: 100;
   background-color: rgb(var(--sidbar-bg));
   border-radius: 50%;
+}
+.podcast-player {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
 }
 </style>
 <style lang="scss">
