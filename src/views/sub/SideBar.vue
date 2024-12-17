@@ -1,12 +1,12 @@
 <template>
 
     <div class="sidebar" v-bind="$attrs">
-        <v-list nav class="sidebar-list">
+        <v-list nav class="sidebar-list" @mousedown.prevent="" @contextmenu.prevent>
             <div class="sidebar-top">
                 <slot name="top"></slot>
                 <v-list-item prepend-icon="mdi-inbox" value="all" title="全部文章" to="/all">
                     <template v-slot:append>
-                        <small v-if="appStore.unReadQty" v-text="appStore.unReadQty"></small> 
+                        <small v-if="appStore.unReadQty" v-text="appStore.unReadQty"></small>
                     </template>
                 </v-list-item>
                 <v-list-item prepend-icon="mdi-format-list-bulleted" value="next" title="稍后阅读" to="/next">
@@ -22,32 +22,39 @@
             </div>
             <v-list-subheader>FEEDS</v-list-subheader>
             <template v-for="gItem in feedStore.subscriptions">
-            <v-list-group   v-if="gItem.feeds.length">
-                <template v-slot:activator="{ isOpen, props }">
-                    <v-list-item v-bind="props" :title="gItem.title">
+                <v-list-group v-if="gItem.feeds.length">
+                    <template v-slot:activator="{ isOpen, props }">
+                        <v-list-item v-bind="props" :title="gItem.title"
+                            @contextmenu.prevent="showContextMenu($event, gItem, true)">
+                            <template #prepend>
+                                <v-icon :icon="isOpen ? 'mdi-chevron-up' : ' mdi-chevron-down'">
+                                </v-icon>
+                            </template>
+                            <template #append>
+                                <small v-if="gItem.unreadQty" v-text="gItem.unreadQty"></small>
+                            </template>
+                        </v-list-item>
+                    </template>
+                    <v-list-item title="全部" :value="'/c/' + gItem.id" :to="'/c/' + gItem.id" @click="handlerClear"  @contextmenu.prevent="showContextMenu($event, gItem, true)">
+                    </v-list-item>
+                    <v-list-item v-for="subItem in gItem.feeds" :key="gItem.id + '-' + subItem.id"
+                        :value="isMultiSelectMode||contextMenuVisible ? undefined : gItem.id + '-' + subItem.id"
+                        :to="isMultiSelectMode||contextMenuVisible ? undefined : '/f/' + subItem.id" :class="[
+                            subItem.isFailure ? 'text-red-accent-3' : '',
+                            selectedFeeds.map(o => o.id).includes(subItem.id) ? 'v-list-item--active' : ''
+                        ]" @click="$event => handleFeedSelect($event, subItem)" @mousedown.prevent=""
+                        @contextmenu.prevent="showContextMenu($event, subItem)">
                         <template #prepend>
-                            <v-icon :icon="isOpen ? 'mdi-chevron-up' : ' mdi-chevron-down'">
-                            </v-icon>
+                            <img :src="subItem.icon" onerror="this.src='/logo.svg'" width="16">
+                            </img>
                         </template>
-                        <template #append>
-                            <small v-if="gItem.unreadQty" v-text="gItem.unreadQty"></small>
+                        <v-list-item-title v-text="subItem.title">
+                        </v-list-item-title>
+                        <template v-slot:append>
+                            <small v-if="subItem.unreadQty" v-text="subItem.unreadQty"></small>
                         </template>
                     </v-list-item>
-                </template>
-                <v-list-item title="全部" :value="'/c/' + gItem.id" :to="'/c/' + gItem.id"> </v-list-item>
-                <v-list-item v-for="subItem in gItem.feeds" :key="gItem.id+'-'+subItem.id" :value="gItem.id+'-'+subItem.id" :class="subItem.isFailure?'text-red-accent-3':''"
-                    :to="'/f/' + subItem.id" @contextmenu.prevent="showContextMenu($event, subItem)">
-                    <template #prepend>
-                        <img :src="subItem.icon" onerror="this.src='/logo.svg'" width="16">
-                        </img>
-                    </template>
-                    <v-list-item-title  v-text="subItem.title">
-                    </v-list-item-title>
-                    <template v-slot:append>
-                        <small v-if="subItem.unreadQty" v-text="subItem.unreadQty"></small>
-                    </template>
-                </v-list-item>
-            </v-list-group>
+                </v-list-group>
             </template>
         </v-list>
 
@@ -56,30 +63,44 @@
             <v-btn class="ml-2" variant="flat" to="/download">下载app</v-btn>
         </div>
 
-        <v-card v-show="contextMenuVisible" style="position: fixed; z-index: 10000"
+        <v-card v-show="contextMenuVisible" class="menus" style="position: fixed; z-index: 10000"
             :style="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }">
             <v-list nav>
-                <v-list-item prepend-icon="mdi-pencil-box-outline" @click="handleAction('edit')">编辑订阅源</v-list-item>
-                <v-list-item prepend-icon="mdi-delete-outline" @click="handleAction('delete')">取消订阅</v-list-item>
+                <v-list-item v-if="currentGroup" prepend-icon="mdi-read" @click="handleAction('markRead')">
+                    标记为已读
+                </v-list-item>
+                <template v-else>
+                    <v-list-item v-if="!isMultiSelectMode" prepend-icon="mdi-read" @click="handleAction('markRead')">
+                        标记为已读
+                    </v-list-item>
+                    <v-list-item prepend-icon="mdi-folder-move-outline" @click="handleAction('edit')">
+                        {{ selectedFeeds.length > 1 ? '批量移动分组' : '移动分组' }}
+                    </v-list-item>
+                    <v-list-item prepend-icon="mdi-delete-outline" @click="handleAction('delete')">
+                        {{ selectedFeeds.length > 1 ? '批量取消订阅' : '取消订阅' }}
+                    </v-list-item>
+                </template>
             </v-list>
         </v-card>
     </div>
 
-   
+
 
 
     <v-dialog v-model="editable" max-width="500">
-        <v-card  prepend-icon="mdi-pencil-box-outline" title="编辑订阅源">
+        <v-card prepend-icon="mdi-pencil-box-outline" title="移动分组">
             <v-card-text>
                 <v-form ref="form">
-                    <v-text-field label="标题" disabled required v-model="currentItem.title"></v-text-field>
-                    <v-text-field label="rss地址" disabled required v-model="currentItem.url"></v-text-field>
-                    <v-text-field label="网站地址" disabled required v-model="currentItem.siteUrl"></v-text-field>
-                    <v-select label="分组" v-model="currentItem.groupName" required :items="feedStore.groups.map(g => g.title)"
-                        :rules="[v => !!v || '分组是必填']"></v-select>
-
-
-                    <v-btn class="mt-4" block :loading="loading" color="primary" @click="onUpdate">
+                    <template v-if="selectedFeeds.length == 1">
+                        <v-text-field label="标题" disabled required v-model="currentItem.title"></v-text-field>
+                        <v-text-field label="rss地址" disabled required v-model="currentItem.url"></v-text-field>
+                        <v-text-field label="网站地址" disabled required v-model="currentItem.siteUrl"></v-text-field>
+                    </template>
+                    <v-select label="分组" v-model="currentItem.groupName" required
+                        :items="feedStore.groups.map(g => g.title)" :rules="[v => !!v || '分组是必填']">
+                    </v-select>
+                    <v-btn class="mt-4" block :loading="loading" color="primary"
+                        @click="selectedFeeds.length > 1 ? onBatchUpdate() : onUpdate()">
                         保存
                     </v-btn>
                 </v-form>
@@ -88,27 +109,15 @@
         </v-card>
     </v-dialog>
 
-    <v-dialog
-      v-model="deleteDialog"
-      width="auto"
-    >
-      <v-card
-        width="400"
-        prepend-icon="mdi-delete-outline"
-        text="确认取消订阅?"
-        title="取消订阅"
-      >
-      <v-card-text>
-        <v-btn
-          :loading="loading"
-          block
-          color="error"
-            text="确认"
-            @click="onDelete"
-          ></v-btn>
-      </v-card-text>
-     
-      </v-card>
+    <v-dialog v-model="deleteDialog" width="auto">
+        <v-card width="400" prepend-icon="mdi-delete-outline" :text="selectedFeeds.length > 1 ? '确认批量取消订阅?' : '确认取消订阅?'"
+            title="取消订阅">
+            <v-card-text>
+                <v-btn :loading="loading" block color="error" text="确认"
+                    @click="selectedFeeds.length > 1 ? onBatchDelete() : onDelete()">
+                </v-btn>
+            </v-card-text>
+        </v-card>
     </v-dialog>
 </template>
 
@@ -116,6 +125,7 @@
 import { ref, onMounted, onBeforeUnmount, Ref } from "vue";
 import { useFeedsStore, useAppStore } from "@/store";
 import { useDisplay } from "vuetify";
+import { Marked } from "@/service";
 
 const { mobile } = useDisplay();
 const feedStore = useFeedsStore();
@@ -135,50 +145,166 @@ onBeforeUnmount(() => {
 });
 
 const hideContextMenu = () => {
-    contextMenuVisible.value = false; // 隐藏菜单
+    contextMenuVisible.value = false;
 };
 
 const contextMenuVisible = ref(false);
 const contextMenuX = ref(0);
 const contextMenuY = ref(0);
+const selectedFeeds = ref<any[]>([]);
+const isMultiSelectMode = ref(false);
+const lastSelectedFeed = ref<any>(null);
 
-const showContextMenu = (event: any, item: any) => {
+const handlerClear = () => {
+    selectedFeeds.value = [];
+    lastSelectedFeed.value = null;
+    isMultiSelectMode.value = false;
+}
+
+// 添加选择处理函数
+const handleFeedSelect = (event: MouseEvent | KeyboardEvent, feed: any) => {
+    console.log(feed)
+    if (event.ctrlKey) {
+        // Ctrl 键多选
+        event.preventDefault();
+        isMultiSelectMode.value = true;
+        if (selectedFeeds.value.find(f => f.id === feed.id)) {
+            selectedFeeds.value = selectedFeeds.value.filter(f => f.id !== feed.id);
+        } else {
+            selectedFeeds.value.push(feed);
+        }
+        lastSelectedFeed.value = feed;
+    } else if (event.shiftKey && lastSelectedFeed.value) {
+        event.preventDefault();
+        isMultiSelectMode.value = true;
+
+        let allFeeds: any[] = [];
+
+        feedStore.subscriptions?.forEach(group => {
+            allFeeds = [...allFeeds, ...group.feeds];
+        });
+
+        const startIndex = allFeeds.findIndex(f => f.id === lastSelectedFeed.value.id);
+        const endIndex = allFeeds.findIndex(f => f.id === feed.id);
+
+        if (startIndex !== -1 && endIndex !== -1) {
+            // 获取范围内的所有feeds
+            const start = Math.min(startIndex, endIndex);
+            const end = Math.max(startIndex, endIndex);
+
+            selectedFeeds.value = allFeeds.slice(start, end + 1);
+        }
+    } else {
+        selectedFeeds.value = [feed];
+        lastSelectedFeed.value = feed;
+        isMultiSelectMode.value = false;
+    }
+};
+
+let currentGroup: any = null
+
+// 修改右键菜单处理函数
+const showContextMenu = (event: any, item: any, isGroup = false) => {
     contextMenuX.value = event.clientX;
     contextMenuY.value = event.clientY;
     contextMenuVisible.value = true;
-    item.groupName = feedStore.groups.filter(g=>g.id==item.groupId)[0].title
-    currentItem.value = item
-};
-
-const handleAction = (action: string) => {
-    contextMenuVisible.value = false;
-    if (action === "edit") {
-        editable.value = true
-    } else if (action === "delete") {
-        deleteDialog.value = true
+    if (isGroup) {
+        currentGroup = item;
+        selectedFeeds.value = [];
+    } else {
+        currentGroup = null;
+        currentItem.value = item;
+        if (!isMultiSelectMode.value && item) {
+            item.groupName = feedStore.groups.filter(g => g.id == item.groupId)[0].title;
+            
+            selectedFeeds.value = [item];
+        }
     }
 };
+
+const handleAction = async (action: string) => {
+    contextMenuVisible.value = false;
+    if (action === "edit") {
+        editable.value = true;
+    } else if (action === "delete") {
+        deleteDialog.value = true;
+    } else if (action === "markRead") {
+        let id = currentGroup ? currentGroup.id : currentItem.value.id
+        try {
+            markRead(id, currentGroup ? Marked.GROUP : Marked.FEED)
+        } catch (e) {
+            console.error(e);
+        }
+    }
+};
+
+async function markRead(id: number, marked: Marked) {
+    await appStore.read(
+        id,
+        marked,
+        appStore.lastRefeshTime
+    );
+}
+
+// 添加批量操作函数
+async function onBatchUpdate() {
+    loading.value = true;
+    if (!currentItem.value.groupName) {
+        alert('请选择分组')
+    }
+    const groupId = feedStore.groups.filter(g => g.title == currentItem.value.groupName)[0].id
+    for (const feed of selectedFeeds.value) {
+        await feedStore.updateFeed(feed.id, groupId);
+    }
+    loading.value = false;
+    editable.value = false;
+    handlerClear()
+}
+
+async function onBatchDelete() {
+    loading.value = true;
+    for (const feed of selectedFeeds.value) {
+        try {
+            await feedStore.deleteFeed(feed.id);
+        } catch (e) {
+            console.log(e)
+        }
+    }
+    loading.value = false;
+    deleteDialog.value = false;
+    handlerClear()
+}
+
 
 
 async function onUpdate() {
+    console.log(currentItem.value)
     loading.value = true
-    if(!currentItem.value.groupName){
+    if (!currentItem.value.groupName) {
         alert('请选择分组')
     }
-    const group_id = feedStore.groups.filter(g=>g.title==currentItem.value.groupName)[0].id
-    await feedStore.updateFeed(currentItem.value.id, group_id)
+    const group_id = feedStore.groups.filter(g => g.title == currentItem.value.groupName)[0].id
+    try {
+        await feedStore.updateFeed(currentItem.value.id, group_id)
+    } catch (e) {
+        console.log(e)
+    }
     loading.value = false
-    editable.value=false
+    editable.value = false
 }
-
-
 
 async function onDelete() {
     loading.value = true
-    await feedStore.deleteFeed(currentItem.value.id)
+    try {
+        await feedStore.deleteFeed(currentItem.value.id)
+    } catch (e) {
+        console.log(e)
+    }
     loading.value = false
-    deleteDialog.value=false
+    deleteDialog.value = false
 }
+
+
 </script>
 <style scoped>
 .sidebar-list {
@@ -190,13 +316,17 @@ async function onDelete() {
     padding-top: 0;
     min-height: 100vh;
 }
+.menus{
+    font-size: 0.8rem;
+}
 
 .sidebar-top {
     padding-top: 0.5rem;
     position: sticky;
     top: 0;
     z-index: 10;
-    background-color: rgb(var(--sidbar-bg)); /** rgb(var(--v-theme-background)); */
+    background-color: rgb(var(--sidbar-bg));
+    /** rgb(var(--v-theme-background)); */
     /* border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)); */
 }
 
@@ -206,5 +336,9 @@ async function onDelete() {
     bottom: 0;
     padding: 1rem;
     z-index: 1000;
+}
+
+.v-list .v-list-item--nav:not(:only-child) {
+    margin-bottom: 1px;
 }
 </style>
