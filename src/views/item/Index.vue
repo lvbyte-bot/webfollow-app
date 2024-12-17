@@ -57,7 +57,9 @@
           在新窗口打开
         </v-list-item>
         <v-list-item
-          prepend-icon="mdi-radiobox-marked"
+          :prepend-icon="
+            currentItem.isRead ? 'mdi-radiobox-blank' : 'mdi-radiobox-marked'
+          "
           @click="
             toggleRead(currentItem);
             hideContextMenu();
