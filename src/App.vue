@@ -32,6 +32,9 @@ html {
 #app .v-list-item--density-default.v-list-item--one-line {
   min-height: calc(2rem + 4px);
 }
+.menus {
+  font-size: 0.8rem;
+}
 .page {
   /* text-align: center; */
   padding: 1rem 1rem;

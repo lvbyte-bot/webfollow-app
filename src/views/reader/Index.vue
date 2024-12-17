@@ -62,7 +62,7 @@
       </div>
     </div>
     <slot name="top"></slot>
-    <v-container class="reader-warp">
+    <v-container class="reader-warp" @contextmenu.stop>
       <slot name="prepend"></slot>
       <slot>
         <iframe

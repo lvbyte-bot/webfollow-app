@@ -157,7 +157,13 @@
           </div>
         </v-expand-y-transition>
         <template v-if="store.items?.length">
-          <v-row v-if="general.defaultView == 'card'">
+          <Items
+            :items="store.items"
+            :view="general.defaultView"
+            :type="type"
+            @open-reader="openReader"
+          ></Items>
+          <!-- <v-row v-if="general.defaultView == 'card'">
             <v-col
               cols="12"
               sm="12"
@@ -192,7 +198,7 @@
               :type="type"
               :key="item.id"
             ></TextItem>
-          </template>
+          </template> -->
         </template>
 
         <template v-if="store.isLast && !loading">
@@ -234,9 +240,7 @@
 import { computed, ref, Ref } from "vue";
 
 import Reader from "./reader/Index.vue";
-import Item from "./item/CardItem.vue";
-import TextItem from "./item/TextItem.vue";
-import MagazineItem from "./item/MagazineItem.vue";
+import Items from "./item/Index.vue";
 import { onMounted, watch } from "vue";
 import { Marked } from "@/service";
 import { storeToRefs } from "pinia";

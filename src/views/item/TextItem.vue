@@ -1,5 +1,5 @@
 <template>
-  <v-list-item :class="{ 'hover-bg': true, readly: item.isRead }">
+  <v-list-item :class="{ 'hover-bg': true, readly: item.isRead }" >
     <template v-slot:prepend>
       <v-icon :color="item.isRead ? 'grey' : 'primary'">
         {{ item.isRead ? "" : "mdi-circle-medium" }}
@@ -61,29 +61,21 @@
       </div>
     </v-list-item-title>
   </v-list-item>
+
+ 
 </template>
 
 <script setup lang="ts">
-import { useAppStore } from "@/store";
-
+import {ClickType} from './types'
 const props = defineProps(["item", "type"]);
-
-const store = useAppStore();
+const emit = defineEmits(['click-action'])
 
 function toggleSaved() {
-  if (props.item.isSaved) {
-    store.unsave(props.item.id);
-  } else {
-    store.save(props.item.id);
-  }
+  emit('click-action', ClickType.save, props.item)
 }
 
 function toggleRead() {
-  if (props.item.isRead) {
-    store.unread(props.item.id);
-  } else {
-    store.read(props.item.id);
-  }
+  emit('click-action', ClickType.read, props.item)
 }
 
 function getSubtitle() {
@@ -130,5 +122,14 @@ function getSubtitle() {
 }
 .v-list-item--density-default {
   min-height: 48px;
+}
+
+.v-card {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.v-list-item {
+  min-width: 160px;
+  cursor: pointer;
 }
 </style>

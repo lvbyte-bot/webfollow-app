@@ -316,9 +316,7 @@ async function onDelete() {
     padding-top: 0;
     min-height: 100vh;
 }
-.menus{
-    font-size: 0.8rem;
-}
+
 
 .sidebar-top {
     padding-top: 0.5rem;

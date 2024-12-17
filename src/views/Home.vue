@@ -1,5 +1,5 @@
 <template>
-  <v-responsive>
+  <v-responsive @contextmenu.prevent>
     <v-app :theme="themeMode">
       <v-navigation-drawer class="sidebar-warp" v-if="mobile" v-model="show">
         <SideBar></SideBar>
