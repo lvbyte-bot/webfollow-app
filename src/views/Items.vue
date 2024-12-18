@@ -126,36 +126,34 @@
       </div>
 
       <v-container class="mx-auto items-warp">
-        <v-expand-y-transition>
-          <v-alert
-            class="my-3"
-            v-show="appStore.nav.isFailure"
-            border="top"
-            border-color="warning"
-          >
-            <div class="d-flex justify-space-between">
-              <v-icon class="mr-3">mdi-alert-circle-outline</v-icon>
-              此订阅源有问题。请检查并在必要时重新订阅。
-              <v-btn
-                class="ml-3"
-                size="small"
-                variant="text"
-                :href="appStore.nav.url"
-              >
-                查看订阅源
-              </v-btn>
-            </div>
-          </v-alert>
-          <div
-            v-show="!appStore.nav.isFailure && (loading || appStore.loading)"
-            class="ma-6 text-center"
-          >
-            <div class="rotating">
-              <v-icon>mdi-loading</v-icon>
-            </div>
-            <div class="mt-2 text-body-2">正在刷新...</div>
+        <v-alert
+          class="my-3"
+          v-show="appStore.nav.isFailure"
+          border="top"
+          border-color="warning"
+        >
+          <div class="d-flex justify-space-between">
+            <v-icon class="mr-3">mdi-alert-circle-outline</v-icon>
+            此订阅源有问题。请检查并在必要时重新订阅。
+            <v-btn
+              class="ml-3"
+              size="small"
+              variant="text"
+              :href="appStore.nav.url"
+            >
+              查看订阅源
+            </v-btn>
           </div>
-        </v-expand-y-transition>
+        </v-alert>
+        <div
+          v-show="!appStore.nav.isFailure && (loading || appStore.loading)"
+          class="ma-6 text-center"
+        >
+          <div class="rotating">
+            <v-icon>mdi-loading</v-icon>
+          </div>
+          <div class="mt-2 text-body-2">正在刷新...</div>
+        </div>
         <template v-if="store.items?.length">
           <Items
             :items="store.items"
@@ -163,42 +161,6 @@
             :type="type"
             @open-reader="openReader"
           ></Items>
-          <!-- <v-row v-if="general.defaultView == 'card'">
-            <v-col
-              cols="12"
-              sm="12"
-              md="4"
-              lg="3"
-              xl="2"
-              xxl="1"
-              v-for="(item, index) in store.items"
-              :key="item.id"
-            >
-              <Item
-                :item="item"
-                @click="openReader(index, item)"
-                :type="type"
-              ></Item>
-            </v-col>
-          </v-row>
-          <template v-else-if="general.defaultView == 'magazine'">
-            <MagazineItem
-              v-for="(item, index) in store.items"
-              :item="item"
-              @click="openReader(index, item)"
-              :type="type"
-              :key="item.id"
-            ></MagazineItem>
-          </template>
-          <template v-else>
-            <TextItem
-              v-for="(item, index) in store.items"
-              :item="item"
-              @click="openReader(index, item)"
-              :type="type"
-              :key="item.id"
-            ></TextItem>
-          </template> -->
         </template>
 
         <template v-if="store.isLast && !loading">

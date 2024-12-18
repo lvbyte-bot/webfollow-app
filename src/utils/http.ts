@@ -4,16 +4,21 @@ const key: string = '352E55075E6B8487D6BC55B6463B9141'
 
 // const url: string = localStorage.getItem('url') || 'https://api.webfollow.cc/plugins/fever/'
 
-export async function request(params0: any, options: any = {
+export async function request(params: any, options: any = {
     method: "POST",
 }): Promise<any> {
     const api_key = JSON.parse(localStorage.getItem('auth') || '{}')?.token || key
-    // ... existing code ...
-    const params = Object.assign({
+    const url = localStorage.getItem('url') || 'https://api.webfollow.cc/plugins/fever/'
+    let fullUrl = url;
+    const reqParams = Object.assign({
         api_key,
-    }, params0)
-    const paramsStr = params2str(params);
-    const fullUrl = `${localStorage.getItem('url') || 'https://api.webfollow.cc/plugins/fever/'}?${paramsStr}`;
+    }, params)
+    if (url.indexOf('fever.php')) {
+        options = Object.assign({}, options, { body: param2From(reqParams) })
+    } else {
+        const paramsStr = params2str(reqParams);
+        fullUrl = `${url}?${paramsStr}`;
+    }
     try {
         const response = await fetch(fullUrl, options)
         if (!response.ok) {
@@ -34,10 +39,10 @@ function params2str(params: object): string {
         .join('&');
 }
 
-// function param2From(params: object): FormData {
-//     const formData = new FormData();
-//     Object.entries(params)
-//         .filter(([_, value]) => value)
-//         .forEach(([key, value]) => formData.append(key, value));
-//     return formData
-// }
+function param2From(params: object): FormData {
+    const formData = new FormData();
+    Object.entries(params)
+        .filter(([_, value]) => value)
+        .forEach(([key, value]) => formData.append(key, value));
+    return formData
+}

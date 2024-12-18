@@ -8,6 +8,8 @@ declare module "*.vue" {
 
 declare function log(...args: any): void
 
+declare function err(e: Error | unknown, ...args: any): void
+
 declare function setTitle(arg: number): void
 
 declare namespace CryptoJS {

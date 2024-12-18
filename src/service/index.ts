@@ -87,7 +87,7 @@ export async function sync() {
     for (let with_ids of idsto50str(syncItemIdArray)) {
         let fItems = (await items({ with_ids })).items
         for (let item of fItems) {
-            await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
+            await itemRepo.save({ id: item.id instanceof Number ? item.id : Number.parseInt(item.id), feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
         }
         total = total + 50
         if (total > syncItemIds.size) {

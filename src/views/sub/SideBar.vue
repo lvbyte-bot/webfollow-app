@@ -35,11 +35,12 @@
                             </template>
                         </v-list-item>
                     </template>
-                    <v-list-item title="全部" :value="'/c/' + gItem.id" :to="'/c/' + gItem.id" @click="handlerClear"  @contextmenu.prevent="showContextMenu($event, gItem, true)">
+                    <v-list-item title="全部" :value="'/c/' + gItem.id" :to="'/c/' + gItem.id" @click="handlerClear"
+                        @contextmenu.prevent="showContextMenu($event, gItem, true)">
                     </v-list-item>
                     <v-list-item v-for="subItem in gItem.feeds" :key="gItem.id + '-' + subItem.id"
-                        :value="isMultiSelectMode||contextMenuVisible ? undefined : gItem.id + '-' + subItem.id"
-                        :to="isMultiSelectMode||contextMenuVisible ? undefined : '/f/' + subItem.id" :class="[
+                        :value="isMultiSelectMode || contextMenuVisible ? undefined : gItem.id + '-' + subItem.id"
+                        :to="isMultiSelectMode || contextMenuVisible ? undefined : '/f/' + subItem.id" :class="[
                             subItem.isFailure ? 'text-red-accent-3' : '',
                             selectedFeeds.map(o => o.id).includes(subItem.id) ? 'v-list-item--active' : ''
                         ]" @click="$event => handleFeedSelect($event, subItem)" @mousedown.prevent=""
@@ -163,7 +164,6 @@ const handlerClear = () => {
 
 // 添加选择处理函数
 const handleFeedSelect = (event: MouseEvent | KeyboardEvent, feed: any) => {
-    console.log(feed)
     if (event.ctrlKey) {
         // Ctrl 键多选
         event.preventDefault();
@@ -216,7 +216,7 @@ const showContextMenu = (event: any, item: any, isGroup = false) => {
         currentItem.value = item;
         if (!isMultiSelectMode.value && item) {
             item.groupName = feedStore.groups.filter(g => g.id == item.groupId)[0].title;
-            
+
             selectedFeeds.value = [item];
         }
     }
@@ -254,7 +254,11 @@ async function onBatchUpdate() {
     }
     const groupId = feedStore.groups.filter(g => g.title == currentItem.value.groupName)[0].id
     for (const feed of selectedFeeds.value) {
-        await feedStore.updateFeed(feed.id, groupId);
+        try {
+            await feedStore.updateFeed(feed.id, groupId);
+        } catch (e) {
+            err(e, 'feed删除失败[' + feed.title + ']')
+        }
     }
     loading.value = false;
     editable.value = false;
@@ -267,7 +271,7 @@ async function onBatchDelete() {
         try {
             await feedStore.deleteFeed(feed.id);
         } catch (e) {
-            console.log(e)
+            err(e, 'feed更新失败[' + feed.title + ']')
         }
     }
     loading.value = false;
@@ -278,7 +282,7 @@ async function onBatchDelete() {
 
 
 async function onUpdate() {
-    console.log(currentItem.value)
+    // console.log(currentItem.value)
     loading.value = true
     if (!currentItem.value.groupName) {
         alert('请选择分组')
@@ -287,7 +291,7 @@ async function onUpdate() {
     try {
         await feedStore.updateFeed(currentItem.value.id, group_id)
     } catch (e) {
-        console.log(e)
+        err(e, 'feed更新失败[' + currentItem.value.title + ']')
     }
     loading.value = false
     editable.value = false
@@ -298,7 +302,7 @@ async function onDelete() {
     try {
         await feedStore.deleteFeed(currentItem.value.id)
     } catch (e) {
-        console.log(e)
+        err(e, 'feed删除失败[' + currentItem.value.title + ']')
     }
     loading.value = false
     deleteDialog.value = false
