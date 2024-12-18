@@ -13,7 +13,7 @@ export async function request(params: any, options: any = {
     const reqParams = Object.assign({
         api_key,
     }, params)
-    if (url.indexOf('fever.php')) {
+    if (url.indexOf('fever.php') > 0) {
         options = Object.assign({}, options, { body: param2From(reqParams) })
     } else {
         const paramsStr = params2str(reqParams);

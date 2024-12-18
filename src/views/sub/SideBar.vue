@@ -251,6 +251,7 @@ async function onBatchUpdate() {
     loading.value = true;
     if (!currentItem.value.groupName) {
         alert('请选择分组')
+        return
     }
     const groupId = feedStore.groups.filter(g => g.title == currentItem.value.groupName)[0].id
     for (const feed of selectedFeeds.value) {
@@ -286,6 +287,7 @@ async function onUpdate() {
     loading.value = true
     if (!currentItem.value.groupName) {
         alert('请选择分组')
+        return
     }
     const group_id = feedStore.groups.filter(g => g.title == currentItem.value.groupName)[0].id
     try {
