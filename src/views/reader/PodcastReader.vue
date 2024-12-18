@@ -76,7 +76,7 @@ function togglePlay() {
   top: calc(64px + 16px);
   padding: 1rem;
   .warp {
-    height: calc(100vh - 64px - 4rem);
+    height: calc(100vh - 64px - 5rem);
     border-radius: 1rem;
     background: linear-gradient(
       to right bottom,
