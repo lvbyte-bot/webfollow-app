@@ -61,7 +61,7 @@
         </slot>
       </div>
     </div>
-    <slot name="top"></slot>
+    <slot name="header"></slot>
     <v-container class="reader-warp" @contextmenu.stop>
       <slot name="prepend"></slot>
       <slot>
@@ -93,6 +93,7 @@
         <video-reader :item="item" v-else-if="item.type == 'VIDEO'" />
       </slot>
     </v-container>
+    <slot name="footer"></slot>
   </div>
 </template>
 <script setup lang="ts">

@@ -34,7 +34,7 @@
               @click="openReader(currentItemIndex + 1, undefined)"
             ></c-btn>
           </template>
-          <template #top>
+          <template #header>
             <div
               class="entry-list"
               v-if="!mobile && general.defaultView != 'magazine'"
@@ -54,6 +54,25 @@
                 </li>
               </ul>
             </div>
+          </template>
+          <template #footer>
+            <v-empty-state
+              icon="mdi-page-next-outline"
+              v-if="
+                currentItemIndex + 1 != store.items?.length &&
+                currentItem.type == 'BASIC'
+              "
+            >
+              <v-btn
+                variant="text"
+                @click="openReader(currentItemIndex + 1, undefined)"
+              >
+                <template #prepend>
+                  <v-icon> mdi-chevron-right </v-icon>
+                </template>
+                点击打开下一个篇文章
+              </v-btn>
+            </v-empty-state>
           </template>
         </Reader>
       </div>
