@@ -14,7 +14,7 @@
         :item="item"
         @click="openReader(index, item)"
         @click-action="clickAction"
-        @contextmenu.prevent="showContextMenu($event, item)"
+        @contextmenu.prevent="showContextMenu($event, item, index)"
         :type="type"
       ></CardItem>
     </v-col>
@@ -24,7 +24,7 @@
       v-for="(item, index) in items"
       :item="item"
       @click="openReader(index, item)"
-      @contextmenu.prevent="showContextMenu($event, item)"
+      @contextmenu.prevent="showContextMenu($event, item, index)"
       :type="type"
       :key="item.id"
     ></MagazineItem>
@@ -35,7 +35,7 @@
       :item="item"
       @click="openReader(index, item)"
       @click-action="clickAction"
-      @contextmenu.prevent="showContextMenu($event, item)"
+      @contextmenu.prevent="showContextMenu($event, item, index)"
       :type="type"
       :key="item.id"
     ></TextItem>
@@ -54,11 +54,12 @@
           target="_blank"
           @click="hideContextMenu"
         >
-          在新窗口打开
+          在新窗口打开源网页
         </v-list-item>
+        <v-divider></v-divider>
         <v-list-item
           :prepend-icon="
-            currentItem.isRead ? 'mdi-radiobox-blank' : 'mdi-radiobox-marked'
+            currentItem.isRead ? 'mdi-circle' : 'mdi-circle-outline'
           "
           @click="
             toggleRead(currentItem);
@@ -86,6 +87,17 @@
         >
           查看订阅源
         </v-list-item>
+        <v-list-item
+          :prepend-icon="
+            currentItem.isRead ? 'mdi-check-underline' : 'mdi-read'
+          "
+          @click="
+            upItemsToggleRead(currentItemIndex);
+            hideContextMenu();
+          "
+        >
+          {{ currentItem.isRead ? "标记以上为未读" : "标记以上为已读" }}
+        </v-list-item>
       </v-list>
     </v-card>
   </v-dialog-transition>
@@ -99,7 +111,7 @@ import TextItem from "./TextItem.vue";
 import MagazineItem from "./MagazineItem.vue";
 import { FeedItem } from "@/service/types";
 import { ClickType } from "./types";
-defineProps<{
+const props = defineProps<{
   view: String;
   items: FeedItem[];
   type: string;
@@ -136,16 +148,32 @@ function toggleRead(item: FeedItem) {
   }
 }
 
+function upItemsToggleRead(index: number) {
+  const isRead = props.items[index].isRead;
+  const items = props.items.slice(0, index + 1);
+  items.forEach((item) => {
+    if (item.isRead == isRead) {
+      if (isRead) {
+        store.unread(item.id);
+      } else {
+        store.read(item.id);
+      }
+    }
+  });
+}
+
 const contextMenuVisible = ref(false);
 const contextMenuX = ref(0);
 const contextMenuY = ref(0);
+let currentItemIndex = 0;
 
-const showContextMenu = (event: MouseEvent, item: FeedItem) => {
+const showContextMenu = (event: MouseEvent, item: FeedItem, index: number) => {
   event.preventDefault();
   contextMenuX.value = event.clientX;
   contextMenuY.value = event.clientY;
   contextMenuVisible.value = true;
   currentItem.value = item;
+  currentItemIndex = index;
 };
 
 const hideContextMenu = () => {

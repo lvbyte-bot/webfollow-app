@@ -6,17 +6,17 @@
                 <slot name="top"></slot>
                 <v-list-item prepend-icon="mdi-inbox" value="all" title="全部文章" to="/all">
                     <template v-slot:append>
-                        <small v-if="appStore.unReadQty" v-text="appStore.unReadQty"></small>
+                        <small v-if="appStore.unReadQty" class="font-weight-thin" v-text="appStore.unReadQty"></small>
                     </template>
                 </v-list-item>
                 <v-list-item prepend-icon="mdi-format-list-bulleted" value="next" title="稍后阅读" to="/next">
                     <template v-slot:append>
-                        <small v-if="appStore.savedQty" v-text="appStore.savedQty"></small>
+                        <small v-if="appStore.savedQty" class="font-weight-thin" v-text="appStore.savedQty"></small>
                     </template>
                 </v-list-item>
                 <v-list-item prepend-icon=" mdi-rocket-launch-outline" value="recom" title="猜你喜欢" to="/recom">
                     <template v-slot:append>
-                        <small v-if="appStore.unReadQty" v-text="appStore.unReadQty"></small>
+                        <small v-if="appStore.unReadQty" class="font-weight-thin" v-text="appStore.unReadQty"></small>
                     </template>
                 </v-list-item>
             </div>
@@ -24,14 +24,15 @@
             <template v-for="gItem in feedStore.subscriptions">
                 <v-list-group v-if="gItem.feeds.length">
                     <template v-slot:activator="{ isOpen, props }">
-                        <v-list-item v-bind="props" :title="gItem.title"
+                        <v-list-item v-bind="props" 
                             @contextmenu.prevent="showContextMenu($event, gItem, true)">
+                            <v-list-item-title :class="{'font-weight-bold':gItem.unreadQty}" v-text="gItem.title"></v-list-item-title>
                             <template #prepend>
                                 <v-icon :icon="isOpen ? 'mdi-chevron-up' : ' mdi-chevron-down'">
                                 </v-icon>
                             </template>
                             <template #append>
-                                <small v-if="gItem.unreadQty" v-text="gItem.unreadQty"></small>
+                                <small v-if="gItem.unreadQty" class="font-weight-thin" v-text="gItem.unreadQty"></small>
                             </template>
                         </v-list-item>
                     </template>
@@ -39,20 +40,18 @@
                         @contextmenu.prevent="showContextMenu($event, gItem, true)">
                     </v-list-item>
                     <v-list-item v-for="subItem in gItem.feeds" :key="gItem.id + '-' + subItem.id"
+                        :class="{ 'text-red-accent-3':subItem.isFailure, 'v-list-item--active': selectedFeeds.map(o => o.id).includes(subItem.id)}"
                         :value="isMultiSelectMode || contextMenuVisible ? undefined : gItem.id + '-' + subItem.id"
-                        :to="isMultiSelectMode || contextMenuVisible ? undefined : '/f/' + subItem.id" :class="[
-                            subItem.isFailure ? 'text-red-accent-3' : '',
-                            selectedFeeds.map(o => o.id).includes(subItem.id) ? 'v-list-item--active' : ''
-                        ]" @click="$event => handleFeedSelect($event, subItem)" @mousedown.prevent=""
+                        :to="isMultiSelectMode || contextMenuVisible ? undefined : '/f/' + subItem.id"  @click="$event => handleFeedSelect($event, subItem)" @mousedown.prevent=""
                         @contextmenu.prevent="showContextMenu($event, subItem)">
                         <template #prepend>
                             <img :src="subItem.icon" onerror="this.src='/logo.svg'" width="16">
                             </img>
                         </template>
-                        <v-list-item-title v-text="subItem.title">
+                        <v-list-item-title :class="{'font-weight-bold':subItem.unreadQty}" v-text="subItem.title">
                         </v-list-item-title>
                         <template v-slot:append>
-                            <small v-if="subItem.unreadQty" v-text="subItem.unreadQty"></small>
+                            <small v-if="subItem.unreadQty" class="font-weight-thin" v-text="subItem.unreadQty"></small>
                         </template>
                     </v-list-item>
                 </v-list-group>

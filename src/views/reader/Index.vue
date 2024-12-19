@@ -48,14 +48,13 @@
           >
           </c-btn>
           <c-btn
-            size="small"
             variant="text"
             icon
             :title="item.isRead ? '未读' : '已读'"
             @click.stop="toggleRead"
           >
             <v-icon>{{
-              item.isRead ? "mdi-radiobox-blank" : "mdi-radiobox-marked"
+              item.isRead ? "mdi-circle" : "mdi-circle-outline"
             }}</v-icon>
           </c-btn>
         </slot>

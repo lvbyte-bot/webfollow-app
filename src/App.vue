@@ -51,6 +51,10 @@ html {
 .v-navigation-drawer .v-list {
   overflow: auto !important;
 }
+.top-bar .v-btn,
+.top-sider .v-btn {
+  color: rgba(var(--v-theme-surface-variant), 0.8);
+}
 
 /* 滚动条整体区域 */
 ::-webkit-scrollbar {

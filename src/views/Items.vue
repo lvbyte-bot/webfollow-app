@@ -83,7 +83,7 @@
         <div class="v-toolbar-title v-app-bar-title text-truncate">
           {{ (appStore.nav && appStore.nav.title) || "未分类" }}
           <small
-            class="mx-3 text-medium-emphasis"
+            class="mx-2 text-medium-emphasis font-weight-light"
             v-if="appStore.nav.qty"
             v-text="appStore.nav.qty"
           ></small>
@@ -117,7 +117,7 @@
             <v-icon>{{ loading ? "mdi-loading" : "mdi-reload" }}</v-icon>
           </c-btn>
           <c-btn
-            :icon="onlyUnread ? 'mdi-radiobox-marked' : 'mdi-radiobox-blank'"
+            :icon="onlyUnread ? 'mdi-circle' : 'mdi-circle-outline'"
             :title="onlyUnread ? '只看未读' : '看全部'"
             @click="changeOnlyUnread(!onlyUnread)"
             class="mr-2"
