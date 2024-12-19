@@ -316,7 +316,7 @@ async function onDelete() {
 .sidebar-list {
     position: relative;
     max-height: 100vh;
-    overflow: auto;
+    overflow: scroll;
     /* background-color: rgb(var(--v-theme-background)); */
     background-color: transparent;
     padding-top: 0;

@@ -205,7 +205,7 @@ onMounted(() => {
   :deep(.sidebar) {
     position: relative;
     border-right: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
-    overflow: scroll;
+    overflow: auto;
     resize: horizontal;
     min-width: 230px;
     width: 260px;
