@@ -54,7 +54,7 @@
             @click.stop="toggleRead"
           >
             <v-icon>{{
-              item.isRead ? "mdi-circle" : "mdi-circle-outline"
+              item.isRead ? "mdi-circle-outline" : "mdi-circle"
             }}</v-icon>
           </c-btn>
         </slot>
