@@ -46,34 +46,7 @@ export async function sync() {
     })
     data.feeds.forEach((f: any) => {
         feedRepo.save({ id: f.id, title: f.title, url: f.url, siteUrl: f.site_url, groupId: fid2gid[f.id + ''] })
-        // feedsCache[f.id] = f
     })
-    // 同步items
-    // let lastId = await itemRepo.maxId()
-    // if (lastId) {
-    //     let hasNext: boolean = true
-    //     let fItems: any[] = []
-    //     while (hasNext) {
-    //         fItems = (await items({ since_id: lastId })).items
-    //         hasNext = fItems.length == 50
-    //         for (let item of fItems) {
-    //             await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
-    //         }
-    //         lastId = await itemRepo.maxId()
-    //     }
-    // } else {
-    //     const sids = await listSavedIds()
-    //     const uids = await listUnreadIds()
-    //     const syncItemIds = new Set([...uids, ...sids])
-    //     for (let with_ids of idsto50str(Array.from(syncItemIds))) {
-    //         let fItems = (await items({ with_ids })).items
-    //         for (let item of fItems) {
-    //             await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
-    //         }
-    //         const total = await itemRepo.count()
-    //         setTitle(total)
-    //     }
-    // }
     const sids = await listSavedIds()
     const uids = await listUnreadIds()
     const syncItemIds = new Set([...uids, ...sids])
@@ -87,7 +60,11 @@ export async function sync() {
     for (let with_ids of idsto50str(syncItemIdArray)) {
         let fItems = (await items({ with_ids })).items
         for (let item of fItems) {
-            await itemRepo.save({ id: item.id instanceof Number ? item.id : Number.parseInt(item.id), feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
+            try {
+                await itemRepo.save({ id: item.id instanceof Number ? item.id : Number.parseInt(item.id), feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
+            } catch (e) {
+                err(e, '同步item出错' + with_ids)
+            }
         }
         total = total + 50
         if (total > syncItemIds.size) {
