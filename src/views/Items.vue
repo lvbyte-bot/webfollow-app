@@ -164,7 +164,7 @@
             </v-btn>
           </div>
         </v-alert>
-        <div
+        <!-- <div
           v-show="!appStore.nav.isFailure && (loading || appStore.loading)"
           class="ma-6 text-center"
         >
@@ -172,7 +172,7 @@
             <v-icon>mdi-loading</v-icon>
           </div>
           <div class="mt-2 text-body-2">正在刷新...</div>
-        </div>
+        </div> -->
         <template v-if="store.items?.length">
           <Items
             :items="store.items"
@@ -183,16 +183,6 @@
         </template>
 
         <template v-if="store.isLast && !loading">
-          <v-empty-state
-            v-if="type == 'f' && store.isLast && store.items?.length == 0"
-          >
-            <v-btn variant="text" @click="pullFeedItems" :disabled="loading">
-              <template #prepend>
-                <v-icon> mdi-database-arrow-down-outline </v-icon>
-              </template>
-              加载归档
-            </v-btn>
-          </v-empty-state>
           <v-empty-state
             icon="mdi-book-open-page-variant-outline"
             v-if="feedStore.nextUnReadUrl"
@@ -206,11 +196,30 @@
             </v-btn>
           </v-empty-state>
           <v-empty-state
+            v-else-if="!store.items?.length"
+            height="calc(100vh - 64px)"
+            icon="mdi-fruit-watermelon"
+            text="全部已读"
+          >
+          </v-empty-state>
+          <v-empty-state
             v-else
             height="calc(100vh - 64px)"
-            icon=" mdi-book-open-outline"
+            icon="mdi-fruit-cherries"
             text="我是有底线的"
           >
+          </v-empty-state>
+          <v-empty-state
+            v-if="!onlyUnread && type == 'f' && store.items?.length == 0"
+            height="calc(100vh - 64px)"
+            icon="mdi-database-arrow-down-outline "
+          >
+            <v-btn variant="text" @click="pullFeedItems" :disabled="loading">
+              <template #prepend>
+                <v-icon> mdi-database-arrow-down-outline </v-icon>
+              </template>
+              加载归档
+            </v-btn>
           </v-empty-state>
         </template>
       </v-container>

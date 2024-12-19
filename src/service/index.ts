@@ -85,17 +85,22 @@ export async function syncFeedItem(feedId: number) {
     let fItems: any[] = []
     let lastId = 0;
     while (hasNext) {
-        const r = (await items({ feed_ids: feedId, since_id: lastId }))
-        // console.log(sum, r.total_items)
-        if (r.total_items == sum) {
-            return
+        try {
+            const r = (await items({ feed_ids: feedId, since_id: lastId }))
+            // console.log(sum, r.total_items)
+            if (r.total_items == sum) {
+                return
+            }
+            fItems = r.items
+            hasNext = fItems.length == 50
+            for (let item of fItems) {
+                await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
+                lastId = item.id > lastId ? item.id : lastId
+            }
+        } catch (e) {
+            err(e, '同步item出错')
         }
-        fItems = r.items
-        hasNext = fItems.length == 50
-        for (let item of fItems) {
-            await itemRepo.save({ id: item.id, feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
-            lastId = item.id > lastId ? item.id : lastId
-        }
+
     }
 }
 
