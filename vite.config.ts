@@ -35,6 +35,13 @@ export default defineConfig(async () => ({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        api: 'modern-compiler' // or "modern"
+      }
+    }
+  },
   // 1. prevent vite from obscuring rust errors
   clearScreen: false,
   // 2. tauri expects a fixed port, fail if that port is not available
@@ -56,7 +63,7 @@ export default defineConfig(async () => ({
     proxy: {
       "/fever/": {
         // target: "https://api.webfollow.cc/api",
-        target: "http://192.168.8.232:28080/plugins/",
+        target: "http://127.0.0.1:8086/",
 
         changeOrigin: true,
         // rewrite: (path) => path.replace(/^\/fever/, ""),

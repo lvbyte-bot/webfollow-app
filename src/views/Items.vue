@@ -212,11 +212,11 @@
           <v-empty-state
             v-if="!onlyUnread && type == 'f' && store.items?.length == 0"
             height="calc(100vh - 64px)"
-            icon="mdi-database-arrow-down-outline "
+            icon="mdi-cloud-download-outline"
           >
             <v-btn variant="text" @click="pullFeedItems" :disabled="loading">
               <template #prepend>
-                <v-icon> mdi-database-arrow-down-outline </v-icon>
+                <v-icon>mdi-sync</v-icon>
               </template>
               加载归档
             </v-btn>

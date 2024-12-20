@@ -1,5 +1,5 @@
 <template>
-  <v-card min-height="80vh">
+  <v-card min-height="80vh" class="rounded-lg">
     <v-container fluid>
       <v-row>
         <!-- 左侧导航菜单 -->
