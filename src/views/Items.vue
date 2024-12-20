@@ -57,7 +57,6 @@
           </template>
           <template #footer>
             <v-empty-state
-              icon="mdi-page-next-outline"
               v-if="
                 currentItemIndex + 1 != store.items?.length &&
                 currentItem.type == 'BASIC'
@@ -68,9 +67,9 @@
                 @click="openReader(currentItemIndex + 1, undefined)"
               >
                 <template #prepend>
-                  <v-icon> mdi-chevron-right </v-icon>
+                  <v-icon> mdi mdi-page-next-outline </v-icon>
                 </template>
-                点击打开下一个篇文章
+                下一个篇文章
               </v-btn>
             </v-empty-state>
           </template>
@@ -192,7 +191,7 @@
               <template #prepend>
                 <v-icon color="primary"> mdi-circle-medium </v-icon>
               </template>
-              点击打开下一个未读的订阅源
+              打开下一个未读的订阅源
             </v-btn>
           </v-empty-state>
           <v-empty-state
@@ -482,7 +481,15 @@ async function changeOnlyUnread(onlyUnread0: boolean) {
   top: 10rem;
   left: 0.5rem;
   width: 300px;
-  max-width: 300px;
+  min-height: 36vh;
+  & > ul {
+    display: none;
+  }
+  &:hover {
+    > ul {
+      display: block;
+    }
+  }
 }
 </style>
 <style lang="scss">

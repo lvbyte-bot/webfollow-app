@@ -9,11 +9,12 @@
       </div>
       <div class="top-sider-title mx-auto w-100">
         <v-dialog-transition>
-          <v-card-title
-            class="text-truncate"
+          <div
+            class="text-truncate text-subtitle-1"
             v-show="scrollTop > 120 && !mobile"
-            >{{ item.title }} | <small v-text="getSource()"></small>
-          </v-card-title>
+          >
+            {{ item.title }} | <small v-text="getSource()"></small>
+          </div>
         </v-dialog-transition>
       </div>
       <div class="append-bar">
@@ -244,14 +245,17 @@ provide(summarizingSymbol, summarizing);
   z-index: 10;
   background-color: rgb(var(--v-theme-background));
   display: grid;
-  grid-template-columns: auto minmax(5vw, 1fr) auto;
+  grid-template-columns: minmax(180px, auto) minmax(5vw, 1fr) minmax(
+      180px,
+      auto
+    );
   align-items: center;
   padding: 0.5rem 0.3rem;
   border-bottom: 1px solid rgba(var(--v-border-color), 0);
   height: 64px;
   > * {
     min-width: 120px;
-    max-width: 680px;
+    max-width: 650px;
   }
   a {
     text-decoration: none;

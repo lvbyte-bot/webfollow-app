@@ -90,7 +90,7 @@ const onSlideChange = (_: any) => {};
 
 .swiper {
   border-radius: 8px;
-  height: calc(100vh - 64px - 2rem);
+  height: calc(100vh - 64px - 2.5rem);
   padding: 1rem;
 }
 
