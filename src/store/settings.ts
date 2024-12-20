@@ -16,6 +16,7 @@ interface AppearanceSettings {
     codeFont: string
     fontSize: number
     density: 'comfortable' | 'compact' | 'default'
+    hideSidebar: boolean
 }
 
 interface IntegratedSettings {
@@ -50,7 +51,8 @@ export const useSettingsStore = defineStore('settings', () => {
         fontFamily: 'system-ui',
         codeFont: 'mono',
         fontSize: 14,
-        density: 'default'
+        density: 'default',
+        hideSidebar: false
     })
 
     const integrated = ref<IntegratedSettings>({
@@ -117,7 +119,8 @@ export const useSettingsStore = defineStore('settings', () => {
             fontFamily: 'system-ui',
             codeFont: 'mono',
             fontSize: 14,
-            density: 'default'
+            density: 'default',
+            hideSidebar: false
         }
         saveToLocalStorage()
     }

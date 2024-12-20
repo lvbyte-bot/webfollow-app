@@ -121,7 +121,7 @@
 <script setup async>
 import { useDisplay } from "vuetify";
 import { useRoute, useRouter } from "vue-router";
-import { onMounted, ref, watch } from "vue";
+import { onBeforeMount, onMounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import {
   useAppStore,
@@ -145,7 +145,6 @@ const title = ref("");
 const hideSide = ref(false);
 const settingable = ref(false);
 const showPlayList = ref(false);
-
 const show = ref(false);
 
 const themeMode = ref(appearance.value.themeMode);
@@ -171,6 +170,14 @@ watch(
     }
   }
 );
+
+watch(hideSide, () => {
+  settingsStore.appearance.hideSidebar = hideSide.value;
+  settingsStore.saveToLocalStorage();
+});
+onBeforeMount(() => {
+  hideSide.value = settingsStore.appearance.hideSidebar;
+});
 
 onMounted(() => {
   // 默认启动页
