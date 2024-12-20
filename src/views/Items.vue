@@ -276,10 +276,10 @@ const settingsStore = useSettingsStore();
 const { general } = storeToRefs(settingsStore);
 const onlyUnread = computed(() => general.value.hideReadArticles);
 const entryList = computed(() =>
-  getSurroundingElements(store.items || [], currentItem.value)
+  getSurroundingItems(store.items || [], currentItem.value)
 );
 
-function getSurroundingElements(
+function getSurroundingItems(
   array: FeedItem[],
   currentItem0: FeedItem,
   range = 7
@@ -311,17 +311,31 @@ function changeItemView() {
   settingsStore.saveToLocalStorage();
 }
 
+function watchLoadMore() {
+  watch(isBottom, (v) => {
+    if (v && !store.isLast) {
+      initData(++page);
+    }
+  });
+}
+
+function watchRefresh() {
+  watch(props, () => {
+    initData(0);
+    show.value = false;
+    mainRef.value.scrollTo(0, 0);
+  });
+}
+
 let page = 0;
 
-watch(isBottom, (v) => {
-  if (v && !store.isLast) {
-    initData(++page);
-  }
+onMounted(() => {
+  watchRefresh();
+  watchLoadMore();
+  initData();
 });
 
-onMounted(initData);
-
-let autoRefresh: any;
+let autoRefresh: NodeJS.Timeout;
 
 async function loadData(
   id: any,
@@ -344,6 +358,7 @@ async function loadData(
 
 async function initData(page0: number = 0) {
   loading.value = true;
+
   page = page0;
   // log(onlyUnread.value);
   if (props.type == "f") {
@@ -357,12 +372,14 @@ async function initData(page0: number = 0) {
   } else if (props.type == "recom") {
     await loadData(null, LsItemType.RECOMMEND, page, onlyUnread.value);
   }
+
   loading.value = false;
 }
 
 async function refresh() {
   loading.value = true;
   await appStore.sync();
+  mainRef.value.scrollTo(0, 0);
   loading.value = false;
 }
 
@@ -382,6 +399,7 @@ async function markRead() {
     appStore.lastRefeshTime
   );
 }
+
 function openReader(index: number, item: any | undefined) {
   show.value = true;
   currentItemIndex.value = index;
@@ -397,12 +415,6 @@ async function changeOnlyUnread(onlyUnread0: boolean) {
   settingsStore.saveToLocalStorage();
   await initData(0);
 }
-
-watch(props, () => {
-  initData(0);
-  show.value = false;
-  mainRef.value.scrollTo(0, 0);
-});
 </script>
 <style lang="scss" scoped>
 .items-warp {
