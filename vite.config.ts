@@ -4,6 +4,7 @@ import vuetify, {
 } from 'vite-plugin-vuetify'
 import ViteFonts from 'unplugin-fonts/vite'
 import vue from "@vitejs/plugin-vue";
+import { VitePWA } from 'vite-plugin-pwa';
 
 import {
   fileURLToPath,
@@ -28,6 +29,33 @@ export default defineConfig(async () => ({
         name: 'Roboto',
         styles: 'wght@100;300;400;500;700;900',
       }],
+    },
+  }),
+  VitePWA({
+    injectRegister: 'auto',
+    registerType: 'autoUpdate',
+    devOptions: {
+      enabled: true
+    },
+    includeAssets: ['favicon.ico', 'logo.svg'],
+    manifest: {
+      name: 'WebFollow',
+      short_name: 'WF',
+      description: '做懂你阅读的RSS阅读器',
+      display: 'standalone',
+      theme_color: '#ffffff',
+      icons: [
+        {
+          src: 'logo.svg',
+          sizes: '192x192',
+          type: 'image/png',
+        },
+        {
+          src: 'logo.svg',
+          sizes: '512x512',
+          type: 'image/png',
+        },
+      ],
     },
   }),],
   resolve: {
