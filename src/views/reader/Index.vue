@@ -245,10 +245,7 @@ provide(summarizingSymbol, summarizing);
   z-index: 10;
   background-color: rgb(var(--v-theme-background));
   display: grid;
-  grid-template-columns: minmax(180px, auto) minmax(5vw, 1fr) minmax(
-      180px,
-      auto
-    );
+  grid-template-columns: minmax(180px, auto) minmax(0, 1fr) minmax(180px, auto);
   align-items: center;
   padding: 0.5rem 0.3rem;
   border-bottom: 1px solid rgba(var(--v-border-color), 0);
