@@ -44,6 +44,21 @@ export const useFeedsStore = defineStore('feeds', () => {
                     f.unreadQty = await sumUnread(items, f.id, unread_item_ids)
                     f.isFailure = efids.has(f.id)
                 }));
+                g.feeds.sort((a, b) => {
+                    //错误的在最后 有未读的进行字母排序 无的放后面 
+                    let a0 = a.isFailure ? 1 : 0
+                    let b0 = b.isFailure ? 1 : 0
+                    if (a0 == 1 || b0 == 1) {
+                        return a0 - b0
+                    }
+                    if (a.unreadQty != 0 && b.unreadQty != 0) {
+                        return a.title.localeCompare(b.title)
+                    } else if (a.unreadQty == 0 && b.unreadQty == 0) {
+                        return a.title.localeCompare(b.title)
+                    } else {
+                        return b.unreadQty - a.unreadQty
+                    }
+                })
                 g.unreadQty = g.feeds.map(f => f.unreadQty).reduce((x, y) => x + y)
                 return g
             } catch {
