@@ -79,6 +79,14 @@ export const useSettingsStore = defineStore('settings', () => {
 
         // 更新主题颜色
         root.style.setProperty('--theme-color', appearance.value.themeColor)
+        const metaTheme: any = document.querySelector('meta[name=theme-color]')
+        if (metaTheme) {
+            if (appearance.value.themeColor == 'dark' || window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                metaTheme.content = '#292929'
+            } else {
+                metaTheme.content = '#fff'
+            }
+        }
 
     }
 
