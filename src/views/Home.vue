@@ -18,6 +18,9 @@
                     {{ appStore.authInfo.username.substring(0, 2) }}
                   </v-avatar>
                 </template>
+                <template #append>
+                  <v-icon size="16px">mdi-exit-to-app</v-icon>
+                </template>
               </v-list-item>
 
               <c-btn @click="settingable = true" icon=" mdi-cog-outline">

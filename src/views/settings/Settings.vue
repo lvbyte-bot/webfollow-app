@@ -3,7 +3,7 @@
     <v-container fluid>
       <v-row>
         <!-- 左侧导航菜单 -->
-        <v-col cols="3" class="pr-0">
+        <v-col lg="3" cols="12" class="pr-0">
           <v-list rounded>
             <v-list-item
               subtitle="hello webfollow"
@@ -46,7 +46,7 @@
         </v-col>
 
         <!-- 右侧内容区域 -->
-        <v-col cols="9">
+        <v-col lg="9" cols="12">
           <v-card flat>
             <v-card-title class="d-flex justify-space-between align-center"
               >{{ getCurrentTitle }}
@@ -54,7 +54,7 @@
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </v-card-title>
-            <div class="ov">
+            <div :class="{ scroll: !mobile }">
               <component :is="currentComponent" />
             </div>
           </v-card>
@@ -67,6 +67,7 @@
 <script lang="ts" setup>
 import { useSettingsStore, useAppStore } from "@/store";
 import { ref, computed } from "vue";
+import { useDisplay } from "vuetify";
 import SettingsGeneral from "./sub/SettingsGeneral.vue";
 import SettingsAppearance from "./sub/SettingsAppearance.vue";
 import SettingsIntegrated from "./sub/SettingsIntegrated.vue";
@@ -78,6 +79,7 @@ const comps: any = {
   about: SettingsAbout,
   integrated: SettingsIntegrated,
 };
+const { mobile } = useDisplay();
 const appStore = useAppStore();
 
 const currentSection = ref("general");
@@ -112,9 +114,9 @@ const close = () => {
 .v-list-item--active {
   border-radius: 0 50px 50px 0;
 }
-:deep(.ov) {
+:deep(.scroll) {
   height: 70vh;
-  overflow: auto;
+  overflow: scroll;
   .v-card--variant-elevated {
     box-shadow: none;
   }
