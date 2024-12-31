@@ -2,7 +2,30 @@
   <v-responsive @contextmenu.prevent>
     <v-app :theme="themeMode">
       <v-navigation-drawer class="sidebar-warp" v-if="mobile" v-model="show">
-        <SideBar></SideBar>
+        <SideBar>
+          <template #top>
+            <div class="mb-2 d-flex justify-space-between align-center">
+              <v-list-item
+                :title="appStore.authInfo.username"
+                @click="router.push('/login')"
+              >
+                <template #prepend>
+                  <v-avatar
+                    size="30px"
+                    color="secondary"
+                    :title="appStore.authInfo.username"
+                  >
+                    {{ appStore.authInfo.username.substring(0, 2) }}
+                  </v-avatar>
+                </template>
+              </v-list-item>
+
+              <c-btn @click="settingable = true" icon=" mdi-cog-outline">
+              </c-btn>
+            </div>
+            <v-divider class="mb-2"></v-divider>
+          </template>
+        </SideBar>
       </v-navigation-drawer>
       <v-navigation-drawer v-else :model-value="!hideSide" rail>
         <v-list-item
