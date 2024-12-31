@@ -1,8 +1,8 @@
 <template>
   <v-row v-if="view == 'card'">
     <v-col
-      cols="12"
-      sm="12"
+      cols="6"
+      sm="4"
       md="4"
       lg="3"
       xl="2"

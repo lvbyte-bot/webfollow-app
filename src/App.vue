@@ -55,7 +55,13 @@ html {
 .top-sider .v-btn {
   color: rgba(var(--v-theme-surface-variant), 0.8);
 }
-
+.text-ellipsis {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 /* 滚动条整体区域 */
 ::-webkit-scrollbar {
   width: 6px;
