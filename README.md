@@ -18,12 +18,20 @@
 - [x] data in local
 - [x] recommend
 - [x] llm summary
+- [x] pwa
 
 ## Demo
 
 [online](https://webfollow.cc)
 
 ## Preview
+
+**mobile**
+
+![](./doc/mobile-feed.png)
+![](./doc/mobile-reader.png)
+
+**pc**
 
 ![](./doc/col-view.png)
 ![](./doc/text-reader.png)
