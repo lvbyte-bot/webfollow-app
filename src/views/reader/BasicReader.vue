@@ -120,12 +120,13 @@ const summarizing: boolean | undefined = inject(summarizingSymbol);
 }
 @media (max-width: 1280px) {
   .chapter-warp {
-    top: 60px;
+    position: static;
+    // top: 60px;
     float: none;
-    background: rgb(var(--v-theme-background));
-    border-radius: 0.5rem;
-    max-height: 30vh;
-    overflow: auto;
+    // background: rgb(var(--v-theme-background));
+    // border-radius: 0.5rem;
+    // max-height: 30vh;
+    // overflow: auto;
   }
 }
 </style>
