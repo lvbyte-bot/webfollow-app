@@ -32,6 +32,12 @@ html {
 #app .v-list-item--density-default.v-list-item--one-line {
   min-height: calc(2rem + 4px);
 }
+.reader-warp a {
+  text-decoration: none;
+}
+.reader-warp a:hover {
+  text-decoration: underline;
+}
 .menus {
   font-size: 0.8rem;
 }
