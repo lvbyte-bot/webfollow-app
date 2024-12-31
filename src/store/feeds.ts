@@ -34,16 +34,19 @@ export const useFeedsStore = defineStore('feeds', () => {
 
     let readUrls: any[] = []
 
-    async function initFeeds() {
+
+    async function buildFeeds() {
         // init  subscriptions
         const efids = new Set(fail_feed_ids)
         const items = await itemRepo.listAll(undefined)
+        // 需要重构，首次加载构建数结构，后期只更新数量
         subscriptions.value = await Promise.all(data.value?.map(async g => {
             try {
                 await Promise.all(g.feeds.map(async f => {
                     f.unreadQty = await sumUnread(items, f.id, unread_item_ids)
                     f.isFailure = efids.has(f.id)
                 }));
+
                 g.feeds.sort((a, b) => {
                     //错误的在最后 有未读的进行字母排序 无的放后面 
                     let a0 = a.isFailure ? 1 : 0
@@ -75,12 +78,32 @@ export const useFeedsStore = defineStore('feeds', () => {
         })
     }
 
+    async function refreshFeedUnreadQty() {
+        // 直接使用 unread_item_ids 计算未读数量
+        const items = await itemRepo.listAll(undefined)
+        subscriptions.value?.forEach(async g => {
+            await Promise.all(g.feeds.map(async f => {
+                f.unreadQty = await sumUnread(items, f.id, unread_item_ids)
+            }))
+            g.unreadQty = g.feeds.map(f => f.unreadQty).reduce((x, y) => x + y)
+            return g
+        })
+
+        readUrls = [{ url: '/all' }, { url: '/next' }, { url: '/recom' }]
+        subscriptions.value?.forEach(g => {
+            readUrls.push({ url: '/c/' + g.id, unreadQty: g.unreadQty })
+            g.feeds.forEach(f => {
+                readUrls.push({ url: '/f/' + f.id, unreadQty: f.unreadQty })
+            })
+        })
+    }
+
     async function refresh() {
         const r = await listSubscription()
         if (r) {
             data.value = r[0]
             groups.value = r[1]
-            await initFeeds()
+            await buildFeeds()
         }
 
     }
@@ -111,7 +134,7 @@ export const useFeedsStore = defineStore('feeds', () => {
 
     onMounted(async () => {
         refresh()
-        watch(unread_item_ids, initFeeds)
+        watch(unread_item_ids, refreshFeedUnreadQty)
     })
 
     async function deleteFeed(id: number) {

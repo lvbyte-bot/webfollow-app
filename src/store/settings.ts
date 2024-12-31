@@ -81,7 +81,7 @@ export const useSettingsStore = defineStore('settings', () => {
         root.style.setProperty('--theme-color', appearance.value.themeColor)
         const metaTheme: any = document.querySelector('meta[name=theme-color]')
         if (metaTheme) {
-            if (appearance.value.themeColor == 'dark' || window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            if (appearance.value.themeMode == 'dark' || window.matchMedia("(prefers-color-scheme: dark)").matches) {
                 metaTheme.content = '#292929'
             } else {
                 metaTheme.content = '#fff'
