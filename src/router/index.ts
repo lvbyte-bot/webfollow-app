@@ -22,6 +22,9 @@ const routes = [{
         path: '/subscribe',
         component: () => import('@/views/Discovery.vue'),
     }, {
+        path: '/search',
+        component: () => import('@/views/FeedAssistant.vue'),
+    }, {
         path: '/download',
         component: () => import('@/views/Download.vue'),
     }, {

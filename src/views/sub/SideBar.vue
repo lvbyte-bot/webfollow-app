@@ -9,15 +9,17 @@
                         <small v-if="appStore.unReadQty" class="font-weight-thin" v-text="appStore.unReadQty"></small>
                     </template>
                 </v-list-item>
+                <v-list-item prepend-icon=" mdi-rocket-launch-outline" value="recom" title="猜你喜欢" to="/recom">
+                    <template v-slot:append>
+                        <small v-if="appStore.unReadQty" class="font-weight-thin" v-text="appStore.unReadQty"></small>
+                    </template>
+                </v-list-item>
                 <v-list-item prepend-icon="mdi-format-list-bulleted" value="next" title="稍后阅读" to="/next">
                     <template v-slot:append>
                         <small v-if="appStore.savedQty" class="font-weight-thin" v-text="appStore.savedQty"></small>
                     </template>
                 </v-list-item>
-                <v-list-item prepend-icon=" mdi-rocket-launch-outline" value="recom" title="猜你喜欢" to="/recom">
-                    <template v-slot:append>
-                        <small v-if="appStore.unReadQty" class="font-weight-thin" v-text="appStore.unReadQty"></small>
-                    </template>
+                <v-list-item prepend-icon="mdi-text-search-variant" value="search" title="智慧搜索" to="/search">
                 </v-list-item>
             </div>
             <v-list-subheader>FEEDS</v-list-subheader>
