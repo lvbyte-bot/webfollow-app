@@ -33,12 +33,16 @@
 
 ## Preview
 
-**mobile**
+**AI**
+
 ![](./doc/ai-search.png)
+
+**Mobile**
+
 ![](./doc/mobile-feed.png)
 ![](./doc/mobile-reader.png)
 
-**pc**
+**PC**
 
 ![](./doc/col-view.png)
 ![](./doc/text-reader.png)
