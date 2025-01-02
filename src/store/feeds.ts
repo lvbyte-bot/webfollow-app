@@ -23,7 +23,8 @@ import { feedRepo, Group, itemRepo } from '@/repository'
 export const useFeedsStore = defineStore('feeds', () => {
     const {
         unread_item_ids,
-        fail_feed_ids
+        fail_feed_ids,
+        refresh: refreshBase
     } = useBaseStore()
     const groups: Ref<Group[]> = ref([])
     const route = useRoute()
@@ -144,6 +145,7 @@ export const useFeedsStore = defineStore('feeds', () => {
             itemRepo.del(item.id)
         })
         await refresh()
+        await refreshBase(async () => { }, async () => { })
     }
 
     async function updateFeed(id: number, groupId: number) {
