@@ -7,6 +7,15 @@
 
 ## Feature
 
+**feature**
+
+- [x] fever api
+- [x] data in local
+- [x] ai search
+- [x] recommend
+- [x] llm summary
+- [x] pwa
+      **base**
 - [x] text-reader
 - [x] podcast-reader
 - [x] img-reader
@@ -14,11 +23,7 @@
 - [x] column-view
 - [x] list-view
 - [x] card-view
-- [x] fever api
-- [x] data in local
-- [x] recommend
-- [x] llm summary
-- [x] pwa
+      **todo list**
 - [ ] export opml
 - [ ] data reset
 
@@ -29,7 +34,7 @@
 ## Preview
 
 **mobile**
-
+![](./doc/ai-search.png)
 ![](./doc/mobile-feed.png)
 ![](./doc/mobile-reader.png)
 
