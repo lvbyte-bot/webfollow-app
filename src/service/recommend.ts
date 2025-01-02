@@ -3,10 +3,22 @@ let feeds = JSON.parse(localStorage.getItem('readfeeds') || '{}')
 
 // 后期需要根据时间往下掉
 export function readItem(feedId: number, itemId: number) {
-    if (feeds.hasOwnProperty(feedId)) {
-        feeds[feedId] = feeds[feedId] + 1
+    log('read-item', itemId)
+    if (feeds['itemids']) {
+        feeds.itemids.push(itemId)
+        let feedread = feeds.feedread || {}
+        if (feedread.hasOwnProperty(feedId)) {
+            feedread[feedId] = feedread[feedId] + 1
+        } else {
+            feedread[feedId] = 1
+        }
     } else {
-        feeds[feedId] = 1
+        if (feeds.hasOwnProperty(feedId)) {
+            feeds[feedId] = feeds[feedId] + 1
+        } else {
+            feeds[feedId] = 1
+        }
+        feeds = { itemids: [itemId], feedread: feeds }
     }
     localStorage.setItem('readfeeds', JSON.stringify(feeds))
 }

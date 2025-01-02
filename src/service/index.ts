@@ -127,7 +127,7 @@ export async function listItem(id: any, type: LsItemType, page: number = 0, only
             feedIds = new Set((await feedRepo.getAll()).filter(item => id == -1 ? item.groupId == undefined : item.groupId == id).map(item => item.id))
             res = (await itemRepo.findAll(item => filterItem(item, feedIds, onlyUnread, unReadItemIds), page))
             break
-        case LsItemType.SAVED:
+        case LsItemType.SAVED: case LsItemType.ITEMS:
             let itemIds: Set<number> = new Set(id)
             res = (await itemRepo.findAll(item => filterItem0(item, (id) => itemIds.has(id), onlyUnread, unReadItemIds), page))
             break

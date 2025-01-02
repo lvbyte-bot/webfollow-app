@@ -13,7 +13,9 @@ export function useScroll(el: any): any {
             isBottom.value = false
         }, 300));
         const config = { childList: true, subtree: true };
-        observer.observe(el.value, config);
+        if (el.value) {
+            observer.observe(el.value, config);
+        }
     })
     onUnmounted(() => {
         nextTick(() => {

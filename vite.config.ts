@@ -40,11 +40,17 @@ export default defineConfig(async () => ({
     includeAssets: ['favicon.ico', 'logo.svg'],
     manifest: {
       name: 'WebFollow',
-      short_name: 'WF',
+      short_name: 'WebFollow',
       description: '做懂你阅读的RSS阅读器',
       display: 'standalone',
-      theme_color: '#ffffff',
+      theme_color: '#0000',
+      background_color: '#fff',
       icons: [
+        {
+          src: 'logo.svg',
+          sizes: '48x48',
+          type: 'image/png',
+        },
         {
           src: 'logo.svg',
           sizes: '192x192',
@@ -55,6 +61,10 @@ export default defineConfig(async () => ({
           sizes: '512x512',
           type: 'image/png',
         },
+        {
+          "src": "logo.svg",
+          "sizes": "any"
+        }
       ],
     },
   }),],
