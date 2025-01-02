@@ -19,6 +19,8 @@
 - [x] recommend
 - [x] llm summary
 - [x] pwa
+- [ ] export opml
+- [ ] data reset
 
 ## Demo
 
