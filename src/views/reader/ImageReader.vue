@@ -134,7 +134,7 @@ const onSlideChange = (_: any) => {};
 }
 @media (max-width: 760px) {
   .grid {
-    grid-template-columns: 1fr;
+    display: block;
   }
 }
 </style>
