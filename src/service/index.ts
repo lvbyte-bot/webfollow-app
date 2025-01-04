@@ -24,10 +24,16 @@ export async function getItemTotal(): Promise<number> {
     return await itemRepo.count()
 }
 
+
+async function asyncFilter(array: any, asyncCallback: (item: any) => Promise<boolean>) {
+    const results = await Promise.all(array.map(asyncCallback));
+    return array.filter((_: any, index: number) => results[index]);
+}
+
 /**
  * 刷新同步数据到本地
  */
-export async function sync() {
+export async function pull(ecb: () => void) {
     await isDbExists();
 
     // await groupRepo.count();
@@ -55,7 +61,8 @@ export async function sync() {
     if (localMaxId >= Math.max(...remoteIds)) {
         return
     }
-    let syncItemIdArray = await remoteIds.filter(async (id) => ! await itemRepo.existsId(id))
+
+    let syncItemIdArray = await asyncFilter(remoteIds, async id => !await itemRepo.existsId(id))
     let total = remoteIds.length - syncItemIdArray.length
     for (let with_ids of idsto50str(syncItemIdArray)) {
         let fItems = (await items({ with_ids })).items
@@ -63,6 +70,7 @@ export async function sync() {
             try {
                 await itemRepo.save({ id: item.id instanceof Number ? item.id : Number.parseInt(item.id), feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
             } catch (e) {
+                ecb()
                 err(e, '同步item出错' + with_ids)
             }
         }

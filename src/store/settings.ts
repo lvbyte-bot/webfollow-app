@@ -7,6 +7,7 @@ interface GeneralSettings {
     hideReadArticles: boolean
     autoRefresh: boolean
     refreshInterval: number
+    refreshFail: boolean
 }
 
 interface AppearanceSettings {
@@ -42,7 +43,8 @@ export const useSettingsStore = defineStore('settings', () => {
         defaultView: 'magazine',
         hideReadArticles: true,
         autoRefresh: false,
-        refreshInterval: 30 * 60
+        refreshInterval: 30 * 60,
+        refreshFail: false
     })
 
     const appearance = ref<AppearanceSettings>({
@@ -115,7 +117,8 @@ export const useSettingsStore = defineStore('settings', () => {
             defaultView: 'magazine',
             hideReadArticles: true,
             autoRefresh: false,
-            refreshInterval: 30 * 60
+            refreshInterval: 30 * 60,
+            refreshFail: false
         }
         saveToLocalStorage()
     }

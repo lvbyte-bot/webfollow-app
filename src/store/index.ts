@@ -4,13 +4,13 @@ import { useBaseStore } from './base'
 import { useFeedsStore } from './feeds'
 import { useItemsStore } from './items'
 import { usePlayListStore } from './playlist'
-import { sync as sync2local, setRanks } from '@/service'
+import { pull as pulllocal, setRanks } from '@/service'
 import { ranks as getRanks } from '@/service/recommend'
 import { clearIndexedDB } from '@/utils/dbHelper'
 import { computed, Ref, watch, ref, onMounted, reactive, Reactive } from 'vue'
 import { PageRoute, TopNav } from './types'
 import { LsItemType } from '@/service/types'
-export { useSettingsStore } from './settings'
+import { useSettingsStore } from './settings'
 
 type SyncType = '' | 'sync2local'
 
@@ -21,6 +21,7 @@ export const useAppStore = defineStore('app', () => {
     const { clear } = usePlayListStore()
     const { refresh: refreshFeed } = useFeedsStore()
     const { subscriptions } = storeToRefs(useFeedsStore())
+    const settingsStore = useSettingsStore()
     const { refreshItems, pageRoute } = useItemsStore()
     const loading: Ref<boolean> = ref(false)
     const lastRefeshTime = ref(0);
@@ -28,32 +29,47 @@ export const useAppStore = defineStore('app', () => {
     const nav: Reactive<TopNav> = reactive({ title: 'loading' })
 
     async function sync(type: SyncType = '') {
+        async function pullData2Local() {
+            return await pulllocal(() => {
+                settingsStore.general.refreshFail = true
+                settingsStore.saveToLocalStorage()
+            })
+        }
         lastRefeshTime.value = new Date().getTime()
+        const tmpRefreshFail = settingsStore.general.refreshFail
+        settingsStore.general.refreshFail = false
         if (type == '') {
             await refresh(async () => {
                 loading.value = true
-                await sync2local()
+                await pullData2Local()
                 await refreshFeed()
                 setRanks(await getRanks())
                 await refreshItems()
-                log('sync end')
                 loading.value = false
             }, async () => {
+                loading.value = true
+                if (tmpRefreshFail) {
+                    await pullData2Local()
+                }
                 setRanks(await getRanks())
                 await refreshItems()
+                loading.value = false
             })
 
         } else if (type = 'sync2local') {
             loading.value = true
-            await sync2local()
+            await pullData2Local()
             setRanks(await getRanks())
             await refreshFeed()
-            log('sync end')
             loading.value = false
         }
         setTimeout(() => initNav(pageRoute), 1000)
         lastRefeshTime.value = new Date().getTime()
+        log('sync end')
+        settingsStore.saveToLocalStorage()
     }
+
+
 
     async function reloadBuild() {
         await clearIndexedDB()
@@ -127,7 +143,7 @@ export const useAppStore = defineStore('app', () => {
 
 
 
-export { useFeedsStore, useItemsStore, usePlayListStore };
+export { useFeedsStore, useItemsStore, usePlayListStore, useSettingsStore };
 
 type wathRef = Ref<any> | Reactive<any>
 
