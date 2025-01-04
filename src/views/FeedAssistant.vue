@@ -17,7 +17,12 @@
             </v-textarea>
             <div class="d-flex align-center justify-space-between">
               <div></div>
-              <c-btn icon="mdi-send" @click="handleQuery"></c-btn>
+              <c-btn
+                icon="mdi-send"
+                @click="handleQuery"
+                :loading="loading"
+                :disabled="loading"
+              ></c-btn>
             </div>
           </div>
           <v-card
@@ -41,7 +46,13 @@
             <v-divider></v-divider>
             <v-card-text>
               <div class="text-subtitle-1 mb-2">参考资料</div>
-              <v-row v-if="itemStore.items?.length">
+              <v-empty-state
+                v-if="!loading && itemStore.items?.length == 0"
+                icon="mdi-magnify"
+                text="请重新尝试提问，有可能是AI调用存在问题导致，可以直接重试"
+                title="没有找到相关资料"
+              ></v-empty-state>
+              <v-row v-else-if="itemStore.items?.length">
                 <v-col
                   cols="12"
                   md="6"
