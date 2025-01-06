@@ -18,7 +18,7 @@
         </Swiper>
       </div>
     </div>
-    <div class="image-no">
+    <div class="text-reader">
       <basic-reader :item="item" :reader-ref="readerRef"></basic-reader>
     </div>
   </div>
@@ -132,19 +132,22 @@ const onSlideChange = (_: any) => {};
     display: block;
   }
 }
-@media (max-width: 760px) {
+
+@media (max-width: 1200px) {
   .grid {
     display: block;
+  }
+  .text-reader {
+    margin-top: 2rem;
   }
 }
 </style>
 <style lang="scss">
-.image-no {
+.text-reader {
   img {
-    // display: none;
     text-align: center;
     margin: 0 auto;
-    width: 80%;
+    max-width: 100%;
   }
   .v-card-title {
     display: none;
