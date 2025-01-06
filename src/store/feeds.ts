@@ -106,7 +106,6 @@ export const useFeedsStore = defineStore('feeds', () => {
             groups.value = r[1]
             await buildFeeds()
         }
-
     }
 
     watch(route, () => {
@@ -138,14 +137,16 @@ export const useFeedsStore = defineStore('feeds', () => {
         watch(unread_item_ids, refreshFeedUnreadQty)
     })
 
-    async function deleteFeed(id: number) {
+    async function deleteFeed(id: number, auotRefresh: boolean = true) {
         await extFeed({ feed_id: id, as: 'remove' })
         await feedRepo.del(id);
         (await itemRepo.listAll(item => item.feedId == id)).forEach(item => {
             itemRepo.del(item.id)
         })
+        if (auotRefresh) {
+            await refreshBase(async () => { }, async () => { })
+        }
         await refresh()
-        await refreshBase(async () => { }, async () => { })
     }
 
     async function updateFeed(id: number, groupId: number) {

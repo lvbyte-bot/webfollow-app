@@ -269,9 +269,10 @@ async function onBatchUpdate() {
 
 async function onBatchDelete() {
     loading.value = true;
-    for (const feed of selectedFeeds.value) {
+    for(let i=0;i<selectedFeeds.value.length;i++){
+        const feed = selectedFeeds.value[i]
         try {
-            await feedStore.deleteFeed(feed.id);
+             await feedStore.deleteFeed(feed.id, i+1==selectedFeeds.value.length);
         } catch (e) {
             err(e, 'feed更新失败[' + feed.title + ']')
         }
