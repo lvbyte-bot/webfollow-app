@@ -4,15 +4,7 @@
         <v-list nav class="sidebar-list" @mousedown.prevent="" @contextmenu.prevent>
             <div class="sidebar-top">
                 <slot name="top"></slot>
-                <v-list-item prepend-icon="mdi-inbox" value="all" title="全部文章" to="/all">
-                    <template v-slot:append>
-                        <small v-if="appStore.unReadQty" class="font-weight-thin" v-text="appStore.unReadQty"></small>
-                    </template>
-                </v-list-item>
                 <v-list-item prepend-icon=" mdi-rocket-launch-outline" value="recom" title="猜你喜欢" to="/recom">
-                    <template v-slot:append>
-                        <small v-if="appStore.unReadQty" class="font-weight-thin" v-text="appStore.unReadQty"></small>
-                    </template>
                 </v-list-item>
                 <v-list-item prepend-icon="mdi-format-list-bulleted" value="next" title="稍后阅读" to="/next">
                     <template v-slot:append>
@@ -23,6 +15,11 @@
                 </v-list-item>
             </div>
             <v-list-subheader>FEEDS</v-list-subheader>
+            <v-list-item prepend-icon="mdi-inbox" value="all" title="全部文章" to="/all">
+                    <template v-slot:append>
+                        <small v-if="appStore.unReadQty" class="font-weight-thin" v-text="appStore.unReadQty"></small>
+                    </template>
+                </v-list-item>
             <template v-for="gItem in feedStore.subscriptions">
                 <v-list-group v-if="gItem.feeds.length">
                     <template v-slot:activator="{ isOpen, props }">

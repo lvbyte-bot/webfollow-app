@@ -37,7 +37,8 @@
         </div> -->
         <div class="line">测试账号 guest/123456</div>
         <div class="line">
-          该账号仅做测试使用，请勿当作正式账号使用，会不定期重置订阅，正式使用请购买会员
+          该账号仅做测试使用，请勿当作正式账号使用，会不定期重置订阅，正式使用请
+          <router-link to="/combo">购买会员</router-link>
         </div>
       </v-card-text>
     </v-card>

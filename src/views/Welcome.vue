@@ -15,9 +15,11 @@
   </div>
 
   <v-empty-state height="100vh" v-if="appStore.loading">
-    <v-icon size="x-large" :class="{ rotating: appStore.loading }"
-      >mdi-loading</v-icon
-    >
+    <div class="mx-auto">
+      <v-icon size="x-large" :class="{ rotating: appStore.loading }"
+        >mdi-loading</v-icon
+      >
+    </div>
     <p class="mt-5">正在为你准备中...</p>
   </v-empty-state>
   <v-empty-state
@@ -32,8 +34,8 @@
         v-if="appStore.authInfo.username == 'guest'"
         class="mt-3"
         variant="text"
-        to="/combo"
-        >目前是测试用户,如正式使用请查看套餐</v-btn
+        to="/download"
+        >目前是测试用户,可以下载app试用</v-btn
       >
     </div>
   </v-empty-state>
