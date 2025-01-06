@@ -8,6 +8,7 @@
   --swiper-navigation-size: 20px !important;
   --sidbar-bg: 248, 250, 253;
   --v-overlay-opacity: 0.7;
+  --line-clamp: 2;
   --v-theme-primary: var(--theme-color) !important;
 }
 .v-theme--dark {
@@ -64,7 +65,8 @@ html {
 .text-ellipsis {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: var(--line-clamp);
+  line-clamp: var(--line-clamp);
   overflow: hidden;
   text-overflow: ellipsis;
 }

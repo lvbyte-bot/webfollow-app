@@ -18,7 +18,12 @@
         <div class="magazine-sec" :class="{ nomagazinethumb: !item.thumbnail }">
           <div class="desc">
             <p class="text-truncate mb-2 title">{{ item.title }}</p>
-            <p class="text-body-2 text-medium-emphasis">{{ item.summary }}</p>
+            <p
+              style="--line-clamp: 3"
+              class="text-body-2 text-medium-emphasis text-ellipsis"
+            >
+              {{ item.summary }}
+            </p>
           </div>
           <div v-if="item.thumbnail">
             <v-img :src="item.thumbnail" cover height="80px"></v-img>

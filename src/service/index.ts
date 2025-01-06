@@ -317,7 +317,7 @@ function map(item: Item): FeedItem {
             thumbnail = item.enclosure
         }
     }
-    const summary: string = text && text.length > 36 ? text.substring(0, 36) : text
+    const summary: string = text && text.length > 200 ? text.substring(0, 200) : text
     const d: number = item.pubDate * 1000
     const datestr: string = formatDate(d)
     const feed = feedsCache[item.feedId]
