@@ -1,8 +1,9 @@
 <template>
   <v-card flat>
-    <div class="title">
-      <v-list-item :href="item.link" :title="item.title">
-        <template #subtitle>
+    <div class="title-container">
+      <a class="title-warp" :href="item.link" target="_blank">
+        <p class="text-h4 title">{{ item.title }}</p>
+        <p class="text-subtitle-2 mb-2">
           <router-link
             @click.stop=""
             class="a"
@@ -11,10 +12,9 @@
             v-text="props.item.feed?.title"
           ></router-link>
           <span v-text="getSource()"></span>
-
-          <span v-text="getDate()"></span>
-        </template>
-      </v-list-item>
+        </p>
+        <p class="text-subtitle-2 text-body-2" v-text="getDate()"></p>
+      </a>
     </div>
 
     <div class="content">
@@ -68,18 +68,27 @@ function videoUrl() {
     : link;
 }
 </script>
-<style lang="css" scoped>
-.title {
-  margin-bottom: 1rem;
-}
-:deep(.title) .v-list-item-title {
-  font-size: 18px;
-  margin-bottom: 1rem;
-}
-.v-list-item {
+<style lang="scss" scoped>
+.title-container {
+  margin: 0 auto 2rem;
+  text-align: center;
+  max-width: 692px;
   padding: 1.5rem;
-  max-width: 760px;
-  margin: 0 auto;
+  border-radius: 0.5rem;
+  &:hover {
+    background-color: rgb(var(--v-theme-surface-light));
+  }
+  a {
+    text-decoration: none;
+    color: rgb(var(--v-theme-surface-variant));
+  }
+  .title-warp {
+    text-align: start;
+  }
+  .title {
+    margin-bottom: 1rem;
+    line-height: 3rem;
+  }
 }
 .iframe {
   position: relative;
