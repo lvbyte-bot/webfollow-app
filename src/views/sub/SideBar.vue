@@ -58,6 +58,7 @@
                     </v-list-item>
                 </v-list-group>
             </template>
+            <slot name="footer"></slot>
         </v-list>
 
         <div v-if="mobile" class="plus mx-auto">

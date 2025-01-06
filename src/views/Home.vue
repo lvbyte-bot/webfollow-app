@@ -28,6 +28,9 @@
             </div>
             <v-divider class="mb-2"></v-divider>
           </template>
+          <template #footer>
+            <div style="height: 5rem"></div>
+          </template>
         </SideBar>
       </v-navigation-drawer>
       <v-navigation-drawer v-else :model-value="!hideSide" rail>
