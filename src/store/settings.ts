@@ -50,7 +50,7 @@ export const useSettingsStore = defineStore('settings', () => {
     const appearance = ref<AppearanceSettings>({
         themeMode: 'system',
         themeColor: '39, 174, 96',
-        fontFamily: 'system-ui',
+        fontFamily: 'system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
         codeFont: 'mono',
         fontSize: 14,
         density: 'default',

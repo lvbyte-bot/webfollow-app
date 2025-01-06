@@ -41,7 +41,7 @@ export const useFeedsStore = defineStore('feeds', () => {
         const efids = new Set(fail_feed_ids)
         const items = await itemRepo.listAll(undefined)
         // 需要重构，首次加载构建数结构，后期只更新数量
-        subscriptions.value = await Promise.all(data.value?.map(async g => {
+        const follow = await Promise.all(data.value?.map(async g => {
             try {
                 await Promise.all(g.feeds.map(async f => {
                     f.unreadQty = await sumUnread(items, f.id, unread_item_ids)
@@ -69,9 +69,19 @@ export const useFeedsStore = defineStore('feeds', () => {
                 return g
             }
         }) || [])
+        follow.sort((a, b) => {
+            if (a.unreadQty != 0 && b.unreadQty != 0) {
+                return a.title.localeCompare(b.title)
+            } else if (a.unreadQty == 0 && b.unreadQty == 0) {
+                return a.title.localeCompare(b.title)
+            } else {
+                return (b.unreadQty || 0) - (a.unreadQty || 0)
+            }
+        })
+        subscriptions.value = follow
         // init readUrls
         readUrls = [{ url: '/all' }, { url: '/next' }, { url: '/recom' }]
-        subscriptions.value.forEach(g => {
+        follow.forEach(g => {
             readUrls.push({ url: '/c/' + g.id, unreadQty: g.unreadQty })
             g.feeds.forEach(f => {
                 readUrls.push({ url: '/f/' + f.id, unreadQty: f.unreadQty })

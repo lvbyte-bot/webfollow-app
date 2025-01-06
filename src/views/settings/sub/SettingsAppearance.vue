@@ -193,7 +193,10 @@ function value2color(value: string) {
 }
 // 字体选项
 const fontFamilies = [
-  { title: "系统默认", value: "system-ui" },
+  {
+    title: "系统默认",
+    value: "system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, SN Pro",
+  },
   { title: "微软雅黑", value: "Microsoft YaHei" },
   { title: "苹方", value: "PingFang SC" },
   { title: "思源黑体", value: "Noto Sans SC" },
