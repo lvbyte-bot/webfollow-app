@@ -4,9 +4,9 @@
       v-if="item.thumbnail"
       class="align-end text-white rounded-lg"
       :title="item.title"
-      :aspect-ratio="mobile?0.70:1.78"
+      :aspect-ratio="mobile?(item.enclosure?1.79:0.70):(item.enclosure?1.79:0)"
       max-height="360px"
-      cover
+      :cover="mobile||item.enclosure"
       :src="
         item.thumbnail
           ? item.thumbnail
