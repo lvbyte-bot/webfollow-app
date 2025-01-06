@@ -33,24 +33,25 @@ async function asyncFilter(array: any, asyncCallback: (item: any) => Promise<boo
 /**
  * 刷新同步数据到本地
  */
-export async function pull(ecb: () => void) {
+export async function pull() {
     await isDbExists();
 
-    // await groupRepo.count();
-    // console.log(await favicons({id:1}));
     // 同步group
-    (await groups()).groups.forEach((g: any) => {
+    const groupData = (await groups()).groups
+    groupRepo.delAll()
+    groupData.forEach((g: any) => {
         groupRepo.save({ id: g.id, title: g.title })
     });
     // 同步feed
-    const data = (await feeds())
+    const feedRes = (await feeds())
     const fid2gid: any = {}
-    data.feeds_groups.forEach((gf: any) => {
+    feedRes.feeds_groups.forEach((gf: any) => {
         gf.feed_ids.split(',').forEach((fid: string) => {
             fid2gid[fid + ''] = gf.group_id
         })
     })
-    data.feeds.forEach((f: any) => {
+    feedRepo.delAll()
+    feedRes.feeds.forEach((f: any) => {
         feedRepo.save({ id: f.id, title: f.title, url: f.url, siteUrl: f.site_url, groupId: fid2gid[f.id + ''] })
     })
     const sids = await listSavedIds()
@@ -70,7 +71,6 @@ export async function pull(ecb: () => void) {
             try {
                 await itemRepo.save({ id: item.id instanceof Number ? item.id : Number.parseInt(item.id), feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
             } catch (e) {
-                ecb()
                 err(e, '同步item出错' + with_ids)
             }
         }

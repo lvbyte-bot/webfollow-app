@@ -54,6 +54,9 @@ class Repo<T extends DbStore> {
     async del(id: number): Promise<string> {
         return remove(this.storename, id)
     }
+    async delAll(): Promise<string[]> {
+        return Promise.all((await this.getAll()).map(t => this.del(t.id)))
+    }
     async getAll(): Promise<T[]> {
         return getAll(this.storename)
     }

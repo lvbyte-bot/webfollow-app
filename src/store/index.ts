@@ -30,43 +30,38 @@ export const useAppStore = defineStore('app', () => {
 
     async function sync(type: SyncType = '') {
         async function pullData2Local() {
-            return await pulllocal(() => {
-                settingsStore.general.refreshFail = true
-                settingsStore.saveToLocalStorage()
-            })
+            return await pulllocal()
         }
         lastRefeshTime.value = new Date().getTime()
-        const tmpRefreshFail = settingsStore.general.refreshFail
-        settingsStore.general.refreshFail = false
+        const tmpPullDataFail = settingsStore.general.pullDataFail
+        settingsStore.general.pullDataFail = true
+        settingsStore.saveToLocalStorage()
+        loading.value = true
         if (type == '') {
             await refresh(async () => {
-                loading.value = true
                 await pullData2Local()
                 await refreshFeed()
                 setRanks(await getRanks())
                 await refreshItems()
-                loading.value = false
             }, async () => {
-                loading.value = true
-                if (tmpRefreshFail) {
+                if (tmpPullDataFail) {
                     await pullData2Local()
                 }
                 setRanks(await getRanks())
                 await refreshItems()
-                loading.value = false
             })
-
         } else if (type = 'sync2local') {
-            loading.value = true
             await pullData2Local()
-            setRanks(await getRanks())
             await refreshFeed()
-            loading.value = false
+            setRanks(await getRanks())
         }
+        settingsStore.general.pullDataFail = false
+        settingsStore.saveToLocalStorage()
+        loading.value = false
         setTimeout(() => initNav(pageRoute), 1000)
         lastRefeshTime.value = new Date().getTime()
         log('sync end')
-        settingsStore.saveToLocalStorage()
+
     }
 
 

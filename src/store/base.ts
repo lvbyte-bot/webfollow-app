@@ -60,7 +60,7 @@ export const useBaseStore = defineStore('base', () => {
         localStorage.setItem('efids', JSON.stringify(efids))
     }
 
-    async function refresh(cb: () => {}, emptCb: () => {}) {
+    async function refresh(refreshCb: () => Promise<void>, noRefreshCb: () => Promise<void>) {
         const d = await listUnreadIds()
         // 非标准接口
         let fids: number[] = []
@@ -73,9 +73,9 @@ export const useBaseStore = defineStore('base', () => {
             unread_item_ids.clear()
             saved_item_ids.clear()
             initData(d, await listSavedIds(), fids)
-            await cb()
+            await refreshCb()
         } else {
-            await emptCb()
+            await noRefreshCb()
         }
 
     }
