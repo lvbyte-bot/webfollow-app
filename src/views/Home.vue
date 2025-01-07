@@ -126,7 +126,7 @@
           <router-view></router-view>
         </div>
         <v-btn
-          v-show="mobile"
+          v-show="mobile && playListStore.playlist.length"
           icon
           color="primary"
           class="podcast-player"
