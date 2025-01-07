@@ -1,7 +1,7 @@
 <template>
   <v-row v-if="view == 'card'">
     <v-col
-      cols="6"
+      :cols="itemsType == 'VIDEO' ? 12 : 6"
       sm="4"
       md="4"
       lg="3"
@@ -40,6 +40,8 @@
       :key="item.id"
     ></TextItem>
   </template>
+
+  <!-- 右键菜单 -->
   <v-dialog-transition>
     <v-card
       v-show="contextMenuVisible"
@@ -105,7 +107,7 @@
 
 <script setup lang="ts">
 import { useAppStore } from "@/store";
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import CardItem from "./CardItem.vue";
 import TextItem from "./TextItem.vue";
 import MagazineItem from "./MagazineItem.vue";
@@ -119,6 +121,13 @@ const props = defineProps<{
 const emit = defineEmits(["open-reader"]);
 const store = useAppStore();
 const currentItem = ref<FeedItem | undefined>(undefined);
+const itemsType = computed(() => {
+  const counts = props.items.slice(0, 50).reduce((acc: any, item: FeedItem) => {
+    acc[item.type] = (acc[item.type] || 0) + 1;
+    return acc;
+  }, {});
+  return Object.entries(counts).sort((a: any, b: any) => b[1] - a[1])[0][0];
+});
 
 function openReader(index: number, item: FeedItem) {
   emit("open-reader", index, item);
