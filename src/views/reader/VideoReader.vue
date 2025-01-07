@@ -1,38 +1,36 @@
 <template>
-  <v-card flat>
-    <div class="title-container">
-      <a class="title-warp" :href="item.link" target="_blank">
-        <p class="text-h4 title">{{ item.title }}</p>
-        <p class="text-subtitle-2 mb-2">
-          <router-link
-            @click.stop=""
-            class="a"
-            title="前往订阅源"
-            :to="'/f/' + item?.feed?.id"
-            v-text="props.item.feed?.title"
-          ></router-link>
-          <span v-text="getSource()"></span>
-        </p>
-        <p class="text-subtitle-2 text-body-2" v-text="getDate()"></p>
-      </a>
-    </div>
+  <div class="title-container">
+    <a class="title-warp" :href="item.link" target="_blank">
+      <p class="text-h4 title">{{ item.title }}</p>
+      <p class="text-subtitle-2 mb-2">
+        <router-link
+          @click.stop=""
+          class="a"
+          title="前往订阅源"
+          :to="'/f/' + item?.feed?.id"
+          v-text="props.item.feed?.title"
+        ></router-link>
+        <span v-text="getSource()"></span>
+      </p>
+      <p class="text-subtitle-2 text-body-2" v-text="getDate()"></p>
+    </a>
+  </div>
 
-    <div class="content">
-      <iframe
-        id="ytplayer"
-        type="text/html"
-        class="iframe"
-        :src="videoUrl()"
-        frameborder="0"
-        allow="fullscreen"
-        mozallowfullscreen="mozallowfullscreen"
-        msallowfullscreen="msallowfullscreen"
-        oallowfullscreen="oallowfullscreen"
-        webkitallowfullscreen="webkitallowfullscreen"
-      ></iframe>
-      <div class="mt-6" v-html="item.html"></div>
-    </div>
-  </v-card>
+  <div class="content">
+    <iframe
+      id="ytplayer"
+      type="text/html"
+      class="iframe"
+      :src="videoUrl()"
+      frameborder="0"
+      allow="fullscreen"
+      mozallowfullscreen="mozallowfullscreen"
+      msallowfullscreen="msallowfullscreen"
+      oallowfullscreen="oallowfullscreen"
+      webkitallowfullscreen="webkitallowfullscreen"
+    ></iframe>
+    <div class="mt-6" v-html="item.html"></div>
+  </div>
 </template>
 <script lang="ts" setup>
 import { FeedItem } from "@/service/types";
@@ -64,7 +62,9 @@ function getSource() {
 function videoUrl() {
   const link = props.item.link;
   return link.indexOf("youtube.com/watch")
-    ? `https://www.youtube.com/embed/${link.split("?v=")[1]}?autoplay=1`
+    ? `https://www.youtube-nocookie.com/embed/${
+        link.split("?v=")[1]
+      }?autoplay=1`
     : link;
 }
 </script>
