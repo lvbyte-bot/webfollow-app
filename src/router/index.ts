@@ -15,15 +15,20 @@ const routes = [{
         path: '/:type',
         component: () => import('@/views/Items.vue'),
         props: true
-    }, {
+    },
+    {
         path: '/',
         component: () => import('@/views/Welcome.vue'),
-    }, {
+    },
+    {
         path: '/subscribe',
         component: () => import('@/views/Discovery.vue'),
     }, {
         path: '/search',
         component: () => import('@/views/FeedAssistant.vue'),
+    }, {
+        path: '/filter',
+        component: () => import('@/views/RelatedArticles.vue'),
     }, {
         path: '/download',
         component: () => import('@/views/Download.vue'),

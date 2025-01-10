@@ -121,10 +121,6 @@ function init() {
 </script>
 
 <style scoped>
-.warp {
-  max-height: 100vh;
-  overflow-y: scroll;
-}
 .feed-assistant {
   max-width: 700px;
   margin: 0 auto;

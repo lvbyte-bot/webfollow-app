@@ -15,7 +15,7 @@
   </div>
 
   <v-empty-state height="100vh" v-if="appStore.loading">
-    <div class="mx-auto">
+    <div class="mx-auto text-center">
       <v-icon size="x-large" :class="{ rotating: appStore.loading }"
         >mdi-loading</v-icon
       >

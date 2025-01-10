@@ -5,9 +5,9 @@ declare module "*.vue" {
   const component: DefineComponent<{}, {}, any>;
   export default component;
 }
-
+declare function info(...args: any): void
+declare function debug(...args: any): void
 declare function log(...args: any): void
-
 declare function err(e: Error | unknown, ...args: any): void
 
 declare function setTitle(arg: number): void

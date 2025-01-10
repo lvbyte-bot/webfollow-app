@@ -67,8 +67,8 @@ class Repo<T extends DbStore> {
             return getAll(this.storename)
         }
     }
-    async findAll(conditionFn: (item: T) => boolean, page: number = 0, size: number = 50): Promise<Page<T>> {
-        const data = await findAll(this.storename, conditionFn, size, page)
+    async findAll(conditionFn: (item: T) => boolean, page: number = 0, size: number = 50, sortFn?: (x: T, y: T) => number): Promise<Page<T>> {
+        const data = await findAll(this.storename, conditionFn, size, page, sortFn)
         return { isLast: data.length != size, data }
     }
     async count(): Promise<number> {

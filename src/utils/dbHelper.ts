@@ -163,7 +163,7 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
         });
     }
 
-    function findAll<T extends DbStore>(storeName: string, conditionFn: (item: T) => boolean, pageSize: number, pageIndex: number): Promise<T[]> {
+    function findAll<T extends DbStore>(storeName: string, conditionFn: (item: T) => boolean, pageSize: number, pageIndex: number, sortFn?: (a: T, b: T) => number): Promise<T[]> {
         return new Promise((resolve, reject) => {
             openDatabase().then(db => {
                 const transaction = db.transaction([storeName], 'readonly');
@@ -177,7 +177,6 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
                     request = store.openCursor()
                 }
 
-                let count = 0;
                 const startOffset = pageIndex * pageSize;
                 const endOffset = startOffset + pageSize;
 
@@ -186,14 +185,14 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
                     if (cursor) {
                         const record = cursor.value;
                         if (conditionFn(record)) {
-                            if (count >= startOffset && count < endOffset) {
-                                results.push(record);
-                            }
-                            count++;
+                            results.push(record);
                         }
                         cursor.continue();
                     } else {
-                        resolve(results); // 返回符合条件的结果
+                        if (sortFn) {
+                            results.sort(sortFn);
+                        }
+                        resolve(results.slice(startOffset, endOffset)); // 返回符合条件的结果
                     }
                 };
 

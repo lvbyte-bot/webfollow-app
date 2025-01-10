@@ -135,9 +135,17 @@ export async function listItem(id: any, type: LsItemType, page: number = 0, only
             feedIds = new Set((await feedRepo.getAll()).filter(item => id == -1 ? item.groupId == undefined : item.groupId == id).map(item => item.id))
             res = (await itemRepo.findAll(item => filterItem(item, feedIds, onlyUnread, unReadItemIds), page))
             break
-        case LsItemType.SAVED: case LsItemType.ITEMS:
+        case LsItemType.SAVED:
+            const ids: Set<number> = new Set(id)
+            res = (await itemRepo.findAll(item => filterItem0(item, (id) => ids.has(id), onlyUnread, unReadItemIds), page, 50))
+            break
+        case LsItemType.ITEMS:
+            const id2Index = id.map((i: any, index: number) => ({ i, index })).reduce((acc: any, item: any) => {
+                acc[item.i] = item.index
+                return acc
+            }, {})
             let itemIds: Set<number> = new Set(id)
-            res = (await itemRepo.findAll(item => filterItem0(item, (id) => itemIds.has(id), onlyUnread, unReadItemIds), page))
+            res = (await itemRepo.findAll(item => filterItem0(item, (id) => itemIds.has(id), onlyUnread, unReadItemIds), page, 50, (x: Item, y: Item) => id2Index[x.id] > id2Index[y.id] ? 1 : -1))
             break
         case LsItemType.ALL:
             res = (await itemRepo.findAll(item => filterItem0(item, () => true, onlyUnread, unReadItemIds), page))
@@ -149,7 +157,9 @@ export async function listItem(id: any, type: LsItemType, page: number = 0, only
         default:
             throw Error('error')
     }
-    res.data.sort((x: Item, y: Item) => x.rank && y.rank ? x.rank - y.rank : y.pubDate - x.pubDate)
+    if (type != LsItemType.ITEMS) {
+        res.data.sort((x: Item, y: Item) => x.rank && y.rank ? x.rank - y.rank : y.pubDate - x.pubDate)
+    }
     return { data: res.data.map(map), isLast: res.isLast }
 }
 

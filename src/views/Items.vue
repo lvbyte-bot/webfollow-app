@@ -76,95 +76,97 @@
         </Reader>
       </div>
     </v-dialog-transition>
-    <slot v-bind:="{ openReader, loadData }">
-      <!-- items -->
-      <div class="main-container" ref="mainRef">
-        <div class="top-bar">
-          <div class="v-toolbar-title v-app-bar-title text-truncate">
-            {{ (appStore.nav && appStore.nav.title) || "未分类" }}
-            <small
-              class="mx-2 text-medium-emphasis font-weight-light"
-              v-if="appStore.nav.qty"
-              v-text="appStore.nav.qty"
-            ></small>
-          </div>
-          <div>
-            <c-btn
-              v-show="
-                !(
-                  (id == '-1' && type == 'c') ||
-                  type == 'next' ||
-                  type == 'all' ||
-                  type == 'recom'
-                )
-              "
-              :disabled="store.items?.filter((o) => !o.isRead).length == 0"
-              icon
-              title="标记为已读"
-              @click="markRead"
-              class="mr-2"
-            >
-              <v-icon>mdi-read</v-icon>
-            </c-btn>
+    <main class="main-container" ref="mainRef">
+      <slot v-bind:="{ openReader, loadData }">
+        <!-- items -->
+        <div class="items-container">
+          <slot name="top" v-bind:="{ openReader }">
+            <div class="top-bar">
+              <div class="v-toolbar-title v-app-bar-title text-truncate">
+                {{ (appStore.nav && appStore.nav.title) || "未分类" }}
+                <small
+                  class="mx-2 text-medium-emphasis font-weight-light"
+                  v-if="appStore.nav.qty"
+                  v-text="appStore.nav.qty"
+                ></small>
+              </div>
+              <div>
+                <c-btn
+                  v-show="
+                    !(
+                      (id == '-1' && type == 'c') ||
+                      type == 'next' ||
+                      type == 'all' ||
+                      type == 'recom'
+                    )
+                  "
+                  :disabled="store.items?.filter((o) => !o.isRead).length == 0"
+                  icon
+                  title="标记为已读"
+                  @click="markRead"
+                  class="mr-2"
+                >
+                  <v-icon>mdi-read</v-icon>
+                </c-btn>
 
-            <c-btn
-              icon
-              title="刷新"
-              @click="refresh"
-              :class="{ rotating: loading }"
-              class="mr-2"
-            >
-              <v-icon>{{ loading ? "mdi-loading" : "mdi-reload" }}</v-icon>
-            </c-btn>
-            <c-btn
-              :icon="onlyUnread ? 'mdi-circle' : 'mdi-circle-outline'"
-              :title="onlyUnread ? '只看未读' : '看全部'"
-              @click="changeOnlyUnread(!onlyUnread)"
-              class="mr-2"
-            >
-            </c-btn>
-            <c-btn
-              :icon="
-                general.defaultView == 'card'
-                  ? 'mdi-view-gallery-outline'
-                  : general.defaultView == 'magazine'
-                  ? 'mdi-view-column-outline'
-                  : 'mdi-view-list-outline'
-              "
-              :title="
-                general.defaultView == 'card'
-                  ? '卡片视图'
-                  : general.defaultView == 'magazine'
-                  ? '三栏视图'
-                  : '列表视图'
-              "
-              @click="changeItemView()"
-            >
-            </c-btn>
-          </div>
-        </div>
-
-        <v-container class="mx-auto items-warp">
-          <v-alert
-            class="my-3"
-            v-show="appStore.nav.isFailure"
-            border="top"
-            border-color="warning"
-          >
-            <div class="d-flex justify-space-between">
-              <v-icon class="mr-3">mdi-alert-circle-outline</v-icon>
-              此订阅源有问题。请检查并在必要时重新订阅。
-              <v-btn
-                class="ml-3"
-                size="small"
-                variant="text"
-                :href="appStore.nav.url"
-              >
-                查看订阅源
-              </v-btn>
+                <c-btn
+                  icon
+                  title="刷新"
+                  @click="refresh"
+                  :class="{ rotating: loading }"
+                  class="mr-2"
+                >
+                  <v-icon>{{ loading ? "mdi-loading" : "mdi-reload" }}</v-icon>
+                </c-btn>
+                <c-btn
+                  :icon="onlyUnread ? 'mdi-circle' : 'mdi-circle-outline'"
+                  :title="onlyUnread ? '只看未读' : '看全部'"
+                  @click="changeOnlyUnread(!onlyUnread)"
+                  class="mr-2"
+                >
+                </c-btn>
+                <c-btn
+                  :icon="
+                    general.defaultView == 'card'
+                      ? 'mdi-view-gallery-outline'
+                      : general.defaultView == 'magazine'
+                      ? 'mdi-view-column-outline'
+                      : 'mdi-view-list-outline'
+                  "
+                  :title="
+                    general.defaultView == 'card'
+                      ? '卡片视图'
+                      : general.defaultView == 'magazine'
+                      ? '三栏视图'
+                      : '列表视图'
+                  "
+                  @click="changeItemView()"
+                >
+                </c-btn>
+              </div>
             </div>
-          </v-alert>
-          <!-- <div
+          </slot>
+          <v-container class="mx-auto items-warp">
+            <v-alert
+              class="my-3"
+              v-show="appStore.nav.isFailure"
+              border="top"
+              border-color="warning"
+            >
+              <div class="d-flex justify-space-between">
+                <v-icon class="mr-3">mdi-alert-circle-outline</v-icon>
+                此订阅源有问题。请检查并在必要时重新订阅。
+                <v-btn
+                  class="ml-3"
+                  size="small"
+                  variant="text"
+                  :href="appStore.nav.url"
+                >
+                  查看订阅源
+                </v-btn>
+              </div>
+            </v-alert>
+            <!-- <div
           v-show="!appStore.nav.isFailure && (loading || appStore.loading)"
           class="ma-6 text-center"
         >
@@ -173,58 +175,63 @@
           </div>
           <div class="mt-2 text-body-2">正在刷新...</div>
         </div> -->
-          <template v-if="store.items?.length">
-            <Items
-              :items="store.items"
-              :view="general.defaultView"
-              :type="type"
-              @open-reader="openReader"
-            ></Items>
-          </template>
+            <template v-if="store.items?.length">
+              <Items
+                :items="store.items"
+                :view="general.defaultView"
+                :type="type"
+                @open-reader="openReader"
+              ></Items>
+            </template>
 
-          <template v-if="store.isLast && !loading">
-            <v-empty-state
-              icon="mdi-book-open-page-variant-outline"
-              v-if="feedStore.nextUnReadUrl"
-              height="calc(100vh - 64px)"
-            >
-              <v-btn variant="text" :to="feedStore.nextUnReadUrl">
-                <template #prepend>
-                  <v-icon color="primary"> mdi-circle-medium </v-icon>
-                </template>
-                打开下一个未读的订阅源
-              </v-btn>
-            </v-empty-state>
-            <v-empty-state
-              v-else-if="!store.items?.length"
-              height="calc(100vh - 64px)"
-              icon="mdi-fruit-watermelon"
-              text="全部已读"
-            >
-            </v-empty-state>
-            <v-empty-state
-              v-else
-              height="calc(100vh - 64px)"
-              icon="mdi-fruit-cherries"
-              text="我是有底线的"
-            >
-            </v-empty-state>
-            <v-empty-state
-              v-if="!onlyUnread && type == 'f' && store.items?.length == 0"
-              height="calc(100vh - 64px)"
-              icon="mdi-cloud-download-outline"
-            >
-              <v-btn variant="text" @click="pullFeedItems" :disabled="loading">
-                <template #prepend>
-                  <v-icon>mdi-sync</v-icon>
-                </template>
-                加载归档
-              </v-btn>
-            </v-empty-state>
-          </template>
-        </v-container>
-      </div>
-    </slot>
+            <template v-if="store.isLast && !loading">
+              <v-empty-state
+                icon="mdi-book-open-page-variant-outline"
+                v-if="feedStore.nextUnReadUrl"
+                height="calc(100vh - 64px)"
+              >
+                <v-btn variant="text" :to="feedStore.nextUnReadUrl">
+                  <template #prepend>
+                    <v-icon color="primary"> mdi-circle-medium </v-icon>
+                  </template>
+                  打开下一个未读的订阅源
+                </v-btn>
+              </v-empty-state>
+              <v-empty-state
+                v-else-if="!store.items?.length"
+                height="calc(100vh - 64px)"
+                icon="mdi-fruit-watermelon"
+                text="全部已读"
+              >
+              </v-empty-state>
+              <v-empty-state
+                v-else
+                height="calc(100vh - 64px)"
+                icon="mdi-fruit-cherries"
+                text="我是有底线的"
+              >
+              </v-empty-state>
+              <v-empty-state
+                v-if="!onlyUnread && type == 'f' && store.items?.length == 0"
+                height="calc(100vh - 64px)"
+                icon="mdi-cloud-download-outline"
+              >
+                <v-btn
+                  variant="text"
+                  @click="pullFeedItems"
+                  :disabled="loading"
+                >
+                  <template #prepend>
+                    <v-icon>mdi-sync</v-icon>
+                  </template>
+                  加载归档
+                </v-btn>
+              </v-empty-state>
+            </template>
+          </v-container>
+        </div>
+      </slot>
+    </main>
   </div>
 </template>
 <script setup lang="ts">
@@ -317,6 +324,7 @@ function watchLoadMore() {
   watch(isBottom, (v) => {
     if (v && !store.isLast) {
       loadData(++page);
+      console.log(page);
     }
   });
 }
@@ -335,7 +343,9 @@ onMounted(() => {
   if (mainRef.value) {
     watchRefresh();
     watchLoadMore();
-    loadData();
+    if (props.type) {
+      loadData();
+    }
   }
 });
 
@@ -359,8 +369,8 @@ async function loadData0(
   }
   await store.loadData(id, type, page, onlyUnread);
 }
-
-async function loadData(page0: number = 0, itemIds: string[] = []) {
+let tmpIds: number[] = [];
+async function loadData(page0: number = 0, itemIds: number[] = []) {
   loading.value = true;
   page = page0;
   // log(onlyUnread.value);
@@ -375,7 +385,10 @@ async function loadData(page0: number = 0, itemIds: string[] = []) {
   } else if (props.type == "recom") {
     await loadData0(null, LsItemType.RECOMMEND, page, onlyUnread.value);
   } else {
-    await loadData0(itemIds, LsItemType.ITEMS, page, false);
+    if (itemIds.length > 0) {
+      tmpIds = itemIds;
+    }
+    await loadData0(tmpIds, LsItemType.ITEMS, page, false);
   }
   loading.value = false;
 }

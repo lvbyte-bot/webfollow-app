@@ -93,11 +93,18 @@
   </style>
   <script>
     function log(...args) {
-      console.log("%cWebFollow", "padding:5px 8px;border-radius:3px;background:#ff7a61;color:#fff;font-size:1em;", ...args)
+      console.log("%cWebFollow", "padding:3px 5px;border-radius:5px;background:#999;color:#fff;font-size:1em;", ...args)
+    }
+    function info(...args) {
+      console.log("%cWebFollow", "padding:3px 5px;border-radius:5px;background:#ff7a61;color:#fff;font-size:1em;", ...args)
+    }
+    function debug(...args) {
+      console.log("%cWebFollow", "padding:3px 5px;border-radius:5px;background:green;color:#fff;font-size:1em;", ...args)
     }
     function err(e, ...args) {
-      console.error("%cWebFollow", "padding:5px 8px;border-radius:3px;background:#ff7a61;color:#fff;font-size:1em;", ...args, e)
+      console.error("%cWebFollow", "padding:3px 5px;border-radius:5px;background:#ff7a61;color:#fff;font-size:1em;", ...args, e)
     }
+
     function setTitle(total) {
       if (total) {
         document.title = `(${total})WebFollow - 在线 RSS 阅读器`
@@ -123,6 +130,9 @@
     <img class="loading-logo" style="width: 5rem;" src="/logo.svg" alt="">
     <p class="loding-text">加载中....</p>
   </div>
+  <script>
+    window.addEventListener('load', () => document.getElementById('loading').style.display = 'none');
+  </script>
   <script type="module" src="/src/main.ts"></script>
 </body>
 

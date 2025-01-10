@@ -60,7 +60,7 @@ export const useAppStore = defineStore('app', () => {
         loading.value = false
         setTimeout(() => initNav(pageRoute), 1000)
         lastRefeshTime.value = new Date().getTime()
-        log('sync end')
+        info('sync end')
 
     }
 
@@ -117,7 +117,7 @@ export const useAppStore = defineStore('app', () => {
                 return
             case LsItemType.RECOMMEND:
                 nav.title = '猜你喜欢'
-                nav.qty = unReadQty.value
+                nav.qty = 0
                 return
             case LsItemType.FEED:
                 let fs = subscriptions?.value?.flatMap(g => g.feeds).filter(f => f.id == v.id)

@@ -1,4 +1,4 @@
-import { feedRepo, itemRepo } from "@/repository"
+import { feedRepo, Item, itemRepo } from "@/repository"
 import { useSettingsStore } from "@/store/settings"
 
 export interface FeedContext {
@@ -7,13 +7,14 @@ export interface FeedContext {
     source: string
     pubDate: number
     id: number,
+    score: number
 }
 
 interface ScoredContext extends FeedContext {
     score: number
 }
 
-interface KeywordWeight {
+export interface KeywordWeight {
     keyword: string
     weight: number
 }
@@ -87,35 +88,45 @@ export async function queryWithRAG(query: string): Promise<RAGResponse> {
 
 }
 
-async function retrieveRelevantContexts(query: string): Promise<FeedContext[]> {
+/**
+ * 或取 keywordsWithWeights || query 对应的相关内容
+ * @param query 
+ * @param keywordsWithWeights 
+ * @returns 
+ */
+export async function retrieveRelevantContexts(query: string, keywordsWithWeights: KeywordWeight[] = [], split: number = 6): Promise<FeedContext[]> {
     // 获取所有订阅源
     const feeds = await feedRepo.getAll()
     const contexts: ScoredContext[] = []
-
     // 对查询语句进行AI分词和权重分配
-    const keywordsWithWeights = await splitToKeywordsWithAI(query)
-    console.log("AI分词及权重结果：", keywordsWithWeights)
+    keywordsWithWeights = keywordsWithWeights.length ? keywordsWithWeights : await splitToKeywordsWithAI(query)
+    log("AI分词及权重结果：", keywordsWithWeights)
+    const feedId2items: any = (await itemRepo.listAll(_ => true)).reduce((acc: any, item: Item) => {
+        acc[item.feedId] = acc[item.feedId] || []
+        acc[item.feedId].push(item)
+        return acc;
+    })
+
 
     // 从每个订阅源获取最近的文章
     for (const feed of feeds) {
-        const items = await itemRepo.listAll(item => item.feedId === feed.id)
 
         // 计算 feed 标题的相关性得分
         const feedTitleScore = calculateRelevanceScore(feed.title, keywordsWithWeights)
 
         // 计算每篇文章的得分
-        const scoredItems = items.map(item => {
+        const scoredItems = feedId2items[feed.id]?.map((item: Item) => {
             const titleScore = calculateRelevanceScore(item.title, keywordsWithWeights)
             const contentScore = calculateRelevanceScore(item.description, keywordsWithWeights)
             return {
                 item,
                 score: titleScore * 2 + contentScore + feedTitleScore * 1.5
             }
-        }).filter(x => x.score > 0)
+        }).filter((x: any) => x.score > 0) || []
 
         // 按相关性得分排序，取前3篇
         const relevantItems = scoredItems
-            .sort((a, b) => b.score - a.score)
+            .sort((a: any, b: any) => b.score - a.score)
             .slice(0, 3)
 
         for (const { item, score } of relevantItems) {
@@ -129,12 +140,11 @@ async function retrieveRelevantContexts(query: string): Promise<FeedContext[]> {
             })
         }
     }
-
     // 对所有上下文按得分排序，返回最相关的前5条
     return contexts
         .sort((a, b) => b.score - a.score)
-        .slice(0, 6)
-        .map(({ title, content, source, pubDate, id }) => ({ title, content, source, pubDate, id }))
+        .slice(0, split)
+        .map(({ id, title, content, source, pubDate, score }) => ({ id, title, content, source, pubDate, score }))
 }
 
 /**
@@ -173,7 +183,7 @@ async function splitToKeywordsWithAI(query: string): Promise<KeywordWeight[]> {
                     },
                 ],
                 temperature: 0.1,
-                max_tokens: 100,
+                max_tokens: 300,
             }),
         })
 
@@ -207,6 +217,64 @@ async function splitToKeywordsWithAI(query: string): Promise<KeywordWeight[]> {
             .split(/\s+/)
             .filter(word => word.length > 1)
             .map(word => ({ keyword: word, weight: 1 }))
+    }
+}
+
+/**
+ * 
+ * @param query 
+ * @returns 
+ */
+export async function getRelatedKeywords(query: string): Promise<KeywordWeight[]> {
+    const settingsStore = useSettingsStore()
+    const settings = settingsStore.integrated
+
+    if (!settings.isApiValid || !settings.apiKey) {
+        throw new Error("AI 配置无效")
+    }
+
+    try {
+        const response = await fetch(settings.apiUrl + "/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${settings.apiKey}`,
+            },
+            body: JSON.stringify({
+                model: settings.selectedModel,
+                messages: [
+                    {
+                        role: "system",
+                        content: "你是一个关键字分析助手。请将用户输入的查询语句最关键的部分分解为以及经常与这些关键词一起出现的其他关键词，包括相关人物、事件和相似词汇等，其与部分忽略，并为每个关键词分配权重(1-99)。权重基于词语在查询中的重要性,核心概念给最高可以给99分，重要修饰词给最高3分，一般词给1分。返回格式为JSON数组，每项包含keyword和weight字段。",
+                    },
+                    {
+                        role: "user",
+                        content: `请分析以下语句，返回其中的关键词，以及经常与这些关键词一起出现的其他关键词，包括相关人物、事件和相似词汇等，并给出相应的权重：\n${query}\n只返回JSON数组，不要其他内容和Markdown格式，请按照以下格式返回：[{"keyword": "word", "weight": 1}]。`,
+                    },
+                ],
+                temperature: 0.1,
+                max_tokens: 300,
+            }),
+        })
+        if (!response.ok) {
+            throw new Error(`API 请求失败: ${response.statusText}`)
+        }
+
+        const data = await response.json()
+        const result = data.choices[0].message.content
+        try {
+            const keywords = JSON.parse(result)
+            if (Array.isArray(keywords) && keywords.every(k => k.keyword && k.weight)) {
+                return keywords.filter(k => k.keyword.length > 1)
+            }
+        } catch (e) {
+            console.error("AI返回结果解析失败:", e)
+        }
+
+        return []
+    } catch (error) {
+        console.error("AI调用失败:", error)
+        return []
     }
 }
 
