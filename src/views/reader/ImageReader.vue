@@ -49,7 +49,7 @@ const swiper = ref<any>({});
 
 // 计算属性
 const allImages = computed(() => {
-  return props.item.imgs;
+  return props.item.images;
 });
 
 // 监听器

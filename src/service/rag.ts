@@ -257,7 +257,7 @@ export async function getRelatedKeywords(query: string): Promise<KeywordWeight[]
             }),
         })
         if (!response.ok) {
-            throw new Error(`API 请求失败: ${response.statusText}`)
+            throw new Error(`API 请求失败: ${(await response.json())?.error?.message || response.statusText}`)
         }
 
         const data = await response.json()
@@ -273,7 +273,7 @@ export async function getRelatedKeywords(query: string): Promise<KeywordWeight[]
 
         return []
     } catch (error) {
-        console.error("AI调用失败:", error)
+        alert("AI调用失败:" + error)
         return []
     }
 }
