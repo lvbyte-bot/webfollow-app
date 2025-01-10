@@ -40,7 +40,7 @@ interface SettingsState {
 export const useSettingsStore = defineStore('settings', () => {
     const general = ref<GeneralSettings>({
         startPage: 'home',
-        defaultView: 'magazine',
+        defaultView: 'text',
         hideReadArticles: true,
         autoRefresh: false,
         refreshInterval: 30 * 60,
@@ -114,7 +114,7 @@ export const useSettingsStore = defineStore('settings', () => {
     function resetGeneralSettings() {
         general.value = {
             startPage: 'all',
-            defaultView: 'magazine',
+            defaultView: 'text',
             hideReadArticles: true,
             autoRefresh: false,
             refreshInterval: 30 * 60,

@@ -4,7 +4,7 @@
         <v-list nav class="sidebar-list" @mousedown.prevent="" @contextmenu.prevent>
             <div class="sidebar-top">
                 <slot name="top"></slot>
-                <v-list-item prepend-icon="mdi-rocket-launch-outline" value="recom" title="猜你喜欢" to="/recom">
+                <v-list-item prepend-icon="mdi-rocket-launch-outline" value="recom" title="推荐" to="/recom">
                 </v-list-item>
                 <v-list-item prepend-icon="mdi-filter-outline" value="filter" title="文章过滤" to="/filter">
                 </v-list-item>

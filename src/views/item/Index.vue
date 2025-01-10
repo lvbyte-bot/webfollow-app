@@ -30,7 +30,7 @@
     ></MagazineItem>
   </template>
   <template v-else>
-    <TextItem
+    <!-- <TextItem
       v-for="(item, index) in items"
       :item="item"
       @click="openReader(index, item)"
@@ -38,7 +38,16 @@
       @contextmenu.prevent="showContextMenu($event, item, index)"
       :type="type"
       :key="item.id"
-    ></TextItem>
+    ></TextItem> -->
+    <ContentItem
+      v-for="(item, index) in items"
+      :item="item"
+      @click="openReader(index, item)"
+      @click-action="clickAction"
+      @contextmenu.prevent="showContextMenu($event, item, index)"
+      :type="type"
+      :key="item.id"
+    ></ContentItem>
   </template>
 
   <!-- 右键菜单 -->
@@ -111,6 +120,7 @@ import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import CardItem from "./CardItem.vue";
 import TextItem from "./TextItem.vue";
 import MagazineItem from "./MagazineItem.vue";
+import ContentItem from "./ContentItem.vue";
 import { FeedItem } from "@/service/types";
 import { ClickType } from "./types";
 const props = defineProps<{

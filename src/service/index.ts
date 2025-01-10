@@ -315,10 +315,10 @@ function filterItem0(item: Item, itemIdFilter: (id: any) => boolean, onlyUnread:
 
 function map(item: Item): FeedItem {
     const html = md2html(item.description)
-    const imgs = extImgs(html)
-    let thumbnail: string | undefined = imgs && imgs.length > 0 ? imgs[0] : undefined
+    const images = extImgs(html)
+    let thumbnail: string | undefined = images && images.length > 0 ? images[0] : undefined
     const text = extText(html)
-    let type: string = ItemType[imgs.length > 5 && imgs.length * 50 > text.length ? ItemType.IMAGE : ItemType.BASIC]
+    let type: string = ItemType[images.length > 5 && images.length * 50 > text.length ? ItemType.IMAGE : ItemType.BASIC]
     if (item.enclosure) {
         type = ItemType[ItemType.PODCAST]
         const strs = item.enclosure.split('.')
@@ -336,7 +336,7 @@ function map(item: Item): FeedItem {
         thumbnail,
         summary,
         datestr,
-        imgs,
+        images,
         type,
         html,
         feed
@@ -361,7 +361,28 @@ function extText(htmlContent: string): string {
 }
 
 function formatDate(date: number): string {
-    // ... existing code ...
+    const now = new Date().getTime();
+    const diff = now - date;
+
+    // 1小时以内
+    if (diff < 3600000) {
+        const minutes = Math.floor(diff / 60000);
+        return `${minutes}分钟前`;
+    }
+
+    // 24小时内
+    if (diff < 86400000) {
+        const hours = Math.floor(diff / 3600000);
+        return `${hours}小时前`;
+    }
+
+    // 7天内
+    if (diff < 604800000) {
+        const days = Math.floor(diff / 86400000);
+        return `${days}天前`;
+    }
+
+    // 其他情况保持原来的格式
     const options: Intl.DateTimeFormatOptions = {
         year: "numeric",
         month: "2-digit",

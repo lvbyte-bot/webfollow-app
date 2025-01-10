@@ -116,7 +116,7 @@ export const useAppStore = defineStore('app', () => {
                 }
                 return
             case LsItemType.RECOMMEND:
-                nav.title = '猜你喜欢'
+                nav.title = '推荐'
                 nav.qty = 0
                 return
             case LsItemType.FEED:

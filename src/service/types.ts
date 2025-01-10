@@ -29,7 +29,7 @@ export interface FeedItem extends Item {
     thumbnail?: string,
     summary: string,
     datestr: string,
-    imgs?: string[],
+    images?: string[],
     type: ItemType | string,
     html: string,
     feed?: SubscriptionFeed
