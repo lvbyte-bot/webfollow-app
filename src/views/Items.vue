@@ -370,7 +370,12 @@ async function loadData0(
   await store.loadData(id, type, page, onlyUnread);
 }
 let tmpIds: number[] = [];
-async function loadData(page0: number = 0, itemIds: number[] = []) {
+async function loadData(
+  page0: number = 0,
+  itemIds: number[] = [],
+  clearItemIds: boolean = false,
+  onlyUnread0: boolean = false
+) {
   loading.value = true;
   page = page0;
   // log(onlyUnread.value);
@@ -388,7 +393,10 @@ async function loadData(page0: number = 0, itemIds: number[] = []) {
     if (itemIds.length > 0) {
       tmpIds = itemIds;
     }
-    await loadData0(tmpIds, LsItemType.ITEMS, page, false);
+    if (clearItemIds) {
+      tmpIds = [];
+    }
+    await loadData0(tmpIds, LsItemType.ITEMS, page, onlyUnread0);
   }
   loading.value = false;
 }

@@ -44,7 +44,7 @@
           </div>
 
           <v-card
-            v-if="articles.length || loading"
+            v-if="articles.length || loading || isSearching"
             class="mt-4 border rounded-lg"
             :loading="loading"
             flat
@@ -57,27 +57,31 @@
                     : "搜索到 " + articles.length + " 条相关结果"
                 }}
               </div>
+              <v-row v-if="loading">
+                <v-col cols="12" md="12" v-for="index in 6" :key="index">
+                  <v-skeleton-loader type="paragraph"></v-skeleton-loader>
+                  <v-skeleton-loader
+                    type="card-avatar"
+                    class="mx-5"
+                  ></v-skeleton-loader>
+                </v-col>
+              </v-row>
               <v-empty-state
-                v-if="!loading && articles.length == 0"
+                v-else-if="articles.length == 0"
                 icon="mdi-magnify"
                 text="尝试使用其他关键词"
                 title="没有找到相关文章"
               ></v-empty-state>
-              <v-row v-else-if="articles?.length">
+              <v-row v-else>
                 <v-col
                   cols="12"
                   v-for="(item, index) in itemStore.items"
                   :key="item.id"
                 >
-                  <MagazineItem
+                  <ContentItem
                     :item="item"
                     @click="openReader(index, item)"
-                  ></MagazineItem>
-                </v-col>
-              </v-row>
-              <v-row v-else>
-                <v-col cols="12" md="6" v-for="index in 6" :key="index">
-                  <v-skeleton-loader type="paragraph"></v-skeleton-loader>
+                  ></ContentItem>
                 </v-col>
               </v-row>
             </v-card-text>
@@ -90,7 +94,7 @@
 
 <script setup lang="ts">
 import Items from "./Items.vue";
-import MagazineItem from "./item/MagazineItem.vue";
+import ContentItem from "./item/ContentItem.vue";
 import { ref, watch } from "vue";
 import { getRelatedKeywords, retrieveRelevantContexts } from "@/service/rag";
 import type { KeywordWeight, FeedContext } from "@/service/rag";
@@ -103,6 +107,7 @@ const selectedKeywords = ref<number[]>([]);
 const articles = ref<FeedContext[]>([]);
 const itemStore = useItemsStore();
 const itemsRef = ref();
+const isSearching = ref(false);
 
 const getTagColor = (weight: number) => {
   if (weight >= 50) return "error";
@@ -112,6 +117,7 @@ const getTagColor = (weight: number) => {
 };
 
 watch(selectedKeywords, async (newVal) => {
+  loading.value = true;
   if (newVal.length > 0) {
     const selectedWords = newVal.map((index) => keywords.value[index]);
     articles.value = await retrieveRelevantContexts("", selectedWords, 300);
@@ -120,13 +126,15 @@ watch(selectedKeywords, async (newVal) => {
       articles.value.map((item) => item.id)
     );
   } else {
-    itemsRef.value.loadData(0, []);
+    itemsRef.value.loadData(0, [], true);
   }
+  loading.value = false;
 });
 
 async function handleSearch() {
   if (!searchQuery.value.trim()) return;
   loading.value = true;
+  isSearching.value = true;
   init();
 
   try {

@@ -6,9 +6,9 @@
                 <slot name="top"></slot>
                 <v-list-item prepend-icon="mdi-rocket-launch-outline" value="recom" title="推荐" to="/recom">
                 </v-list-item>
-                <v-list-item prepend-icon="mdi-filter-outline" value="filter" title="文章过滤" to="/filter">
+                <v-list-item prepend-icon="mdi-filter-outline" value="filter" title="过滤" to="/filter">
                 </v-list-item>
-                <v-list-item prepend-icon="mdi-text-search-variant" value="search" title="智慧搜索" to="/search">
+                <v-list-item prepend-icon="mdi-text-search-variant" value="search" title="搜索" to="/search">
                 </v-list-item>
                 <v-list-item prepend-icon="mdi-format-list-bulleted" value="next" title="稍后阅读" to="/next">
                     <template v-slot:append>
