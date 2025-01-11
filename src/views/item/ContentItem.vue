@@ -20,13 +20,13 @@
               <v-img
                 :src="item.thumbnail"
                 cover
-                min-width="280px"
-                min-height="100px"
-                max-height="150px"
-                class="rounded-lg"
+                class="rounded-lg image-item"
+                :aspect-ratio="1.77"
               >
                 <div class="play-icon-wrapper">
-                  <v-icon size="40">mdi-play</v-icon>
+                  <div class="play-icon">
+                    <v-icon size="20">mdi-play</v-icon>
+                  </div>
                 </div>
                 <div class="video-duration">
                   {{ formatDuration(item.duration) }}
@@ -38,9 +38,8 @@
               <v-img
                 :src="item.thumbnail || item.images[0]"
                 cover
-                height="150px"
-                min-width="230px"
-                class="rounded-lg"
+                :aspect-ratio="1.77"
+                class="rounded-lg image-item"
               ></v-img>
             </div>
           </div>
@@ -58,7 +57,7 @@
                   :key="index"
                   :src="image"
                   cover
-                  :aspect-ratio="1"
+                  :aspect-ratio="1.77"
                   class="image-item rounded-lg"
                 >
                   <div
@@ -69,16 +68,6 @@
                   </div>
                 </v-img>
               </div>
-            </div>
-
-            <!-- 单图预览 -->
-            <div v-else-if="item.thumbnail" class="image-preview">
-              <v-img
-                :src="item.thumbnail"
-                cover
-                height="200px"
-                class="rounded-lg"
-              ></v-img>
             </div>
           </div>
 
@@ -147,10 +136,11 @@ function formatDuration(seconds: number) {
 }
 
 function getImageGridClass(count: number) {
-  if (count === 1) return "single";
-  if (count === 2) return "two";
-  if (count === 3) return "three";
-  return count <= 6 ? "grid-" + count : "grid-6";
+  // if (count === 1) return "single";
+  // if (count === 2) return "two";
+  // if (count === 3) return "three";
+  // return count <= 6 ? "grid-" + count : "grid-6";
+  return "grid-6";
 }
 
 function getDisplayImages(images: string[]) {
@@ -212,43 +202,22 @@ function getDisplayImages(images: string[]) {
 
     &.single {
       grid-template-columns: 1fr;
-      max-width: 600px;
+      max-width: 150px;
       margin: 0 auto;
 
       .image-item {
-        height: 200px;
+        height: 100px;
       }
     }
 
-    &.two {
-      grid-template-columns: repeat(2, minmax(120px, 1fr));
-      max-width: 520px;
-    }
-
-    &.three {
-      grid-template-columns: repeat(3, minmax(120px, 1fr));
-      max-width: 780px;
-    }
-
-    &.grid-4 {
-      grid-template-columns: repeat(4, minmax(120px, 1fr));
-      max-width: 1040px;
-    }
-
-    &.grid-5 {
-      grid-template-columns: repeat(5, minmax(120px, 1fr));
-      max-width: 1200px;
-    }
-
     &.grid-6 {
-      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      grid-template-columns: repeat(8, minmax(150px, 1fr));
     }
 
     .image-item {
       position: relative;
       border-radius: 4px;
       overflow: hidden;
-      height: 150px;
 
       .more-images {
         position: absolute;
@@ -275,8 +244,11 @@ function getDisplayImages(images: string[]) {
     align-items: center;
     justify-content: center;
 
-    .v-icon {
+    .play-icon {
       color: rgba(var(--v-theme-background), 0.9);
+      background: rgba(var(--v-theme-surface-variant), 0.9);
+      border-radius: 50%;
+      padding: 0.5rem;
     }
   }
 
@@ -284,8 +256,8 @@ function getDisplayImages(images: string[]) {
     position: absolute;
     bottom: 8px;
     right: 8px;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
+    color: rgba(var(--v-theme-background), 0.9);
+    background: rgba(var(--v-theme-surface-variant), 0.7);
     padding: 2px 6px;
     border-radius: 4px;
     font-size: 0.8rem;
@@ -302,8 +274,8 @@ a {
 
 .content-body {
   display: grid;
-  grid-template-columns: 1fr minmax(0, auto);
-  grid-gap: 1rem;
+  grid-template-columns: 7fr minmax(150px, 1fr);
+  grid-gap: 28px;
   &.with-single-image {
     display: grid;
     grid-template-columns: 1fr auto;
@@ -317,5 +289,13 @@ a {
 .video-preview {
   border-radius: 4px;
   overflow: hidden;
+  min-height: 100px;
+  max-height: 200px;
+  max-width: 300px;
+}
+.image-item {
+  min-height: 100px;
+  max-height: 200px;
+  max-width: 300px;
 }
 </style>

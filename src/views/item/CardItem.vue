@@ -9,7 +9,10 @@
           item.type == 'VIDEO' && !mobile ? imageHeight + 'px' : 'none',
       }"
       class="rounded-lg"
-      :class="{ 'iframe-container': showIframe && item.type == 'VIDEO' }"
+      :class="{
+        'iframe-container': showIframe && item.type == 'VIDEO',
+        'playing-preview': item.type == 'VIDEO' || item.type == 'PODCAST',
+      }"
     >
       <template v-if="item.type == 'VIDEO' && showIframe">
         <iframe
@@ -44,6 +47,16 @@
         :cover="mobile || item.enclosure"
         :src="item.thumbnail"
       >
+        <template v-if="item.type == 'VIDEO' || item.type == 'PODCAST'">
+          <div class="play-icon-wrapper">
+            <div class="play-icon">
+              <v-icon size="20">mdi-play</v-icon>
+            </div>
+          </div>
+          <div class="video-duration">
+            {{ formatDuration(item.duration) }}
+          </div>
+        </template>
       </v-img>
     </div>
     <p
@@ -118,6 +131,15 @@ function videoUrl() {
       }?autoplay=1&controls=0&mute=1`
     : link;
 }
+
+function formatDuration(seconds: number) {
+  if (!seconds) return "00:00";
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+  return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
+    .toString()
+    .padStart(2, "0")}`;
+}
 </script>
 <style lang="scss" scoped>
 .summary-warp {
@@ -140,5 +162,34 @@ iframe {
   width: 100%;
   margin: 0;
   padding: 0;
+}
+.playing-preview {
+  overflow: hidden;
+  background-color: rgba(var(--v-theme-surface-variant), 0.6);
+  .play-icon-wrapper {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .play-icon {
+      color: rgba(var(--v-theme-background), 0.9);
+      background: rgba(var(--v-theme-surface-variant), 0.9);
+      border-radius: 50%;
+      padding: 0.5rem;
+    }
+  }
+
+  .video-duration {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    color: rgba(var(--v-theme-background), 0.9);
+    background: rgba(var(--v-theme-surface-variant), 0.7);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+  }
 }
 </style>
