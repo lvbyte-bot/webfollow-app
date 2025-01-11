@@ -26,7 +26,23 @@
             </p>
           </div>
           <div v-if="item.thumbnail">
-            <v-img :src="item.thumbnail" cover height="80px"></v-img>
+            <v-img
+              :src="item.thumbnail"
+              class="play-preview"
+              cover
+              height="80px"
+            >
+              <template v-if="item.type == 'VIDEO' || item.type == 'PODCAST'">
+                <div class="play-icon-wrapper">
+                  <div class="play-icon">
+                    <v-icon size="20">mdi-play</v-icon>
+                  </div>
+                </div>
+                <div class="play-duration">
+                  {{ formatDuration(item.duration) }}
+                </div>
+              </template>
+            </v-img>
           </div>
         </div>
       </div>
@@ -43,6 +59,14 @@ function getSource() {
       ? props.item.author || props.item.feed?.title
       : props.item.feed?.title;
   return source;
+}
+function formatDuration(seconds: number) {
+  if (!seconds) return "00:00";
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+  return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
+    .toString()
+    .padStart(2, "0")}`;
 }
 </script>
 
@@ -88,6 +112,34 @@ a {
   color: rgb(var(--v-theme-surface-variant));
   &:hover {
     text-decoration: underline;
+  }
+}
+.play-preview {
+  overflow: hidden;
+  .play-icon-wrapper {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .play-icon {
+      color: rgba(var(--v-theme-background), 0.9);
+      background: rgba(var(--v-theme-surface-variant), 0.9);
+      border-radius: 50%;
+      padding: 0.3rem;
+    }
+  }
+
+  .play-duration {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    color: rgba(var(--v-theme-background), 0.9);
+    background: rgba(var(--v-theme-surface-variant), 0.7);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8rem;
   }
 }
 </style>

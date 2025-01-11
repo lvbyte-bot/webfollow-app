@@ -16,11 +16,11 @@
               <p class="mb-2 title">{{ item.title }}</p>
             </div>
             <!-- 视频/播客预览 -->
-            <div v-if="isVideoOrPodcast" class="video-preview">
+            <div v-if="isVideoOrPodcast">
               <v-img
                 :src="item.thumbnail"
                 cover
-                class="rounded-lg image-item"
+                class="rounded-lg image-item play-preview"
                 :aspect-ratio="1.77"
               >
                 <div class="play-icon-wrapper">
@@ -28,7 +28,7 @@
                     <v-icon size="20">mdi-play</v-icon>
                   </div>
                 </div>
-                <div class="video-duration">
+                <div class="play-duration">
                   {{ formatDuration(item.duration) }}
                 </div>
               </v-img>
@@ -48,10 +48,7 @@
           <div v-if="hasMedia && !isVideoOrPodcast" class="media-content">
             <!-- 多图片预览 -->
             <div v-if="item.images?.length" class="images-preview">
-              <div
-                class="images-grid"
-                :class="getImageGridClass(item.images.length)"
-              >
+              <div class="images-grid grid-6">
                 <v-img
                   v-for="(image, index) in getDisplayImages(item.images)"
                   :key="index"
@@ -133,14 +130,6 @@ function formatDuration(seconds: number) {
   return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
     .toString()
     .padStart(2, "0")}`;
-}
-
-function getImageGridClass(count: number) {
-  // if (count === 1) return "single";
-  // if (count === 2) return "two";
-  // if (count === 3) return "three";
-  // return count <= 6 ? "grid-" + count : "grid-6";
-  return "grid-6";
 }
 
 function getDisplayImages(images: string[]) {
@@ -234,7 +223,7 @@ function getDisplayImages(images: string[]) {
   }
 }
 
-.video-preview {
+.play-preview {
   overflow: hidden;
   background-color: rgba(var(--v-theme-surface-variant), 0.6);
   .play-icon-wrapper {
@@ -252,7 +241,7 @@ function getDisplayImages(images: string[]) {
     }
   }
 
-  .video-duration {
+  .play-duration {
     position: absolute;
     bottom: 8px;
     right: 8px;

@@ -11,7 +11,6 @@
       class="rounded-lg"
       :class="{
         'iframe-container': showIframe && item.type == 'VIDEO',
-        'playing-preview': item.type == 'VIDEO' || item.type == 'PODCAST',
       }"
     >
       <template v-if="item.type == 'VIDEO' && showIframe">
@@ -37,7 +36,7 @@
       <v-img
         v-else
         ref="imageRef"
-        class="align-end text-white rounded-lg"
+        class="align-end text-white rounded-lg play-preview"
         :title="item.title"
         :aspect-ratio="
           mobile ? (item.enclosure ? 1.78 : 0.7) : item.enclosure ? 1.79 : 0
@@ -48,12 +47,7 @@
         :src="item.thumbnail"
       >
         <template v-if="item.type == 'VIDEO' || item.type == 'PODCAST'">
-          <div class="play-icon-wrapper">
-            <div class="play-icon">
-              <v-icon size="20">mdi-play</v-icon>
-            </div>
-          </div>
-          <div class="video-duration">
+          <div class="play-duration">
             {{ formatDuration(item.duration) }}
           </div>
         </template>
@@ -163,25 +157,10 @@ iframe {
   margin: 0;
   padding: 0;
 }
-.playing-preview {
+.play-preview {
   overflow: hidden;
-  background-color: rgba(var(--v-theme-surface-variant), 0.6);
-  .play-icon-wrapper {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 
-    .play-icon {
-      color: rgba(var(--v-theme-background), 0.9);
-      background: rgba(var(--v-theme-surface-variant), 0.9);
-      border-radius: 50%;
-      padding: 0.5rem;
-    }
-  }
-
-  .video-duration {
+  .play-duration {
     position: absolute;
     bottom: 8px;
     right: 8px;
