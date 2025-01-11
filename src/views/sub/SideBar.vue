@@ -6,8 +6,6 @@
                 <slot name="top"></slot>
                 <v-list-item prepend-icon="mdi-rocket-launch-outline" value="recom" title="推荐" to="/recom">
                 </v-list-item>
-                <v-list-item prepend-icon="mdi-filter-outline" value="filter" title="过滤" to="/filter">
-                </v-list-item>
                 <v-list-item prepend-icon="mdi-text-search-variant" value="search" title="搜索" to="/search">
                 </v-list-item>
                 <v-list-item prepend-icon="mdi-format-list-bulleted" value="next" title="稍后阅读" to="/next">
@@ -16,18 +14,33 @@
                     </template>
                 </v-list-item>
             </div>
+            <div class="v-list-subheader" style="padding: 0.3rem;">
+                <div class="d-flex justify-space-between w-100">
+                    <span>FILTERS</span>
+                    <router-link to="/filter">
+                        <v-icon icon="mdi-filter-plus-outline" color="secondary"></v-icon>
+                    </router-link>
+                </div>
+            </div>
+            <v-list-item v-for="filter in settingsStore.automation.filters" :key="filter.id" :title="filter.name"
+                :to="`/filter/${filter.id}`" :value="filter.id"
+                @contextmenu.prevent="showFilterContextMenu($event, filter)">
+                <template #prepend>
+                    <v-icon size="small">mdi-filter-outline</v-icon>
+                </template>
+            </v-list-item>
             <v-list-subheader>FEEDS</v-list-subheader>
             <v-list-item prepend-icon="mdi-inbox" value="all" title="全部文章" to="/all">
-                    <template v-slot:append>
-                        <small v-if="appStore.unReadQty" class="font-weight-thin" v-text="appStore.unReadQty"></small>
-                    </template>
-                </v-list-item>
+                <template v-slot:append>
+                    <small v-if="appStore.unReadQty" class="font-weight-thin" v-text="appStore.unReadQty"></small>
+                </template>
+            </v-list-item>
             <template v-for="gItem in feedStore.subscriptions">
                 <v-list-group v-if="gItem.feeds.length">
                     <template v-slot:activator="{ isOpen, props }">
-                        <v-list-item v-bind="props" 
-                            @contextmenu.prevent="showContextMenu($event, gItem, true)">
-                            <v-list-item-title :class="{'font-weight-bold':gItem.unreadQty}" v-text="gItem.title"></v-list-item-title>
+                        <v-list-item v-bind="props" @contextmenu.prevent="showContextMenu($event, gItem, true)">
+                            <v-list-item-title :class="{ 'font-weight-bold': gItem.unreadQty }"
+                                v-text="gItem.title"></v-list-item-title>
                             <template #prepend>
                                 <v-icon :icon="isOpen ? 'mdi-chevron-up' : ' mdi-chevron-down'">
                                 </v-icon>
@@ -41,15 +54,16 @@
                         @contextmenu.prevent="showContextMenu($event, gItem, true)">
                     </v-list-item>
                     <v-list-item v-for="subItem in gItem.feeds" :key="gItem.id + '-' + subItem.id"
-                        :class="{ 'text-red-accent-3':subItem.isFailure, 'v-list-item--active': selectedFeeds.map(o => o.id).includes(subItem.id)}"
+                        :class="{ 'text-red-accent-3': subItem.isFailure, 'v-list-item--active': selectedFeeds.map(o => o.id).includes(subItem.id) }"
                         :value="isMultiSelectMode || contextMenuVisible ? undefined : gItem.id + '-' + subItem.id"
-                        :to="isMultiSelectMode || contextMenuVisible ? undefined : '/f/' + subItem.id"  @click="$event => handleFeedSelect($event, subItem)" @mousedown.prevent=""
+                        :to="isMultiSelectMode || contextMenuVisible ? undefined : '/f/' + subItem.id"
+                        @click="$event => handleFeedSelect($event, subItem)" @mousedown.prevent=""
                         @contextmenu.prevent="showContextMenu($event, subItem)">
                         <template #prepend>
                             <img :src="subItem.icon" onerror="this.src='/logo.svg'" width="16">
                             </img>
                         </template>
-                        <v-list-item-title :class="{'font-weight-bold':subItem.unreadQty}" v-text="subItem.title">
+                        <v-list-item-title :class="{ 'font-weight-bold': subItem.unreadQty }" v-text="subItem.title">
                         </v-list-item-title>
                         <template v-slot:append>
                             <small v-if="subItem.unreadQty" class="font-weight-thin" v-text="subItem.unreadQty"></small>
@@ -84,9 +98,16 @@
                 </template>
             </v-list>
         </v-card>
+
+        <v-card v-show="filterContextMenuVisible" class="menus" style="position: fixed; z-index: 10000"
+            :style="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }">
+            <v-list nav>
+                <v-list-item prepend-icon="mdi-delete-outline" @click="handleFilterAction('delete')">
+                    删除过滤项
+                </v-list-item>
+            </v-list>
+        </v-card>
     </div>
-
-
 
 
     <v-dialog v-model="editable" max-width="500">
@@ -125,13 +146,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, Ref } from "vue";
-import { useFeedsStore, useAppStore } from "@/store";
+import { useFeedsStore, useAppStore, useSettingsStore } from "@/store";
 import { useDisplay } from "vuetify";
 import { Marked } from "@/service";
 
 const { mobile } = useDisplay();
 const feedStore = useFeedsStore();
 const appStore = useAppStore();
+const settingsStore = useSettingsStore();
 const editable = ref(false)
 const deleteDialog = ref(false)
 const form: Ref<any> = ref()
@@ -148,6 +170,7 @@ onBeforeUnmount(() => {
 
 const hideContextMenu = () => {
     contextMenuVisible.value = false;
+    filterContextMenuVisible.value = false;
 };
 
 const contextMenuVisible = ref(false);
@@ -156,6 +179,9 @@ const contextMenuY = ref(0);
 const selectedFeeds = ref<any[]>([]);
 const isMultiSelectMode = ref(false);
 const lastSelectedFeed = ref<any>(null);
+
+const filterContextMenuVisible = ref(false);
+const currentFilter = ref<any>(null);
 
 const handlerClear = () => {
     selectedFeeds.value = [];
@@ -217,7 +243,6 @@ const showContextMenu = (event: any, item: any, isGroup = false) => {
         currentItem.value = item;
         if (!isMultiSelectMode.value && item) {
             item.groupName = feedStore.groups.filter(g => g.id == item.groupId)[0].title;
-
             selectedFeeds.value = [item];
         }
     }
@@ -269,10 +294,10 @@ async function onBatchUpdate() {
 
 async function onBatchDelete() {
     loading.value = true;
-    for(let i=0;i<selectedFeeds.value.length;i++){
+    for (let i = 0; i < selectedFeeds.value.length; i++) {
         const feed = selectedFeeds.value[i]
         try {
-             await feedStore.deleteFeed(feed.id, i+1==selectedFeeds.value.length);
+            await feedStore.deleteFeed(feed.id, i + 1 == selectedFeeds.value.length);
         } catch (e) {
             err(e, 'feed更新失败[' + feed.title + ']')
         }
@@ -312,6 +337,29 @@ async function onDelete() {
     deleteDialog.value = false
 }
 
+const showFilterContextMenu = (event: MouseEvent, filter: any) => {
+    event.preventDefault();
+    contextMenuX.value = event.clientX;
+    contextMenuY.value = event.clientY;
+    filterContextMenuVisible.value = true;
+    currentFilter.value = filter;
+};
+
+const handleFilterAction = (action: string) => {
+    filterContextMenuVisible.value = false;
+
+    if (action === 'delete' && currentFilter.value) {
+        if (confirm('确定要删除这个过滤项吗？')) {
+            const index = settingsStore.automation.filters.findIndex(
+                f => f.id === currentFilter.value.id
+            );
+            if (index !== -1) {
+                settingsStore.automation.filters.splice(index, 1);
+                settingsStore.saveToLocalStorage();
+            }
+        }
+    }
+};
 
 </script>
 <style scoped>

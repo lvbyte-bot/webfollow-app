@@ -110,19 +110,20 @@
         </v-slide-x-transition>
         <div class="flexible">
           <c-btn
-            v-if="hideSide && !mobile"
-            class="ma-3 menu-warp"
-            variant="text"
-            icon="mdi-menu"
-            title="打开边栏"
-            @click="hideSide = !hideSide"
-          ></c-btn>
-          <c-btn
             class="ma-3 menu-warp"
             icon="mdi-menu"
             v-if="mobile"
             @click="show = !show"
           ></c-btn>
+          <c-btn
+            v-else-if="hideSide"
+            class="ma-2 menu-warp"
+            variant="text"
+            icon="mdi-menu"
+            title="打开边栏"
+            @click="hideSide = !hideSide"
+          ></c-btn>
+
           <router-view></router-view>
         </div>
         <v-btn

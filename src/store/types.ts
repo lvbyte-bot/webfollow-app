@@ -11,5 +11,13 @@ export interface TopNav {
 
 export interface PageRoute {
     id?: number,
-    type: LsItemType
+    type: LsItemType,
+    meta?: PageRouteMeta
+}
+
+export interface PageRouteMeta {
+    title?: string
+    qty?: number
+    isFailure?: boolean
+    url?: string
 }

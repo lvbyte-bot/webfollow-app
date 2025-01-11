@@ -147,6 +147,7 @@ export async function listItem(id: any, type: LsItemType, page: number = 0, only
             let itemIds: Set<number> = new Set(id)
             res = (await itemRepo.findAll(item => filterItem0(item, (id) => itemIds.has(id), onlyUnread, unReadItemIds), page, 50, (x: Item, y: Item) => id2Index[x.id] > id2Index[y.id] ? 1 : -1))
             break
+
         case LsItemType.ALL:
             res = (await itemRepo.findAll(item => filterItem0(item, () => true, onlyUnread, unReadItemIds), page))
             break

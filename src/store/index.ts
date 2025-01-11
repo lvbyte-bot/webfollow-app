@@ -115,6 +115,12 @@ export const useAppStore = defineStore('app', () => {
                     nav.qty = ga[0].unreadQty
                 }
                 return
+            case LsItemType.ITEMS:
+                if (v.meta) {
+                    nav.title = v.meta.title
+                    nav.qty = v.meta.qty
+                }
+                return
             case LsItemType.RECOMMEND:
                 nav.title = '推荐'
                 nav.qty = 0

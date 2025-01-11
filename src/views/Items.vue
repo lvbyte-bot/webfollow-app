@@ -97,7 +97,8 @@
                       (id == '-1' && type == 'c') ||
                       type == 'next' ||
                       type == 'all' ||
-                      type == 'recom'
+                      type == 'recom' ||
+                      type == 'filter'
                     )
                   "
                   :disabled="store.items?.filter((o) => !o.isRead).length == 0"
@@ -241,6 +242,7 @@ import Reader from "./reader/Index.vue";
 import Items from "./item/Index.vue";
 import { onMounted, watch } from "vue";
 import { Marked } from "@/service";
+import { retrieveRelevantContexts } from "@/service/rag";
 import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
 import {
@@ -367,7 +369,27 @@ async function loadData0(
       loadData();
     }, general.value.refreshInterval * 1000);
   }
-  await store.loadData(id, type, page, onlyUnread);
+
+  if (type == LsItemType.FILTER) {
+    const filter = settingsStore.getFilter(id);
+    const articles = await retrieveRelevantContexts(
+      "",
+      filter?.keywords || [],
+      300
+    );
+    await store.loadData(
+      articles.map((item) => item.id),
+      LsItemType.ITEMS,
+      page,
+      onlyUnread,
+      {
+        title: filter?.name || "过滤文章",
+        qty: articles.length,
+      }
+    );
+  } else {
+    await store.loadData(id, type, page, onlyUnread);
+  }
 }
 let tmpIds: number[] = [];
 async function loadData(
@@ -389,6 +411,8 @@ async function loadData(
     await loadData0(null, LsItemType.ALL, page, onlyUnread.value);
   } else if (props.type == "recom") {
     await loadData0(null, LsItemType.RECOMMEND, page, onlyUnread.value);
+  } else if (props.type == "filter") {
+    await loadData0(props.id, LsItemType.FILTER, page, onlyUnread.value);
   } else {
     if (itemIds.length > 0) {
       tmpIds = itemIds;

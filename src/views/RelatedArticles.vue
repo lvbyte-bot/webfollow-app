@@ -19,6 +19,7 @@
               <v-chip-group
                 v-if="keywords.length"
                 v-model="selectedKeywords"
+                @update:model-value="handleKeywordsChange"
                 column
                 multiple
                 selected-class="text-primary"
@@ -34,12 +35,21 @@
                 >
                 </v-chip>
               </v-chip-group>
-              <c-btn
-                icon="mdi-magnify"
-                @click="handleSearch"
-                :loading="loading"
-                :disabled="loading"
-              ></c-btn>
+              <div class="d-flex gap-2">
+                <c-btn
+                  v-if="keywords.length"
+                  icon="mdi-filter-plus-outline"
+                  @click="saveAsFilter"
+                  :disabled="loading"
+                >
+                </c-btn>
+                <c-btn
+                  icon="mdi-magnify"
+                  @click="handleSearch"
+                  :loading="loading"
+                  :disabled="loading"
+                ></c-btn>
+              </div>
             </div>
           </div>
 
@@ -72,18 +82,20 @@
                 text="尝试使用其他关键词"
                 title="没有找到相关文章"
               ></v-empty-state>
-              <v-row v-else>
-                <v-col
-                  cols="12"
-                  v-for="(item, index) in itemStore.items"
-                  :key="item.id"
-                >
-                  <ContentItem
-                    :item="item"
-                    @click="openReader(index, item)"
-                  ></ContentItem>
-                </v-col>
-              </v-row>
+              <v-expand-transition>
+                <v-row v-if="articles.length && !loading">
+                  <v-col
+                    cols="12"
+                    v-for="(item, index) in itemStore.items"
+                    :key="item.id"
+                  >
+                    <ContentItem
+                      :item="item"
+                      @click="openReader(index, item)"
+                    ></ContentItem>
+                  </v-col>
+                </v-row>
+              </v-expand-transition>
             </v-card-text>
           </v-card>
         </div>
@@ -95,10 +107,11 @@
 <script setup lang="ts">
 import Items from "./Items.vue";
 import ContentItem from "./item/ContentItem.vue";
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { getRelatedKeywords, retrieveRelevantContexts } from "@/service/rag";
 import type { KeywordWeight, FeedContext } from "@/service/rag";
 import { useItemsStore } from "@/store";
+import { useSettingsStore } from "@/store";
 
 const searchQuery = ref("");
 const loading = ref(false);
@@ -108,6 +121,7 @@ const articles = ref<FeedContext[]>([]);
 const itemStore = useItemsStore();
 const itemsRef = ref();
 const isSearching = ref(false);
+const settingsStore = useSettingsStore();
 
 const getTagColor = (weight: number) => {
   if (weight >= 50) return "error";
@@ -116,7 +130,8 @@ const getTagColor = (weight: number) => {
   return "info";
 };
 
-watch(selectedKeywords, async (newVal) => {
+async function handleKeywordsChange() {
+  const newVal = selectedKeywords.value;
   loading.value = true;
   if (newVal.length > 0) {
     const selectedWords = newVal.map((index) => keywords.value[index]);
@@ -126,10 +141,11 @@ watch(selectedKeywords, async (newVal) => {
       articles.value.map((item) => item.id)
     );
   } else {
+    articles.value = [];
     itemsRef.value.loadData(0, [], true);
   }
   loading.value = false;
-});
+}
 
 async function handleSearch() {
   if (!searchQuery.value.trim()) return;
@@ -141,6 +157,7 @@ async function handleSearch() {
     // 获取相关关键词
     keywords.value = await getRelatedKeywords(searchQuery.value);
     selectedKeywords.value = keywords.value.map((_, index) => index);
+    await handleKeywordsChange();
   } catch (error: any) {
     console.error("搜索失败:", error);
     alert(error.message || "搜索失败");
@@ -154,6 +171,23 @@ function init() {
   articles.value = [];
   selectedKeywords.value = [];
   itemsRef.value.loadData(0, []);
+}
+
+async function saveAsFilter() {
+  const name = prompt("请输入过滤项名称");
+  if (!name) return;
+
+  const filter = {
+    id: Date.now().toString(),
+    name,
+    keywords: selectedKeywords.value.map((index) => keywords.value[index]),
+    createTime: Date.now(),
+  };
+
+  settingsStore.automation.filters.push(filter);
+  settingsStore.saveToLocalStorage();
+
+  alert("保存成功");
 }
 </script>
 

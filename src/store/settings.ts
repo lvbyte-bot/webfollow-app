@@ -29,13 +29,28 @@ interface IntegratedSettings {
     selectedModel?: string;
 }
 
+interface FilterItem {
+    id: string;
+    name: string;
+    keywords: KeywordWeight[];
+    createTime: number;
+}
+
+interface KeywordWeight {
+    keyword: string;
+    weight: number;
+}
+
+interface AutomationSettings {
+    filters: FilterItem[];
+}
+
 interface SettingsState {
     general: GeneralSettings
     appearance: AppearanceSettings
     integrated: IntegratedSettings
+    automation: AutomationSettings
 }
-
-
 
 export const useSettingsStore = defineStore('settings', () => {
     const general = ref<GeneralSettings>({
@@ -64,6 +79,10 @@ export const useSettingsStore = defineStore('settings', () => {
         isApiValid: false,
         lastTestTime: '',
         selectedModel: 'gpt-4o-mini'
+    })
+
+    const automation = ref<AutomationSettings>({
+        filters: []
     })
 
     function updateCSSVariables() {
@@ -96,7 +115,8 @@ export const useSettingsStore = defineStore('settings', () => {
         localStorage.setItem('app-settings', JSON.stringify({
             general: general.value,
             appearance: appearance.value,
-            integrated: integrated.value
+            integrated: integrated.value,
+            automation: automation.value
         }))
         updateCSSVariables()
     }
@@ -108,6 +128,7 @@ export const useSettingsStore = defineStore('settings', () => {
             general.value = { ...general.value, ...parsed.general }
             appearance.value = { ...appearance.value, ...parsed.appearance }
             integrated.value = { ...integrated.value, ...parsed.integrated }
+            automation.value = { ...automation.value, ...parsed.automation }
         }
     }
 
@@ -143,9 +164,20 @@ export const useSettingsStore = defineStore('settings', () => {
             summaryPrompt: '请用简洁的语言总结这篇文章的主要内容，突出核心观点和关键信息。',
             isApiValid: false,
             lastTestTime: '',
-            selectedModel: 'gpt-4o-mini',
+            selectedModel: 'gpt-4o-mini'
         }
         saveToLocalStorage()
+    }
+
+    function resetAutomationSettings() {
+        automation.value = {
+            filters: []
+        }
+        saveToLocalStorage()
+    }
+
+    function getFilter(filterId: string): FilterItem | undefined {
+        return automation.value.filters.find(f => f.id === filterId);
     }
 
     onBeforeMount(() => {
@@ -160,9 +192,12 @@ export const useSettingsStore = defineStore('settings', () => {
         general,
         appearance,
         integrated,
+        automation,
+        getFilter,
         saveToLocalStorage,
         resetGeneralSettings,
         resetAppearanceSettings,
-        resetIntegratedSettings
+        resetIntegratedSettings,
+        resetAutomationSettings
     }
 })

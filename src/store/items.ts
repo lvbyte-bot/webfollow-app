@@ -18,7 +18,7 @@ import {
     useBaseStore
 } from './base'
 import { FeedItem, LsItemType } from '@/service/types'
-import { PageRoute } from './types'
+import { PageRoute, PageRouteMeta } from './types'
 
 export const useItemsStore = defineStore('items', () => {
     const {
@@ -39,12 +39,13 @@ export const useItemsStore = defineStore('items', () => {
         return item
     }))
 
-    async function loadData(id: any, type: LsItemType, page: number = 0, onlyUnread: boolean = false) {
+    async function loadData(id: any, type: LsItemType, page: number = 0, onlyUnread: boolean = false, meta?: PageRouteMeta) {
         cacheLoadParams = { id, type, page, onlyUnread }
         id = type == LsItemType.SAVED ? saved_item_ids : id
         id = type == LsItemType.ALL ? null : id
         pageRoute.id = id
         pageRoute.type = type
+        pageRoute.meta = meta
         const r = await listItem(id, type, page, onlyUnread, unread_item_ids)
         if (page == 0) {
             data.value = []
