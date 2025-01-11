@@ -73,10 +73,10 @@ function togglePlay() {
 .podcat-reader {
   width: 100%;
   position: sticky;
-  top: calc(64px + 16px);
+  top: calc(56px + 16px);
   padding: 1rem;
   .warp {
-    height: calc(100vh - 64px - 5rem);
+    height: calc(100vh - 56px - 5rem);
     border-radius: 1rem;
     background: linear-gradient(
       to right bottom,

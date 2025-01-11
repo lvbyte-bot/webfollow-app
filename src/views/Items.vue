@@ -188,7 +188,7 @@
               <v-empty-state
                 icon="mdi-book-open-page-variant-outline"
                 v-if="feedStore.nextUnReadUrl"
-                height="calc(100vh - 64px)"
+                height="calc(100vh - 56px)"
               >
                 <v-btn variant="text" :to="feedStore.nextUnReadUrl">
                   <template #prepend>
@@ -199,21 +199,21 @@
               </v-empty-state>
               <v-empty-state
                 v-else-if="!store.items?.length"
-                height="calc(100vh - 64px)"
+                height="calc(100vh - 56px)"
                 icon="mdi-fruit-watermelon"
                 text="全部已读"
               >
               </v-empty-state>
               <v-empty-state
                 v-else
-                height="calc(100vh - 64px)"
+                height="calc(100vh - 56px)"
                 icon="mdi-fruit-cherries"
                 text="我是有底线的"
               >
               </v-empty-state>
               <v-empty-state
                 v-if="!onlyUnread && type == 'f' && store.items?.length == 0"
-                height="calc(100vh - 64px)"
+                height="calc(100vh - 56px)"
                 icon="mdi-cloud-download-outline"
               >
                 <v-btn
@@ -317,6 +317,7 @@ function changeItemView() {
     general.value.defaultView = "text";
   }
   mainRef.value.style.width = "";
+  mainRef.value.scrollTo(0, 0);
   settingsStore.saveToLocalStorage();
 }
 
@@ -324,7 +325,6 @@ function watchLoadMore() {
   watch(isBottom, (v) => {
     if (v && !store.isLast) {
       loadData(++page);
-      console.log(page);
     }
   });
 }
@@ -439,6 +439,7 @@ async function changeOnlyUnread(onlyUnread0: boolean) {
   general.value.hideReadArticles = onlyUnread0;
   settingsStore.saveToLocalStorage();
   await loadData(0);
+  mainRef.value.scrollTo(0, 0);
 }
 
 defineExpose({ loadData, openReader });
@@ -490,7 +491,8 @@ defineExpose({ loadData, openReader });
   padding: 0 1rem 0 1rem;
   // border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
 
-  height: 64px;
+  // height: 64px;
+  height: 56px;
   &:last-child {
     min-width: 170px;
   }

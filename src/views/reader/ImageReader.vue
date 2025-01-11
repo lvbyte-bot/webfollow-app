@@ -85,12 +85,12 @@ const onSlideChange = (_: any) => {};
 
 .image-reader {
   position: sticky;
-  top: calc(64px + 16px);
+  top: calc(56px + 16px);
 }
 
 .swiper {
   border-radius: 8px;
-  height: calc(100vh - 64px - 2.5rem);
+  height: calc(100vh - 56px - 2.5rem);
   padding: 1rem;
 }
 

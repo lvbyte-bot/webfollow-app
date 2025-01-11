@@ -20,14 +20,15 @@
       <div class="append-bar">
         <slot name="append-bar">
           <c-btn
+            icon
             variant="text"
-            icon="mdi-auto-fix"
             :loading="summarizing"
             :disabled="!canSummarize"
             title="AI 总结"
             @click="generateSummary"
             class="mr-2"
           >
+            <v-icon>mdi-matrix</v-icon>
           </c-btn>
           <c-btn
             variant="text"
@@ -249,7 +250,8 @@ provide(summarizingSymbol, summarizing);
   align-items: center;
   padding: 0.5rem 0.3rem;
   border-bottom: 1px solid rgba(var(--v-border-color), 0);
-  height: 64px;
+  // height: 64px;
+  height: 56px;
   > * {
     min-width: 120px;
     max-width: 650px;
