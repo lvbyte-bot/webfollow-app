@@ -144,7 +144,7 @@ export const useAppStore = defineStore('app', () => {
 
 
 
-export { useFeedsStore, useItemsStore, usePlayListStore, useSettingsStore };
+export { useFeedsStore, useItemsStore, usePlayListStore, useSettingsStore, useBaseStore };
 
 type wathRef = Ref<any> | Reactive<any>
 

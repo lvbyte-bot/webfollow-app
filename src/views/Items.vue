@@ -250,6 +250,7 @@ import {
   useAppStore,
   useFeedsStore,
   useSettingsStore,
+  useBaseStore,
 } from "@/store";
 import { FeedItem, LsItemType } from "@/service/types";
 import { useScroll } from "@/utils/scrollListener";
@@ -263,7 +264,7 @@ const { mobile } = useDisplay();
 const store = useItemsStore();
 const appStore = useAppStore();
 const feedStore = useFeedsStore();
-
+const baseStore = useBaseStore();
 const currentItem: Ref<FeedItem> = ref({
   id: 0,
   title: "",
@@ -384,7 +385,10 @@ async function loadData0(
       onlyUnread,
       {
         title: filter?.name || "过滤文章",
-        qty: articles.length,
+        qty: onlyUnread
+          ? articles.filter((item) => baseStore.unread_item_ids.has(item.id))
+              .length
+          : articles.length,
       }
     );
   } else {
