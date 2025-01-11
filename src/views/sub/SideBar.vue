@@ -17,9 +17,12 @@
             <div class="v-list-subheader" style="padding: 0.3rem;">
                 <div class="d-flex justify-space-between w-100">
                     <span>FILTERS</span>
-                    <router-link to="/filter">
-                        <v-icon icon="mdi-filter-plus-outline" color="secondary"></v-icon>
-                    </router-link>
+                    <div> 
+                        <span style="color: #ff0000;">new</span> 
+                        <router-link to="/filter">
+                            <v-icon icon="mdi-filter-plus-outline" color="secondary"></v-icon>
+                        </router-link>
+                    </div>
                 </div>
             </div>
             <v-list-item v-for="filter in settingsStore.automation.filters" :key="filter.id" :title="filter.name"
