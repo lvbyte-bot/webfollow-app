@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { onBeforeMount, onMounted, ref, } from 'vue'
 
 interface GeneralSettings {
-    startPage: 'home' | 'all' | 'next' | 'firstfolder' | 'recom'
+    startPage: 'welcome' | 'all' | 'next' | 'firstfolder' | 'home'
     defaultView: 'text' | 'card' | 'magazine'
     hideReadArticles: boolean
     autoRefresh: boolean
@@ -134,7 +134,7 @@ export const useSettingsStore = defineStore('settings', () => {
 
     function resetGeneralSettings() {
         general.value = {
-            startPage: 'all',
+            startPage: 'home',
             defaultView: 'text',
             hideReadArticles: true,
             autoRefresh: false,

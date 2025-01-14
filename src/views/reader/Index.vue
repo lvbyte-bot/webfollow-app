@@ -28,7 +28,7 @@
             @click="generateSummary"
             class="mr-2"
           >
-            <v-icon>mdi-matrix</v-icon>
+            <v-icon>mdi-auto-fix</v-icon>
           </c-btn>
           <c-btn
             variant="text"

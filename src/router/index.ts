@@ -21,6 +21,10 @@ const routes = [{
         component: () => import('@/views/Welcome.vue'),
     },
     {
+        path: '/welcome',
+        component: () => import('@/views/Welcome.vue'),
+    },
+    {
         path: '/subscribe',
         component: () => import('@/views/Discovery.vue'),
     }, {

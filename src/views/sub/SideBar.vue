@@ -4,7 +4,7 @@
         <v-list nav class="sidebar-list" @mousedown.prevent="" @contextmenu.prevent>
             <div class="sidebar-top">
                 <slot name="top"></slot>
-                <v-list-item prepend-icon="mdi-rocket-launch-outline" value="recom" title="推荐" to="/recom">
+                <v-list-item prepend-icon="mdi-home-outline" value="home" title="首页" to="/home">
                 </v-list-item>
                 <v-list-item prepend-icon="mdi-text-search-variant" value="search" title="搜索" to="/search">
                 </v-list-item>
@@ -32,7 +32,15 @@
                     <v-icon size="small">mdi-filter-outline</v-icon>
                 </template>
             </v-list-item>
-            <v-list-subheader>FEEDS</v-list-subheader>
+            <!-- <v-list-subheader>FEEDS</v-list-subheader> -->
+            <div class="v-list-subheader" style="padding: 0.3rem;">
+                <div class="d-flex justify-space-between w-100">
+                    <span>FEEDS</span>
+                    <div> 
+                        <v-btn variant="text" to="/subscribe" icon="mdi-plus" size="small" title="订阅" height="20" width="20"></v-btn>
+                    </div>
+                </div>
+            </div>
             <v-list-item prepend-icon="mdi-inbox" value="all" title="全部文章" to="/all">
                 <template v-slot:append>
                     <small v-if="appStore.unReadQty" class="font-weight-thin" v-text="appStore.unReadQty"></small>

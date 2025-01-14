@@ -122,7 +122,7 @@ export const useAppStore = defineStore('app', () => {
                 }
                 return
             case LsItemType.RECOMMEND:
-                nav.title = '推荐'
+                nav.title = '首页'
                 nav.qty = 0
                 return
             case LsItemType.FEED:

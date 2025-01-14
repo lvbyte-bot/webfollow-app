@@ -33,81 +33,93 @@
           </template>
         </SideBar>
       </v-navigation-drawer>
-      <v-navigation-drawer v-else :model-value="!hideSide" rail>
-        <v-list-item
-          class="my-2"
-          prepend-avatar="/logo.svg"
-          title="webfollow"
-          @click="router.push('/')"
-        >
-        </v-list-item>
-        <v-divider></v-divider>
-
-        <v-list-item
-          class="mt-1"
-          prepend-icon="mdi-plus"
-          title="添加"
-          @click="router.push('/subscribe')"
-        ></v-list-item>
-        <v-list-item
-          class="mt-1"
-          prepend-icon="mdi-professional-hexagon"
-          value="combo"
-          @click="router.push('/combo')"
-        ></v-list-item>
-        <v-list-item
-          class="mt-1"
-          prepend-icon="mdi-download"
-          value="app"
-          @click="router.push('/download')"
-        ></v-list-item>
-
-        <div class="bottom">
-          <v-list-item value="play" @click="showPlayList = !showPlayList">
-            <template #prepend>
-              <v-icon :class="{ spinner: playListStore.isPlaying }">
-                {{
-                  playListStore.isPlaying
-                    ? "mdi-music-circle-outline"
-                    : "mdi-headphones"
-                }}
-              </v-icon>
-            </template>
-          </v-list-item>
-          <v-list-item class="text-center" href="https://i.webfollow.cc">
-            回到老版
-          </v-list-item>
+      <!-- <v-navigation-drawer
+        v-else
+        :model-value="hideSide"
+        rail
+        style="border-right: none"
+        :style="{
+          width: hideSide ? '64px' : '0px',
+        }"
+      >
+        <div class="text-center pa-4">
+          <v-img
+            class="mx-auto"
+            src="/logo.svg"
+            @click="router.push('/')"
+            alt=""
+            width="30"
+          />
         </div>
-      </v-navigation-drawer>
+        <v-btn variant="flat" title="首页" to="/home" height="64">
+          <div class="text-center text-caption">
+            <v-icon size="20">mdi-home-outline</v-icon>
+            <div>首页</div>
+          </div>
+        </v-btn>
+        <v-btn variant="flat" value="search" to="/search" height="64">
+          <div class="text-center">
+            <v-icon size="20">mdi-text-search-variant</v-icon>
+            <div>搜索</div>
+          </div>
+        </v-btn>
+        <v-btn variant="flat" value="next" to="/all" height="64">
+          <div class="text-center">
+            <v-icon size="20">mdi-rss</v-icon>
+            <div>订阅</div>
+          </div>
+        </v-btn>
+        <v-btn
+          variant="flat"
+          value="all"
+          @click="settingable = true"
+          height="64"
+        >
+          <div class="text-center">
+            <v-icon size="20">mdi-account-circle-outline</v-icon>
+            <div>我</div>
+          </div>
+        </v-btn>
+      </v-navigation-drawer> -->
       <v-navigation-drawer width="320" temporary v-model="showPlayList">
         <PlayList></PlayList>
       </v-navigation-drawer>
       <v-main :class="{ cols: !mobile, hideside: hideSide || mobile }">
-        <v-slide-x-transition>
+        <v-scroll-x-transition>
           <div v-show="!mobile && !hideSide">
             <SideBar>
               <template #top>
                 <div class="mb-2 d-flex justify-space-between align-center">
-                  <c-btn
-                    variant="text"
-                    icon="mdi-backburger"
-                    @click="hideSide = !hideSide"
-                    title="关闭边栏"
-                  ></c-btn>
-                  <c-btn @click="settingable = true" icon>
-                    <v-avatar
-                      size="26px"
-                      color="secondary"
-                      :title="appStore.authInfo.username"
-                    >
-                      {{ appStore.authInfo.username.substring(0, 2) }}
-                    </v-avatar>
-                  </c-btn>
+                  <div
+                    class="d-flex align-center cursor-pointer"
+                    @click="router.push('/')"
+                  >
+                    <v-img src="/logo.svg" alt="" width="30" class="mx-2" />
+                    <span class="font-weight-bold">WebFollow</span>
+                  </div>
+                  <div>
+                    <c-btn
+                      variant="text"
+                      icon="mdi-menu-open"
+                      @click="hideSide = !hideSide"
+                      title="关闭边栏"
+                      size="small"
+                    ></c-btn>
+                    <c-btn @click="settingable = true" icon size="small">
+                      <v-avatar
+                        size="23px"
+                        color="secondary"
+                        :title="appStore.authInfo.username"
+                      >
+                        {{ appStore.authInfo.username.substring(0, 2) }}
+                      </v-avatar>
+                    </c-btn>
+                  </div>
                 </div>
               </template>
             </SideBar>
           </div>
-        </v-slide-x-transition>
+        </v-scroll-x-transition>
         <div class="flexible">
           <c-btn
             class="ma-2 menu-warp"
@@ -115,27 +127,20 @@
             v-if="mobile"
             @click="show = !show"
           ></c-btn>
-          <v-img
-            v-else-if="hideSide"
-            src="/logo.svg"
-            class="ma-4 menu-warp"
-            width="26"
-            title="打开边栏"
-            @click="hideSide = !hideSide"
-          ></v-img>
-          <!-- <c-btn
+          <c-btn
             v-else-if="hideSide"
             class="ma-2 menu-warp"
             variant="text"
             icon="mdi-menu"
             title="打开边栏"
+            size="small"
             @click="hideSide = !hideSide"
-          ></c-btn> -->
+          ></c-btn>
 
           <router-view></router-view>
         </div>
         <v-btn
-          v-show="mobile && playListStore.playlist.length"
+          v-show="playListStore.playlist.length"
           icon
           color="primary"
           class="podcast-player"
@@ -223,8 +228,10 @@ onMounted(() => {
   if (route.fullPath == "/") {
     if (startPage == "all") {
       router.push("/all");
-    } else if (startPage == "recom") {
-      router.push("/recom");
+    } else if (startPage == "home") {
+      router.push("/home");
+    } else if (startPage == "welcome") {
+      router.push("/welcome");
     } else if (startPage == "next") {
       router.push("/next");
     } else if (startPage == "firstfolder") {
@@ -281,13 +288,14 @@ onMounted(() => {
   position: absolute;
   top: 0;
   z-index: 100;
-  // background-color: rgb(var(--sidbar-bg));
+  background-color: rgb(var(--v-theme-background));
   // border-radius: 50%;
 }
 .podcast-player {
   position: fixed;
   bottom: 1.5rem;
   left: 1.5rem;
+  z-index: 10000;
 }
 </style>
 <style lang="scss">
