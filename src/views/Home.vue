@@ -110,19 +110,27 @@
         </v-slide-x-transition>
         <div class="flexible">
           <c-btn
-            class="ma-3 menu-warp"
+            class="ma-2 menu-warp"
             icon="mdi-menu"
             v-if="mobile"
             @click="show = !show"
           ></c-btn>
-          <c-btn
+          <v-img
+            v-else-if="hideSide"
+            src="/logo.svg"
+            class="ma-3 menu-warp"
+            width="30"
+            title="打开边栏"
+            @click="hideSide = !hideSide"
+          ></v-img>
+          <!-- <c-btn
             v-else-if="hideSide"
             class="ma-2 menu-warp"
             variant="text"
             icon="mdi-menu"
             title="打开边栏"
             @click="hideSide = !hideSide"
-          ></c-btn>
+          ></c-btn> -->
 
           <router-view></router-view>
         </div>
@@ -273,8 +281,8 @@ onMounted(() => {
   position: absolute;
   top: 0;
   z-index: 100;
-  background-color: rgb(var(--sidbar-bg));
-  border-radius: 50%;
+  // background-color: rgb(var(--sidbar-bg));
+  // border-radius: 50%;
 }
 .podcast-player {
   position: fixed;
