@@ -118,8 +118,8 @@
           <v-img
             v-else-if="hideSide"
             src="/logo.svg"
-            class="ma-3 menu-warp"
-            width="30"
+            class="ma-4 menu-warp"
+            width="26"
             title="打开边栏"
             @click="hideSide = !hideSide"
           ></v-img>

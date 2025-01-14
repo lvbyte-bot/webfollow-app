@@ -39,7 +39,7 @@
                 </template>
             </v-list-item>
             <template v-for="gItem in feedStore.subscriptions">
-                <v-list-group v-if="gItem.feeds.length">
+                <v-list-group v-if="gItem.feeds.length" :value="gItem.id" :key="gItem.id">
                     <template v-slot:activator="{ isOpen, props }">
                         <v-list-item v-bind="props" @contextmenu.prevent="showContextMenu($event, gItem, true)">
                             <v-list-item-title :class="{ 'font-weight-bold': gItem.unreadQty }"
@@ -61,7 +61,7 @@
                         :value="isMultiSelectMode || contextMenuVisible ? undefined : gItem.id + '-' + subItem.id"
                         :to="isMultiSelectMode || contextMenuVisible ? undefined : '/f/' + subItem.id"
                         @click="$event => handleFeedSelect($event, subItem)" @mousedown.prevent=""
-                        @contextmenu.prevent="showContextMenu($event, subItem)">
+                        @contextmenu.prevent="showContextMenu($event, subItem)" >
                         <template #prepend>
                             <img :src="subItem.icon" onerror="this.src='/logo.svg'" width="16">
                             </img>

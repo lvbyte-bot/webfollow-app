@@ -150,6 +150,7 @@ type wathRef = Ref<any> | Reactive<any>
 
 function watchAll(wathers: wathRef[], call: () => void) {
     wathers.forEach(w => {
-        watch(w, call)
+        // deep
+        watch(w, call, { deep: true })
     })
 }
