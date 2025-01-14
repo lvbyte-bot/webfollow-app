@@ -231,7 +231,7 @@ onMounted(() => {
     } else if (startPage == "home") {
       router.push("/home");
     } else if (startPage == "welcome") {
-      router.push("/welcome");
+      router.push("/");
     } else if (startPage == "next") {
       router.push("/next");
     } else if (startPage == "firstfolder") {
