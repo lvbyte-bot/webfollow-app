@@ -26,7 +26,7 @@
 - [x] list-view
 - [x] card-view
 
-  **todo list**
+**todo list**
 
 - [ ] export opml
 - [ ] data reset
