@@ -15,7 +15,9 @@
 - [x] recommend
 - [x] llm summary
 - [x] pwa
-      **base**
+
+**base**
+
 - [x] text-reader
 - [x] podcast-reader
 - [x] img-reader
@@ -23,7 +25,9 @@
 - [x] column-view
 - [x] list-view
 - [x] card-view
-      **todo list**
+
+  **todo list**
+
 - [ ] export opml
 - [ ] data reset
 
