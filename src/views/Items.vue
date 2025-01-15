@@ -499,7 +499,7 @@ defineExpose({ loadData, openReader });
   right: 0;
   width: 100%;
   height: 100%;
-  z-index: 1009;
+  z-index: 1000;
   background-color: rgb(var(--v-theme-background));
 
   .cover-action {

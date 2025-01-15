@@ -66,12 +66,13 @@
 
 <script lang="ts" setup>
 import { useSettingsStore, useAppStore } from "@/store";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useDisplay } from "vuetify";
 import SettingsGeneral from "./sub/SettingsGeneral.vue";
 import SettingsAppearance from "./sub/SettingsAppearance.vue";
 import SettingsIntegrated from "./sub/SettingsIntegrated.vue";
 import SettingsAbout from "./sub/SettingsAbout.vue";
+const props = defineProps(["activeMenu"]);
 const settingsStore = useSettingsStore();
 const comps: any = {
   general: SettingsGeneral,
@@ -108,6 +109,14 @@ const close = () => {
   emit("onclose");
   settingsStore.saveToLocalStorage();
 };
+
+onMounted(() => {
+  currentSection.value = props.activeMenu || "general";
+});
+
+watch(props.activeMenu, (newVal) => {
+  currentSection.value = newVal;
+});
 </script>
 
 <style scoped>

@@ -1,6 +1,7 @@
 <template>
   <v-responsive @contextmenu.prevent>
     <v-app :theme="themeMode">
+      <!-- 移动端侧边栏 -->
       <v-navigation-drawer class="sidebar-warp" v-if="mobile" v-model="show">
         <SideBar>
           <template #top>
@@ -33,6 +34,7 @@
           </template>
         </SideBar>
       </v-navigation-drawer>
+      <!-- 桌面端侧边栏 -->
       <v-navigation-drawer
         v-else
         :model-value="
@@ -80,8 +82,8 @@
           size="small"
           variant="flat"
           value="all"
-          @click="settingable = true"
           height="64"
+          id="menu-activator-2"
         >
           <div class="text-center">
             <v-icon size="20">mdi-account-circle-outline</v-icon>
@@ -89,10 +91,13 @@
           </div>
         </v-btn>
       </v-navigation-drawer>
+      <!-- 播放列表 -->
       <v-navigation-drawer width="320" temporary v-model="showPlayList">
         <PlayList></PlayList>
       </v-navigation-drawer>
+      <!-- 主体 -->
       <v-main :class="{ cols: !mobile, hideside: hideSide || mobile }">
+        <!-- 桌面端侧边栏 -->
         <v-scroll-x-transition>
           <div v-show="!mobile && !hideSide">
             <SideBar>
@@ -113,7 +118,7 @@
                       title="关闭边栏"
                       size="small"
                     ></c-btn>
-                    <c-btn @click="settingable = true" icon size="small">
+                    <c-btn id="menu-activator-1" icon size="small">
                       <v-avatar
                         size="23px"
                         color="secondary"
@@ -128,6 +133,7 @@
             </SideBar>
           </div>
         </v-scroll-x-transition>
+        <!-- 主体 -->
         <div class="flexible">
           <c-btn
             class="ma-2 menu-warp"
@@ -147,25 +153,47 @@
 
           <router-view></router-view>
         </div>
-        <v-btn
-          v-show="playListStore.playlist.length"
-          icon
-          color="primary"
-          class="podcast-player"
-          @click="showPlayList = !showPlayList"
-        >
-          <v-icon :class="{ spinner: playListStore.isPlaying }">
-            {{
-              playListStore.isPlaying
-                ? "mdi-music-circle-outline"
-                : "mdi-headphones"
-            }}
-          </v-icon>
-        </v-btn>
       </v-main>
       <v-dialog max-width="960px" v-model="settingable">
-        <Settings @onclose="settingable = false"></Settings>
+        <Settings
+          :activeMenu="activeMenu"
+          @onclose="settingable = false"
+        ></Settings>
       </v-dialog>
+      <!-- 播放列表按钮 -->
+      <v-btn
+        v-show="
+          playListStore.playlist.length &&
+          (!appStore.readerMode ||
+            settingsStore.general.defaultView == 'magazine')
+        "
+        icon
+        color="primary"
+        class="podcast-player"
+        @click="showPlayList = !showPlayList"
+      >
+        <v-icon :class="{ spinner: playListStore.isPlaying }">
+          {{
+            playListStore.isPlaying
+              ? "mdi-music-circle-outline"
+              : "mdi-headphones"
+          }}
+        </v-icon>
+      </v-btn>
+      <template v-for="i in 2" :key="i">
+        <v-menu :activator="`#menu-activator-${i}`" class="menu" width="200">
+          <v-list nav>
+            <v-list-item
+              v-for="(item, index) in menus"
+              :key="index"
+              :value="index"
+              @click="handleMenuClick(item.value)"
+            >
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </template>
     </v-app>
   </v-responsive>
 </template>
@@ -197,8 +225,39 @@ const hideSide = ref(false);
 const settingable = ref(false);
 const showPlayList = ref(false);
 const show = ref(false);
+const activeMenu = ref("general");
 
 const themeMode = ref(appearance.value.themeMode);
+
+// 设置 套餐 下载app
+const menus = [
+  { title: "设置", value: "setting" },
+  { title: "套餐", value: "combo" },
+  { title: "AI Key", value: "aikey" },
+  { title: "反馈", value: "feedback" },
+  { title: "注册账号", value: "register" },
+  { title: "下载app", value: "app" },
+];
+
+const handleMenuClick = (value) => {
+  activeMenu.value = "general";
+  if (value == "setting") {
+    settingable.value = true;
+  } else if (value == "aikey") {
+    activeMenu.value = "integrated";
+    settingable.value = true;
+  } else if (value == "feedback") {
+    window.open(
+      "https://github.com/weekend-project-space/webfollow-app/issues"
+    );
+  } else if (value == "register") {
+    window.open("https://zhidayingxiao.cn/to/06g6yb");
+  } else if (value == "combo") {
+    router.push("/combo");
+  } else if (value == "app") {
+    router.push("/download");
+  }
+};
 
 // 监听系统主题变化
 watch(
@@ -301,9 +360,14 @@ onMounted(() => {
 }
 .podcast-player {
   position: fixed;
-  bottom: 1.5rem;
-  left: 1.5rem;
-  z-index: 1008;
+  bottom: 3rem;
+  left: 60px;
+  z-index: 100;
+}
+.menu {
+  .v-list-item--density-default.v-list-item--one-line {
+    min-height: 32px;
+  }
 }
 </style>
 <style lang="scss">
