@@ -56,8 +56,6 @@
           placeholder="请用简洁的语言总结这篇文章的主要内容..."
         ></v-textarea>
 
-        {{ showHint }}
-
         <!-- 模型选择部分 -->
         <div v-if="data.isApiValid">
           <v-divider class="my-4"></v-divider>
@@ -90,7 +88,12 @@
         </div>
       </v-card-text>
     </v-card>
-
+    <a href="https://oneapi.jisuai.cn/" target="_blank">
+      <v-btn color="primary" variant="outlined">
+        获取API Key
+        <v-icon right class="ml-2">mdi-key</v-icon>
+      </v-btn>
+    </a>
     <!-- 保存按钮 -->
     <v-row class="mt-4">
       <v-col>
