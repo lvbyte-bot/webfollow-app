@@ -33,43 +33,51 @@
           </template>
         </SideBar>
       </v-navigation-drawer>
-      <!-- <v-navigation-drawer
+      <v-navigation-drawer
         v-else
-        :model-value="hideSide"
+        :model-value="
+          hideSide &&
+          (!appStore.readerMode ||
+            settingsStore.general.defaultView == 'magazine')
+        "
         rail
-        style="border-right: none"
-        :style="{
-          width: hideSide ? '64px' : '0px',
-        }"
+        style="border-right: none; padding: 2px"
       >
-        <div class="text-center pa-4">
+        <div class="text-center pa-3">
           <v-img
             class="mx-auto"
             src="/logo.svg"
             @click="router.push('/')"
             alt=""
-            width="30"
+            width="36"
           />
         </div>
-        <v-btn variant="flat" title="首页" to="/home" height="64">
+        <v-btn size="small" variant="flat" title="首页" to="/home" height="64">
           <div class="text-center text-caption">
             <v-icon size="20">mdi-home-outline</v-icon>
             <div>首页</div>
           </div>
         </v-btn>
-        <v-btn variant="flat" value="search" to="/search" height="64">
+        <v-btn
+          variant="flat"
+          value="search"
+          to="/search"
+          height="64"
+          size="small"
+        >
           <div class="text-center">
             <v-icon size="20">mdi-text-search-variant</v-icon>
             <div>搜索</div>
           </div>
         </v-btn>
-        <v-btn variant="flat" value="next" to="/all" height="64">
+        <v-btn size="small" variant="flat" value="next" to="/all" height="64">
           <div class="text-center">
             <v-icon size="20">mdi-rss</v-icon>
             <div>订阅</div>
           </div>
         </v-btn>
         <v-btn
+          size="small"
           variant="flat"
           value="all"
           @click="settingable = true"
@@ -80,7 +88,7 @@
             <div>我</div>
           </div>
         </v-btn>
-      </v-navigation-drawer> -->
+      </v-navigation-drawer>
       <v-navigation-drawer width="320" temporary v-model="showPlayList">
         <PlayList></PlayList>
       </v-navigation-drawer>
@@ -295,7 +303,7 @@ onMounted(() => {
   position: fixed;
   bottom: 1.5rem;
   left: 1.5rem;
-  z-index: 10000;
+  z-index: 1008;
 }
 </style>
 <style lang="scss">

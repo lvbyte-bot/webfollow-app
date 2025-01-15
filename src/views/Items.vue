@@ -5,7 +5,7 @@
   >
     <!-- reader -->
     <v-dialog-transition>
-      <div class="cover" v-show="show">
+      <div class="cover" v-show="appStore.readerMode">
         <Reader :item="currentItem">
           <template #chapter>
             <div id="chapters" class="chapter-list"></div>
@@ -14,7 +14,7 @@
             <c-btn
               variant="text"
               icon="mdi-close"
-              @click="show = false"
+              @click="appStore.readerMode = false"
               title="关闭"
               class="mr-2"
             ></c-btn>
@@ -97,7 +97,7 @@
                       (id == '-1' && type == 'c') ||
                       type == 'next' ||
                       type == 'all' ||
-                      type == 'recom' ||
+                      type == 'home' ||
                       type == 'filter'
                     )
                   "
@@ -237,7 +237,7 @@
 </template>
 <script setup lang="ts">
 import { computed, ref, Ref } from "vue";
-
+import { useRoute } from "vue-router";
 import Reader from "./reader/Index.vue";
 import Items from "./item/Index.vue";
 import { onMounted, watch } from "vue";
@@ -265,6 +265,7 @@ const store = useItemsStore();
 const appStore = useAppStore();
 const feedStore = useFeedsStore();
 const baseStore = useBaseStore();
+const route = useRoute();
 const currentItem: Ref<FeedItem> = ref({
   id: 0,
   title: "",
@@ -280,7 +281,7 @@ const currentItem: Ref<FeedItem> = ref({
 });
 const currentItemIndex = ref(0);
 
-const show = ref(false);
+// const show = ref(false);
 const loading = ref(false);
 const settingsStore = useSettingsStore();
 const { general } = storeToRefs(settingsStore);
@@ -335,19 +336,31 @@ function watchLoadMore() {
 function watchRefresh() {
   watch(props, () => {
     loadData(0);
-    show.value = false;
+    // show.value = false;
+    appStore.readerMode = false;
     mainRef.value.scrollTo(0, 0);
   });
 }
 
+function watchRoute() {
+  watch(
+    route.path,
+    () => {
+      appStore.readerMode = false;
+    },
+    { immediate: true }
+  );
+}
 let page = 0;
 
 onMounted(() => {
   if (mainRef.value) {
     watchRefresh();
     watchLoadMore();
+    watchRoute();
     if (props.type) {
       loadData();
+      appStore.readerMode = false;
     }
   }
 });
@@ -454,7 +467,8 @@ async function markRead() {
 }
 
 function openReader(index: number, item: any | undefined) {
-  show.value = true;
+  // show.value = true;
+  appStore.readerMode = true;
   currentItemIndex.value = index;
   if (item) {
     currentItem.value = item;
@@ -485,7 +499,7 @@ defineExpose({ loadData, openReader });
   right: 0;
   width: 100%;
   height: 100%;
-  z-index: 100;
+  z-index: 1009;
   background-color: rgb(var(--v-theme-background));
 
   .cover-action {

@@ -27,6 +27,7 @@ export const useAppStore = defineStore('app', () => {
     const lastRefeshTime = ref(0);
     const authInfo: Ref<any> = ref(JSON.parse(localStorage.getItem('auth') || '{"username":"guest"}'))
     const nav: Reactive<TopNav> = reactive({ title: 'loading' })
+    const readerMode = ref(false)
 
     async function sync(type: SyncType = '') {
         async function pullData2Local() {
@@ -139,7 +140,7 @@ export const useAppStore = defineStore('app', () => {
 
 
 
-    return { reloadBuild, sync, loading, read, unread, save, unsave, savedQty, unReadQty, authInfo, lastRefeshTime, nav }
+    return { reloadBuild, sync, loading, read, unread, save, unsave, savedQty, unReadQty, authInfo, lastRefeshTime, nav, readerMode }
 })
 
 
