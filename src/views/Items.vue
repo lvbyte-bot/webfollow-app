@@ -344,7 +344,7 @@ function watchRefresh() {
 
 function watchRoute() {
   watch(
-    route.path,
+    route,
     () => {
       appStore.readerMode = false;
     },
