@@ -6,7 +6,7 @@
       <v-card-text>
         <v-radio-group v-model="data.startPage">
           <v-radio label="欢迎页" value="welcome"></v-radio>
-          <v-radio label="首页" value="home"></v-radio>
+          <v-radio label="发现页面" value="explore"></v-radio>
           <v-radio label="全部文章" value="all"></v-radio>
           <v-radio label="稍后阅读" value="next"></v-radio>
           <v-radio label="第一个文件夹" value="firstfolder"></v-radio>

@@ -426,7 +426,7 @@ async function loadData(
     await loadData0(null, LsItemType.SAVED, page, onlyUnread.value);
   } else if (props.type == "all") {
     await loadData0(null, LsItemType.ALL, page, onlyUnread.value);
-  } else if (props.type == "home") {
+  } else if (props.type == "home" || props.type == "explore") {
     await loadData0(null, LsItemType.RECOMMEND, page, onlyUnread.value);
   } else if (props.type == "filter") {
     await loadData0(props.id, LsItemType.FILTER, page, onlyUnread.value);

@@ -4,7 +4,7 @@
         <v-list nav class="sidebar-list" @mousedown.prevent="" @contextmenu.prevent>
             <div class="sidebar-top">
                 <slot name="top"></slot>
-                <v-list-item prepend-icon="mdi-home-outline" value="home" title="首页" to="/home">
+                <v-list-item prepend-icon="mdi-home-outline" value="explore" title="发现" to="/explore">
                 </v-list-item>
                 <v-list-item prepend-icon="mdi-text-search-variant" value="search" title="搜索" to="/search">
                 </v-list-item>
@@ -37,7 +37,7 @@
                 <div class="d-flex justify-space-between w-100">
                     <span>FEEDS</span>
                     <div> 
-                        <v-btn variant="text" to="/subscribe" icon="mdi-plus" size="small" title="订阅" height="20" width="20"></v-btn>
+                        <v-btn variant="text" to="/subscribe" icon="mdi-plus" size="small" title="订阅" height="20" width="20" color="secondary"></v-btn>
                     </div>
                 </div>
             </div>

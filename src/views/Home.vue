@@ -54,10 +54,16 @@
             width="36"
           />
         </div>
-        <v-btn size="small" variant="flat" title="首页" to="/home" height="64">
+        <v-btn
+          size="small"
+          variant="flat"
+          title="发现"
+          to="/explore"
+          height="64"
+        >
           <div class="text-center text-caption">
             <v-icon size="20">mdi-home-outline</v-icon>
-            <div>首页</div>
+            <div>发现</div>
           </div>
         </v-btn>
         <v-btn
@@ -72,7 +78,13 @@
             <div>搜索</div>
           </div>
         </v-btn>
-        <v-btn size="small" variant="flat" value="next" to="/all" height="64">
+        <v-btn
+          size="small"
+          variant="flat"
+          value="next"
+          to="/subscribe"
+          height="64"
+        >
           <div class="text-center">
             <v-icon size="20">mdi-rss</v-icon>
             <div>订阅</div>
@@ -295,8 +307,8 @@ onMounted(() => {
   if (route.fullPath == "/") {
     if (startPage == "all") {
       router.push("/all");
-    } else if (startPage == "home") {
-      router.push("/home");
+    } else if (startPage == "explore") {
+      router.push("/explore");
     } else if (startPage == "welcome") {
       router.push("/");
     } else if (startPage == "next") {
