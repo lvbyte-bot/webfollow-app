@@ -16,7 +16,7 @@
         <p class="text-subtitle-2 text-body-2" v-text="getDate()"></p>
       </a>
     </div>
-    <div class="content chapter-warp">
+    <div class="chapter-warp">
       <slot></slot>
     </div>
     <div class="summary content" v-if="summary || summarizing">
@@ -124,6 +124,7 @@ const summarizing: boolean | undefined = inject(summarizingSymbol);
     // top: 60px;
     float: none;
     right: 0;
+    max-width: 100%;
     // background: rgb(var(--v-theme-background));
     // border-radius: 0.5rem;
     // max-height: 30vh;

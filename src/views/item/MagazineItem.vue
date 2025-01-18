@@ -85,10 +85,10 @@ function formatDuration(seconds: number) {
 }
 .readly {
   .title {
-    opacity: 0.9;
+    opacity: 0.8;
   }
   .text-body-2 {
-    opacity: 0.6;
+    opacity: 0.5;
   }
 }
 .magazine-one {
