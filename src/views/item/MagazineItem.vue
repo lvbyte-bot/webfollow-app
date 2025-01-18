@@ -1,6 +1,6 @@
 <template>
   <v-list-item class="magazine-item py-3">
-    <div class="magazine">
+    <div class="magazine" :class="{ readly: item.isRead }">
       <v-icon :color="item.isRead ? '-' : 'primary'">
         {{ item.isRead ? "" : "mdi-circle-medium" }}
       </v-icon>
@@ -16,12 +16,11 @@
           </div>
         </div>
         <div class="magazine-sec" :class="{ nomagazinethumb: !item.thumbnail }">
-          <div class="desc">
-            <p class="text-truncate mb-2 title">{{ item.title }}</p>
-            <p
-              style="--line-clamp: 3"
-              class="text-body-2 text-medium-emphasis text-ellipsis"
-            >
+          <div class="desc text-ellipsis">
+            <p class="mb-2 text-body-1 title">
+              {{ item.title }}
+            </p>
+            <p class="text-medium-emphasis text-body-2">
               {{ item.summary }}
             </p>
           </div>
@@ -84,6 +83,14 @@ function formatDuration(seconds: number) {
     border-radius: 0.5rem;
   }
 }
+.readly {
+  .title {
+    opacity: 0.9;
+  }
+  .text-body-2 {
+    opacity: 0.6;
+  }
+}
 .magazine-one {
   display: grid;
   grid-template-columns: auto 6rem;
@@ -100,11 +107,11 @@ function formatDuration(seconds: number) {
   text-align: right;
 }
 .desc {
-  display: grid;
+  --line-clamp: 4;
   width: 100%;
   align-self: flex-start;
   .title {
-    font-weight: bold;
+    font-weight: 500;
   }
 }
 a {
