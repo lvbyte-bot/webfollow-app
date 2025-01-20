@@ -7,29 +7,99 @@ import vuetify from '@/plugins/vuetify';
 export function useImgPreview() {
     const dialog = ref(false);
     const imgSrc = ref('');
+    const currentIndex = ref(0);
+    const images = ref<string[]>([]);
 
     const parent = document.createElement('div')
     document.body.appendChild(parent)
 
     const app = createApp(defineComponent({
         setup() {
-            return { dialog, imgSrc };
+            return { dialog, imgSrc, currentIndex, images };
         },
         render() {
             return h(
                 VDialog,
-                { 'modelValue': this.dialog, 'onUpdate:modelValue': (v: boolean) => this.dialog = v, fullscreen: true, },
-                [h('div', { style: { height: '100vh', display: 'flex', 'align-items': 'center' } }, h(VImg, { src: this.imgSrc, maxHeight: '80vh', maxWidth: '100vw', })), h(VBtn, { onClick: () => { this.dialog = false }, icon: 'mdi-close', style: { position: 'absolute', top: '1rem', right: '1rem' } })]
+                {
+                    'modelValue': this.dialog,
+                    'onUpdate:modelValue': (v: boolean) => this.dialog = v,
+                    fullscreen: true,
+                },
+                [
+                    h('div', {
+                        style: {
+                            height: '100vh',
+                            display: 'flex',
+                            'align-items': 'center',
+                            'justify-content': 'center',
+                            position: 'relative'
+                        }
+                    }, [
+
+                        h(VImg, {
+                            src: this.imgSrc,
+                            maxHeight: '100vh',
+                            maxWidth: '100vw',
+                        }),
+                        h(VBtn, {
+                            onClick: () => navigateImage('prev'),
+                            icon: 'mdi-chevron-left',
+                            style: { position: 'absolute', left: '1rem' }
+                        }),
+                        h(VBtn, {
+                            onClick: () => navigateImage('next'),
+                            icon: 'mdi-chevron-right',
+                            style: { position: 'absolute', right: '1rem' }
+                        })
+                    ]),
+                    h(VBtn, {
+                        onClick: () => { this.dialog = false },
+                        icon: 'mdi-close',
+                        style: { position: 'absolute', top: '1rem', right: '1rem' }
+                    })
+                ]
             );
         },
     }))
     app.use(vuetify)
     app.mount(parent)
 
+    const collectImages = () => {
+        const d = document.querySelector('.reader-warp');
+        if (d) {
+            const imgElements = d.querySelectorAll('img:not(.noclick)');
+            images.value = Array.from(imgElements).map(img => (img as HTMLImageElement).src);
+        }
+    };
+
+    const navigateImage = (direction: 'prev' | 'next') => {
+        if (images.value.length <= 1) return;
+
+        if (direction === 'prev') {
+            currentIndex.value = (currentIndex.value - 1 + images.value.length) % images.value.length;
+        } else {
+            currentIndex.value = (currentIndex.value + 1) % images.value.length;
+        }
+        imgSrc.value = images.value[currentIndex.value];
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+        if (!dialog.value) return;
+
+        if (event.key === 'ArrowLeft') {
+            navigateImage('prev');
+        } else if (event.key === 'ArrowRight') {
+            navigateImage('next');
+        } else if (event.key === 'Escape') {
+            closePreview();
+        }
+    };
+
     const openPreview = (src: string) => {
+        collectImages();
+        currentIndex.value = images.value.findIndex(img => img === src);
         imgSrc.value = src;
-        dialog.value = true; // 打开对话框
-        showDialog(); // 显示对话框
+        dialog.value = true;
     };
 
     const closePreview = () => {
@@ -45,15 +115,12 @@ export function useImgPreview() {
         }
     };
 
-    const showDialog = () => {
-
-    };
-
     onMounted(() => {
         const d = document.querySelector('.reader-warp')
         if (d) {
             d.addEventListener('click', handleImageClick);
         }
+        window.addEventListener('keydown', handleKeyDown);
     });
 
     onBeforeUnmount(() => {
@@ -61,6 +128,7 @@ export function useImgPreview() {
         if (d) {
             d.removeEventListener('click', handleImageClick);
         }
+        window.removeEventListener('keydown', handleKeyDown);
     });
 
     return {
