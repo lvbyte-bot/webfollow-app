@@ -117,6 +117,7 @@ const summarizing: boolean | undefined = inject(summarizingSymbol);
   border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
   padding: 1rem !important;
   border-radius: 0.5rem;
+  max-width: calc(650px + 2rem) !important;
 }
 @media (max-width: 1280px) {
   .chapter-warp {
@@ -133,13 +134,26 @@ const summarizing: boolean | undefined = inject(summarizingSymbol);
 }
 </style>
 <style lang="scss">
-.bar-left {
-  width: 150px;
-}
-.summary {
-  ol,
-  ul {
-    padding-inline-start: 1rem;
+.basic-reader {
+  .bar-left {
+    width: 150px;
+  }
+  .summary {
+    ol,
+    ul {
+      padding-inline-start: 1rem;
+    }
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    img {
+      max-height: 2rem;
+      margin-right: 1rem;
+    }
   }
 }
 </style>

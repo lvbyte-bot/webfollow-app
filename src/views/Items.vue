@@ -589,17 +589,20 @@ defineExpose({ loadData, openReader });
   overflow: hidden;
   border: 1px solid rgba(var(--v-border-color), 0);
   img {
-    height: 1.3rem;
+    height: 1.1rem;
+    margin: 0;
+    padding: 0;
   }
   ul {
     list-style: none;
     font-size: 12px;
+    // line-height: 24px;
     line-height: 24px;
     li {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-
+      margin-bottom: 4px;
       > * {
         white-space: nowrap;
         overflow: hidden;
@@ -654,9 +657,9 @@ defineExpose({ loadData, openReader });
       background-color: rgb(var(--v-theme-on-code), 0.05);
       border-radius: 0.2rem;
       width: 4rem;
-      height: 0.3rem;
-      margin-bottom: 1.7rem;
+      height: 4px;
       text-indent: -99px;
+      margin-bottom: 24px;
       &.active {
         background-color: rgba(var(--v-theme-on-code), 0.2);
       }
@@ -666,8 +669,8 @@ defineExpose({ loadData, openReader });
         width: auto;
         height: auto;
         text-indent: 0;
-        line-height: 1.8rem;
-        margin-bottom: 0.2rem;
+        // line-height: 1.8rem;
+        margin-bottom: 4px;
         background-color: transparent;
         &:hover {
           color: rgb(var(--v-theme-primary));
