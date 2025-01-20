@@ -269,10 +269,15 @@ provide(summarizingSymbol, summarizing);
   padding: 0.5rem 0.3rem;
   border-bottom: 1px solid rgba(var(--v-border-color), 0);
   height: 56px;
-  transition: transform 0.5s ease;
+  transition: transform 0.3s ease;
 
   &.top-sider-hidden {
-    transform: translateY(-100%);
+    transform: translateY(-50%);
+    opacity: 0;
+    &:hover {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 
   > * {
