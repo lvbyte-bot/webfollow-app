@@ -550,18 +550,24 @@ defineExpose({ loadData, openReader });
 }
 .entry-list {
   position: absolute;
-  top: 10rem;
+  top: 6rem;
   left: 0.5rem;
   width: 300px;
   min-height: 36vh;
-  & > ul {
-    display: none;
-  }
+  transition: transform 0.3s ease;
+
+  transform: translateX(-0.5rem);
   &:hover {
-    > ul {
-      display: block;
-    }
+    transform: translateX(0);
   }
+  // & > ul {
+  //   // display: none;
+  // }
+  // &:hover {
+  //   > ul {
+  //     display: block;
+  //   }
+  // }
 }
 </style>
 <style lang="scss">
@@ -580,12 +586,8 @@ defineExpose({ loadData, openReader });
   border-radius: 0.5rem;
   z-index: 1;
   color: rgba(var(--v-theme-on-code), 0.26);
-  // margin-bottom: 3rem;
-  // max-width: 150px;
   overflow: hidden;
   border: 1px solid rgba(var(--v-border-color), 0);
-  // max-height: calc(100vh - 150px);
-  // overflow: auto;
   img {
     height: 1.3rem;
   }
@@ -615,9 +617,6 @@ defineExpose({ loadData, openReader });
   &:hover {
     max-width: none;
     color: rgba(var(--v-theme-on-code), 0.5);
-    // background-color: rgb(var(--v-theme-background));
-    // box-shadow: 3px 3px 2px rgba(var(--v-theme-on-code), 0.1);
-    // border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
   }
 }
 
@@ -649,7 +648,8 @@ defineExpose({ loadData, openReader });
   }
 }
 @media (min-width: 1281px) {
-  .chapter-list {
+  .chapter-list,
+  .entry-list {
     ul > li {
       background-color: rgb(var(--v-theme-on-code), 0.05);
       border-radius: 0.2rem;
