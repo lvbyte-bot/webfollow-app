@@ -652,10 +652,10 @@ defineExpose({ loadData, openReader });
   .chapter-list {
     ul > li {
       background-color: rgb(var(--v-theme-on-code), 0.05);
-      border-radius: 0.5rem;
-      width: 50px;
-      height: 5px;
-      margin-bottom: 1.6rem;
+      border-radius: 0.2rem;
+      width: 4rem;
+      height: 0.3rem;
+      margin-bottom: 1.7rem;
       text-indent: -99px;
       &.active {
         background-color: rgba(var(--v-theme-on-code), 0.2);
@@ -666,6 +666,7 @@ defineExpose({ loadData, openReader });
         width: auto;
         height: auto;
         text-indent: 0;
+        line-height: 1.8rem;
         margin-bottom: 0.2rem;
         background-color: transparent;
         &:hover {

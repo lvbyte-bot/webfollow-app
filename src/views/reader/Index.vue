@@ -90,7 +90,18 @@
           :item="item"
           :reader-ref="readerRef"
         >
-          <slot name="chapter"></slot>
+          <div>
+            <slot name="chapter"></slot>
+            <v-btn
+              v-show="isScrollingDown && scrollTop > 960"
+              class="mx-5"
+              size="small"
+              variant="text"
+              icon="mdi-arrow-up"
+              title="回到顶部"
+              @click="scrollTo(0)"
+            ></v-btn>
+          </div>
         </basic-reader>
         <podcast-reader
           v-else-if="item?.type == 'PODCAST'"
@@ -122,7 +133,7 @@ const readerRef = ref();
 const props = defineProps<{
   item: FeedItem;
 }>();
-const { scrollTop } = useScroll(readerRef);
+const { scrollTop, scrollTo } = useScroll(readerRef);
 const { mobile } = useDisplay();
 const readerType = ref("default");
 const lastScrollTop = ref(0);
