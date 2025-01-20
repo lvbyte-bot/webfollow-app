@@ -2,7 +2,13 @@
   <div class="overflow" ref="readerRef">
     <div
       class="top-sider v-toolbar__content px-2"
-      :class="{ 'top-sider-border': scrollTop > 120 && !mobile }"
+      :class="{
+        'top-sider-border': scrollTop > 120 && !mobile,
+        'top-sider-hidden':
+          isScrollingDown &&
+          scrollTop > 960 &&
+          settingsStore.general.defaultView != 'magazine',
+      }"
     >
       <div class="prepend-bar">
         <slot name="prepend-bar"></slot>
@@ -119,6 +125,18 @@ const props = defineProps<{
 const { scrollTop } = useScroll(readerRef);
 const { mobile } = useDisplay();
 const readerType = ref("default");
+const lastScrollTop = ref(0);
+const isScrollingDown = ref(false);
+
+// 监听滚动方向
+watch(scrollTop, (newScrollTop) => {
+  if (newScrollTop > lastScrollTop.value) {
+    isScrollingDown.value = true;
+  } else {
+    isScrollingDown.value = false;
+  }
+  lastScrollTop.value = newScrollTop;
+});
 
 watch(
   () => props.item.id,
@@ -250,8 +268,13 @@ provide(summarizingSymbol, summarizing);
   align-items: center;
   padding: 0.5rem 0.3rem;
   border-bottom: 1px solid rgba(var(--v-border-color), 0);
-  // height: 64px;
   height: 56px;
+  transition: transform 0.5s ease;
+
+  &.top-sider-hidden {
+    transform: translateY(-100%);
+  }
+
   > * {
     min-width: 120px;
     max-width: 650px;
