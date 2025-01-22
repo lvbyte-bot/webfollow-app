@@ -4,7 +4,7 @@
       <h3 class="text-center ma-12">添加订阅</h3>
       <v-tabs v-model="tab" align-tabs="center">
         <v-tab value="rss">导入RSS</v-tab>
-        <v-tab value="ompl">导入OMPL</v-tab>
+        <v-tab value="ompl">导入OPML</v-tab>
       </v-tabs>
 
       <v-card-text class="mt-6">
@@ -28,12 +28,12 @@
               v-model="omplFile"
               label="选择OPML文件"
               accept=".opml"
-              @change="importOmpl"
+              @change="importOpml"
               required
             ></v-file-input>
             <div class="text-center mx-auto">
-              <v-btn color="primary" :loading="loading" @click="importOmpl">
-                导入OMPL
+              <v-btn color="primary" :loading="loading" @click="importOpml">
+                导入导入OPML
               </v-btn>
             </div>
           </v-tabs-window-item>
@@ -74,7 +74,7 @@ async function add() {
   loading.value = false;
 }
 
-async function importOmpl() {
+async function importOpml() {
   if (!omplFile.value) {
     alert("请先选择OMPL文件");
     return;
