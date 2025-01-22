@@ -111,15 +111,15 @@
         document.title = `WebFollow - 在线 RSS 阅读器`
       }
     }
-    if (!window.location.host.includes("local")) {
-      var _hmt = _hmt || [];
-      (function () {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?392ac0df04b6b46eb9cc5a38c42b8004";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(hm, s);
-      })();
-    }
+    // if (!window.location.host.includes("local")) {
+    //   var _hmt = _hmt || [];
+    //   (function () {
+    //     var hm = document.createElement("script");
+    //     hm.src = "https://hm.baidu.com/hm.js?392ac0df04b6b46eb9cc5a38c42b8004";
+    //     var s = document.getElementsByTagName("script")[0];
+    //     s.parentNode.insertBefore(hm, s);
+    //   })();
+    // }
   </script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-E4PSK55B0V"></script>
@@ -130,6 +130,8 @@
 
     gtag('config', 'G-E4PSK55B0V');
   </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
 </head>
 
 <body>
@@ -142,7 +144,6 @@
     window.addEventListener('load', () => document.getElementById('loading').style.display = 'none');
   </script>
   <script type="module" src="/src/main.ts"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
 </body>
 

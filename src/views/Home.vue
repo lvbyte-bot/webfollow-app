@@ -107,44 +107,44 @@
       <v-navigation-drawer width="320" temporary v-model="showPlayList">
         <PlayList></PlayList>
       </v-navigation-drawer>
+      <v-navigation-drawer :model-value="!mobile && !hideSide">
+        <div class="left-sidebar-warp">
+          <!-- 桌面端侧边栏 -->
+          <SideBar>
+            <template #top>
+              <div class="mb-2 d-flex justify-space-between align-center">
+                <div
+                  class="d-flex align-center cursor-pointer"
+                  @click="router.push('/')"
+                >
+                  <v-img src="/logo.svg" alt="" width="30" class="mx-2" />
+                  <span class="font-weight-bold">WebFollow</span>
+                </div>
+                <div>
+                  <c-btn
+                    variant="text"
+                    icon="mdi-menu-open"
+                    @click="hideSide = !hideSide"
+                    title="关闭边栏"
+                    size="small"
+                  ></c-btn>
+                  <c-btn id="menu-activator-1" icon size="small">
+                    <v-avatar
+                      size="23px"
+                      color="secondary"
+                      :title="appStore.authInfo.username"
+                    >
+                      {{ appStore.authInfo.username.substring(0, 2) }}
+                    </v-avatar>
+                  </c-btn>
+                </div>
+              </div>
+            </template>
+          </SideBar>
+        </div>
+      </v-navigation-drawer>
       <!-- 主体 -->
       <v-main :class="{ cols: !mobile, hideside: hideSide || mobile }">
-        <!-- 桌面端侧边栏 -->
-        <v-scroll-x-transition>
-          <div v-show="!mobile && !hideSide">
-            <SideBar>
-              <template #top>
-                <div class="mb-2 d-flex justify-space-between align-center">
-                  <div
-                    class="d-flex align-center cursor-pointer"
-                    @click="router.push('/')"
-                  >
-                    <v-img src="/logo.svg" alt="" width="30" class="mx-2" />
-                    <span class="font-weight-bold">WebFollow</span>
-                  </div>
-                  <div>
-                    <c-btn
-                      variant="text"
-                      icon="mdi-menu-open"
-                      @click="hideSide = !hideSide"
-                      title="关闭边栏"
-                      size="small"
-                    ></c-btn>
-                    <c-btn id="menu-activator-1" icon size="small">
-                      <v-avatar
-                        size="23px"
-                        color="secondary"
-                        :title="appStore.authInfo.username"
-                      >
-                        {{ appStore.authInfo.username.substring(0, 2) }}
-                      </v-avatar>
-                    </c-btn>
-                  </div>
-                </div>
-              </template>
-            </SideBar>
-          </div>
-        </v-scroll-x-transition>
         <!-- 主体 -->
         <div class="flexible">
           <c-btn
@@ -330,19 +330,6 @@ onMounted(() => {
 });
 </script>
 <style lang="scss" scoped>
-.cols {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  :deep(.sidebar) {
-    position: relative;
-    border-right: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
-    overflow: auto;
-    resize: horizontal;
-    min-width: 230px;
-    width: 260px;
-    max-width: 36vw;
-  }
-}
 .hideside {
   grid-template-columns: 1fr;
 }
@@ -364,7 +351,7 @@ onMounted(() => {
   background-color: rgb(var(--sidbar-bg));
 }
 .menu-warp {
-  position: absolute;
+  position: fixed;
   top: 0;
   z-index: 100;
   background-color: rgb(var(--v-theme-background));

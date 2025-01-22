@@ -180,7 +180,7 @@ export async function listSubscription(): Promise<[Subscription[], Group[], Feed
         gid2group[item.id] = item
     })
     feeds.forEach(f => {
-        const sf: SubscriptionFeed = { id: f.id, title: f.title, url: f.url, unreadQty: 0, siteUrl: f.siteUrl, groupId: f.groupId, icon: getBaseUrl(f.siteUrl) + "/favicon.ico" }
+        const sf: SubscriptionFeed = { id: f.id, title: f.title, url: f.url, unreadQty: 0, siteUrl: f.siteUrl, groupId: f.groupId, icon: `https://unavatar.webp.se/${getBaseDomain(f.siteUrl)}?fallback=false` }
         if (f.groupId) {
             gid2group[f.groupId].feeds.push(sf)
         } else {
@@ -392,9 +392,9 @@ function formatDate(date: number): string {
     return new Date(date).toLocaleDateString("zh-CN", options);
 }
 
-function getBaseUrl(url: string) {
+function getBaseDomain(url: string) {
     try {
-        return url.split('/').slice(0, 3).join('/');
+        return url.split('/')[2];
     } catch {
         return url
     }

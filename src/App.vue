@@ -21,7 +21,7 @@
 }
 html {
   background-color: #fff;
-  overflow-y: hidden !important;
+  /* overflow-y: hidden !important; */
   font-family: var(--font-family) !important;
 }
 #app .v-list-item__spacer {
@@ -56,7 +56,7 @@ html {
   font-size: 18px;
 }
 .v-navigation-drawer .v-list {
-  overflow: auto !important;
+  overflow: scroll !important;
 }
 .top-bar .v-btn,
 .top-sider .v-btn {

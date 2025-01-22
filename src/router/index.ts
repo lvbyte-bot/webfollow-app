@@ -42,6 +42,10 @@ const routes = [{
     }, {
         path: '/login',
         component: () => import('@/views/Login.vue'),
+    }, {
+        path: '/rss',
+        name: 'RSSList',
+        component: () => import('../views/discover/RssList.vue')
     }]
 }]
 

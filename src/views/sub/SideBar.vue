@@ -239,41 +239,7 @@ const handleFeedSelect = (event: MouseEvent | KeyboardEvent, feed: any) => {
     }
 };
 
-let currentGroup: any = null
 
-// 修改右键菜单处理函数
-const showContextMenu = (event: any, item: any, isGroup = false) => {
-    contextMenuX.value = event.clientX;
-    contextMenuY.value = event.clientY;
-    contextMenuVisible.value = true;
-    if (isGroup) {
-        currentGroup = item;
-        selectedFeeds.value = [];
-    } else {
-        currentGroup = null;
-        currentItem.value = item;
-        if (!isMultiSelectMode.value && item) {
-            item.groupName = feedStore.groups.filter(g => g.id == item.groupId)[0].title;
-            selectedFeeds.value = [item];
-        }
-    }
-};
-
-const handleAction = async (action: string) => {
-    contextMenuVisible.value = false;
-    if (action === "edit") {
-        editable.value = true;
-    } else if (action === "delete") {
-        deleteDialog.value = true;
-    } else if (action === "markRead") {
-        let id = currentGroup ? currentGroup.id : currentItem.value.id
-        try {
-            markRead(id, currentGroup ? Marked.GROUP : Marked.FEED)
-        } catch (e) {
-            console.error(e);
-        }
-    }
-};
 
 async function markRead(id: number, marked: Marked) {
     await appStore.read(
@@ -348,9 +314,47 @@ async function onDelete() {
     deleteDialog.value = false
 }
 
+let currentGroup: any = null
+
+// 修改右键菜单处理函数
+const showContextMenu = (event: any, item: any, isGroup = false) => {
+    filterContextMenuVisible.value = false;
+    contextMenuX.value = event.clientX > 150 ? event.clientX - 120 : event.clientX;
+    contextMenuY.value = event.clientY;
+    contextMenuVisible.value = true;
+    if (isGroup) {
+        currentGroup = item;
+        selectedFeeds.value = [];
+    } else {
+        currentGroup = null;
+        currentItem.value = item;
+        if (!isMultiSelectMode.value && item) {
+            item.groupName = feedStore.groups.filter(g => g.id == item.groupId)[0].title;
+            selectedFeeds.value = [item];
+        }
+    }
+};
+
+const handleAction = async (action: string) => {
+    contextMenuVisible.value = false;
+    if (action === "edit") {
+        editable.value = true;
+    } else if (action === "delete") {
+        deleteDialog.value = true;
+    } else if (action === "markRead") {
+        let id = currentGroup ? currentGroup.id : currentItem.value.id
+        try {
+            markRead(id, currentGroup ? Marked.GROUP : Marked.FEED)
+        } catch (e) {
+            console.error(e);
+        }
+    }
+};
+
 const showFilterContextMenu = (event: MouseEvent, filter: any) => {
+    contextMenuVisible.value = false;
     event.preventDefault();
-    contextMenuX.value = event.clientX;
+    contextMenuX.value = event.clientX > 150 ? event.clientX - 120 : event.clientX;
     contextMenuY.value = event.clientY;
     filterContextMenuVisible.value = true;
     currentFilter.value = filter;
