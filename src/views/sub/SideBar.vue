@@ -319,7 +319,7 @@ let currentGroup: any = null
 // 修改右键菜单处理函数
 const showContextMenu = (event: any, item: any, isGroup = false) => {
     filterContextMenuVisible.value = false;
-    contextMenuX.value = event.clientX > 150 ? event.clientX - 120 : event.clientX;
+    contextMenuX.value = event.clientX > 130 ? event.clientX - 120 : event.clientX;
     contextMenuY.value = event.clientY;
     contextMenuVisible.value = true;
     if (isGroup) {
@@ -354,7 +354,7 @@ const handleAction = async (action: string) => {
 const showFilterContextMenu = (event: MouseEvent, filter: any) => {
     contextMenuVisible.value = false;
     event.preventDefault();
-    contextMenuX.value = event.clientX > 150 ? event.clientX - 120 : event.clientX;
+    contextMenuX.value = event.clientX > 130 ? event.clientX - 120 : event.clientX;
     contextMenuY.value = event.clientY;
     filterContextMenuVisible.value = true;
     currentFilter.value = filter;

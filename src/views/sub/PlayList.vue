@@ -67,7 +67,7 @@ onMounted(() => {
 <style scoped>
 .play-list {
   overflow: scroll;
-  height: calc(100vh - 540px);
+  height: calc(100vh - 550px);
   margin-left: 0.5rem;
 }
 .podcat-reader {

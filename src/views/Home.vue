@@ -143,6 +143,7 @@
           </SideBar>
         </div>
       </v-navigation-drawer>
+
       <!-- 主体 -->
       <v-main :class="{ cols: !mobile, hideside: hideSide || mobile }">
         <!-- 主体 -->
@@ -177,7 +178,8 @@
         v-show="
           playListStore.playlist.length &&
           (!appStore.readerMode ||
-            settingsStore.general.defaultView == 'magazine')
+            settingsStore.general.defaultView == 'magazine' ||
+            !hideSide)
         "
         icon
         color="primary"
@@ -361,7 +363,7 @@ onMounted(() => {
   position: fixed;
   bottom: 3rem;
   left: 60px;
-  z-index: 100;
+  z-index: 1005;
 }
 .menu {
   .v-list-item--density-default.v-list-item--one-line {
