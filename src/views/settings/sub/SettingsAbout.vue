@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-card flat class="pa-1">
-      <v-list-item subtitle="0.6.3" title="WebFollow" class="mb-6">
+      <v-list-item subtitle="0.7.1" title="WebFollow" class="mb-6">
         <template #prepend>
           <v-img src="/logo.svg" width="64px" class="mr-3"></v-img>
         </template>
