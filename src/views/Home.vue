@@ -104,7 +104,12 @@
         </v-btn>
       </v-navigation-drawer>
       <!-- 播放列表 -->
-      <v-navigation-drawer width="320" temporary v-model="showPlayList">
+      <v-navigation-drawer
+        :style="{ 'z-index': showPlayList ? 1006 : -10 }"
+        width="320"
+        temporary
+        v-model="showPlayList"
+      >
         <PlayList></PlayList>
       </v-navigation-drawer>
       <v-navigation-drawer :model-value="!mobile && !hideSide">

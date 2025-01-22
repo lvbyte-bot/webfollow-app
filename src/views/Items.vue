@@ -76,7 +76,13 @@
         </Reader>
       </div>
     </v-dialog-transition>
-    <main class="main-container" ref="mainRef">
+    <main
+      class="main-container"
+      ref="mainRef"
+      v-show="
+        !appStore.readerMode || settingsStore.general.defaultView == 'magazine'
+      "
+    >
       <slot v-bind:="{ openReader, loadData }">
         <!-- items -->
         <div class="items-container">
