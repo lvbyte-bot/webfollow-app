@@ -70,6 +70,11 @@ html {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+@media (max-width: 768px) {
+  #app .v-container {
+    padding: 0.5rem;
+  }
+}
 /* 滚动条整体区域 */
 ::-webkit-scrollbar {
   width: 6px;

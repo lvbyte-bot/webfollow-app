@@ -1,11 +1,14 @@
 <template>
   <v-list-item class="magazine-item py-3">
     <div class="magazine" :class="{ readly: item.isRead }">
-      <v-icon :color="item.isRead ? '-' : 'primary'">
-        {{ item.isRead ? "" : "mdi-circle-medium" }}
-      </v-icon>
+      <div class="magazine-left">
+        <img :src="item.feed?.icon" alt="" />
+        <v-icon :color="item.isRead ? '-' : 'primary'">
+          {{ item.isRead ? "" : "mdi-circle-medium" }}
+        </v-icon>
+      </div>
       <div>
-        <div class="magazine-one mb-2">
+        <div class="magazine-info mb-2">
           <div class="text-body-2 text-truncate text-medium-emphasis">
             <router-link :to="'/f/' + item.feedId" @click.stop="">
               {{ getSource() }}</router-link
@@ -78,9 +81,21 @@ function formatDuration(seconds: number) {
   display: grid;
   grid-template-columns: 1rem auto;
   align-items: center;
-  grid-gap: 1rem;
-  .v-img {
-    border-radius: 0.5rem;
+  grid-gap: 0.5rem;
+
+  .magazine-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: flex-start;
+    justify-content: space-between;
+    .v-icon {
+      margin-top: 1rem;
+    }
+    img {
+      width: 14px;
+      border-radius: 2px;
+    }
   }
 }
 .readly {
@@ -91,7 +106,7 @@ function formatDuration(seconds: number) {
     opacity: 0.5;
   }
 }
-.magazine-one {
+.magazine-info {
   display: grid;
   grid-template-columns: auto 6rem;
 }
@@ -99,6 +114,9 @@ function formatDuration(seconds: number) {
   display: grid;
   grid-template-columns: auto minmax(6rem, 1fr);
   grid-gap: 0.5rem;
+  .v-img {
+    border-radius: 0.5rem;
+  }
 }
 .nomagazinethumb {
   grid-template-columns: 1fr;
