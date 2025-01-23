@@ -103,7 +103,6 @@
                     !(
                       (id == '-1' && type == 'c') ||
                       type == 'next' ||
-                      type == 'all' ||
                       type == 'home' ||
                       type == 'filter'
                     )
