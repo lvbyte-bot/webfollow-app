@@ -3,79 +3,17 @@
     class="main-warp"
     :class="{ 'main-col': general.defaultView == 'magazine' && type }"
   >
-    <!-- reader -->
-    <v-dialog-transition>
-      <div class="cover" v-show="appStore.readerMode">
-        <Reader :item="currentItem">
-          <template #chapter>
-            <div id="chapters" class="chapter-list"></div>
-          </template>
-          <template #prepend-bar>
-            <c-btn
-              variant="text"
-              icon="mdi-close"
-              @click="appStore.readerMode = false"
-              title="关闭"
-              class="mr-2"
-            ></c-btn>
-            <c-btn
-              :disabled="currentItemIndex == 0"
-              variant="text"
-              icon="mdi-chevron-up"
-              title="上一篇文章"
-              @click="openReader(currentItemIndex - 1, undefined)"
-              class="mr-2"
-            ></c-btn>
-            <c-btn
-              :disabled="currentItemIndex + 1 == store.items?.length"
-              variant="text"
-              icon="mdi-chevron-down"
-              title="下一篇文章"
-              @click="openReader(currentItemIndex + 1, undefined)"
-            ></c-btn>
-          </template>
-          <template #header>
-            <div
-              class="entry-list"
-              v-if="!mobile && (general.defaultView != 'magazine' || !type)"
-            >
-              <ul>
-                <li
-                  v-for="item in entryList"
-                  @click="openReader(-1, item)"
-                  :class="{ active: item.id == currentItem.id }"
-                  :key="item.id"
-                  :title="item.title"
-                >
-                  <v-icon :color="item.isRead ? 'grey' : 'primary'">
-                    {{ item.isRead ? "" : "mdi-circle-medium" }}
-                  </v-icon>
-                  {{ item.title }}
-                </li>
-              </ul>
-            </div>
-          </template>
-          <template #footer>
-            <v-empty-state
-              v-if="
-                currentItemIndex + 1 != store.items?.length &&
-                currentItem.type == 'BASIC'
-              "
-            >
-              <v-btn
-                variant="text"
-                @click="openReader(currentItemIndex + 1, undefined)"
-              >
-                <template #prepend>
-                  <v-icon> mdi mdi-page-next-outline </v-icon>
-                </template>
-                下一个篇文章
-              </v-btn>
-            </v-empty-state>
-          </template>
-        </Reader>
-      </div>
-    </v-dialog-transition>
+    <reader
+      v-if="currentItem && store.items?.length"
+      :item="currentItem"
+      :items="store.items"
+      :open-reader="openReader"
+      :entry-list-disable="
+        mobile || !(general.defaultView != 'magazine' || !type)
+      "
+      :modelValue="appStore.readerMode"
+      @update:modelValue="appStore.readerMode = $event"
+    ></reader>
     <main
       class="main-container"
       ref="mainRef"
@@ -242,7 +180,7 @@
 <script setup lang="ts">
 import { computed, ref, Ref } from "vue";
 import { useRoute } from "vue-router";
-import Reader from "./reader/Index.vue";
+import Reader from "./sub/Reader.vue";
 import Items from "./item/Index.vue";
 import { onMounted, watch } from "vue";
 import { Marked } from "@/service";
@@ -283,38 +221,14 @@ const currentItem: Ref<FeedItem> = ref({
   pubDate: 0,
   link: "",
 });
-const currentItemIndex = ref(0);
 
 // const show = ref(false);
 const loading = ref(false);
 const settingsStore = useSettingsStore();
 const { general } = storeToRefs(settingsStore);
 const onlyUnread = computed(() => general.value.hideReadArticles);
-const entryList = computed(() =>
-  getSurroundingItems(store.items || [], currentItem.value)
-);
 
 const { isBottom } = useScroll(mainRef);
-
-function getSurroundingItems(
-  array: FeedItem[],
-  currentItem0: FeedItem,
-  range = 7
-) {
-  let index = 0;
-  for (let i = 0; i < array.length; i++) {
-    if (currentItem0.id == array[i].id) {
-      index = i;
-      if (currentItemIndex.value < 0) {
-        currentItemIndex.value = index;
-      }
-      continue;
-    }
-  }
-  const start = Math.max(0, index - range);
-  const end = Math.min(array.length, index + range + 1);
-  return array.slice(start, end);
-}
 
 function changeItemView() {
   if (general.value.defaultView == "text") {
@@ -346,22 +260,12 @@ function watchRefresh() {
   });
 }
 
-function watchRoute() {
-  watch(
-    route,
-    () => {
-      appStore.readerMode = false;
-    },
-    { immediate: true }
-  );
-}
 let page = 0;
 
 onMounted(() => {
   if (mainRef.value) {
     watchRefresh();
     watchLoadMore();
-    watchRoute();
     if (props.type) {
       loadData();
       appStore.readerMode = false;
@@ -470,10 +374,9 @@ async function markRead() {
   );
 }
 
-function openReader(index: number, item: any | undefined) {
+function openReader(index: number, item: FeedItem | undefined) {
   // show.value = true;
   appStore.readerMode = true;
-  currentItemIndex.value = index;
   if (item) {
     currentItem.value = item;
   } else if (store.items) {
@@ -495,27 +398,6 @@ defineExpose({ loadData, openReader });
   position: relative;
   padding-top: 0;
   padding-bottom: 0;
-}
-
-.cover {
-  position: sticky;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1000;
-  background-color: rgb(var(--v-theme-background));
-
-  .cover-action {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 100;
-    padding: 0.8rem;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-gap: 2rem;
-  }
 }
 
 @keyframes rotate {
@@ -552,79 +434,14 @@ defineExpose({ loadData, openReader });
 .main-warp {
   font-size: var(--font-size);
 }
-.entry-list {
-  position: absolute;
-  top: 6rem;
-  left: 0.5rem;
-  width: 300px;
-  min-height: 36vh;
-  transition: transform 0.3s ease;
-
-  transform: translateX(-0.5rem);
-  &:hover {
-    transform: translateX(0);
-  }
-  // & > ul {
-  //   // display: none;
-  // }
-  // &:hover {
-  //   > ul {
-  //     display: block;
-  //   }
-  // }
-}
 </style>
 <style lang="scss">
 .main-container {
   height: 100vh;
   overflow-y: scroll;
 }
-
 .v-toolbar {
   background-color: rgb(var(--v-theme-background)) !important;
-}
-
-.chapter-list,
-.entry-list {
-  padding: 0.5rem 0.8rem;
-  border-radius: 0.5rem;
-  z-index: 1;
-  color: rgba(var(--v-theme-on-code), 0.26);
-  overflow: hidden;
-  border: 1px solid rgba(var(--v-border-color), 0);
-  img {
-    height: 1.1rem;
-    margin: 0;
-    padding: 0;
-  }
-  ul {
-    list-style: none;
-    font-size: 12px;
-    // line-height: 24px;
-    line-height: 24px;
-    li {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin-bottom: 4px;
-      > * {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      &:hover {
-        color: rgb(var(--v-theme-primary));
-        cursor: pointer;
-      }
-    }
-  }
-  .active {
-    color: rgb(var(--v-theme-primary));
-  }
-  &:hover {
-    max-width: none;
-    color: rgba(var(--v-theme-on-code), 0.5);
-  }
 }
 
 .main-col {
@@ -649,41 +466,7 @@ defineExpose({ loadData, openReader });
     }
   }
 }
-@media (max-width: 1280px) {
-  .entry-list {
-    display: none;
-    background: rgb(var(--v-theme-background));
-  }
-}
-@media (min-width: 1281px) {
-  .chapter-list,
-  .entry-list {
-    ul > li {
-      background-color: rgb(var(--v-theme-on-code), 0.05);
-      border-radius: 0.2rem;
-      width: 4rem;
-      height: 4px;
-      text-indent: -99px;
-      margin-bottom: 24px;
-      &.active {
-        background-color: rgba(var(--v-theme-on-code), 0.2);
-      }
-    }
-    ul:hover {
-      li {
-        width: auto;
-        height: auto;
-        text-indent: 0;
-        // line-height: 1.8rem;
-        margin-bottom: 4px;
-        background-color: transparent;
-        &:hover {
-          color: rgb(var(--v-theme-primary));
-        }
-      }
-    }
-  }
-}
+
 @media (max-width: 760px) {
   .main-col {
     display: block;
