@@ -111,7 +111,9 @@
         <video-reader :item="item" v-else-if="item.type == 'VIDEO'" />
       </slot>
     </v-container>
-    <slot name="footer"></slot>
+    <template v-if="readerType != 'HTML'">
+      <slot name="footer"></slot>
+    </template>
   </div>
 </template>
 <script setup lang="ts">
