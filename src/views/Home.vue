@@ -151,6 +151,7 @@
 
       <!-- 主体 -->
       <v-main :class="{ cols: !mobile, hideside: hideSide || mobile }" >
+        <div class="v-main-top"></div>
         <!-- 主体 -->
         <div class="flexible">
           <img
@@ -213,6 +214,9 @@
           </v-list>
         </v-menu>
       </template>
+
+      <!-- 搜索弹框 -->
+      <SearchDialog v-model="showSearch" />
     </v-app>
   </v-responsive>
 </template>
@@ -231,6 +235,7 @@ import {
 import Settings from "./settings/Settings.vue";
 import SideBar from "./sub/SideBar.vue";
 import PlayList from "./sub/PlayList.vue";
+import SearchDialog from './sub/SearchDialog.vue'
 
 const appStore = useAppStore();
 const settingsStore = useSettingsStore();
@@ -245,6 +250,7 @@ const hideSide = ref(false);
 const settingable = ref(false);
 const showPlayList = ref(false);
 const show = ref(false);
+const showSearch = ref(false);
 const activeMenu = ref("general");
 
 const themeMode = ref(appearance.value.themeMode);
@@ -253,6 +259,7 @@ const themeMode = ref(appearance.value.themeMode);
 const menus = [
   { title: "设置", value: "setting" },
   { title: "套餐", value: "combo" },
+  { title: "搜索", value: "search" },
   { title: "AI Key", value: "aikey" },
   { title: "反馈", value: "feedback" },
   { title: "注册账号", value: "register" },
@@ -276,6 +283,8 @@ const handleMenuClick = (value) => {
     router.push("/combo");
   } else if (value == "app") {
     router.push("/download");
+  } else if (value == "search") {
+    showSearch.value = true;
   }
 };
 
@@ -417,5 +426,11 @@ onMounted(() => {
 }
 .spinner-2 {
   animation: rotate 20s linear infinite;
+}
+.search-btn {
+  position: fixed;
+  bottom: 3rem;
+  right: 60px;
+  z-index: 1005;
 }
 </style>

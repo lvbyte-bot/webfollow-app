@@ -180,7 +180,8 @@ export async function listSubscription(): Promise<[Subscription[], Group[], Feed
         gid2group[item.id] = item
     })
     feeds.forEach(f => {
-        const sf: SubscriptionFeed = { id: f.id, title: f.title, url: f.url, unreadQty: 0, siteUrl: f.siteUrl, groupId: f.groupId, icon: `https://unavatar.webp.se/${getBaseDomain(f.siteUrl)}?fallback=false` }
+
+        const sf: SubscriptionFeed = mapFeed(f)
         if (f.groupId) {
             gid2group[f.groupId].feeds.push(sf)
         } else {
@@ -306,6 +307,19 @@ export async function unsave(id: number): Promise<any> {
     })
 }
 
+/**
+ * 搜索
+ * @param keyword 
+ * @returns 
+ */
+export async function search(keyword: string): Promise<{ items: FeedItem[], feeds: SubscriptionFeed[] }> {
+    // 通过 repository 查询
+    const items = await itemRepo.findAll(item => item.title.includes(keyword), 0, 100);
+    const feeds = await feedRepo.findAll(feed => feed.title.includes(keyword) || feed.url.includes(keyword), 0, 100);
+    return { items: items.data.map(map), feeds: feeds.data.map(mapFeed) };
+}
+
+
 function filterItem(item: Item, feedIds: Set<number>, onlyUnread: boolean = false, unReadItemIds: Set<number>): boolean {
     return feedIds.has(item.feedId) && (!onlyUnread || unReadItemIds.has(item.id))
 }
@@ -342,6 +356,10 @@ function map(item: Item): FeedItem {
         html,
         feed
     }
+}
+
+function mapFeed(feed: Feed): SubscriptionFeed {
+    return { id: feed.id, title: feed.title, url: feed.url, unreadQty: 0, siteUrl: feed.siteUrl, groupId: feed.groupId, icon: `https://unavatar.webp.se/${getBaseDomain(feed.siteUrl)}?fallback=false` }
 }
 
 function extImgs(htmlContent: string): string[] {
