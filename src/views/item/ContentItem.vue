@@ -10,7 +10,11 @@
         <div class="content-main">
           <div
             class="content-body"
-            :class="{ 'with-side-media': isSingleImage || isVideoOrPodcast }"
+            :class="{
+              'with-side-media': isSingleImage || isVideoOrPodcast,
+              'content-body-not-thumb': !item.thumbnail,
+              'content-body-media': isVideoOrPodcast,
+            }"
           >
             <div class="desc">
               <p class="mb-2 title">{{ item.title }}</p>
@@ -20,7 +24,7 @@
               <v-img
                 :src="item.thumbnail"
                 cover
-                class="rounded-lg image-item play-preview"
+                class="rounded image-item play-preview"
                 :aspect-ratio="1.77"
               >
                 <div class="play-icon-wrapper">
@@ -39,7 +43,7 @@
                 :src="item.thumbnail || item.images[0]"
                 cover
                 :aspect-ratio="1.77"
-                class="rounded-lg image-item"
+                class="rounded image-item"
               ></v-img>
             </div>
           </div>
@@ -55,7 +59,7 @@
                   :src="image"
                   cover
                   :aspect-ratio="1.77"
-                  class="image-item rounded-lg"
+                  class="image-item rounded"
                 >
                   <div
                     v-if="index === 5 && item.images.length > 6"
@@ -147,8 +151,13 @@ function getDisplayImages(images: string[]) {
   display: grid;
   grid-template-columns: 1rem auto;
   align-items: start;
-  grid-gap: 1rem;
+  grid-gap: 0.5rem;
   width: 100%;
+  .v-icon {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
 }
 
 .content-footer {
@@ -174,8 +183,6 @@ function getDisplayImages(images: string[]) {
 
 .desc {
   .title {
-    // font-weight: bold;
-    // font-size: 1.1rem;
     line-height: 1.4;
     padding: 0 4px;
   }
@@ -200,7 +207,7 @@ function getDisplayImages(images: string[]) {
     }
 
     &.grid-6 {
-      grid-template-columns: repeat(8, minmax(150px, 1fr));
+      grid-template-columns: repeat(8, minmax(var(--img-min-width), 1fr));
     }
 
     .image-item {
@@ -263,8 +270,8 @@ a {
 
 .content-body {
   display: grid;
-  grid-template-columns: 7fr minmax(150px, 1fr);
-  grid-gap: 28px;
+  grid-template-columns: 7fr minmax(var(--img-min-width), 1fr);
+  grid-gap: 1rem;
   &.with-single-image {
     display: grid;
     grid-template-columns: 1fr auto;
@@ -273,18 +280,30 @@ a {
     padding: 0 4px;
   }
 }
-
+.content-body-not-thumb,
+.content-body-media {
+  grid-template-columns: 1fr;
+}
 .single-image,
 .video-preview {
   border-radius: 4px;
   overflow: hidden;
-  min-height: 100px;
+  min-height: 60px;
   max-height: 200px;
   max-width: 300px;
 }
 .image-item {
-  min-height: 100px;
+  min-height: 60px;
   max-height: 200px;
   max-width: 300px;
+}
+@media (max-width: 768px) {
+  .images-preview .images-grid.grid-6 {
+    grid-template-columns: repeat(3, minmax(var(--img-min-width), 1fr));
+    gap: 0.5rem;
+  }
+  .content-body .play-preview {
+    max-width: 100%;
+  }
 }
 </style>

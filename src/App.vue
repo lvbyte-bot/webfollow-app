@@ -10,6 +10,7 @@
   --v-overlay-opacity: 0.7;
   --line-clamp: 2;
   --v-theme-primary: var(--theme-color) !important;
+  --img-min-width: 150px;
 }
 .v-theme--dark {
   --sidbar-bg: 41, 41, 45;
@@ -72,7 +73,10 @@ html {
 }
 @media (max-width: 768px) {
   #app .v-container {
-    padding: 0.5rem;
+    padding: 0.3rem;
+  }
+  :root {
+    --img-min-width: 100px;
   }
 }
 /* 滚动条整体区域 */
