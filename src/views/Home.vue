@@ -112,41 +112,43 @@
       >
         <PlayList></PlayList>
       </v-navigation-drawer>
-      <v-navigation-drawer :model-value="!mobile && !hideSide">
-        <div class="left-sidebar-warp">
-          <!-- 桌面端侧边栏 -->
-          <SideBar>
-            <template #top>
-              <div class="mb-2 d-flex justify-space-between align-center">
-                <div
-                  class="d-flex align-center cursor-pointer"
-                  @click="router.push('/')"
-                >
-                  <v-img src="/logo.svg" alt="" width="30" class="mx-2" />
-                  <span class="font-weight-bold">WebFollow</span>
-                </div>
-                <div>
-                  <c-btn
-                    variant="text"
-                    icon="mdi-menu-open"
-                    @click="hideSide = !hideSide"
-                    title="关闭边栏"
-                    size="small"
-                  ></c-btn>
-                  <c-btn id="menu-activator-1" icon size="small">
-                    <v-avatar
-                      size="23px"
-                      color="secondary"
-                      :title="appStore.authInfo.username"
-                    >
-                      {{ appStore.authInfo.username.substring(0, 2) }}
-                    </v-avatar>
-                  </c-btn>
-                </div>
+      <v-navigation-drawer
+        :model-value="!mobile && !hideSide"
+        class="resizable-drawer"
+        :width="drawerWidth"
+      >
+        <!-- 桌面端侧边栏 -->
+        <SideBar>
+          <template #top>
+            <div class="mb-2 d-flex justify-space-between align-center">
+              <div
+                class="d-flex align-center cursor-pointer"
+                @click="router.push('/')"
+              >
+                <v-img src="/logo.svg" alt="" width="30" class="mx-2" />
+                <span class="font-weight-bold">WebFollow</span>
               </div>
-            </template>
-          </SideBar>
-        </div>
+              <div>
+                <c-btn
+                  variant="text"
+                  icon="mdi-menu-open"
+                  @click="hideSide = !hideSide"
+                  title="关闭边栏"
+                  size="small"
+                ></c-btn>
+                <c-btn id="menu-activator-1" icon size="small">
+                  <v-avatar
+                    size="23px"
+                    color="secondary"
+                    :title="appStore.authInfo.username"
+                  >
+                    {{ appStore.authInfo.username.substring(0, 2) }}
+                  </v-avatar>
+                </c-btn>
+              </div>
+            </div>
+          </template>
+        </SideBar>
       </v-navigation-drawer>
 
       <!-- 主体 -->
@@ -199,6 +201,7 @@
           }}
         </v-icon>
       </v-btn>
+      <!-- 菜单 -->
       <template v-for="i in 2" :key="i">
         <v-menu :activator="`#menu-activator-${i}`" class="menu" width="200">
           <v-list nav>
@@ -221,6 +224,7 @@ import { useDisplay } from "vuetify";
 import { useRoute, useRouter } from "vue-router";
 import { onBeforeMount, onMounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
+import { useElResize } from "@/utils/useElResize";
 import {
   useAppStore,
   useSettingsStore,
@@ -307,7 +311,9 @@ watch(hideSide, () => {
 onBeforeMount(() => {
   hideSide.value = settingsStore.appearance.hideSidebar;
 });
-
+const { width: drawerWidth } = useElResize(() =>
+  document.querySelector(".resizable-drawer .v-navigation-drawer__content")
+);
 onMounted(() => {
   // 默认启动页
   let startPage = settingsStore.general.startPage;
@@ -373,6 +379,13 @@ onMounted(() => {
 .menu {
   .v-list-item--density-default.v-list-item--one-line {
     min-height: 32px;
+  }
+}
+.resizable-drawer {
+  :deep(.v-navigation-drawer__content) {
+    min-width: 256px;
+    max-width: 350px;
+    resize: horizontal;
   }
 }
 </style>

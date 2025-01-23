@@ -21,7 +21,7 @@
 }
 html {
   background-color: #fff;
-  /* overflow-y: hidden !important; */
+  overflow-y: auto !important;
   font-family: var(--font-family) !important;
 }
 #app .v-list-item__spacer {

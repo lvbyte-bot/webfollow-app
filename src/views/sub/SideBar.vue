@@ -380,14 +380,11 @@ const handleFilterAction = (action: string) => {
 <style scoped>
 .sidebar-list {
     position: relative;
-    max-height: 100vh;
     overflow: scroll;
-    /* background-color: rgb(var(--v-theme-background)); */
     background-color: transparent;
     padding-top: 0;
-    min-height: 100vh;
+    height: 100vh;
 }
-
 
 .sidebar-top {
     padding-top: 0.5rem;
@@ -395,8 +392,6 @@ const handleFilterAction = (action: string) => {
     top: 0;
     z-index: 10;
     background-color: rgb(var(--sidbar-bg));
-    /** rgb(var(--v-theme-background)); */
-    /* border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)); */
 }
 
 .plus {
