@@ -165,6 +165,7 @@ a {
     padding: 2px 6px;
     border-radius: 4px;
     font-size: 0.8rem;
+    display: none;
   }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <v-list-item class="content-item py-3">
+  <v-list-item class="content-item py-3 mb-2">
     <div class="content">
       <v-icon :color="item.isRead ? '-' : 'primary'">
         {{ item.isRead ? "" : "mdi-circle-medium" }}
@@ -12,12 +12,13 @@
             class="content-body"
             :class="{
               'with-side-media': isSingleImage || isVideoOrPodcast,
-              'content-body-not-thumb': !item.thumbnail,
-              'content-body-media': isVideoOrPodcast,
+              'with-not-side':
+                (!isSingleImage && !isVideoOrPodcast) || !item.thumbnail,
+              'with-media': isVideoOrPodcast,
             }"
           >
             <div class="desc">
-              <p class="mb-2 title">{{ item.title }}</p>
+              <p class="mb-1 title">{{ item.title }}</p>
             </div>
             <!-- 视频/播客预览 -->
             <div v-if="isVideoOrPodcast">
@@ -178,7 +179,7 @@ function getDisplayImages(images: string[]) {
 .content-main {
   display: grid;
   grid-template-columns: 1fr;
-  grid-gap: 0.5rem;
+  grid-gap: 0.3rem;
 }
 
 .desc {
@@ -257,6 +258,7 @@ function getDisplayImages(images: string[]) {
     padding: 2px 6px;
     border-radius: 4px;
     font-size: 0.8rem;
+    display: none;
   }
 }
 
@@ -280,8 +282,8 @@ a {
     padding: 0 4px;
   }
 }
-.content-body-not-thumb,
-.content-body-media {
+.with-not-side,
+.with-media {
   grid-template-columns: 1fr;
 }
 .single-image,

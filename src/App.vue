@@ -75,6 +75,9 @@ html {
   #app .v-container {
     padding: 0.3rem;
   }
+  #app .v-container .v-row {
+    margin: -0.3rem;
+  }
   :root {
     --img-min-width: 100px;
   }
