@@ -70,6 +70,7 @@ html {
   line-clamp: var(--line-clamp);
   overflow: hidden;
   text-overflow: ellipsis;
+  word-break: break-all;
 }
 @media (max-width: 768px) {
   #app .v-container {
@@ -80,6 +81,7 @@ html {
   }
   :root {
     --img-min-width: 100px;
+    --sidbar-bg: var(--v-theme-background);
   }
 }
 /* 滚动条整体区域 */
