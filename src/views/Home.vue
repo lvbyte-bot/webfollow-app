@@ -35,31 +35,26 @@
         </SideBar>
       </v-navigation-drawer>
       <!-- 桌面端侧边栏 -->
-      <v-navigation-drawer
-        v-else
-        :model-value="
+      <nav
+      v-if="false"
+        v-show="
           hideSide &&
           (!appStore.readerMode ||
             settingsStore.general.defaultView == 'magazine')
         "
-        rail
-        style="border-right: none; padding: 2px"
+        class="min-side pa-1"
       >
-        <div class="text-center pa-3">
-          <v-img
-            class="mx-auto"
-            src="/logo.svg"
-            @click="router.push('/')"
-            alt=""
-            width="36"
-          />
+        <div style="height: 54px;">
+          
         </div>
         <v-btn
-          size="small"
           variant="flat"
           title="发现"
           to="/explore"
           height="64"
+          width="54"
+          size="small"
+
         >
           <div class="text-center text-caption">
             <v-icon size="20">mdi-home-outline</v-icon>
@@ -71,6 +66,7 @@
           value="search"
           to="/search"
           height="64"
+          width="54"
           size="small"
         >
           <div class="text-center">
@@ -79,11 +75,12 @@
           </div>
         </v-btn>
         <v-btn
-          size="small"
           variant="flat"
           value="next"
           to="/subscribe"
           height="64"
+          width="54"
+          size="small"
         >
           <div class="text-center">
             <v-icon size="20">mdi-rss</v-icon>
@@ -91,18 +88,19 @@
           </div>
         </v-btn>
         <v-btn
-          size="small"
           variant="flat"
           value="all"
-          height="64"
           id="menu-activator-2"
+          height="64"
+          width="54"
+          size="small"
         >
           <div class="text-center">
             <v-icon size="20">mdi-account-circle-outline</v-icon>
             <div>我</div>
           </div>
         </v-btn>
-      </v-navigation-drawer>
+      </nav>
       <!-- 播放列表 -->
       <v-navigation-drawer
         :style="{ 'z-index': showPlayList ? 1006 : -10 }"
@@ -152,7 +150,7 @@
       </v-navigation-drawer>
 
       <!-- 主体 -->
-      <v-main :class="{ cols: !mobile, hideside: hideSide || mobile }">
+      <v-main :class="{ cols: !mobile, hideside: hideSide || mobile }" >
         <!-- 主体 -->
         <div class="flexible">
           <img
@@ -166,9 +164,8 @@
             v-else-if="hideSide"
             class="ma-2 menu-warp"
             variant="text"
-            icon="mdi-menu"
+            icon="mdi-dock-left"
             title="打开边栏"
-            size="small"
             @click="hideSide = !hideSide"
           ></c-btn>
           <router-view></router-view>
@@ -391,6 +388,11 @@ onMounted(() => {
 .logo{
   // 颜色变成灰色
   filter: grayscale(.3)
+}
+.min-side{
+  width: 64px;
+  position: fixed;
+  height: 100vh;
 }
 </style>
 <style lang="scss">

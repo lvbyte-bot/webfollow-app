@@ -14,7 +14,7 @@
     </div>
   </div>
 
-  <v-empty-state height="100vh" v-if="appStore.loading">
+  <v-empty-state height="calc(100vh - 64px)" v-if="appStore.loading">
     <div class="mx-auto text-center">
       <v-icon size="x-large" :class="{ rotating: appStore.loading }"
         >mdi-loading</v-icon
@@ -23,7 +23,7 @@
     <p class="mt-5">正在为你准备中...</p>
   </v-empty-state>
   <v-empty-state
-    height="100vh"
+    height="calc(100vh - 64px)"
     v-else
     icon="mdi-book-open-page-variant-outline"
   >
