@@ -638,7 +638,8 @@ defineExpose({ loadData, openReader });
   }
   .main-container {
     position: relative;
-    border-right: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+    // border-right: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+    border-left: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
     overflow-y: scroll;
     resize: horizontal;
     min-width: 360px;

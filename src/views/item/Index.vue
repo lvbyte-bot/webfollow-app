@@ -30,15 +30,6 @@
     ></MagazineItem>
   </template>
   <template v-else>
-    <!-- <TextItem
-      v-for="(item, index) in items"
-      :item="item"
-      @click="openReader(index, item)"
-      @click-action="clickAction"
-      @contextmenu.prevent="showContextMenu($event, item, index)"
-      :type="type"
-      :key="item.id"
-    ></TextItem> -->
     <ContentItem
       v-for="(item, index) in items"
       :item="item"
@@ -118,7 +109,6 @@
 import { useAppStore } from "@/store";
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import CardItem from "./CardItem.vue";
-// import TextItem from "./TextItem.vue";
 import MagazineItem from "./MagazineItem.vue";
 import ContentItem from "./ContentItem.vue";
 import { FeedItem } from "@/service/types";
