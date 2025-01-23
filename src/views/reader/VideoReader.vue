@@ -93,7 +93,8 @@ function videoUrl() {
 .iframe {
   position: relative;
   width: 100%;
-  height: 390px;
-  z-index: 10;
+  max-height: 366px;
+  height: 55vw;
+  z-index: 1;
 }
 </style>

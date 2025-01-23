@@ -80,7 +80,8 @@
       class="main-container"
       ref="mainRef"
       v-show="
-        !appStore.readerMode || settingsStore.general.defaultView == 'magazine'
+        !appStore.readerMode ||
+        (settingsStore.general.defaultView == 'magazine' && !mobile)
       "
     >
       <slot v-bind:="{ openReader, loadData }">
@@ -111,7 +112,6 @@
                   icon
                   title="标记为已读"
                   @click="markRead"
-                  class="mr-2"
                 >
                   <v-icon>mdi-read</v-icon>
                 </c-btn>
@@ -121,7 +121,6 @@
                   title="刷新"
                   @click="refresh"
                   :class="{ rotating: loading }"
-                  class="mr-2"
                 >
                   <v-icon>{{ loading ? "mdi-loading" : "mdi-reload" }}</v-icon>
                 </c-btn>
@@ -129,10 +128,10 @@
                   :icon="onlyUnread ? 'mdi-circle' : 'mdi-circle-outline'"
                   :title="onlyUnread ? '只看未读' : '看全部'"
                   @click="changeOnlyUnread(!onlyUnread)"
-                  class="mr-2"
                 >
                 </c-btn>
                 <c-btn
+                  v-if="!mobile"
                   :icon="
                     general.defaultView == 'card'
                       ? 'mdi-view-gallery-outline'

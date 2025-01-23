@@ -36,6 +36,8 @@ html {
 }
 .reader-warp a {
   text-decoration: none;
+  word-wrap: break-word;
+  color: rgb(var(--v-theme-primary));
 }
 .reader-warp a:hover {
   text-decoration: underline;
@@ -74,10 +76,10 @@ html {
 }
 @media (max-width: 768px) {
   #app .v-container {
-    padding: 0.3rem;
+    padding: 0.5rem;
   }
   #app .v-container .v-row {
-    margin: -0.3rem;
+    margin: -0.5rem;
   }
   :root {
     --img-min-width: 100px;

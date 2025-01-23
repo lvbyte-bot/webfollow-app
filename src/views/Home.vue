@@ -155,12 +155,13 @@
       <v-main :class="{ cols: !mobile, hideside: hideSide || mobile }">
         <!-- 主体 -->
         <div class="flexible">
-          <c-btn
-            class="ma-2 menu-warp"
-            icon="mdi-menu"
+          <img
+            class="mx-3 mt-3  menu-warp logo"
+            src="/logo.svg"
+            width="28px"
             v-if="mobile"
             @click="show = !show"
-          ></c-btn>
+          ></img>
           <c-btn
             v-else-if="hideSide"
             class="ma-2 menu-warp"
@@ -170,7 +171,6 @@
             size="small"
             @click="hideSide = !hideSide"
           ></c-btn>
-
           <router-view></router-view>
         </div>
       </v-main>
@@ -387,6 +387,10 @@ onMounted(() => {
     max-width: 350px;
     resize: horizontal;
   }
+}
+.logo{
+  // 颜色变成灰色
+  filter: grayscale(.3)
 }
 </style>
 <style lang="scss">
