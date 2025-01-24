@@ -89,6 +89,14 @@
             <br />
             <v-list-subheader>列表模式</v-list-subheader>
             <v-list-item>
+              <v-list-item-title>↑↓ 方向键</v-list-item-title>
+              <v-list-item-subtitle>选择上/下一篇文章</v-list-item-subtitle>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title>Enter 回车</v-list-item-title>
+              <v-list-item-subtitle>打开文章</v-list-item-subtitle>
+            </v-list-item>
+            <v-list-item>
               <v-list-item-title>R</v-list-item-title>
               <v-list-item-subtitle>刷新订阅</v-list-item-subtitle>
             </v-list-item>
@@ -106,18 +114,9 @@
             </v-list-item>
             <v-list-item>
               <v-list-item-title>N</v-list-item-title>
-              <v-list-item-subtitle>下一个未读订阅源</v-list-item-subtitle>
+              <v-list-item-subtitle>打开下一个未读订阅源</v-list-item-subtitle>
             </v-list-item>
-
-            <v-list-item>
-              <v-list-item-title>↑↓ 方向键</v-list-item-title>
-              <v-list-item-subtitle>选择上/下一篇文章</v-list-item-subtitle>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title>Enter 回车</v-list-item-title>
-              <v-list-item-subtitle>打开文章</v-list-item-subtitle>
-            </v-list-item></v-col
-          >
+          </v-col>
         </v-row>
       </v-card-text>
     </v-card>

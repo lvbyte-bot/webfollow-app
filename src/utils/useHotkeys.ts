@@ -23,24 +23,29 @@ export function useHotkeys() {
                 // 打开搜索 k | /
                 if (e.ctrlKey) {
                     showSearch.value = true
+                    return
                 }
-                return
+                break
             case '?':
                 if (e.ctrlKey) {
                     // 打开帮助 ?
                     showHelp.value = true
+                    return
+
                 }
-                return
+                break
             case 'n':
                 //  添加新订阅
                 if (e.ctrlKey) {
                     router.push('/subscribe')
+                    return
                 }
                 break
             case 'b':
                 // 打开侧边栏
                 if (e.ctrlKey) {
                     webfollowApp.toogleSidebar()
+                    return
                 }
                 break
         }
@@ -111,6 +116,14 @@ export function useHotkeys() {
                     break
                 case 'u':
                     (document.querySelector('.items-container .items-unread-toggle') as HTMLElement)?.click()
+                    break
+                case '/':
+                case 'k':
+                    showSearch.value = true
+                    break
+                case '?':
+                case 'h':
+                    showHelp.value = true
                     break
                 case 'Home':
                     currentIndex.value = 0

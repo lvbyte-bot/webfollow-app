@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" max-width="800px" scrollable>
+  <v-dialog v-model="show" max-width="800px" >
     <v-card>
       <v-card-title class="d-flex align-center pa-4">
         <v-text-field
@@ -26,7 +26,7 @@
       </v-card-title>
 
       <v-divider></v-divider>
-        <v-card-text class="pa-2" style="height: 60vh">
+        <v-card-text class="pa-2 result-warp" style="">
           <template v-if="keyword">
 
             <div v-if="searchResults.items.length > 0">
@@ -224,3 +224,9 @@ const handleSearch = () => {
 };
 
 </script>
+<style lang="scss" scoped>
+.result-warp {
+  height: 60vh;
+  overflow-y: auto;
+}
+</style>
