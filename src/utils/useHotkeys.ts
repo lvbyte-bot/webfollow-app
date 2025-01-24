@@ -1,10 +1,8 @@
 import router from '@/router'
-import { useAppStore } from '@/store'
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 export function useHotkeys() {
-    const appStore = useAppStore()
     const route = useRoute()
     const showHelp = ref(false)
     const showSearch = ref(false)
@@ -21,7 +19,6 @@ export function useHotkeys() {
         switch (e.key) {
             case 'k':
             case '/':
-                console.log('k | /')
                 e.preventDefault()
                 // 打开搜索 k | /
                 if (e.ctrlKey) {
@@ -38,6 +35,12 @@ export function useHotkeys() {
                 //  添加新订阅
                 if (e.ctrlKey) {
                     router.push('/subscribe')
+                }
+                break
+            case 'b':
+                // 打开侧边栏
+                if (e.ctrlKey) {
+                    webfollowApp.toogleSidebar()
                 }
                 break
         }
@@ -196,10 +199,12 @@ export function useHotkeys() {
                 break
             case 'Enter':
                 // 释放焦点
-                setTimeout(() => {
-                    (document.querySelectorAll('.entry-item')[currentIndex.value] as HTMLElement)?.blur();
-                    (reader.querySelector('.overflow') as HTMLElement)?.click()
-                }, 300);
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => {
+                        (document.querySelectorAll('.entry-item')[currentIndex.value] as HTMLElement)?.blur();
+                        (reader.querySelector('.overflow') as HTMLElement)?.click()
+                    }, 200 * i + 300);
+                }
                 break
         }
     }

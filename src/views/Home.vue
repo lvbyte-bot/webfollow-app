@@ -352,6 +352,9 @@ onMounted(() => {
       }
     }
   }
+  webfollowApp.toogleSidebar = () => {
+    hideSide.value = !hideSide.value;
+  };
 });
 
 // 添加快捷键支持

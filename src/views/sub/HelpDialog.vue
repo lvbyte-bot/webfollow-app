@@ -80,6 +80,10 @@
               <v-list-item-title>CTRL + N</v-list-item-title>
               <v-list-item-subtitle>添加订阅源</v-list-item-subtitle>
             </v-list-item>
+            <v-list-item>
+              <v-list-item-title>CTRL + B</v-list-item-title>
+              <v-list-item-subtitle>打开/关闭侧边栏</v-list-item-subtitle>
+            </v-list-item>
             <br />
             <v-divider></v-divider>
             <br />
