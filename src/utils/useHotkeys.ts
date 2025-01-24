@@ -9,6 +9,7 @@ export function useHotkeys(showSearch: Ref<boolean>) {
     // 当前选中的文章索引
     const currentIndex = ref(-1)
     const currentSearchIndex = ref(-1)
+    let searchResultTotal = 0
     const handleKeydown = (e: KeyboardEvent) => {
         // 在阅读视图中
         if (appStore.readerMode) {
@@ -55,8 +56,12 @@ export function useHotkeys(showSearch: Ref<boolean>) {
                     break
                 case 'ArrowDown':
                     e.preventDefault()
-                    // 选择下一篇文章
                     const articles = document.querySelectorAll('.search-item')
+                    if (searchResultTotal != articles.length) {
+                        searchResultTotal = articles.length
+                        currentSearchIndex.value = -1
+                    }
+                    // 选择下一篇文章
                     if (currentSearchIndex.value < articles.length - 1) {
                         currentSearchIndex.value++
                         focusSearch(currentSearchIndex.value)
@@ -69,24 +74,36 @@ export function useHotkeys(showSearch: Ref<boolean>) {
             switch (e.key) {
                 case 'ArrowUp':
                     e.preventDefault()
-                    // 选择上一篇文章
-                    if (currentIndex.value > 0) {
-                        currentIndex.value--
-                        focusArticle(currentIndex.value)
+                    const reading = document.querySelector('.cover.reading .overflow')
+                    if (reading) {
+                        reading.scrollBy(0, -100)
+                    } else {
+                        // 选择上一篇文章
+                        if (currentIndex.value > 0) {
+                            currentIndex.value--
+                            focusArticle(currentIndex.value)
+                        }
                     }
                     break
                 case 'ArrowDown':
                     e.preventDefault()
-                    // 选择下一篇文章
-                    const articles = document.querySelectorAll('.entry-item')
-                    if (currentIndex.value < articles.length - 1) {
-                        currentIndex.value++
-                        focusArticle(currentIndex.value)
+                    const reading0 = document.querySelector('.cover.reading .overflow')
+                    if (reading0) {
+                        reading0.scrollBy(0, 100)
+                    } else {
+                        // 选择下一篇文章
+                        const articles = document.querySelectorAll('.entry-item')
+                        if (currentIndex.value < articles.length - 1) {
+                            currentIndex.value++
+                            focusArticle(currentIndex.value)
+                        }
                     }
                     break
                 case 'k':
-                    // 打开搜索
-                    showSearch.value = true
+                    // 打开搜索 组合键 ctl + alt + k
+                    if (e.ctrlKey && e.altKey) {
+                        showSearch.value = true
+                    }
                     break
                 case 'Escape':
                     document.querySelectorAll('.cover .mdi-close')?.forEach((item) => {

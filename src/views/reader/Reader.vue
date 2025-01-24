@@ -1,7 +1,7 @@
 <template>
   <Teleport defer to=".v-main-top">
     <v-dialog-transition>
-      <div class="cover" v-show="modelValue">
+      <div class="cover" v-show="modelValue" :class="{ reading: modelValue }">
         <template v-if="item">
           <Reader :item="item">
             <template #chapter>
