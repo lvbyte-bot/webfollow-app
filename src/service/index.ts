@@ -312,11 +312,12 @@ export async function unsave(id: number): Promise<any> {
  * @param keyword 
  * @returns 
  */
-export async function search(keyword: string): Promise<{ items: FeedItem[], feeds: SubscriptionFeed[] }> {
+export async function search(keyword: string): Promise<{ items: FeedItem[], feeds: SubscriptionFeed[], groups: Group[] }> {
     // 通过 repository 查询
     const items = await itemRepo.findAll(item => item.title.includes(keyword), 0, 100);
     const feeds = await feedRepo.findAll(feed => feed.title.includes(keyword) || feed.url.includes(keyword), 0, 100);
-    return { items: items.data.map(map), feeds: feeds.data.map(mapFeed) };
+    const groups = await groupRepo.findAll(group => group.title.includes(keyword), 0, 100);
+    return { items: items.data.map(map), feeds: feeds.data.map(mapFeed), groups: groups.data };
 }
 
 

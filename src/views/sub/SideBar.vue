@@ -4,11 +4,11 @@
         <v-list nav class="sidebar-list" @mousedown.prevent="" @contextmenu.prevent>
             <div class="sidebar-top">
                 <slot name="top"></slot>
-                <v-list-item prepend-icon="mdi-home-outline" value="explore" title="发现" to="/explore">
+                <v-list-item prepend-icon="mdi-compass-outline" value="explore" title="发现" to="/explore">
                 </v-list-item>
                 <v-list-item prepend-icon="mdi-text-search-variant" value="search" title="搜索" to="/search">
                 </v-list-item>
-                <v-list-item prepend-icon="mdi-format-list-bulleted" value="next" title="稍后阅读" to="/next">
+                <v-list-item prepend-icon="mdi-bookmark-outline" value="next" title="稍后阅读" to="/next">
                     <template v-slot:append>
                         <small v-if="appStore.savedQty" class="font-weight-thin" v-text="appStore.savedQty"></small>
                     </template>
@@ -41,7 +41,7 @@
                     </div>
                 </div>
             </div>
-            <v-list-item prepend-icon="mdi-inbox" value="all" title="全部文章" to="/all">
+            <v-list-item prepend-icon="mdi-text-box-multiple-outline" value="all" title="全部文章" to="/all">
                 <template v-slot:append>
                     <small v-if="appStore.unReadQty" class="font-weight-thin" v-text="appStore.unReadQty"></small>
                 </template>
