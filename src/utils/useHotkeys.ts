@@ -34,7 +34,12 @@ export function useHotkeys() {
                     showHelp.value = true
                 }
                 return
-
+            case 'n':
+                //  添加新订阅
+                if (e.ctrlKey) {
+                    router.push('/subscribe')
+                }
+                break
         }
         // 在列表视图中
         if (showSearch.value) {
@@ -71,10 +76,6 @@ export function useHotkeys() {
                     // 下一篇文章
                     (document.querySelector('.v-main-top .entry-next') as HTMLElement)?.click()
                     break
-                case 'Escape':
-                    // 退出阅读视图
-                    (document.querySelector('.v-main-top .mdi-close') as HTMLElement)?.click()
-                    break
             }
             handleReaderKeydown(e, topReader)
         } else if (listReader) {
@@ -88,10 +89,6 @@ export function useHotkeys() {
                     // 下一篇文章
                     (document.querySelector('.entry-next') as HTMLElement)?.click()
                     break
-                case 'Escape':
-                    // 退出阅读视图
-                    appStore.readerMode = false
-                    break
             }
             handleReaderKeydown(e, listReader)
         } else if (itemContainer) {
@@ -99,9 +96,6 @@ export function useHotkeys() {
                 case 'r':
                     // 刷新 r
                     (document.querySelector('.items-container .items-reload') as HTMLElement)?.click()
-                    break
-                case 'a':
-                    router.push('/subscribe')
                     break
                 case 'm':
                     (document.querySelector('.items-container .items-mark-read') as HTMLElement)?.click()
@@ -181,6 +175,10 @@ export function useHotkeys() {
                 // 生成总结
                 (reader.querySelector('.cover.reading .entry-ai-summary') as HTMLElement)?.click()
                 break
+            case 'v':
+                // 打开源站
+                window.open((reader.querySelector('.cover.reading .title-container .title-warp') as HTMLLinkElement)?.href, '_blank')
+                break
             case 'Escape':
                 (reader.querySelector('.cover.reading .mdi-close') as HTMLElement)?.click()
                 break
@@ -189,6 +187,12 @@ export function useHotkeys() {
                 break
             case 'ArrowDown':
                 (reader.querySelector('.overflow') as HTMLElement)?.scrollBy(0, 100)
+                break
+            case 'PageUp':
+                (reader.querySelector('.overflow') as HTMLElement)?.scrollBy(0, -window.innerHeight)
+                break
+            case 'PageDown':
+                (reader.querySelector('.overflow') as HTMLElement)?.scrollBy(0, window.innerHeight)
                 break
             case 'Enter':
                 // 释放焦点

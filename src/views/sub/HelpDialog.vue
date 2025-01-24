@@ -32,6 +32,14 @@
               <v-list-item-title>↓ 方向键下</v-list-item-title>
               <v-list-item-subtitle>向下滚动</v-list-item-subtitle>
             </v-list-item>
+            <v-list-item>
+              <v-list-item-title>PageUp</v-list-item-title>
+              <v-list-item-subtitle>向上滚动一页</v-list-item-subtitle>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title>PageDown</v-list-item-title>
+              <v-list-item-subtitle>向下滚动一页</v-list-item-subtitle>
+            </v-list-item>
 
             <v-list-item>
               <v-list-item-title>S</v-list-item-title>
@@ -50,6 +58,10 @@
               <v-list-item-subtitle>生成总结</v-list-item-subtitle>
             </v-list-item>
             <v-list-item>
+              <v-list-item-title>V</v-list-item-title>
+              <v-list-item-subtitle>打开原网页</v-list-item-subtitle>
+            </v-list-item>
+            <v-list-item>
               <v-list-item-title>Esc</v-list-item-title>
               <v-list-item-subtitle>退出阅读模式</v-list-item-subtitle>
             </v-list-item></v-col
@@ -63,6 +75,10 @@
             <v-list-item>
               <v-list-item-title>CTRL + ?</v-list-item-title>
               <v-list-item-subtitle>打开帮助</v-list-item-subtitle>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title>CTRL + N</v-list-item-title>
+              <v-list-item-subtitle>添加订阅源</v-list-item-subtitle>
             </v-list-item>
             <br />
             <v-divider></v-divider>
@@ -88,10 +104,7 @@
               <v-list-item-title>N</v-list-item-title>
               <v-list-item-subtitle>下一个未读订阅源</v-list-item-subtitle>
             </v-list-item>
-            <v-list-item>
-              <v-list-item-title>A</v-list-item-title>
-              <v-list-item-subtitle>添加订阅源</v-list-item-subtitle>
-            </v-list-item>
+
             <v-list-item>
               <v-list-item-title>↑↓ 方向键</v-list-item-title>
               <v-list-item-subtitle>选择上/下一篇文章</v-list-item-subtitle>
