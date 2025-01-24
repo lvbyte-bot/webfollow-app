@@ -35,7 +35,7 @@
               </div>
               <v-list lines="two">
                 <v-list-item
-                  v-for="(item, index) in searchResults.items"
+                  v-for="item in searchResults.items"
                   :key="item.id"
                   @click="openItem(item)"
                   class="search-item"

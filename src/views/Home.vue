@@ -2,7 +2,11 @@
   <v-responsive @contextmenu.prevent>
     <v-app :theme="themeMode">
       <!-- 移动端侧边栏 -->
-      <v-navigation-drawer class="sidebar-warp" v-if="mobile" v-model="show">
+      <v-navigation-drawer
+        class="sidebar-warp"
+        v-if="mobile"
+        v-model="showMobileMenu"
+      >
         <SideBar>
           <template #top>
             <div class="mb-2 d-flex justify-space-between align-center">
@@ -24,8 +28,7 @@
                 </template>
               </v-list-item>
 
-              <c-btn @click="settingable = true" icon=" mdi-cog-outline">
-              </c-btn>
+              <c-btn id="menu-activator-3" icon=" mdi-cog-outline"> </c-btn>
             </div>
             <v-divider class="mb-2"></v-divider>
           </template>
@@ -36,7 +39,7 @@
       </v-navigation-drawer>
       <!-- 桌面端侧边栏 -->
       <nav
-      v-if="false"
+        v-if="false"
         v-show="
           hideSide &&
           (!appStore.readerMode ||
@@ -44,9 +47,7 @@
         "
         class="min-side pa-1"
       >
-        <div style="height: 54px;">
-          
-        </div>
+        <div style="height: 54px"></div>
         <v-btn
           variant="flat"
           title="发现"
@@ -54,7 +55,6 @@
           height="64"
           width="54"
           size="small"
-
         >
           <div class="text-center text-caption">
             <v-icon size="20">mdi-home-outline</v-icon>
@@ -150,17 +150,18 @@
       </v-navigation-drawer>
 
       <!-- 主体 -->
-      <v-main :class="{ cols: !mobile, hideside: hideSide || mobile }" >
+      <v-main :class="{ cols: !mobile, hideside: hideSide || mobile }">
         <div class="v-main-top"></div>
         <!-- 主体 -->
         <div class="flexible">
-          <img
-            class="mx-3 mt-3  menu-warp logo"
-            src="/logo.svg"
-            width="28px"
+          <c-btn
             v-if="mobile"
-            @click="show = !show"
-          ></img>
+            class="ma-2 menu-warp logo"
+            variant="text"
+            icon="mdi-dock-left"
+            title="打开边栏"
+            @click="showMobileMenu = !showMobileMenu"
+          ></c-btn>
           <c-btn
             v-else-if="hideSide"
             class="ma-2 menu-warp"
@@ -200,7 +201,7 @@
         </v-icon>
       </v-btn>
       <!-- 菜单 -->
-      <template v-for="i in 2" :key="i">
+      <template v-for="i in 3" :key="i">
         <v-menu :activator="`#menu-activator-${i}`" class="menu" width="200">
           <v-list nav>
             <v-list-item
@@ -236,9 +237,9 @@ import {
 import Settings from "./settings/Settings.vue";
 import SideBar from "./sub/SideBar.vue";
 import PlayList from "./sub/PlayList.vue";
-import SearchDialog from './sub/SearchDialog.vue'
-import HelpDialog from './sub/HelpDialog.vue'
-import { useHotkeys } from '@/utils/useHotkeys'
+import SearchDialog from "./sub/SearchDialog.vue";
+import HelpDialog from "./sub/HelpDialog.vue";
+import { useHotkeys } from "@/utils/useHotkeys";
 
 const appStore = useAppStore();
 const settingsStore = useSettingsStore();
@@ -252,7 +253,7 @@ const title = ref("");
 const hideSide = ref(false);
 const settingable = ref(false);
 const showPlayList = ref(false);
-const show = ref(false);
+const showMobileMenu = ref(false);
 const activeMenu = ref("general");
 
 const themeMode = ref(appearance.value.themeMode);
@@ -354,7 +355,7 @@ onMounted(() => {
 });
 
 // 添加快捷键支持
-const { showSearch, showHelp } = useHotkeys()
+const { showSearch, showHelp } = useHotkeys();
 </script>
 <style lang="scss" scoped>
 .hideside {
@@ -402,11 +403,11 @@ const { showSearch, showHelp } = useHotkeys()
     resize: horizontal;
   }
 }
-.logo{
+.logo {
   // 颜色变成灰色
-  filter: grayscale(.3)
+  filter: grayscale(0.3);
 }
-.min-side{
+.min-side {
   width: 64px;
   position: fixed;
   height: 100vh;
