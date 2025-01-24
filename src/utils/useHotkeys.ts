@@ -106,6 +106,9 @@ export function useHotkeys() {
                 case 'm':
                     (document.querySelector('.items-container .items-mark-read') as HTMLElement)?.click()
                     break
+                case 'n':
+                    (document.querySelector('.items-container .next-unreadlist .v-btn') as HTMLElement)?.click()
+                    break
                 case 'v':
                     (document.querySelector('.items-container .items-view-toggle') as HTMLElement)?.click()
                     break

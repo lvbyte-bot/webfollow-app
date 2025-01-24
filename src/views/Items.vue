@@ -134,6 +134,7 @@
                 icon="mdi-book-open-page-variant-outline"
                 v-if="feedStore.nextUnReadUrl"
                 height="calc(100vh - 56px)"
+                class="next-unreadlist"
               >
                 <v-btn variant="text" :to="feedStore.nextUnReadUrl">
                   <template #prepend>
