@@ -35,9 +35,10 @@
               </div>
               <v-list lines="two">
                 <v-list-item
-                  v-for="(item, ) in searchResults.items"
+                  v-for="(item, index) in searchResults.items"
                   :key="item.id"
                   @click="openItem(item)"
+                  class="search-item"
                 >
                   <v-list-item-title>{{ item.title }}</v-list-item-title>
                   <div class="d-flex align-center mt-2 text-caption">
@@ -64,6 +65,7 @@
                 <v-list-item
                   v-for="feed in searchResults.feeds"
                   :key="feed.id"
+                  class="search-item"
                   @click="openFeed(feed)"
                 >
                   <template #prepend>
@@ -103,7 +105,7 @@
         </v-card-text>
     </v-card>
   </v-dialog>
-  <Reader v-model="showReader" :item="currentItem" />
+  <reader  v-model="showReader" :item="currentItem" />
 </template>
 
 <script setup lang="ts">
@@ -112,7 +114,7 @@ import { useRouter } from "vue-router";
 import { search } from "@/service";
 import type { FeedItem, SubscriptionFeed } from "@/service/types";
 import { debound } from "@/utils/debound";
-import Reader from "./Reader.vue";
+import Reader from "../reader";
 
 const showReader = ref(false);
 
@@ -120,7 +122,7 @@ const props = defineProps({
   modelValue: Boolean,
 });
 
-const currentItem = ref<FeedItem>();
+const currentItem = ref<FeedItem|undefined>();
 
 const emit = defineEmits(["update:modelValue"]);
 
@@ -143,15 +145,15 @@ const loading = ref(false);
 
 // 打开文章
 const openItem = (item:FeedItem) => {
-  show.value = false;
   showReader.value = true;
   currentItem.value = item;
+  show.value = false;
 };
 
 // 打开订阅源
 const openFeed = (feed: any) => {
-  show.value = false;
   router.push(`/f/${feed.id}`);
+  show.value = false;
 };
 
 // 创建防抖的搜索函数

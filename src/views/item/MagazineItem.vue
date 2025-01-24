@@ -1,5 +1,5 @@
 <template>
-  <v-list-item class="magazine-item py-3">
+  <v-list-item class="magazine-item py-3" v-bind="$attrs">
     <div class="magazine" :class="{ readly: item.isRead }">
       <div class="magazine-left">
         <img :src="item.feed?.icon" alt="" />

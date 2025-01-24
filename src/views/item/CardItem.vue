@@ -1,5 +1,5 @@
 <template>
-  <v-card flat class="rounded-lg card">
+  <v-card flat class="rounded-lg card" v-bind="$attrs">
     <div
       v-if="item.thumbnail"
       @mouseover="showIframe = true"

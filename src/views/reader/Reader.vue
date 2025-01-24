@@ -22,7 +22,7 @@
                   icon="mdi-chevron-up"
                   title="上一篇文章"
                   @click="openReader(currentItemIndex - 1, undefined)"
-                  class="mr-2"
+                  class="mr-2 entry-prev"
                 ></c-btn>
                 <c-btn
                   :disabled="currentItemIndex + 1 == items?.length"
@@ -30,6 +30,7 @@
                   icon="mdi-chevron-down"
                   title="下一篇文章"
                   @click="openReader(currentItemIndex + 1, undefined)"
+                  class="entry-next"
                 ></c-btn>
               </template>
             </template>
@@ -40,8 +41,8 @@
               >
                 <ul>
                   <li
-                    v-for="item0 in entryList"
-                    @click="openReader(-1, item0)"
+                    v-for="(item0, index) in entryList"
+                    @click="openReader(index, item0)"
                     :class="{ active: item0.id == item.id }"
                     :key="item0.id"
                     :title="item0.title"
@@ -81,22 +82,26 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
-import Reader from "../reader/Index.vue";
+import { computed, onMounted, watch } from "vue";
+import Reader from "./Index.vue";
 import { FeedItem } from "@/service/types";
 import { useRoute } from "vue-router";
 const props = defineProps<{
   item: FeedItem | undefined;
-  items: FeedItem[] | undefined;
+  items?: FeedItem[];
   modelValue: boolean;
-  entryListDisable: boolean;
-  openReader: (index: number, item?: FeedItem) => void;
+  entryListDisable?: boolean;
+  openReader?: (index: number, item?: FeedItem) => void;
 }>();
 
 const emit = defineEmits(["update:modelValue"]);
 const route = useRoute();
 
-const currentItemIndex = ref(0);
+const currentItemIndex = computed(() =>
+  props.item
+    ? props.items?.findIndex((item) => item.id == props.item?.id) || 0
+    : 0
+);
 
 const entryList = computed(() =>
   props.item ? getSurroundingItems(props.items || [], props.item) : []
@@ -111,9 +116,6 @@ function getSurroundingItems(
   for (let i = 0; i < array.length; i++) {
     if (currentItem0.id == array[i].id) {
       index = i;
-      if (currentItemIndex.value < 0) {
-        currentItemIndex.value = index;
-      }
       continue;
     }
   }

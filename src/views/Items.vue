@@ -179,8 +179,7 @@
 </template>
 <script setup lang="ts">
 import { computed, ref, Ref } from "vue";
-import { useRoute } from "vue-router";
-import Reader from "./sub/Reader.vue";
+import Reader from "./reader";
 import Items from "./item/Index.vue";
 import { onMounted, watch } from "vue";
 import { Marked } from "@/service";
@@ -207,7 +206,6 @@ const store = useItemsStore();
 const appStore = useAppStore();
 const feedStore = useFeedsStore();
 const baseStore = useBaseStore();
-const route = useRoute();
 const currentItem: Ref<FeedItem> = ref({
   id: 0,
   title: "",

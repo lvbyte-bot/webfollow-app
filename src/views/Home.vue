@@ -216,7 +216,7 @@
       </template>
 
       <!-- 搜索弹框 -->
-      <SearchDialog v-model="showSearch" />
+      <search-dialog v-model="showSearch" />
     </v-app>
   </v-responsive>
 </template>
@@ -236,6 +236,7 @@ import Settings from "./settings/Settings.vue";
 import SideBar from "./sub/SideBar.vue";
 import PlayList from "./sub/PlayList.vue";
 import SearchDialog from './sub/SearchDialog.vue'
+import { useHotkeys } from '@/utils/useHotkeys'
 
 const appStore = useAppStore();
 const settingsStore = useSettingsStore();
@@ -347,6 +348,9 @@ onMounted(() => {
     }
   }
 });
+
+// 添加快捷键支持
+useHotkeys(showSearch)
 </script>
 <style lang="scss" scoped>
 .hideside {

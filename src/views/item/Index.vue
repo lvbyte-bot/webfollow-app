@@ -16,6 +16,7 @@
         @click-action="clickAction"
         @contextmenu.prevent="showContextMenu($event, item, index)"
         :type="type"
+        class="entry-item"
       ></CardItem>
     </v-col>
   </v-row>
@@ -27,6 +28,7 @@
       @contextmenu.prevent="showContextMenu($event, item, index)"
       :type="type"
       :key="item.id"
+      class="entry-item"
     ></MagazineItem>
   </template>
   <template v-else>
@@ -38,6 +40,7 @@
       @contextmenu.prevent="showContextMenu($event, item, index)"
       :type="type"
       :key="item.id"
+      class="entry-item"
     ></ContentItem>
   </template>
 

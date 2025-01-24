@@ -34,7 +34,7 @@
 import { computed, Ref, inject } from "vue";
 import { FeedItem } from "@/service/types";
 import { useSideChapter } from "@/utils/useSideChapter";
-import { summarySymbol, summarizingSymbol } from "./InjectionSymbols";
+import { summarySymbol, summarizingSymbol } from "../InjectionSymbols";
 import { md2html } from "@/utils/mdUtils";
 const props = defineProps<{
   readonly item: FeedItem;

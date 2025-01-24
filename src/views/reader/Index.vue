@@ -120,13 +120,12 @@
 import { onMounted, watch, ref, computed, provide } from "vue";
 import { useAppStore, useSettingsStore } from "@/store";
 import { FeedItem } from "@/service/types";
-// import { useSideChapter } from "@/utils/useSideChapter";
 import { useScroll } from "@/utils/scroll";
 import { useDisplay } from "vuetify";
-import BasicReader from "./BasicReader.vue";
-import ImageReader from "./ImageReader.vue";
-import VideoReader from "./VideoReader.vue";
-import PodcastReader from "./PodcastReader.vue";
+import BasicReader from "./sub/BasicReader.vue";
+import ImageReader from "./sub/ImageReader.vue";
+import VideoReader from "./sub/VideoReader.vue";
+import PodcastReader from "./sub/PodcastReader.vue";
 import { Marked } from "@/service";
 import { summarySymbol, summarizingSymbol } from "./InjectionSymbols";
 

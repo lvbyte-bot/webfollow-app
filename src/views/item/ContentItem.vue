@@ -1,5 +1,5 @@
 <template>
-  <v-list-item class="content-item py-3 mb-2">
+  <v-list-item class="content-item py-3 mb-2" v-bind="$attrs">
     <div class="content">
       <v-icon :color="item.isRead ? '-' : 'primary'">
         {{ item.isRead ? "" : "mdi-circle-medium" }}
