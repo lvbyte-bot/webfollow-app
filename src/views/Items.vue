@@ -14,13 +14,11 @@
       :modelValue="appStore.readerMode"
       @update:modelValue="appStore.readerMode = $event"
     ></reader>
+    <div class="main-reader"></div>
     <main
       class="main-container"
       ref="mainRef"
-      v-show="
-        !appStore.readerMode ||
-        (settingsStore.general.defaultView == 'magazine' && !mobile)
-      "
+      v-show="!appStore.readerMode || general.defaultView == 'magazine'"
     >
       <slot v-bind:="{ openReader, loadData }">
         <!-- items -->
@@ -49,6 +47,7 @@
                   icon
                   title="标记为已读"
                   @click="markRead"
+                  class="items-mark-read"
                 >
                   <v-icon>mdi-read</v-icon>
                 </c-btn>
@@ -58,6 +57,7 @@
                   title="刷新"
                   @click="refresh"
                   :class="{ rotating: loading }"
+                  class="items-reload"
                 >
                   <v-icon>{{ loading ? "mdi-loading" : "mdi-reload" }}</v-icon>
                 </c-btn>
@@ -65,6 +65,7 @@
                   :icon="onlyUnread ? 'mdi-circle' : 'mdi-circle-outline'"
                   :title="onlyUnread ? '只看未读' : '看全部'"
                   @click="changeOnlyUnread(!onlyUnread)"
+                  class="items-unread-toggle"
                 >
                 </c-btn>
                 <c-btn
@@ -84,6 +85,7 @@
                       : '列表视图'
                   "
                   @click="changeItemView()"
+                  class="items-view-toggle"
                 >
                 </c-btn>
               </div>
@@ -445,8 +447,7 @@ defineExpose({ loadData, openReader });
 .main-col {
   display: grid;
   grid-template-columns: auto 1fr;
-
-  .cover {
+  .main-reader {
     grid-area: 1/2/2/2;
   }
   .main-container {

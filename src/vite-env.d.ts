@@ -15,3 +15,6 @@ declare function setTitle(arg: number): void
 declare namespace CryptoJS {
   function MD5(str: string): string;
 }
+
+
+declare const webfollowApp: any

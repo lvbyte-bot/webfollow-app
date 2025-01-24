@@ -1,7 +1,11 @@
 <template>
-  <Teleport defer to=".v-main-top">
+  <Teleport defer :to="to ? to : '.main-reader'">
     <v-dialog-transition>
-      <div class="cover" v-show="modelValue" :class="{ reading: modelValue }">
+      <div
+        class="cover"
+        v-show="modelValue"
+        :class="{ reading: modelValue, 'cover-main': to }"
+      >
         <template v-if="item">
           <Reader :item="item">
             <template #chapter>
@@ -21,7 +25,7 @@
                   variant="text"
                   icon="mdi-chevron-up"
                   title="上一篇文章"
-                  @click="openReader(currentItemIndex - 1, undefined)"
+                  @click="openReader?.(currentItemIndex - 1, undefined)"
                   class="mr-2 entry-prev"
                 ></c-btn>
                 <c-btn
@@ -29,7 +33,7 @@
                   variant="text"
                   icon="mdi-chevron-down"
                   title="下一篇文章"
-                  @click="openReader(currentItemIndex + 1, undefined)"
+                  @click="openReader?.(currentItemIndex + 1, undefined)"
                   class="entry-next"
                 ></c-btn>
               </template>
@@ -42,7 +46,7 @@
                 <ul>
                   <li
                     v-for="(item0, index) in entryList"
-                    @click="openReader(index, item0)"
+                    @click="openReader?.(index, undefined)"
                     :class="{ active: item0.id == item.id }"
                     :key="item0.id"
                     :title="item0.title"
@@ -65,7 +69,7 @@
               >
                 <v-btn
                   variant="text"
-                  @click="openReader(currentItemIndex + 1, undefined)"
+                  @click="openReader?.(currentItemIndex + 1, undefined)"
                 >
                   <template #prepend>
                     <v-icon> mdi mdi-page-next-outline </v-icon>
@@ -92,6 +96,7 @@ const props = defineProps<{
   modelValue: boolean;
   entryListDisable?: boolean;
   openReader?: (index: number, item?: FeedItem) => void;
+  to?: string;
 }>();
 
 const emit = defineEmits(["update:modelValue"]);
@@ -135,12 +140,11 @@ onMounted(() => {
 </script>
 <style lang="scss" scoped>
 .cover {
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: var(--v-layout-left);
-  width: calc(100% - var(--v-layout-left) - var(--v-layout-right));
+  width: 100%;
   height: 100%;
-  z-index: 100;
+  z-index: 1000;
   background-color: rgb(var(--v-theme-background));
   .cover-action {
     position: absolute;
@@ -152,6 +156,14 @@ onMounted(() => {
     grid-template-columns: 1fr;
     grid-gap: 2rem;
   }
+}
+.cover-main {
+  position: fixed;
+  top: 0;
+  left: var(--v-layout-left);
+  width: calc(100% - var(--v-layout-left) - var(--v-layout-right));
+  height: 100%;
+  z-index: 1001;
 }
 .entry-list {
   position: absolute;
@@ -166,6 +178,8 @@ onMounted(() => {
     transform: translateX(0);
   }
 }
+</style>
+<style lang="scss">
 .chapter-list,
 .entry-list {
   padding: 0.5rem 0.8rem;

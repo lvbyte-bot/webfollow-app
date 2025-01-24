@@ -32,7 +32,7 @@
             :disabled="!canSummarize"
             title="AI 总结"
             @click="generateSummary"
-            class="mr-2"
+            class="mr-2 entry-ai-summary"
           >
             <v-icon>mdi-auto-fix</v-icon>
           </c-btn>
@@ -41,7 +41,7 @@
             icon
             title="稍后阅读"
             @click="toggleSaved"
-            class="mr-2"
+            class="mr-2 entry-saved"
           >
             <v-icon>{{
               item.isSaved ? "mdi-playlist-minus" : "mdi-playlist-plus"
@@ -52,6 +52,7 @@
             :color="readerType == 'default' ? '' : 'primary'"
             title="内嵌网页"
             icon=" mdi-apple-safari"
+            class="entry-inner"
             @click="readerType = readerType == 'default' ? 'HTML' : 'default'"
           >
           </c-btn>
@@ -60,6 +61,7 @@
             icon
             :title="item.isRead ? '未读' : '已读'"
             @click.stop="toggleRead"
+            class="entry-read"
           >
             <v-icon>{{
               item.isRead ? "mdi-circle-outline" : "mdi-circle"
@@ -152,18 +154,19 @@ watch(scrollTop, (newScrollTop) => {
 
 watch(
   () => props.item.id,
-  () => {
+  async () => {
     setTimeout(() => {
       readerRef.value.scrollTop = 0;
       summary.value = "";
     }, 100);
     if (!props.item.isRead && props.item.id) {
-      appStore.read(
+      await appStore.read(
         Number(props.item.id),
         Marked.ITEM,
         appStore.lastRefeshTime,
         props.item.feedId
       );
+      props.item.isRead = true;
     }
   }
 );
@@ -230,29 +233,32 @@ async function generateSummary() {
 
 onMounted(async () => {
   if (!props.item.isRead && props.item.id) {
-    appStore.read(
+    await appStore.read(
       Number(props.item.id),
       Marked.ITEM,
       appStore.lastRefeshTime,
       props.item.feedId
     );
+    props.item.isRead = true;
   }
 });
 
-function toggleSaved() {
+async function toggleSaved() {
   if (props.item.isSaved) {
-    appStore.unsave(props.item.id);
+    await appStore.unsave(props.item.id);
   } else {
-    appStore.save(props.item.id);
+    await appStore.save(props.item.id);
   }
+  props.item.isSaved = !props.item.isSaved;
 }
 
-function toggleRead() {
+async function toggleRead() {
   if (props.item.isRead) {
-    appStore.unread(props.item.id);
+    await appStore.unread(props.item.id);
   } else {
-    appStore.read(props.item.id);
+    await appStore.read(props.item.id);
   }
+  props.item.isRead = !props.item.isRead;
 }
 
 function getSource() {

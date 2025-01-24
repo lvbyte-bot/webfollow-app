@@ -217,6 +217,7 @@
 
       <!-- 搜索弹框 -->
       <search-dialog v-model="showSearch" />
+      <help-dialog v-model="showHelp" />
     </v-app>
   </v-responsive>
 </template>
@@ -236,6 +237,7 @@ import Settings from "./settings/Settings.vue";
 import SideBar from "./sub/SideBar.vue";
 import PlayList from "./sub/PlayList.vue";
 import SearchDialog from './sub/SearchDialog.vue'
+import HelpDialog from './sub/HelpDialog.vue'
 import { useHotkeys } from '@/utils/useHotkeys'
 
 const appStore = useAppStore();
@@ -251,7 +253,6 @@ const hideSide = ref(false);
 const settingable = ref(false);
 const showPlayList = ref(false);
 const show = ref(false);
-const showSearch = ref(false);
 const activeMenu = ref("general");
 
 const themeMode = ref(appearance.value.themeMode);
@@ -260,8 +261,9 @@ const themeMode = ref(appearance.value.themeMode);
 const menus = [
   { title: "设置", value: "setting" },
   { title: "套餐", value: "combo" },
-  { title: "搜索", value: "search" },
   { title: "AI Key", value: "aikey" },
+  { title: "搜索", value: "search" },
+  { title: "快捷键", value: "hotkeys" },
   { title: "反馈", value: "feedback" },
   { title: "注册账号", value: "register" },
   { title: "下载app", value: "app" },
@@ -286,6 +288,8 @@ const handleMenuClick = (value) => {
     router.push("/download");
   } else if (value == "search") {
     showSearch.value = true;
+  } else if (value == "hotkeys") {
+    showHelp.value = true;
   }
 };
 
@@ -350,7 +354,7 @@ onMounted(() => {
 });
 
 // 添加快捷键支持
-useHotkeys(showSearch)
+const { showSearch, showHelp } = useHotkeys()
 </script>
 <style lang="scss" scoped>
 .hideside {

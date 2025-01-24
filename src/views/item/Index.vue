@@ -194,9 +194,20 @@ const hideContextMenu = () => {
 
 onMounted(() => {
   document.addEventListener("click", hideContextMenu);
+  webfollowApp.upItemsToggleRead = upItemsToggleRead;
 });
 
 onBeforeUnmount(() => {
   document.removeEventListener("click", hideContextMenu);
+  webfollowApp.upItemsToggleRead = undefined;
+});
+
+defineExpose({
+  upItemsToggleRead,
 });
 </script>
+<style lang="css" scoped>
+.entry-item:focus {
+  border-color: rgb(var(--v-theme-primary)) !important;
+}
+</style>

@@ -105,7 +105,7 @@
         </v-card-text>
     </v-card>
   </v-dialog>
-  <reader  v-model="showReader" :item="currentItem" />
+  <reader  v-model="showReader" :item="currentItem" to=".v-main-top" />
 </template>
 
 <script setup lang="ts">
