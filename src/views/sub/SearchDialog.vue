@@ -205,7 +205,7 @@ const debouncedSearch = debound(async (kw: string) => {
         { title: '过滤器', path: '/filter', icon: 'mdi-filter-plus-outline' },
         { title: '搜索', path: '/search', icon: 'mdi-text-search-variant' }].filter(m=>m.title.includes(kw)),
         ...groups.map(g=>({title:g.title, path:'/c/'+g.id, icon:'mdi-folder-outline'})),
-        ...settingsStore.automation.filters.filter(f=>f.name.includes(kw)).map(f=>({title:f.name, path:'/filter/'+f.id, icon:'mdi-filter-outline'}))
+        ...settingsStore.automation.filters.filter(f=>f.name.toLowerCase().includes(kw)).map(f=>({title:f.name, path:'/filter/'+f.id, icon:'mdi-filter-outline'}))
       ] 
     };
   } finally {

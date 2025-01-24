@@ -314,9 +314,10 @@ export async function unsave(id: number): Promise<any> {
  */
 export async function search(keyword: string): Promise<{ items: FeedItem[], feeds: SubscriptionFeed[], groups: Group[] }> {
     // 通过 repository 查询
-    const items = await itemRepo.findAll(item => item.title.includes(keyword), 0, 100);
-    const feeds = await feedRepo.findAll(feed => feed.title.includes(keyword) || feed.url.includes(keyword), 0, 100);
-    const groups = await groupRepo.findAll(group => group.title.includes(keyword), 0, 100);
+    keyword = keyword.toLowerCase()
+    const items = await itemRepo.findAll(item => item.title.toLowerCase().includes(keyword), 0, 100);
+    const feeds = await feedRepo.findAll(feed => feed.title.toLowerCase().includes(keyword) || feed.url.toLowerCase().includes(keyword), 0, 100);
+    const groups = await groupRepo.findAll(group => group.title.toLowerCase().includes(keyword), 0, 100);
     return { items: items.data.map(map), feeds: feeds.data.map(mapFeed), groups: groups.data };
 }
 
