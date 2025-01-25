@@ -8,7 +8,7 @@ export function useHotkeys() {
     const showSearch = ref(false)
 
     // 当前选中的文章索引
-    let currentIndex = 0
+    let currentIndex = -1
     let currentSearchIndex = 0
     let searchResultTotal = 0
     const handleKeydown = (e: KeyboardEvent) => {
@@ -142,8 +142,8 @@ export function useHotkeys() {
                     // 选择下一篇文章
                     const articles = document.querySelectorAll('.entry-item')
                     if (currentIndex < articles.length) {
-                        focusArticle(currentIndex)
                         currentIndex++
+                        focusArticle(currentIndex)
                     }
                     break
             }
@@ -220,7 +220,7 @@ export function useHotkeys() {
     onMounted(() => {
         window.addEventListener('keydown', handleKeydown)
         watch(route, () => {
-            currentIndex = 0
+            currentIndex = -1
             currentSearchIndex = 0
         }, { immediate: true })
     })
