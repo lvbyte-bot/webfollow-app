@@ -32,13 +32,7 @@ export function useHotkeys() {
                     return
                 }
                 break
-            case 'n':
-                //  添加新订阅
-                if (e.ctrlKey) {
-                    router.push('/subscribe')
-                    return
-                }
-                break
+
             case 'b':
                 // 打开侧边栏
                 if (e.ctrlKey) {
@@ -119,6 +113,9 @@ export function useHotkeys() {
                 case '?':
                 case 'h':
                     showHelp.value = true
+                    break
+                case 'a':
+                    router.push('/subscribe')
                     break
 
 
