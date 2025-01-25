@@ -206,8 +206,4 @@ defineExpose({
   upItemsToggleRead,
 });
 </script>
-<style lang="css" scoped>
-.entry-item:focus {
-  border-color: rgb(var(--v-theme-primary)) !important;
-}
-</style>
+<style lang="css"></style>
