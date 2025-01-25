@@ -8,8 +8,8 @@ export function useHotkeys() {
     const showSearch = ref(false)
 
     // 当前选中的文章索引
-    const currentIndex = ref(-1)
-    const currentSearchIndex = ref(-1)
+    let currentIndex = 0
+    let currentSearchIndex = 0
     let searchResultTotal = 0
     const handleKeydown = (e: KeyboardEvent) => {
         const topReader = document.querySelector('.v-main-top .cover.reading') as HTMLElement
@@ -53,24 +53,17 @@ export function useHotkeys() {
             switch (e.key) {
                 case 'ArrowUp':
                     e.preventDefault()
-                    // 选择上一篇文章
-                    if (currentSearchIndex.value > 0) {
-                        currentSearchIndex.value--
-                        focusSearch(currentSearchIndex.value)
-                    }
                     break
                 case 'ArrowDown':
                     e.preventDefault()
-                    const articles = document.querySelectorAll('.search-item')
-                    if (searchResultTotal != articles.length) {
-                        searchResultTotal = articles.length
-                        currentSearchIndex.value = -1
+                    if (searchResultTotal != document.querySelectorAll('.search-item').length) {
+                        searchResultTotal = document.querySelectorAll('.search-item').length
+                        currentSearchIndex = 0
                     }
-                    // 选择下一篇文章
-                    if (currentSearchIndex.value < articles.length - 1) {
-                        currentSearchIndex.value++
-                        focusSearch(currentSearchIndex.value)
+                    if (currentSearchIndex == 0) {
+                        focusSearch(0)
                     }
+                    currentSearchIndex++
                     break
             }
         } else if (topReader) {
@@ -127,32 +120,35 @@ export function useHotkeys() {
                 case 'h':
                     showHelp.value = true
                     break
+
+
+            }
+            switch (e.key) {
                 case 'Home':
-                    currentIndex.value = 0
-                    focusArticle(currentIndex.value)
+                    currentIndex = 0
+                    focusArticle(currentIndex)
                     break
                 case 'End':
-                    currentIndex.value = document.querySelectorAll('.entry-item').length - 1
-                    focusArticle(currentIndex.value)
+                    currentIndex = document.querySelectorAll('.entry-item').length - 1
+                    focusArticle(currentIndex)
                     break
                 case 'ArrowUp':
                     e.preventDefault()
                     // 选择上一篇文章
-                    if (currentIndex.value > 0) {
-                        currentIndex.value--
-                        focusArticle(currentIndex.value)
+                    if (currentIndex > 0) {
+                        currentIndex--
+                        focusArticle(currentIndex)
                     }
                     break
                 case 'ArrowDown':
                     e.preventDefault()
                     // 选择下一篇文章
                     const articles = document.querySelectorAll('.entry-item')
-                    if (currentIndex.value < articles.length - 1) {
-                        currentIndex.value++
-                        focusArticle(currentIndex.value)
+                    if (currentIndex < articles.length) {
+                        focusArticle(currentIndex)
+                        currentIndex++
                     }
                     break
-
             }
         }
 
@@ -162,7 +158,6 @@ export function useHotkeys() {
     const focusArticle = (index: number) => {
         const articles = document.querySelectorAll('.entry-item')
         if (articles[index]) {
-            articles[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
             (articles[index] as HTMLElement).focus()
         }
     }
@@ -170,7 +165,6 @@ export function useHotkeys() {
     const focusSearch = (index: number) => {
         const articles = document.querySelectorAll('.search-item')
         if (articles[index]) {
-            articles[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
             (articles[index] as HTMLElement).focus()
         }
     }
@@ -197,6 +191,8 @@ export function useHotkeys() {
                 // 打开源站
                 window.open((reader.querySelector('.cover.reading .title-container .title-warp') as HTMLLinkElement)?.href, '_blank')
                 break
+        }
+        switch (e.key) {
             case 'Escape':
                 (reader.querySelector('.cover.reading .mdi-close') as HTMLElement)?.click()
                 break
@@ -227,8 +223,8 @@ export function useHotkeys() {
     onMounted(() => {
         window.addEventListener('keydown', handleKeydown)
         watch(route, () => {
-            currentIndex.value = -1
-            currentSearchIndex.value = -1
+            currentIndex = 0
+            currentSearchIndex = 0
         }, { immediate: true })
     })
 
@@ -236,6 +232,9 @@ export function useHotkeys() {
         window.removeEventListener('keydown', handleKeydown)
     })
 
+    watch(showSearch, () => {
+        currentSearchIndex = 0
+    })
     return {
         showHelp,
         showSearch

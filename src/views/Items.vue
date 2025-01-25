@@ -191,6 +191,7 @@ import { Marked } from "@/service";
 import { retrieveRelevantContexts } from "@/service/rag";
 import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
+import { debound } from "@/utils/debound";
 import {
   useItemsStore,
   useAppStore,
@@ -254,12 +255,16 @@ function watchLoadMore() {
   });
 }
 
+const debounceLoadData = debound(() => {
+  loadData(0);
+  // show.value = false;
+  appStore.readerMode = false;
+  mainRef.value.scrollTo(0, 0);
+}, 1000);
+
 function watchRefresh() {
   watch(props, () => {
-    loadData(0);
-    // show.value = false;
-    appStore.readerMode = false;
-    mainRef.value.scrollTo(0, 0);
+    debounceLoadData();
   });
 }
 

@@ -4,7 +4,7 @@
       <v-card-title class="d-flex align-center pa-4">
         <v-text-field
           v-model="keyword"
-          placeholder="搜索文章或订阅源..."
+          placeholder="搜索本地文章或订阅源..."
           density="compact"
           hide-details
           @keyup.enter="handleSearch"
@@ -22,106 +22,106 @@
               color="primary"
             />
           </template>
+         
         </v-text-field>
       </v-card-title>
 
       <v-divider></v-divider>
-        <v-card-text class="pa-2 result-warp" style="">
-          <template v-if="keyword">
-
-            <div v-if="searchResults.items.length > 0">
-              <div class="text-subtitle-2 px-4 py-2">
-                文章 ({{ searchResults.items.length }})
-              </div>
-              <v-list lines="two">
-                <v-list-item
-                  v-for="item in searchResults.items"
-                  :key="item.id"
-                  @click="openItem(item)"
-                  class="search-item"
-                >
-                  <v-list-item-title>{{ item.title }}</v-list-item-title>
-                  <div class="d-flex align-center mt-2 text-caption">
+      <v-card-text class="pa-2 result-warp" >
+        <template v-if="keyword">
+          <div v-if="searchResults.items.length > 0">
+            <div class="text-subtitle-2 px-4 py-2">
+              文章 ({{ searchResults.items.length }})
+            </div>
+            <v-list>
+              <v-list-item
+                v-for="item in searchResults.items"
+                :key="item.id"
+                @click="openItem(item)"
+                class="search-item"
+              >
+                <div class="item-title">
+                  <p v-text="item.title" class="text-truncate"></p>
+                  <div class="d-flex align-center justify-end text-caption">
                     <img
                       :src="item.feed?.icon"
                       width="14"
                       height="14"
                       style="border-radius: 4px"
                       loading="lazy"
-                      onerror="this.src='/logo.svg'" 
-                      class="mr-2"
-                    ></img>
-                    {{ item.feed?.title }}
-                  </div>
-                </v-list-item>
-              </v-list>
-            </div>
-
-            <div v-if="searchResults.feeds.length > 0">
-              <div class="text-subtitle-2 px-4 py-2">
-                订阅源 ({{ searchResults.feeds.length }})
-              </div>
-              <v-list>
-                <v-list-item
-                  v-for="feed in searchResults.feeds"
-                  :key="feed.id"
-                  class="search-item"
-                  @click="openFeed(feed)"
-                >
-                  <template #prepend>
-                    <img
-                      :src="feed.icon"
-                      :alt="feed.title"
-                      width="16"
-                      height="16"
-                      class="mr-2"
-                      style="border-radius: 4px"
-                      loading="lazy"
-                      onerror="this.src='/logo.svg'" 
-                    ></img>
-                  </template>
-                  <v-list-item-title>{{ feed.title }}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </div>
-
-            <div v-if="searchResults.menus.length > 0">
-              <div class="text-subtitle-2 px-4 py-2">
-                菜单 ({{ searchResults.menus.length }})
-              </div>
-              <v-list>
-                <v-list-item
-                  v-for="menu in searchResults.menus"
-                  :key="menu.path"
-                  class="search-item"
-                  @click="router.push(menu.path); show = false"
-                >
-                  <v-list-item-title><v-icon :icon="menu.icon" size="small" class="mr-3"></v-icon>{{ menu.title }}</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </div>
-
-            
-
-            <v-empty-state
-              v-if="
-                searchResults.items.length === 0 &&
-                searchResults.feeds.length === 0 &&
-                searchResults.menus.length === 0
-              "
-              class="text-center pa-4"
-              icon="mdi-magnify"
-              title="未找到相关内容"
-              text="请尝试其他关键词"
-            >
-              
-            </v-empty-state>
-          </template>
-
-          <div v-else class="text-center pa-4 text-medium-emphasis">
-            输入关键词开始搜索
+                    onerror="this.src='/logo.svg'" 
+                    class="mr-2"
+                  ></img>
+                  {{ item.feed?.title }}
+                </div></div>
+              </v-list-item>
+            </v-list>
           </div>
-        </v-card-text>
+
+          <div v-if="searchResults.feeds.length > 0">
+            <div class="text-subtitle-2 px-4 py-2">
+              订阅源 ({{ searchResults.feeds.length }})
+            </div>
+            <v-list>
+              <v-list-item
+                v-for="feed in searchResults.feeds"
+                :key="feed.id"
+                class="search-item"
+                @click="openFeed(feed)"
+              >
+                <template #prepend>
+                  <img
+                    :src="feed.icon"
+                    :alt="feed.title"
+                    width="16"
+                    height="16"
+                    class="mr-2"
+                    style="border-radius: 4px"
+                    loading="lazy"
+                    onerror="this.src='/logo.svg'" 
+                  ></img>
+                </template>
+                <v-list-item-title>{{ feed.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </div>
+
+          <div v-if="searchResults.menus.length > 0">
+            <div class="text-subtitle-2 px-4 py-2">
+              菜单 ({{ searchResults.menus.length }})
+            </div>
+            <v-list>
+              <v-list-item
+                v-for="menu in searchResults.menus"
+                :key="menu.path"
+                class="search-item"
+                @click="router.push(menu.path); show = false"
+              >
+                <v-list-item-title><v-icon :icon="menu.icon" size="small" class="mr-3"></v-icon>{{ menu.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </div>
+
+          
+          <v-empty-state
+            v-if="
+              searchResults.items.length === 0 &&
+              searchResults.feeds.length === 0 &&
+              searchResults.menus.length === 0
+            "
+            class="text-center pa-4"
+            icon="mdi-magnify"
+            title="未找到相关内容"
+            text="请尝试其他关键词"
+          >
+            
+          </v-empty-state>
+        </template>
+
+        <div v-else class="text-center pa-4 text-medium-emphasis">
+          输入关键词开始搜索
+        </div>
+      </v-card-text>
     </v-card>
   </v-dialog>
   <reader  v-model="showReader" :item="currentItem" to=".v-main-top" />
@@ -226,7 +226,17 @@ const handleSearch = () => {
 </script>
 <style lang="scss" scoped>
 .result-warp {
-  height: 60vh;
+  height: 50vh;
   overflow-y: auto;
+}
+.item-title {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  grid-gap: 1rem;
+  font-size: 0.85rem;
+  :last-child {
+    text-align: right;
+  }
 }
 </style>

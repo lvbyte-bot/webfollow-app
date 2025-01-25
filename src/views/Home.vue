@@ -173,12 +173,7 @@
           <router-view></router-view>
         </div>
       </v-main>
-      <v-dialog max-width="960px" v-model="settingable">
-        <Settings
-          :activeMenu="activeMenu"
-          @onclose="settingable = false"
-        ></Settings>
-      </v-dialog>
+
       <!-- 播放列表按钮 -->
       <v-btn
         v-show="
@@ -219,6 +214,12 @@
       <!-- 搜索弹框 -->
       <search-dialog v-model="showSearch" />
       <help-dialog v-model="showHelp" />
+      <v-dialog max-width="800px" v-model="settingable">
+        <Settings
+          :activeMenu="activeMenu"
+          @onclose="settingable = false"
+        ></Settings>
+      </v-dialog>
     </v-app>
   </v-responsive>
 </template>
