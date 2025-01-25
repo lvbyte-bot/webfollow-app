@@ -112,7 +112,7 @@ function formatDuration(seconds: number) {
 }
 .magazine-sec {
   display: grid;
-  grid-template-columns: auto minmax(6rem, 1fr);
+  grid-template-columns: 3fr minmax(80px, 1fr);
   grid-gap: 0.5rem;
   .v-img {
     border-radius: 0.5rem;

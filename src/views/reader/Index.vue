@@ -168,6 +168,11 @@ watch(
       );
       props.item.isRead = true;
     }
+    setTimeout(() => {
+      document.querySelectorAll(".reading .content pre").forEach((pre: any) => {
+        pre?.addEventListener("click", copyCode);
+      });
+    }, 100);
   }
 );
 
@@ -241,9 +246,6 @@ onMounted(async () => {
     );
     props.item.isRead = true;
   }
-  document.querySelectorAll(".reading .content pre").forEach((pre: any) => {
-    pre?.addEventListener("click", copyCode);
-  });
 });
 
 function copyCode(event: any) {
@@ -406,7 +408,7 @@ provide(summarizingSymbol, summarizing);
   }
   .copy-success {
     :before {
-      content: "✓"; // 隐藏复制成功图标
+      content: "✓";
       font-size: 2rem;
       font-weight: bold;
       padding-left: 1rem;
