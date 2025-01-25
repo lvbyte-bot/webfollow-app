@@ -73,16 +73,7 @@ export function useHotkeys() {
             }
             handleReaderKeydown(e, topReader)
         } else if (listReader) {
-            switch (e.key) {
-                case 'ArrowLeft':
-                    // 上一篇文章
-                    (document.querySelector('.entry-prev') as HTMLElement)?.click()
-                    break
-                case 'ArrowRight':
-                    // 下一篇文章
-                    (document.querySelector('.entry-next') as HTMLElement)?.click()
-                    break
-            }
+
             handleReaderKeydown(e, listReader)
         } else if (itemContainer) {
             switch (e.key.toLowerCase()) {
@@ -170,28 +161,36 @@ export function useHotkeys() {
         switch (e.key.toLowerCase()) {
             case 's':
                 // 稍后阅读
-                (reader.querySelector('.cover.reading .entry-saved') as HTMLElement)?.click()
+                (reader.querySelector('.entry-saved') as HTMLElement)?.click()
                 break
             case 'm':
                 // 标记为已读/未读
-                (reader.querySelector('.cover.reading .entry-read') as HTMLElement)?.click()
+                (reader.querySelector('.entry-read') as HTMLElement)?.click()
                 break
             case 'i':
                 // 内嵌网页
-                (reader.querySelector('.cover.reading .entry-inner') as HTMLElement)?.click()
+                (reader.querySelector('.entry-inner') as HTMLElement)?.click()
                 break
             case 'g':
                 // 生成总结
-                (reader.querySelector('.cover.reading .entry-ai-summary') as HTMLElement)?.click()
+                (reader.querySelector('.entry-ai-summary') as HTMLElement)?.click()
                 break
             case 'v':
                 // 打开源站
-                window.open((reader.querySelector('.cover.reading .title-container .title-warp') as HTMLLinkElement)?.href, '_blank')
+                window.open((reader.querySelector('.title-container .title-warp') as HTMLLinkElement)?.href, '_blank')
                 break
         }
         switch (e.key) {
+            case 'ArrowLeft':
+                // 上一篇文章
+                (reader.querySelector('.entry-prev') as HTMLElement)?.click()
+                break
+            case 'ArrowRight':
+                // 下一篇文章
+                (reader.querySelector('.entry-next') as HTMLElement)?.click()
+                break
             case 'Escape':
-                (reader.querySelector('.cover.reading .mdi-close') as HTMLElement)?.click()
+                (reader.querySelector('.mdi-close') as HTMLElement)?.click()
                 break
             case 'ArrowUp':
                 (reader.querySelector('.overflow') as HTMLElement)?.scrollBy(0, -100)

@@ -277,7 +277,7 @@ async function toggleSaved() {
   } else {
     await appStore.save(props.item.id);
   }
-  props.item.isSaved = !props.item.isSaved;
+  // props.item.isSaved = !props.item.isSaved;
 }
 
 async function toggleRead() {
@@ -286,7 +286,7 @@ async function toggleRead() {
   } else {
     await appStore.read(props.item.id);
   }
-  props.item.isRead = !props.item.isRead;
+  // props.item.isRead = !props.item.isRead;
 }
 
 function getSource() {

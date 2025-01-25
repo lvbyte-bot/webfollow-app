@@ -135,6 +135,7 @@ import type { FeedItem, SubscriptionFeed } from "@/service/types";
 import { debound } from "@/utils/debound";
 import Reader from "../reader";
 import { useSettingsStore } from '@/store';
+import { useItem } from "@/utils/useItem";
 
 const settingsStore = useSettingsStore()
 
@@ -145,7 +146,6 @@ const props = defineProps({
   modelValue: Boolean,
 });
 
-const currentItem = ref<FeedItem|undefined>();
 
 const emit = defineEmits(["update:modelValue"]);
 
@@ -171,10 +171,12 @@ const searchResults = ref<{
 // 添加 loading 状态
 const loading = ref(false);
 
+const { setItem, currentItem } = useItem();
+
 // 打开文章
 const openItem = (item:FeedItem) => {
   showReader.value = true;
-  currentItem.value = item;
+  setItem(item);
   show.value = false;
 };
 
