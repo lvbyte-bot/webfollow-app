@@ -209,7 +209,7 @@ export function useHotkeys() {
                 // 释放焦点
                 for (let i = 0; i < 3; i++) {
                     setTimeout(() => {
-                        (document.querySelectorAll('.entry-item')[currentIndex.value] as HTMLElement)?.blur();
+                        (document.querySelectorAll('.entry-item')[currentIndex] as HTMLElement)?.blur();
                         (reader.querySelector('.overflow') as HTMLElement)?.click()
                     }, 200 * i + 300);
                 }
