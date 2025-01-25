@@ -119,7 +119,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, watch, ref, computed, provide } from "vue";
+import { onMounted, watch, ref, computed, provide, onUnmounted } from "vue";
 import { useAppStore, useSettingsStore } from "@/store";
 import { FeedItem } from "@/service/types";
 import { useScroll } from "@/utils/scroll";
@@ -241,6 +241,32 @@ onMounted(async () => {
     );
     props.item.isRead = true;
   }
+  document.querySelectorAll(".reading .content pre").forEach((pre: any) => {
+    pre?.addEventListener("click", copyCode);
+  });
+});
+
+function copyCode(event: any) {
+  event.preventDefault();
+  event.stopPropagation();
+  const rect = event.target.closest("pre").getBoundingClientRect();
+
+  const right = rect.right - event.clientX;
+  const y = event.clientY - rect.top;
+  console.log(right, y);
+  if (right < 42 && y < 35) {
+    navigator.clipboard.writeText(event.target.textContent);
+    event.target.closest("pre").classList.add("copy-success");
+    setTimeout(() => {
+      event.target.closest("pre").classList.remove("copy-success");
+    }, 2000);
+  }
+}
+
+onUnmounted(() => {
+  document.querySelectorAll(".reading .content pre").forEach((pre: any) => {
+    pre?.removeEventListener("click", copyCode);
+  });
 });
 
 async function toggleSaved() {
@@ -347,13 +373,44 @@ provide(summarizingSymbol, summarizing);
     padding: 0.8rem 0;
   }
   pre {
+    position: relative;
     margin-top: 1rem;
     margin-bottom: 1rem;
-    background-color: rgba(var(--v-theme-on-code), 0.9);
-    color: rgb(var(--v-theme-code));
+    background-color: rgba(var(--v-theme-code), 0.8);
+    color: rgb(var(--v-theme-on-code));
     padding: 1rem;
-    border-radius: 0.5rem;
+    border-radius: 1rem;
     font-family: var(--code-font);
+    overflow-x: auto;
+    pointer-events: hover;
+    :before {
+      display: none;
+      cursor: pointer;
+      content: "复制";
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 35px;
+      width: 42px;
+      background-color: rgba(var(--v-theme-primary), 0.8);
+      color: rgb(var(--v-theme-on-primary));
+      padding: 0.2rem 0.5rem;
+      border-radius: 0 0.5rem 0 0.5rem;
+      pointer-events: auto;
+    }
+    &:hover {
+      :before {
+        display: block;
+      }
+    }
+  }
+  .copy-success {
+    :before {
+      content: "✓"; // 隐藏复制成功图标
+      font-size: 2rem;
+      font-weight: bold;
+      padding-left: 1rem;
+    }
   }
 }
 </style>
