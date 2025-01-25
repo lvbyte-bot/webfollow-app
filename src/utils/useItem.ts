@@ -12,7 +12,7 @@ export const useItem = () => {
     };
 
     const currentItem = computed(() => (
-        { ...item.value, isRead: !isUnread.value, isSaved: isSaved.value }
+        item.value ? { ...item.value, isRead: !isUnread.value, isSaved: isSaved.value } : undefined
     ));
 
     const isSaved = computed(() => saved_item_ids.has(item.value?.id ?? 0));

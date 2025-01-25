@@ -60,6 +60,8 @@ export function useHotkeys() {
                     currentSearchIndex++
                     break
             }
+        } else if (showHelp.value) {
+            // skip
         } else if (topReader) {
             switch (e.key) {
                 case 'ArrowLeft':
