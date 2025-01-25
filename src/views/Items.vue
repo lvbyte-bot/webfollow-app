@@ -18,7 +18,9 @@
     <main
       class="main-container"
       ref="mainRef"
-      v-show="!appStore.readerMode || general.defaultView == 'magazine'"
+      v-show="
+        !appStore.readerMode || (general.defaultView == 'magazine' && !mobile)
+      "
     >
       <slot v-bind:="{ openReader, loadData }">
         <!-- items -->
