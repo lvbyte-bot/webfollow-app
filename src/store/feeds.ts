@@ -1,6 +1,7 @@
 // stores/counter.js
 import {
     defineStore,
+    storeToRefs
 } from 'pinia'
 import {
     ref,
@@ -16,10 +17,10 @@ import { extFeed } from '@/api'
 import {
     useBaseStore
 } from './base'
+import { useSettingsStore } from './settings'
 import { useRoute } from 'vue-router'
 import { Subscription } from '@/service/types'
 import { feedRepo, Group, itemRepo } from '@/repository'
-import { url } from 'inspector'
 
 export const useFeedsStore = defineStore('feeds', () => {
     const {
@@ -27,6 +28,9 @@ export const useFeedsStore = defineStore('feeds', () => {
         fail_feed_ids,
         refresh: refreshBase
     } = useBaseStore()
+    const {
+        automation
+    } = storeToRefs(useSettingsStore())
     const groups: Ref<Group[]> = ref([])
     const route = useRoute()
     const data: Ref<Subscription[] | undefined> = ref([])
@@ -81,14 +85,7 @@ export const useFeedsStore = defineStore('feeds', () => {
         })
         subscriptions.value = follow
         // init readUrls
-        readUrls = [{ url: '/explore', unreadQty: 1 }, { url: '/next', unreadQty: 1 }, { url: '/all', unreadQty: unread_item_ids.size }]
-        subscriptions.value.forEach(g => {
-            readUrls.push({ url: '/c/' + g.id, unreadQty: g.unreadQty })
-            g.feeds.forEach(f => {
-                readUrls.push({ url: '/f/' + f.id, unreadQty: f.unreadQty })
-            })
-        })
-        updateNextUnReadUrl()
+        updateReadUrls()
     }
 
     async function refreshFeedUnreadQty() {
@@ -102,14 +99,7 @@ export const useFeedsStore = defineStore('feeds', () => {
             return g
         })
 
-        readUrls = [{ url: '/explore', unreadQty: 1 }, { url: '/next', unreadQty: 1 }, { url: '/all', unreadQty: unread_item_ids.size }]
-        subscriptions.value?.forEach(g => {
-            readUrls.push({ url: '/c/' + g.id, unreadQty: g.unreadQty })
-            g.feeds.forEach(f => {
-                readUrls.push({ url: '/f/' + f.id, unreadQty: f.unreadQty })
-            })
-        })
-        updateNextUnReadUrl()
+        updateReadUrls()
     }
 
     async function refresh() {
@@ -124,6 +114,21 @@ export const useFeedsStore = defineStore('feeds', () => {
     watch(route, () => {
         updateNextUnReadUrl()
     })
+    watch(automation, () => {
+        updateReadUrls()
+    }, { deep: true })
+
+
+    function updateReadUrls() {
+        readUrls = [{ url: '/explore', unreadQty: 1 }, { url: '/next', unreadQty: 1 }, ...automation.value.filters.map(f => ({ url: '/filter/' + f.id, unreadQty: 1 })), { url: '/all', unreadQty: unread_item_ids.size }]
+        subscriptions.value?.forEach(g => {
+            readUrls.push({ url: '/c/' + g.id, unreadQty: g.unreadQty })
+            g.feeds.forEach(f => {
+                readUrls.push({ url: '/f/' + f.id, unreadQty: f.unreadQty })
+            })
+        })
+        updateNextUnReadUrl()
+    }
 
     function updateNextUnReadUrl() {
         nextUnReadUrl.value = getNextUnReadUrl(route.fullPath)
