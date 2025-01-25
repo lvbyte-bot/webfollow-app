@@ -4,7 +4,7 @@
     @update:model-value="$emit('update:modelValue', false)"
     max-width="600"
   >
-    <v-card class="rounded-lg" height="70vh">
+    <v-card class="rounded-lg" height="80vh">
       <v-card-title class="d-flex justify-space-between">
         <span class="my-2">快捷键帮助</span>
         <v-spacer></v-spacer>
@@ -115,6 +115,10 @@
             <v-list-item>
               <v-list-item-title>N</v-list-item-title>
               <v-list-item-subtitle>打开下一个未读订阅源</v-list-item-subtitle>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-title>Shift + N</v-list-item-title>
+              <v-list-item-subtitle>打开上一个未读订阅源</v-list-item-subtitle>
             </v-list-item>
           </v-col>
         </v-row>

@@ -19,6 +19,7 @@ import {
 import { useRoute } from 'vue-router'
 import { Subscription } from '@/service/types'
 import { feedRepo, Group, itemRepo } from '@/repository'
+import { url } from 'inspector'
 
 export const useFeedsStore = defineStore('feeds', () => {
     const {
@@ -80,13 +81,14 @@ export const useFeedsStore = defineStore('feeds', () => {
         })
         subscriptions.value = follow
         // init readUrls
-        readUrls = [{ url: '/all' }, { url: '/next' }, { url: '/recom' }]
-        follow.forEach(g => {
+        readUrls = [{ url: '/explore', unreadQty: 1 }, { url: '/next', unreadQty: 1 }, { url: '/all', unreadQty: unread_item_ids.size }]
+        subscriptions.value.forEach(g => {
             readUrls.push({ url: '/c/' + g.id, unreadQty: g.unreadQty })
             g.feeds.forEach(f => {
                 readUrls.push({ url: '/f/' + f.id, unreadQty: f.unreadQty })
             })
         })
+        updateNextUnReadUrl()
     }
 
     async function refreshFeedUnreadQty() {
@@ -100,13 +102,14 @@ export const useFeedsStore = defineStore('feeds', () => {
             return g
         })
 
-        readUrls = [{ url: '/all' }, { url: '/next' }, { url: '/recom' }]
+        readUrls = [{ url: '/explore', unreadQty: 1 }, { url: '/next', unreadQty: 1 }, { url: '/all', unreadQty: unread_item_ids.size }]
         subscriptions.value?.forEach(g => {
             readUrls.push({ url: '/c/' + g.id, unreadQty: g.unreadQty })
             g.feeds.forEach(f => {
                 readUrls.push({ url: '/f/' + f.id, unreadQty: f.unreadQty })
             })
         })
+        updateNextUnReadUrl()
     }
 
     async function refresh() {
@@ -119,15 +122,12 @@ export const useFeedsStore = defineStore('feeds', () => {
     }
 
     watch(route, () => {
-        nextUnReadUrl.value = getNextUnReadUrl(route.fullPath)
+        updateNextUnReadUrl()
     })
 
-    watch(subscriptions, () => {
-        setTimeout(() => {
-            nextUnReadUrl.value = getNextUnReadUrl(route.fullPath)
-        }, 500);
-        // console.log(feeds)
-    })
+    function updateNextUnReadUrl() {
+        nextUnReadUrl.value = getNextUnReadUrl(route.fullPath)
+    }
 
     function getNextUnReadUrl(currentUrl: string): string {
         let canNextUrl = false
@@ -140,6 +140,26 @@ export const useFeedsStore = defineStore('feeds', () => {
             }
         }
         return ''
+    }
+
+    function getPrevUnReadUrl(currentUrl: string): string {
+        let prevUrl = ''
+        for (let i = 0; i < readUrls.length; i++) {
+            if (readUrls[i].url == currentUrl) {
+                return prevUrl
+            }
+            if (readUrls[i].unreadQty && readUrls[i].unreadQty > 0) {
+                prevUrl = readUrls[i].url
+            }
+        }
+        return ''
+    }
+
+    webfollowApp.getUnReadUrl = function (currentUrl: string, isNext: boolean = true): string {
+        if (isNext) {
+            return getNextUnReadUrl(currentUrl)
+        }
+        return getPrevUnReadUrl(currentUrl)
     }
 
     onMounted(async () => {
@@ -169,9 +189,6 @@ export const useFeedsStore = defineStore('feeds', () => {
         }
     }
 
-
-
-
     return {
         groups,
         subscriptions,
@@ -179,6 +196,5 @@ export const useFeedsStore = defineStore('feeds', () => {
         updateFeed,
         nextUnReadUrl,
         refresh,
-        readUrls
     }
 })

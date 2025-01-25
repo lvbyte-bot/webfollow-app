@@ -15,7 +15,6 @@ export function useHotkeys() {
         const topReader = document.querySelector('.v-main-top .cover.reading') as HTMLElement
         const listReader = document.querySelector('.main-reader .cover.reading') as HTMLElement
         const itemContainer = document.querySelector('.items-container');
-
         switch (e.key) {
             case 'k':
             case '/':
@@ -31,7 +30,6 @@ export function useHotkeys() {
                     // 打开帮助 ?
                     showHelp.value = true
                     return
-
                 }
                 break
             case 'n':
@@ -49,6 +47,7 @@ export function useHotkeys() {
                 }
                 break
         }
+
         // 在列表视图中
         if (showSearch.value) {
             switch (e.key) {
@@ -91,7 +90,6 @@ export function useHotkeys() {
                 case 'ArrowLeft':
                     // 上一篇文章
                     (document.querySelector('.entry-prev') as HTMLElement)?.click()
-                    console.log('ArrowLeft')
                     break
                 case 'ArrowRight':
                     // 下一篇文章
@@ -100,7 +98,7 @@ export function useHotkeys() {
             }
             handleReaderKeydown(e, listReader)
         } else if (itemContainer) {
-            switch (e.key) {
+            switch (e.key.toLowerCase()) {
                 case 'r':
                     // 刷新 r
                     (document.querySelector('.items-container .items-reload') as HTMLElement)?.click()
@@ -109,7 +107,11 @@ export function useHotkeys() {
                     (document.querySelector('.items-container .items-mark-read') as HTMLElement)?.click()
                     break
                 case 'n':
-                    (document.querySelector('.items-container .next-unreadlist .v-btn') as HTMLElement)?.click()
+                    if (e.shiftKey) {
+                        router.push(webfollowApp.getUnReadUrl(route.fullPath, false))
+                    } else {
+                        router.push(webfollowApp.getUnReadUrl(route.fullPath, true))
+                    }
                     break
                 case 'v':
                     (document.querySelector('.items-container .items-view-toggle') as HTMLElement)?.click()
@@ -174,7 +176,7 @@ export function useHotkeys() {
     }
 
     function handleReaderKeydown(e: KeyboardEvent, reader: HTMLElement) {
-        switch (e.key) {
+        switch (e.key.toLowerCase()) {
             case 's':
                 // 稍后阅读
                 (reader.querySelector('.cover.reading .entry-saved') as HTMLElement)?.click()
