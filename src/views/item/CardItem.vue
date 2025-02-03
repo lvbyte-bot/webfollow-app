@@ -42,7 +42,7 @@
           :aspect-ratio="
             mobile ? (item.enclosure ? 1.78 : 0.7) : item.enclosure ? 1.79 : 0
           "
-          max-height="360px"
+          max-height="600px"
           min-height="80px"
           :cover="mobile || item.enclosure"
           :src="item.thumbnail"
@@ -62,13 +62,13 @@
       ></p>
     </div>
       <!-- 标题信息 -->
-      <div class="mt-2 d-flex mx-1">
-        <div class="text-center">
+      <div class="my-2 d-flex mx-1">
+        <div class="text-center mr-2 left-info">
           <img
               :src="item?.feed?.icon"
               onerror="this.src='/logo.svg'"
               style="width:1.8rem;height: 1.8rem;"
-              class="mr-2 rounded-circle"
+              class="rounded-circle"
             />
             <br>
             <v-icon
@@ -83,7 +83,7 @@
          
           <span  v-text="item.title"></span>
         </p>
-        <div class="my-2 text-grey">
+        <div class="mt-2 text-grey">
           <small>
             
             {{ getSubtitle() }}
@@ -186,5 +186,11 @@ iframe {
     border-radius: 4px;
     font-size: 0.8rem;
   }
+}
+.left-info{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
 }
 </style>
