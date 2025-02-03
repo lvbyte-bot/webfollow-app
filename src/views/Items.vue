@@ -201,12 +201,10 @@ import {
 } from "@/store";
 import { FeedItem, LsItemType } from "@/service/types";
 import { useScroll } from "@/utils/scrollListener";
-import { useImgPreview } from "@/utils/useImgPreview";
 const props = defineProps(["type", "id"]);
 
 const mainRef = ref();
 
-useImgPreview();
 const { mobile } = useDisplay();
 const store = useItemsStore();
 const appStore = useAppStore();

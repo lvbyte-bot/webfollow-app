@@ -1,5 +1,5 @@
 <template>
-  <v-card min-height="80vh" class="rounded-lg">
+  <v-card max-height="70vh" class="rounded-lg">
     <v-container fluid>
       <v-row>
         <!-- 左侧导航菜单 -->
@@ -124,7 +124,7 @@ watch(props.activeMenu, (newVal) => {
   border-radius: 0 50px 50px 0;
 }
 :deep(.scroll) {
-  height: 70vh;
+  height: 60vh;
   overflow: scroll;
   .v-card--variant-elevated {
     box-shadow: none;

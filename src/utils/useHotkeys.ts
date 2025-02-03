@@ -15,6 +15,10 @@ export function useHotkeys() {
         const topReader = document.querySelector('.v-main-top .cover.reading') as HTMLElement
         const listReader = document.querySelector('.main-reader .cover.reading') as HTMLElement
         const itemContainer = document.querySelector('.items-container');
+        const imgPreviewEl = document.querySelector('body>.v-overlay-container .v-overlay')
+        if(imgPreviewEl){
+            return
+        }
         switch (e.key) {
             case 'k':
             case '/':

@@ -214,7 +214,7 @@
       <!-- 搜索弹框 -->
       <search-dialog v-model="showSearch" />
       <help-dialog v-model="showHelp" />
-      <v-dialog max-width="800px" v-model="settingable">
+      <v-dialog max-width="800px" max-height="70vh" v-model="settingable">
         <Settings
           :activeMenu="activeMenu"
           @onclose="settingable = false"
