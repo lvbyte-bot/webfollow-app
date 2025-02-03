@@ -73,7 +73,7 @@ const onSlideChange = (_: any) => {};
   height: 100%;
   display: grid;
   grid-gap: 1rem;
-  grid-template-columns: minmax(20vw, 5fr) minmax(15vw, 3fr);
+  grid-template-columns: minmax(20vw, 6fr) minmax(15vw, 2fr);
   background: rgb(var(--v-theme-background));
 }
 
@@ -148,12 +148,20 @@ const onSlideChange = (_: any) => {};
     text-align: center;
     margin: 0 auto;
     max-width: 100%;
+    display: none;
   }
   .v-card-title {
     display: none;
   }
   .bar-left {
     width: 10px;
+  }
+}
+@media (max-width: 1200px)  {
+  .text-reader {
+    img {
+      display: block;
+    }
   }
 }
 </style>
