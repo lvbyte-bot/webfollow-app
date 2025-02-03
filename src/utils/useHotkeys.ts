@@ -63,19 +63,8 @@ export function useHotkeys() {
         } else if (showHelp.value) {
             // skip
         } else if (topReader) {
-            switch (e.key) {
-                case 'ArrowLeft':
-                    // 上一篇文章
-                    (document.querySelector('.v-main-top .entry-prev') as HTMLElement)?.click()
-                    break
-                case 'ArrowRight':
-                    // 下一篇文章
-                    (document.querySelector('.v-main-top .entry-next') as HTMLElement)?.click()
-                    break
-            }
             handleReaderKeydown(e, topReader)
         } else if (listReader) {
-
             handleReaderKeydown(e, listReader)
         } else if (itemContainer) {
             switch (e.key.toLowerCase()) {
@@ -195,10 +184,20 @@ export function useHotkeys() {
                 (reader.querySelector('.mdi-close') as HTMLElement)?.click()
                 break
             case 'ArrowUp':
-                (reader.querySelector('.overflow') as HTMLElement)?.scrollBy(0, -100)
+                const prev = reader.querySelector('.swiper-button-prev')
+                if(prev){
+                    (prev as HTMLElement).click()
+                }else{
+                    (reader.querySelector('.overflow') as HTMLElement)?.scrollBy(0, -100)
+                }
                 break
             case 'ArrowDown':
-                (reader.querySelector('.overflow') as HTMLElement)?.scrollBy(0, 100)
+                const next = reader.querySelector('.swiper-button-next')
+                if(next){
+                    (next as HTMLElement).click()
+                }else{
+                    (reader.querySelector('.overflow') as HTMLElement)?.scrollBy(0, 100)
+                }
                 break
             case 'PageUp':
                 (reader.querySelector('.overflow') as HTMLElement)?.scrollBy(0, -window.innerHeight)
