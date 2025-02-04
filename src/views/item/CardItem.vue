@@ -54,46 +54,50 @@
           </template>
         </v-img>
       </div>
-        <div v-else :style="{ '--line-clamp': mobile ? 12 : 7 }" class=" text-body-2 px-4 py-3 text-grey border rounded-lg summary-warp">
-      <p
-        v-text="item.summary"
-        
-        class="text-ellipsis  "
-      ></p>
-    </div>
+      <div
+        v-else
+        :style="{ '--line-clamp': mobile ? 12 : 7 }"
+        class="text-body-2 px-4 py-3 text-grey border rounded-lg summary-warp"
+      >
+        <p v-text="item.summary" class="text-ellipsis"></p>
+      </div>
       <!-- 标题信息 -->
       <div class="my-2 d-flex mx-1">
         <div class="text-center mr-2 left-info">
-          <img
+          <v-badge v-if="!item.isRead" color="primary" dot>
+            <img
               :src="item?.feed?.icon"
               onerror="this.src='/logo.svg'"
-              style="width:1.8rem;height: 1.8rem;"
+              style="width: 1.8rem; height: 1.8rem"
               class="rounded-circle"
             />
-            <br>
-            <v-icon
+          </v-badge>
+          <img
+            v-else
+            :src="item?.feed?.icon"
+            onerror="this.src='/logo.svg'"
+            style="width: 1.8rem; height: 1.8rem"
+            class="rounded-circle"
+          />
+          <!-- <v-icon
             v-if="!item.isRead"
             style="margin-left: -5px"
             color="primary"
             :icon="item.isRead ? '' : 'mdi-circle-medium'"
-          ></v-icon>
+          ></v-icon> -->
         </div>
         <div>
           <p class="text-ellipsis">
-         
-          <span  v-text="item.title"></span>
-        </p>
-        <div class="mt-2 text-grey">
-          <small>
-            
-            {{ getSubtitle() }}
-          </small>
-          <br>
-          <small v-text="item.datestr"></small>
-
+            <span v-text="item.title"></span>
+          </p>
+          <div class="mt-2 text-grey">
+            <small>
+              {{ getSubtitle() }}
+            </small>
+            <br />
+            <small v-text="item.datestr"></small>
+          </div>
         </div>
-        </div>
-        
       </div>
     </v-card>
   </v-list-item>
@@ -151,8 +155,8 @@ function formatDuration(seconds: number) {
 </script>
 <style lang="scss" scoped>
 .summary-warp {
- // min-height: 152px;
- min-height: 10rem;
+  // min-height: 152px;
+  min-height: 10rem;
   box-sizing: border-box;
   background-color: rgba(var(--v-theme-surface-light), 0.2);
 }
@@ -187,7 +191,7 @@ iframe {
     font-size: 0.8rem;
   }
 }
-.left-info{
+.left-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
