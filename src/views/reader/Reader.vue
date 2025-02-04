@@ -45,16 +45,16 @@
               >
                 <ul>
                   <li
-                    v-for="(item0, index) in entryList"
-                    @click="openReader?.(index, undefined)"
-                    :class="{ active: item0.id == item.id }"
-                    :key="item0.id"
-                    :title="item0.title"
+                    v-for="entry in entryList"
+                    @click="openReader?.(0, entry)"
+                    :class="{ active: entry.id == item.id }"
+                    :key="entry.id"
+                    :title="entry.title"
                   >
-                    <v-icon :color="item0.isRead ? 'grey' : 'primary'">
-                      {{ item0.isRead ? "" : "mdi-circle-medium" }}
+                    <v-icon :color="entry.isRead ? 'grey' : 'primary'">
+                      {{ entry.isRead ? "" : "mdi-circle-medium" }}
                     </v-icon>
-                    {{ item0.title }}
+                    {{ entry.title }}
                   </li>
                 </ul>
               </div>
