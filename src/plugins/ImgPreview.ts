@@ -141,7 +141,7 @@ function createImgPreview(vuetify: any, options: ImgPreviewOptions = {}): ImgPre
 
             timeout = window.setTimeout(() => {
                 const target = event.target as HTMLElement;
-                if (target.tagName === 'IMG' && !target.classList.contains(excludeClass)) {
+                if (document.querySelector('.reading')?.contains(target)&&target.tagName === 'IMG' && !target.classList.contains(excludeClass)) {
                     openPreview((target as HTMLImageElement).src);
                 }
             }, 100);
