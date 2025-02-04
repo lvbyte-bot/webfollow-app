@@ -11,6 +11,7 @@
   --line-clamp: 2;
   --v-theme-primary: var(--theme-color) !important;
   --img-min-width: 150px;
+  --reader-main-max-width: 650px;
 }
 .v-theme--dark {
   --sidbar-bg: 41, 41, 45;

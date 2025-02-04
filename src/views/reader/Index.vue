@@ -328,7 +328,7 @@ provide(summarizingSymbol, summarizing);
 
   > * {
     min-width: 120px;
-    max-width: 650px;
+    max-width: var(--reader-main-max-width);
   }
   a {
     text-decoration: none;
@@ -357,7 +357,7 @@ provide(summarizingSymbol, summarizing);
 }
 
 :deep(.reader-warp) .content {
-  max-width: 664px;
+  max-width: calc(var(--reader-main-max-width) + 1rem);
   margin: 0 auto;
   padding: 0.5rem;
   line-height: var(--line-height);

@@ -76,7 +76,7 @@ const summarizing: boolean | undefined = inject(summarizingSymbol);
 .title-container {
   margin: 0 auto 2rem;
   text-align: center;
-  max-width: 692px;
+  max-width: calc(var(--reader-main-max-width) + 42px);
   padding: 1.5rem;
   border-radius: 0.5rem;
   &:hover {
@@ -103,33 +103,28 @@ const summarizing: boolean | undefined = inject(summarizingSymbol);
   text-decoration: none;
   &:hover {
     text-decoration: underline;
-    color: rgb(var(--v-theme-success));
+    color: rgb(var(--v-theme-primary));
   }
 }
 .chapter-warp {
   float: left;
   position: sticky;
-  top: 80px;
-  left: calc(50% + 340px);
+  top: 10rem;
+  left: calc(50% + var(--reader-main-max-width) / 2 + 2rem);
   max-width: 210px;
 }
 .summary {
   border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
   padding: 1rem !important;
   border-radius: 0.5rem;
-  max-width: calc(650px + 2rem) !important;
+  max-width: calc(var(--reader-main-max-width) + 2rem) !important;
 }
 @media (max-width: 1280px) {
   .chapter-warp {
     position: static;
-    // top: 60px;
     float: none;
     right: 0;
     max-width: 100%;
-    // background: rgb(var(--v-theme-background));
-    // border-radius: 0.5rem;
-    // max-height: 30vh;
-    // overflow: auto;
   }
 }
 </style>

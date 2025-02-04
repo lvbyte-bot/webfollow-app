@@ -170,7 +170,7 @@ onMounted(() => {
 }
 .entry-list {
   position: absolute;
-  top: 6rem;
+  top: 10rem;
   left: 0.5rem;
   width: 300px;
   min-height: 36vh;
@@ -191,6 +191,8 @@ onMounted(() => {
   color: rgba(var(--v-theme-on-code), 0.26);
   overflow: hidden;
   border: 1px solid rgba(var(--v-border-color), 0);
+  max-height: calc(60vh - 56px);
+  overflow: hidden;
   img {
     height: 1.1rem;
     margin: 0;
@@ -223,6 +225,7 @@ onMounted(() => {
   &:hover {
     max-width: none;
     color: rgba(var(--v-theme-on-code), 0.5);
+    overflow-y: auto;
   }
 }
 @media (max-width: 1280px) {
