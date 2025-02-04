@@ -90,7 +90,6 @@ import { computed, onMounted, watch } from "vue";
 import Reader from "./Index.vue";
 import { FeedItem } from "@/service/types";
 import { useRoute } from "vue-router";
-import { useImgPreview } from "@/utils/useImgPreview";
 
 const props = defineProps<{
   item: FeedItem | undefined;
@@ -103,7 +102,6 @@ const props = defineProps<{
 
 const emit = defineEmits(["update:modelValue"]);
 const route = useRoute();
-useImgPreview();
 
 const currentItemIndex = computed(() =>
   props.item
