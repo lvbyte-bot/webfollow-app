@@ -201,6 +201,8 @@ import {
 } from "@/store";
 import { FeedItem, LsItemType } from "@/service/types";
 import { useScroll } from "@/utils/scrollListener";
+import { confirm } from "@/plugins/confirm";
+
 const props = defineProps(["type", "id"]);
 
 const mainRef = ref();
@@ -373,11 +375,18 @@ async function pullFeedItems() {
 }
 
 async function markRead() {
-  await appStore.read(
-    Number(props.id),
-    props.type == "f" ? Marked.FEED : Marked.GROUP,
-    appStore.lastRefeshTime
-  );
+  const confirmed = await confirm({
+    title: "标记已读",
+    message: "确定要将全部文章标记为已读吗？",
+  });
+
+  if (confirmed) {
+    await appStore.read(
+      Number(props.id),
+      props.type == "f" ? Marked.FEED : Marked.GROUP,
+      appStore.lastRefeshTime
+    );
+  }
 }
 
 function openReader(index: number, item: FeedItem | undefined) {
