@@ -95,7 +95,7 @@ export const useFeedsStore = defineStore('feeds', () => {
             await Promise.all(g.feeds.map(async f => {
                 f.unreadQty = await sumUnread(items, f.id, unread_item_ids)
             }))
-            g.unreadQty = g.feeds.map(f => f.unreadQty).reduce((x, y) => x + y)
+            g.unreadQty = g.feeds.map(f => f.unreadQty).reduce((x, y) => x + y, 0)
             return g
         })
 
