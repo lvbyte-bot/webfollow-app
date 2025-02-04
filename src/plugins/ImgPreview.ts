@@ -165,7 +165,7 @@ function createImgPreview(vuetify: any, options: ImgPreviewOptions = {}): ImgPre
         mainContainer.addEventListener('click', handleImageClick);
         eventListeners.set(mainContainer, handleImageClick);
         window.addEventListener('keydown', handleKeyDown);
-        console.log('imgPreview init')
+        log('imgPreview init')
     };
 
     const destroy = () => {
