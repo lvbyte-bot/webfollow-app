@@ -44,7 +44,7 @@ const cancel = () => {
 
 const handleKeydown = (e: KeyboardEvent) => {
   if (!dialogVisible.value) return;
-
+  e.stopPropagation();
   if (e.key.toLowerCase() === "y") {
     confirm();
   } else if (e.key.toLowerCase() === "n") {
