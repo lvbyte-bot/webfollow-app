@@ -3,7 +3,7 @@ import { onBeforeMount, onMounted, ref, } from 'vue'
 
 interface GeneralSettings {
     startPage: 'welcome' | 'all' | 'next' | 'firstfolder' | 'explore'
-    defaultView: 'text' | 'card' | 'magazine'
+    defaultView: 'text' | 'card' | 'magazine' | 'column'
     hideReadArticles: boolean
     autoRefresh: boolean
     refreshInterval: number

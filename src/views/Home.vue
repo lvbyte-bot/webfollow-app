@@ -43,7 +43,7 @@
         v-show="
           hideSide &&
           (!appStore.readerMode ||
-            settingsStore.general.defaultView == 'magazine')
+            settingsStore.general.defaultView == 'column')
         "
         class="min-side pa-1"
       >
@@ -179,7 +179,7 @@
         v-show="
           playListStore.playlist.length &&
           (!appStore.readerMode ||
-            settingsStore.general.defaultView == 'magazine' ||
+            settingsStore.general.defaultView == 'column' ||
             !hideSide)
         "
         icon

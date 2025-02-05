@@ -7,7 +7,7 @@
         'top-sider-hidden':
           isScrollingDown &&
           scrollTop > 960 &&
-          settingsStore.general.defaultView != 'magazine',
+          settingsStore.general.defaultView != 'column',
       }"
     >
       <div class="prepend-bar">

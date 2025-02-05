@@ -1,7 +1,7 @@
 <template>
   <div
     class="main-warp"
-    :class="{ 'main-col': general.defaultView == 'magazine' && type }"
+    :class="{ 'main-col': general.defaultView == 'column' && type }"
   >
     <reader
       v-if="currentItem && store.items?.length"
@@ -9,7 +9,7 @@
       :items="store.items"
       :open-reader="openReader"
       :entry-list-disable="
-        mobile || !(general.defaultView != 'magazine' || !type)
+        mobile || !(general.defaultView != 'column' || !type)
       "
       :modelValue="appStore.readerMode"
       @update:modelValue="appStore.readerMode = $event"
@@ -19,7 +19,7 @@
       class="main-container"
       ref="mainRef"
       v-show="
-        !appStore.readerMode || (general.defaultView == 'magazine' && !mobile)
+        !appStore.readerMode || (general.defaultView == 'column' && !mobile)
       "
     >
       <slot v-bind:="{ openReader, loadData }">
@@ -74,16 +74,20 @@
                   v-if="!mobile"
                   :icon="
                     general.defaultView == 'card'
-                      ? 'mdi-view-gallery-outline'
-                      : general.defaultView == 'magazine'
+                      ? 'mdi-view-grid-outline'
+                      : general.defaultView == 'column'
                       ? 'mdi-view-column-outline'
+                      : general.defaultView == 'magazine'
+                      ? 'mdi-view-sequential-outline'
                       : 'mdi-view-list-outline'
                   "
                   :title="
                     general.defaultView == 'card'
                       ? '卡片视图'
-                      : general.defaultView == 'magazine'
+                      : general.defaultView == 'column'
                       ? '三栏视图'
+                      : general.defaultView == 'magazine'
+                      ? '杂志视图'
                       : '列表视图'
                   "
                   @click="changeItemView()"
@@ -239,6 +243,8 @@ function changeItemView() {
     general.value.defaultView = "card";
   } else if (general.value.defaultView == "card") {
     general.value.defaultView = "magazine";
+  } else if (general.value.defaultView == "magazine") {
+    general.value.defaultView = "column";
   } else {
     general.value.defaultView = "text";
   }

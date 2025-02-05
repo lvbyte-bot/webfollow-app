@@ -31,15 +31,23 @@
             <template v-slot:label>
               <div class="d-flex align-center">
                 卡片视图
-                <v-icon class="ml-2">mdi-view-gallery-outline</v-icon>
+                <v-icon class="ml-2">mdi-view-grid-outline</v-icon>
+              </div>
+            </template>
+          </v-radio>
+          <v-radio label="三栏视图" value="column">
+            <template v-slot:label>
+              <div class="d-flex align-center">
+                三栏视图
+                <v-icon class="ml-2">mdi-view-column-outline </v-icon>
               </div>
             </template>
           </v-radio>
           <v-radio label="杂志视图" value="magazine">
             <template v-slot:label>
               <div class="d-flex align-center">
-                三栏视图
-                <v-icon class="ml-2">mdi-view-column-outline </v-icon>
+                杂志视图
+                <v-icon class="ml-2">mdi-view-sequential-outline</v-icon>
               </div>
             </template>
           </v-radio>
