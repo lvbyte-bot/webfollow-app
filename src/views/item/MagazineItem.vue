@@ -57,7 +57,6 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { getIconBackground } from "@/utils/iconBackgoundUtils";
 const props = defineProps(["item", "type"]);
 
 function getSource() {

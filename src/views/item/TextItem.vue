@@ -84,9 +84,9 @@ function toggleSaved() {
   emit("click-action", ClickType.save, props.item);
 }
 
-function toggleRead() {
-  emit("click-action", ClickType.read, props.item);
-}
+// function toggleRead() {
+//   emit("click-action", ClickType.read, props.item);
+// }
 
 function getSource() {
   const source =
