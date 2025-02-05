@@ -2,7 +2,7 @@
   <v-list-item v-bind="$attrs" class="pa-0 rounded-lg">
     <v-card flat class="rounded-lg card">
       <div
-        v-if="item.thumbnail"
+        v-if="item.thumbnail || item.feed?.icon"
         @mouseover="showIframe = true"
         @mouseleave="showIframe = false"
         :style="{
@@ -45,7 +45,7 @@
           max-height="600px"
           min-height="80px"
           :cover="mobile || item.enclosure"
-          :src="item.thumbnail"
+          :src="item.thumbnail || item.feed?.icon"
         >
           <template v-if="item.type == 'VIDEO' || item.type == 'PODCAST'">
             <div class="play-duration">

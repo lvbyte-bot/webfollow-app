@@ -18,7 +18,10 @@
             {{ item.datestr }}
           </div>
         </div>
-        <div class="magazine-sec" :class="{ nomagazinethumb: !item.thumbnail }">
+        <div
+          class="magazine-sec"
+          :class="{ nomagazinethumb: !isVideoOrPodcast }"
+        >
           <div class="desc text-ellipsis">
             <p class="mb-2 text-body-1 title">
               {{ item.title }}
@@ -27,9 +30,9 @@
               {{ item.summary }}
             </p>
           </div>
-          <div v-if="item.thumbnail">
+          <div v-if="isVideoOrPodcast">
             <v-img
-              :src="item.thumbnail"
+              :src="item.thumbnail || item.feed?.icon"
               class="play-preview"
               cover
               height="80px"
@@ -53,6 +56,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { getIconBackground } from "@/utils/iconBackgoundUtils";
 const props = defineProps(["item", "type"]);
 
 function getSource() {
@@ -70,6 +75,9 @@ function formatDuration(seconds: number) {
     .toString()
     .padStart(2, "0")}`;
 }
+const isVideoOrPodcast = computed(() => {
+  return props.item.type === "VIDEO" || props.item.type === "PODCAST";
+});
 </script>
 
 <style lang="scss" scoped>
@@ -112,7 +120,7 @@ function formatDuration(seconds: number) {
 }
 .magazine-sec {
   display: grid;
-  grid-template-columns: 3fr minmax(80px, 1fr);
+  grid-template-columns: 3fr minmax(80px, auto);
   grid-gap: 0.5rem;
   .v-img {
     border-radius: 0.5rem;
@@ -141,6 +149,7 @@ a {
 }
 .play-preview {
   overflow: hidden;
+  background-color: rgba(var(--v-theme-surface-variant), 0.6);
   .play-icon-wrapper {
     position: absolute;
     inset: 0;
