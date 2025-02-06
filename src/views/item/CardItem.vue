@@ -103,7 +103,7 @@
   </v-list-item>
 </template>
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { useDisplay } from "vuetify";
 const props = defineProps(["item", "type"]);
 const { mobile } = useDisplay();
@@ -134,6 +134,10 @@ function getSubtitle() {
       : props.item.feed?.title;
   return `${source}`;
 }
+
+const isVideoOrPodcast = computed(() => {
+  return props.item.type === "VIDEO" || props.item.type === "PODCAST";
+});
 
 function videoUrl() {
   const link = props.item.link;
