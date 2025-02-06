@@ -332,7 +332,15 @@ defineExpose({
   animation: fadeIn 0.3s forwards; /* 动画效果 */
 }
 @keyframes fadeIn {
-  to {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  50% {
+    opacity: 0.1;
+    transform: translateY(5px);
+  }
+  100% {
     opacity: 1;
     transform: translateY(0);
   }
