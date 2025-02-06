@@ -16,7 +16,8 @@ export function useHotkeys() {
         const listReader = document.querySelector('.main-reader .cover.reading') as HTMLElement
         const itemContainer = document.querySelector('.items-container');
         const imgPreviewEl = document.querySelector('body>.v-overlay-container .v-overlay')
-        if(imgPreviewEl){
+
+        if (imgPreviewEl && !showSearch.value) {
             return
         }
         switch (e.key) {
@@ -189,17 +190,17 @@ export function useHotkeys() {
                 break
             case 'ArrowUp':
                 const prev = reader.querySelector('.swiper-button-prev')
-                if(prev){
+                if (prev) {
                     (prev as HTMLElement).click()
-                }else{
+                } else {
                     (reader.querySelector('.overflow') as HTMLElement)?.scrollBy(0, -100)
                 }
                 break
             case 'ArrowDown':
                 const next = reader.querySelector('.swiper-button-next')
-                if(next){
+                if (next) {
                     (next as HTMLElement).click()
-                }else{
+                } else {
                     (reader.querySelector('.overflow') as HTMLElement)?.scrollBy(0, 100)
                 }
                 break
