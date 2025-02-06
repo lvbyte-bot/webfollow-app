@@ -79,7 +79,9 @@
                       ? 'mdi-view-column-outline'
                       : general.defaultView == 'magazine'
                       ? 'mdi-view-sequential-outline'
-                      : 'mdi-view-list-outline'
+                      : general.defaultView == 'list'
+                      ? 'mdi-list-box-outline'
+                      : 'mdi-text-box-outline'
                   "
                   :title="
                     general.defaultView == 'card'
@@ -88,7 +90,9 @@
                       ? '三栏视图'
                       : general.defaultView == 'magazine'
                       ? '杂志视图'
-                      : '列表视图'
+                      : general.defaultView == 'list'
+                      ? '列表视图'
+                      : '清单视图'
                   "
                   @click="changeItemView()"
                   class="items-view-toggle"
@@ -239,14 +243,18 @@ const onlyUnread = computed(() => general.value.hideReadArticles);
 const { isBottom } = useScroll(mainRef);
 
 function changeItemView() {
-  if (general.value.defaultView == "text") {
+  if (general.value.defaultView == "list") {
     general.value.defaultView = "card";
   } else if (general.value.defaultView == "card") {
+    general.value.defaultView = "column";
+  } else if (general.value.defaultView == "column") {
     general.value.defaultView = "magazine";
   } else if (general.value.defaultView == "magazine") {
-    general.value.defaultView = "column";
-  } else {
     general.value.defaultView = "text";
+  } else if (general.value.defaultView == "text") {
+    general.value.defaultView = "list";
+  } else {
+    general.value.defaultView = "list";
   }
   mainRef.value.style.width = "";
   mainRef.value.scrollTo(0, 0);

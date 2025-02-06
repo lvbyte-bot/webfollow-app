@@ -2,7 +2,7 @@
   <v-list-item v-bind="$attrs" class="pa-0 rounded-lg">
     <v-card flat class="rounded-lg card">
       <div
-        v-if="item.thumbnail || item.feed?.icon"
+        v-if="item.thumbnail || isVideoOrPodcast"
         @mouseover="showIframe = true"
         @mouseleave="showIframe = false"
         :style="{
@@ -47,7 +47,7 @@
           :cover="mobile || item.enclosure"
           :src="item.thumbnail || item.feed?.icon"
         >
-          <template v-if="item.type == 'VIDEO' || item.type == 'PODCAST'">
+          <template v-if="isVideoOrPodcast">
             <div class="play-duration">
               {{ formatDuration(item.duration) }}
             </div>

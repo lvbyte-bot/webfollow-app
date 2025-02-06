@@ -3,7 +3,7 @@ import { onBeforeMount, onMounted, ref, } from 'vue'
 
 interface GeneralSettings {
     startPage: 'welcome' | 'all' | 'next' | 'firstfolder' | 'explore'
-    defaultView: 'text' | 'card' | 'magazine' | 'column'
+    defaultView: 'text' | 'card' | 'magazine' | 'column' | 'list'
     hideReadArticles: boolean
     autoRefresh: boolean
     refreshInterval: number
@@ -55,7 +55,7 @@ interface SettingsState {
 export const useSettingsStore = defineStore('settings', () => {
     const general = ref<GeneralSettings>({
         startPage: 'explore',
-        defaultView: 'text',
+        defaultView: 'list',
         hideReadArticles: true,
         autoRefresh: false,
         refreshInterval: 30 * 60,
@@ -135,7 +135,7 @@ export const useSettingsStore = defineStore('settings', () => {
     function resetGeneralSettings() {
         general.value = {
             startPage: 'explore',
-            defaultView: 'text',
+            defaultView: 'list',
             hideReadArticles: true,
             autoRefresh: false,
             refreshInterval: 30 * 60,

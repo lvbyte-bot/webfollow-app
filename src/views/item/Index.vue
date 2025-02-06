@@ -31,6 +31,20 @@
       class="entry-item"
     ></MagazineItem>
   </template>
+  <template v-else-if="view == 'text'">
+    <v-list>
+      <TextItem
+        v-for="(item, index) in items"
+        :item="item"
+        @click="openReader(index, item)"
+        @click-action="clickAction"
+        @contextmenu.prevent="showContextMenu($event, item, index)"
+        :type="type"
+        :key="item.id"
+        class="entry-item"
+      ></TextItem>
+    </v-list>
+  </template>
   <template v-else>
     <ContentItem
       v-for="(item, index) in items"
@@ -114,6 +128,7 @@ import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import CardItem from "./CardItem.vue";
 import MagazineItem from "./MagazineItem.vue";
 import ContentItem from "./ContentItem.vue";
+import TextItem from "./TextItem.vue";
 import { FeedItem } from "@/service/types";
 import { ClickType } from "./types";
 const props = defineProps<{

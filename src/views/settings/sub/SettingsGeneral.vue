@@ -19,11 +19,11 @@
       <v-card-title>默认视图</v-card-title>
       <v-card-text>
         <v-radio-group v-model="data.defaultView">
-          <v-radio label="列表视图" value="text">
+          <v-radio label="列表视图" value="list">
             <template v-slot:label>
               <div class="d-flex align-center">
                 列表视图
-                <v-icon class="ml-2">mdi-view-list-outline</v-icon>
+                <v-icon class="ml-2">mdi-list-box-outline</v-icon>
               </div>
             </template>
           </v-radio>
@@ -48,6 +48,14 @@
               <div class="d-flex align-center">
                 杂志视图
                 <v-icon class="ml-2">mdi-view-sequential-outline</v-icon>
+              </div>
+            </template>
+          </v-radio>
+          <v-radio label="标题视图" value="text">
+            <template v-slot:label>
+              <div class="d-flex align-center">
+                清单视图
+                <v-icon class="ml-2">mdi-text-box-outline</v-icon>
               </div>
             </template>
           </v-radio>

@@ -1,24 +1,23 @@
 <template>
-  <v-list-item :class="{ 'hover-bg': true, readly: item.isRead }">
-    <template v-slot:prepend>
-      <v-icon :color="item.isRead ? 'grey' : 'primary'">
-        {{ item.isRead ? "" : "mdi-circle-medium" }}
-      </v-icon>
-    </template>
+  <v-list-item :class="{  readly: item.isRead }" class="rounded hover-bg "   >
 
     <v-list-item-title class="d-flex justify-space-between align-center">
+      
       <div class="text-item">
+        <v-icon :color="item.isRead ? 'grey' : 'primary'">
+        {{ item.isRead ? "" : "mdi-circle-medium" }}
+      </v-icon>
         <div class="d-flex align-center ">
-          <img class="noclick mr-2" :src=" item?.feed?.icon" onerror="this.src='/logo.svg'" style="width:1rem" >
+          <img class="noclick mr-2 rounded" :src=" item?.feed?.icon" onerror="this.src='/logo.svg'" style="width:1rem" >
             </img>
-            <span
-          class="text-truncate  text-medium-emphasis"
+        <small
+          class="text-truncate  text-medium-emphasis "
           v-text="getSource()"
-        ></span>
+        ></small>
         </div>
         
         <div class="text-truncate">
-          <span class="mr-2 title" v-text="item.title"></span>
+          <span class="mr-2 text-body-1 title" v-text="item.title"></span>
           <span class="text-body-2 text-medium-emphasis" v-text="item.summary">
           </span>
         </div>
@@ -54,14 +53,19 @@
 
         <v-btn
           size="small"
+          height="24"
+          width="24"
           icon="mdi-open-in-new"
           variant="text"
           title="打开原文"
+          class="mr-2"
           :href="item.link"
         ></v-btn>
         <v-btn
           size="small"
           variant="text"
+          height="24"
+          width="24"
           icon
           title="稍后阅读"
           @click.stop="toggleSaved"
@@ -99,10 +103,10 @@ function getSource() {
 
 <style scoped>
 .readly {
-  opacity: 0.8;
+  opacity: 0.6;
 }
 .readly .title {
-  font-weight: 300;
+  font-weight: none;
 }
 .hover-bg:hover {
   background-color: rgba(var(--v-theme-surface-variant), 0.1);
@@ -119,7 +123,7 @@ function getSource() {
 }
 .text-item {
   display: grid;
-  grid-template-columns: 150px 1fr;
+  grid-template-columns: 1.5rem 150px 1fr;
   gap: 1rem;
 }
 .hover-bg:hover .buttons {
@@ -133,11 +137,8 @@ function getSource() {
   flex: 1;
   min-width: 0;
 }
-.v-list-item--density-default {
-  min-height: 48px;
-}
 
 .title {
-  font-weight: bold;
+  font-weight: 500;
 }
 </style>
