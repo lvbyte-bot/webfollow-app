@@ -47,7 +47,7 @@
         :key="item.id"
         class="entry-item"
         :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
-        :style="{ animationDelay: `${(index % 50) * 0.02}s` }"
+        :style="{ animationDelay: `${(index % 50) * 0.005}s` }"
       />
     </v-list>
   </template>
