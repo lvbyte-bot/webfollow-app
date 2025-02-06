@@ -274,7 +274,7 @@ const debounceLoadData = debound(() => {
   // show.value = false;
   appStore.readerMode = false;
   mainRef.value.scrollTo(0, 0);
-}, 1000);
+}, 360);
 
 function watchRefresh() {
   watch(props, () => {
