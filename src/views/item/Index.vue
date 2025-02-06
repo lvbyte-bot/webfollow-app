@@ -10,18 +10,20 @@
       v-for="(item, index) in items"
       :key="item.id"
     >
-      <CardItem
+      <card-item
         :item="item"
         @click="openReader(index, item)"
         @click-action="clickAction"
         @contextmenu.prevent="showContextMenu($event, item, index)"
         :type="type"
         class="entry-item"
-      ></CardItem>
+        :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
+        :style="{ animationDelay: `${(index % 50) * 0.08}s` }"
+      />
     </v-col>
   </v-row>
   <template v-else-if="view == 'magazine' || view == 'column'">
-    <MagazineItem
+    <magazine-item
       v-for="(item, index) in items"
       :item="item"
       @click="openReader(index, item)"
@@ -29,11 +31,13 @@
       :type="type"
       :key="item.id"
       class="entry-item"
-    ></MagazineItem>
+      :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
+      :style="{ animationDelay: `${(index % 50) * 0.08}s` }"
+    />
   </template>
   <template v-else-if="view == 'text'">
     <v-list>
-      <TextItem
+      <text-item
         v-for="(item, index) in items"
         :item="item"
         @click="openReader(index, item)"
@@ -42,11 +46,13 @@
         :type="type"
         :key="item.id"
         class="entry-item"
-      ></TextItem>
+        :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
+        :style="{ animationDelay: `${(index % 50) * 0.02}s` }"
+      />
     </v-list>
   </template>
   <template v-else>
-    <ContentItem
+    <content-item
       v-for="(item, index) in items"
       :item="item"
       @click="openReader(index, item)"
@@ -55,9 +61,10 @@
       :type="type"
       :key="item.id"
       class="entry-item"
-    ></ContentItem>
+      :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
+      :style="{ animationDelay: `${(index % 50) * 0.1}s` }"
+    />
   </template>
-
   <!-- 右键菜单 -->
   <v-dialog-transition>
     <v-card
@@ -123,7 +130,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAppStore } from "@/store";
+import { useAppStore, useSettingsStore } from "@/store";
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import CardItem from "./CardItem.vue";
 import MagazineItem from "./MagazineItem.vue";
@@ -138,6 +145,7 @@ const props = defineProps<{
 }>();
 const emit = defineEmits(["open-reader"]);
 const store = useAppStore();
+const settingStore = useSettingsStore();
 const currentItem = ref<FeedItem | undefined>(undefined);
 const itemsType = computed(() => {
   const counts = props.items.slice(0, 50).reduce((acc: any, item: FeedItem) => {
@@ -317,5 +325,16 @@ defineExpose({
 }
 .v-list-item .v-card {
   padding: 9px;
+}
+.fade-in {
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeIn 0.3s forwards; /* 动画效果 */
+}
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

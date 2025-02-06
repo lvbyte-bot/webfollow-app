@@ -17,6 +17,8 @@ interface AppearanceSettings {
     codeFont: string
     fontSize: number
     density: 'comfortable' | 'compact' | 'default'
+    // 减少动画
+    lessAnimation: boolean,
     hideSidebar: boolean
     sidebarWidth: number
 }
@@ -70,6 +72,7 @@ export const useSettingsStore = defineStore('settings', () => {
         codeFont: 'mono',
         fontSize: 14,
         density: 'default',
+        lessAnimation: false,
         hideSidebar: false,
         sidebarWidth: 256
     })
@@ -154,6 +157,7 @@ export const useSettingsStore = defineStore('settings', () => {
             codeFont: 'mono',
             fontSize: 14,
             density: 'default',
+            lessAnimation: false,
             hideSidebar: false,
             sidebarWidth: 256
         }
