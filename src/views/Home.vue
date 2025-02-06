@@ -113,10 +113,10 @@
       <v-navigation-drawer
         :model-value="!mobile && !hideSide"
         class="resizable-drawer"
-        :width="drawerWidth"
+        :width="settingsStore.appearance.sidebarWidth"
       >
         <!-- 桌面端侧边栏 -->
-        <SideBar>
+        <SideBar :width="settingsStore.appearance.sidebarWidth + 'px'">
           <template #top>
             <div class="mb-2 d-flex justify-space-between align-center">
               <div
@@ -153,7 +153,7 @@
       <v-main :class="{ cols: !mobile, hideside: hideSide || mobile }">
         <div class="v-main-top"></div>
         <!-- 主体 -->
-        <div class="flexible">
+        <div>
           <c-btn
             v-if="mobile"
             class="ma-2 menu-warp logo"
@@ -316,17 +316,27 @@ watch(
     }
   }
 );
-
+const { width: drawerWidth } = useElResize(() =>
+  document.querySelector(".resizable-drawer .v-navigation-drawer__content")
+);
 watch(hideSide, () => {
   settingsStore.appearance.hideSidebar = hideSide.value;
   settingsStore.saveToLocalStorage();
 });
+watch(drawerWidth, (v) => {
+  // 防止抖动
+  if (
+    v - settingsStore.appearance.sidebarWidth > 2 ||
+    settingsStore.appearance.sidebarWidth - v > 2
+  ) {
+    settingsStore.appearance.sidebarWidth = drawerWidth.value;
+    settingsStore.saveToLocalStorage();
+  }
+});
 onBeforeMount(() => {
   hideSide.value = settingsStore.appearance.hideSidebar;
 });
-const { width: drawerWidth } = useElResize(() =>
-  document.querySelector(".resizable-drawer .v-navigation-drawer__content")
-);
+
 onMounted(() => {
   // 默认启动页
   let startPage = settingsStore.general.startPage;
@@ -401,6 +411,7 @@ const { showSearch, showHelp } = useHotkeys();
   }
 }
 .resizable-drawer {
+  min-width: 256px;
   :deep(.v-navigation-drawer__content) {
     min-width: 256px;
     max-width: 350px;
@@ -418,9 +429,9 @@ const { showSearch, showHelp } = useHotkeys();
 }
 </style>
 <style lang="scss">
-.flexible {
-  flex: 1;
-}
+// .flexible {
+//   flex: 1;
+// }
 .hideside {
   .top-bar .v-app-bar-title {
     margin-left: 3rem;
