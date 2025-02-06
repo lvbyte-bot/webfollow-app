@@ -1,7 +1,7 @@
 // src/utils/useImgPreview.ts
 
 import { ref, createApp, h, defineComponent } from 'vue';
-import { VBtn, VDialog, VImg } from 'vuetify/components';
+import ImagePreviewDialog from '@/components/ImagePreviewDialog.vue';
 
 // 添加类型定义
 interface ImgPreviewInstance {
@@ -18,7 +18,7 @@ function createImgPreview(vuetify: any, options: ImgPreviewOptions = {}): ImgPre
     const dialog = ref(false);
     const imgSrc = ref('');
     const currentIndex = ref(0);
-    const images = ref<string[]>([]);
+    const images = ref<HTMLImageElement[]>([]);
 
     const {
         selector = '.reading .reader-warp',
@@ -31,56 +31,7 @@ function createImgPreview(vuetify: any, options: ImgPreviewOptions = {}): ImgPre
     const parent = document.createElement('div');
     document.body.appendChild(parent);
 
-    const app = createApp(defineComponent({
-        setup() {
-            return { dialog, imgSrc, currentIndex, images };
-        },
-        render() {
-            return h(
-                VDialog,
-                {
-                    'modelValue': this.dialog,
-                    'onUpdate:modelValue': (v: boolean) => this.dialog = v,
-                    fullscreen: true,
-                },
-                [
-                    h('div', {
-                        style: {
-                            height: '100vh',
-                            display: 'flex',
-                            'align-items': 'center',
-                            'justify-content': 'center',
-                            position: 'relative'
-                        }
-                    }, [
 
-                        h(VImg, {
-                            src: this.imgSrc,
-                            maxHeight: '100vh',
-                            maxWidth: '100vw',
-                        }),
-                        h(VBtn, {
-                            onClick: () => navigateImage('prev'),
-                            icon: 'mdi-chevron-left',
-                            style: { position: 'absolute', left: '1rem' }
-                        }),
-                        h(VBtn, {
-                            onClick: () => navigateImage('next'),
-                            icon: 'mdi-chevron-right',
-                            style: { position: 'absolute', right: '1rem' }
-                        })
-                    ]),
-                    h(VBtn, {
-                        onClick: () => { this.dialog = false },
-                        icon: 'mdi-close',
-                        style: { position: 'absolute', top: '1rem', right: '1rem' }
-                    })
-                ]
-            );
-        },
-    }))
-    app.use(vuetify)
-    app.mount(parent)
 
     const collectImages = () => {
         const container = document.querySelector(selector);
@@ -89,7 +40,7 @@ function createImgPreview(vuetify: any, options: ImgPreviewOptions = {}): ImgPre
         try {
             const imgElements = container.querySelectorAll(`img:not(.${excludeClass})`);
             const validImages = Array.from(imgElements)
-                .map(img => (img as HTMLImageElement).src)
+                .map(img => (img as HTMLImageElement))
                 .filter(src => src); // 过滤掉无效的src
 
             images.value = validImages;
@@ -101,10 +52,9 @@ function createImgPreview(vuetify: any, options: ImgPreviewOptions = {}): ImgPre
     // 优化导航逻辑
     const navigateImage = (direction: 'prev' | 'next') => {
         if (images.value.length <= 1) return;
-
         const delta = direction === 'prev' ? -1 : 1;
         currentIndex.value = (currentIndex.value + delta + images.value.length) % images.value.length;
-        imgSrc.value = images.value[currentIndex.value];
+        imgSrc.value = images.value[currentIndex.value].src;
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -121,7 +71,7 @@ function createImgPreview(vuetify: any, options: ImgPreviewOptions = {}): ImgPre
 
     const openPreview = (src: string) => {
         collectImages();
-        currentIndex.value = images.value.findIndex(img => img === src);
+        currentIndex.value = images.value.findIndex(img => img.src === src);
         imgSrc.value = src;
         dialog.value = true;
     };
@@ -141,12 +91,38 @@ function createImgPreview(vuetify: any, options: ImgPreviewOptions = {}): ImgPre
 
             timeout = window.setTimeout(() => {
                 const target = event.target as HTMLElement;
-                if (document.querySelector('.reading')?.contains(target)&&target.tagName === 'IMG' && !target.classList.contains(excludeClass)) {
+                if (document.querySelector('.reading')?.contains(target) && target.tagName === 'IMG' && !target.classList.contains(excludeClass)) {
                     openPreview((target as HTMLImageElement).src);
                 }
             }, 100);
         };
     })();
+
+    const app = createApp(defineComponent({
+        setup() {
+            return () => h(ImagePreviewDialog, {
+                modelValue: dialog.value,
+                'onUpdate:modelValue': (v: boolean) => dialog.value = v,
+                imgSrc: imgSrc.value,
+                images: images.value.map(img => img.src),
+                onNavigate: (direction: 'prev' | 'next' | 'goto' | number) => {
+                    if (typeof direction === 'number') {
+                        // 处理点击缩略图的情况
+                        currentIndex.value = direction;
+                        imgSrc.value = images.value[direction].src;
+                    } else if (direction === 'prev' || direction === 'next') {
+                        // 处理前进/后退导航
+                        navigateImage(direction);
+                    } else if (direction === 'goto') {
+                        images.value[currentIndex.value].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        closePreview();
+                    }
+                }
+            });
+        }
+    }));
+    app.use(vuetify)
+    app.mount(parent)
 
     const init = () => {
         const mainContainer: HTMLElement | null = document.querySelector('.v-main');

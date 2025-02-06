@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="dialogVisible" max-width="400" @keydown="handleKeydown">
+  <v-dialog
+    v-model="dialogVisible"
+    :theme="settingsStore.appearance.themeMode"
+    max-width="400"
+    @keydown="handleKeydown"
+  >
     <v-card>
       <v-card-title class="text-h6">{{ title }}</v-card-title>
       <v-card-text>
@@ -18,6 +23,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, computed } from "vue";
+import { useSettingsStore } from "@/store";
 
 const props = defineProps<{
   title?: string;
@@ -27,6 +33,7 @@ const props = defineProps<{
 
 const emit = defineEmits(["confirm", "cancel", "update:modelValue"]);
 
+const settingsStore = useSettingsStore();
 const dialogVisible = computed({
   get: () => props.modelValue ?? false,
   set: (value) => emit("update:modelValue", value),
