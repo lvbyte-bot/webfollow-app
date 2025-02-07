@@ -15,13 +15,7 @@
       @update:modelValue="appStore.readerMode = $event"
     ></reader>
     <div class="main-reader"></div>
-    <main
-      class="main-container"
-      ref="mainRef"
-      v-show="
-        !appStore.readerMode || (general.defaultView == 'column' && !mobile)
-      "
-    >
+    <main class="main-container" ref="mainRef">
       <slot v-bind:="{ openReader, loadData }">
         <!-- items -->
         <div class="items-container">

@@ -150,30 +150,31 @@
       </v-navigation-drawer>
 
       <!-- 主体 -->
-      <v-main :class="{ cols: !mobile, hideside: hideSide || mobile }">
+      <v-main
+        :class="{
+          hideside: hideSide || mobile,
+          'h-screen': route.matched[1].components.default.__name == 'Items',
+        }"
+      >
         <div class="v-main-top"></div>
         <!-- 主体 -->
-        <div>
-          <c-btn
-            v-if="mobile"
-            class="ma-2 menu-warp logo"
-            variant="text"
-            icon="mdi-dock-left"
-            title="打开边栏"
-            @click="showMobileMenu = !showMobileMenu"
-          ></c-btn>
-          <c-btn
-            v-else-if="hideSide"
-            class="ma-2 menu-warp"
-            variant="text"
-            icon="mdi-dock-left"
-            title="打开边栏"
-            @click="hideSide = !hideSide"
-          ></c-btn>
-          <router-view></router-view>
-        </div>
+        <router-view></router-view>
       </v-main>
-
+      <c-btn
+        class="ma-2 menu-warp logo"
+        variant="text"
+        icon="mdi-dock-left"
+        title="打开边栏"
+        @click="
+          () => {
+            if (mobile) {
+              showMobileMenu = !showMobileMenu;
+            } else {
+              hideSide = !hideSide;
+            }
+          }
+        "
+      ></c-btn>
       <!-- 播放列表按钮 -->
       <v-btn
         v-show="
