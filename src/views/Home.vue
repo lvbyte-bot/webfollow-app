@@ -154,6 +154,7 @@
         :class="{
           hideside: hideSide || mobile,
           'h-screen': route.matched[1].components.default.__name == 'Items',
+          'm-main': mobile,
         }"
       >
         <div class="v-main-top"></div>

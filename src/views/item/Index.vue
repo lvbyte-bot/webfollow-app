@@ -1,27 +1,22 @@
 <template>
-  <v-row class="items-list" v-if="view == 'card'">
-    <v-col
-      :cols="itemsType == 'VIDEO' ? 12 : 6"
-      sm="4"
-      md="4"
-      lg="3"
-      xl="2"
-      xxl="1"
+  <div
+    class="items-list"
+    v-if="view == 'card'"
+    :class="{ 'items-list-col': itemsType !== 'VIDEO' }"
+  >
+    <card-item
       v-for="(item, index) in items"
       :key="item.id"
-    >
-      <card-item
-        :item="item"
-        @click="openReader(index, item)"
-        @click-action="clickAction"
-        @contextmenu.prevent="showContextMenu($event, item, index)"
-        :type="type"
-        class="entry-item"
-        :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
-        :style="{ animationDelay: `${(index % 50) * 0.05}s` }"
-      />
-    </v-col>
-  </v-row>
+      :item="item"
+      @click="openReader(index, item)"
+      @click-action="clickAction"
+      @contextmenu.prevent="showContextMenu($event, item, index)"
+      :type="type"
+      class="entry-item"
+      :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
+      :style="{ animationDelay: `${(index % 50) * 0.05}s` }"
+    />
+  </div>
   <template v-else-if="view == 'magazine' || view == 'column'">
     <magazine-item
       v-for="(item, index) in items"
@@ -235,6 +230,22 @@ defineExpose({
   background-color: rgb(var(--v-theme-on-surface-variant));
 }
 .items-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  align-items: start; /* 顶部对齐 */
+  gap: 0.5rem;
+  & > div {
+    padding: 0.5rem;
+  }
+  & .v-card {
+    padding: 9px;
+  }
+}
+.m-main .items-list-col {
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+/**
+.items-list {
   .v-col-xxl,
   .v-col-xxl-auto,
   .v-col-xxl-12,
@@ -326,6 +337,7 @@ defineExpose({
 .v-list-item .v-card {
   padding: 9px;
 }
+*/
 .fade-in {
   opacity: 0;
   transform: translateY(-20px);
