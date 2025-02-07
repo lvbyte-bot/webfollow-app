@@ -40,20 +40,24 @@
                 @click="openItem(item)"
                 class="search-item"
               >
-                <div class="item-title">
-                  <p v-text="item.title" class="text-truncate"></p>
-                  <div class="d-flex align-center justify-end text-caption">
-                    <img
-                      :src="item.feed?.icon"
-                      width="14"
-                      height="14"
-                      style="border-radius: 4px"
-                      loading="lazy"
-                    onerror="this.src='/logo.svg'" 
-                    class="mr-2"
-                  ></img>
-                  {{ item.feed?.title }}
-                </div></div>
+                <template #title>
+                  <div class="item-title">
+                    <p v-text="item.title" class="text-truncate"></p>
+                    <div class="d-flex align-center justify-end text-caption">
+                      <img
+                        :src="item.feed?.icon"
+                        width="14"
+                        height="14"
+                        style="border-radius: 4px"
+                        loading="lazy"
+                        onerror="this.src='/logo.svg'" 
+                        class="mr-2"
+                      ></img>
+                      {{ item.feed?.title }}
+                    </div>
+                    <small class="text-caption">{{ item.datestr }}</small>
+                  </div>
+                </template>
               </v-list-item>
             </v-list>
           </div>
@@ -81,7 +85,7 @@
                     onerror="this.src='/logo.svg'" 
                   ></img>
                 </template>
-                <v-list-item-title>{{ feed.title }}</v-list-item-title>
+                <v-list-item-title class="text-sm">{{ feed.title }}</v-list-item-title>
               </v-list-item>
             </v-list>
           </div>
@@ -97,7 +101,7 @@
                 class="search-item"
                 @click="router.push(menu.path); show = false"
               >
-                <v-list-item-title><v-icon :icon="menu.icon" size="small" class="mr-3"></v-icon>{{ menu.title }}</v-list-item-title>
+                <v-list-item-title class="text-sm"><v-icon :icon="menu.icon" size="small" class="mr-3"></v-icon>{{ menu.title }}</v-list-item-title>
               </v-list-item>
             </v-list>
           </div>
@@ -233,12 +237,15 @@ const handleSearch = () => {
 }
 .item-title {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr auto 4.5rem;
   align-items: center;
   grid-gap: 1rem;
   font-size: 0.85rem;
   :last-child {
     text-align: right;
   }
+}
+.text-sm {
+  font-size: 0.85rem;
 }
 </style>
