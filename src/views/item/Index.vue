@@ -18,7 +18,7 @@
         :type="type"
         class="entry-item"
         :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
-        :style="{ animationDelay: `${(index % 50) * 0.08}s` }"
+        :style="{ animationDelay: `${(index % 50) * 0.05}s` }"
       />
     </v-col>
   </v-row>
@@ -32,7 +32,7 @@
       :key="item.id"
       class="entry-item"
       :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
-      :style="{ animationDelay: `${(index % 50) * 0.08}s` }"
+      :style="{ animationDelay: `${(index % 50) * 0.05}s` }"
     />
   </template>
   <template v-else-if="view == 'text'">
@@ -62,7 +62,7 @@
       :key="item.id"
       class="entry-item"
       :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
-      :style="{ animationDelay: `${(index % 50) * 0.1}s` }"
+      :style="{ animationDelay: `${(index % 50) * 0.05}s` }"
     />
   </template>
   <!-- 右键菜单 -->
