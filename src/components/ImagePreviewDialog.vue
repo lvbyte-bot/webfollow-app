@@ -134,7 +134,8 @@ watch(
   overflow-y: auto;
   border-top-right-radius: 0.5rem;
   border-top-left-radius: 0.5rem;
-  background: rgba(var(--v-theme-background), 0.8);
+  background: rgba(var(--v-theme-background), 0.6);
+  backdrop-filter: blur(10px);
 }
 
 .thumbnails-container {
