@@ -17,8 +17,8 @@
             <div class="v-list-subheader" style="padding: 0.3rem;">
                 <div class="d-flex justify-space-between w-100">
                     <span>FILTERS</span>
-                    <div> 
-                        <span style="color: #ff0000;">new</span> 
+                    <div>
+                        <span style="color: #ff0000;">new</span>
                         <router-link to="/filter">
                             <v-icon icon="mdi-filter-plus-outline" color="secondary"></v-icon>
                         </router-link>
@@ -36,11 +36,13 @@
             <div class="v-list-subheader" style="padding: 0.3rem;">
                 <div class="d-flex justify-space-between w-100">
                     <span>FEEDS</span>
-                    <div> 
-                        <v-btn variant="text" to="/subscribe" icon="mdi-plus" size="small" title="订阅" height="20" width="20" color="secondary"></v-btn>
+                    <div>
+                        <v-btn variant="text" to="/subscribe" icon="mdi-plus" size="small" title="订阅" height="20"
+                            width="20" color="secondary"></v-btn>
                     </div>
                 </div>
             </div>
+
             <v-list-item prepend-icon="mdi-text-box-multiple-outline" value="all" title="全部文章" to="/all">
                 <template v-slot:append>
                     <small v-if="appStore.unReadQty" class="font-weight-thin" v-text="appStore.unReadQty"></small>
@@ -69,7 +71,7 @@
                         :value="isMultiSelectMode || contextMenuVisible ? undefined : gItem.id + '-' + subItem.id"
                         :to="isMultiSelectMode || contextMenuVisible ? undefined : '/f/' + subItem.id"
                         @click="$event => handleFeedSelect($event, subItem)" @mousedown.prevent=""
-                        @contextmenu.prevent="showContextMenu($event, subItem)" >
+                        @contextmenu.prevent="showContextMenu($event, subItem)">
                         <template #prepend>
                             <img :src="subItem.icon" onerror="this.src='/logo.svg'" width="16">
                             </img>
@@ -89,38 +91,36 @@
             <v-btn color="surface-variant" to="/subscribe" icon="mdi-plus"></v-btn>
             <v-btn class="ml-2" variant="flat" to="/download">下载app</v-btn>
         </div>
-
-        <v-card v-show="contextMenuVisible" class="menus" style="position: fixed; z-index: 10000"
-            :style="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }">
-            <v-list nav>
-                <v-list-item v-if="currentGroup" prepend-icon="mdi-read" @click="handleAction('markRead')">
-                    标记为已读
-                </v-list-item>
-                <template v-else>
-                    <v-list-item v-if="!isMultiSelectMode" prepend-icon="mdi-read" @click="handleAction('markRead')">
-                        标记为已读
-                    </v-list-item>
-                    <v-list-item prepend-icon="mdi-folder-move-outline" @click="handleAction('edit')">
-                        {{ selectedFeeds.length > 1 ? '批量移动分组' : '移动分组' }}
-                    </v-list-item>
-                    <v-list-item prepend-icon="mdi-delete-outline" @click="handleAction('delete')">
-                        {{ selectedFeeds.length > 1 ? '批量取消订阅' : '取消订阅' }}
-                    </v-list-item>
-                </template>
-            </v-list>
-        </v-card>
-
-        <v-card v-show="filterContextMenuVisible" class="menus" style="position: fixed; z-index: 10000"
-            :style="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }">
-            <v-list nav>
-                <v-list-item prepend-icon="mdi-delete-outline" @click="handleFilterAction('delete')">
-                    删除过滤项
-                </v-list-item>
-            </v-list>
-        </v-card>
     </div>
 
+    <v-card v-show="contextMenuVisible" class="menus" style="position: fixed; z-index: 10000"
+        :style="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }">
+        <v-list nav>
+            <v-list-item v-if="currentGroup" prepend-icon="mdi-read" @click="handleAction('markRead')">
+                标记为已读
+            </v-list-item>
+            <template v-else>
+                <v-list-item v-if="!isMultiSelectMode" prepend-icon="mdi-read" @click="handleAction('markRead')">
+                    标记为已读
+                </v-list-item>
+                <v-list-item prepend-icon="mdi-folder-move-outline" @click="handleAction('edit')">
+                    {{ selectedFeeds.length > 1 ? '批量移动分组' : '移动分组' }}
+                </v-list-item>
+                <v-list-item prepend-icon="mdi-delete-outline" @click="handleAction('delete')">
+                    {{ selectedFeeds.length > 1 ? '批量取消订阅' : '取消订阅' }}
+                </v-list-item>
+            </template>
+        </v-list>
+    </v-card>
 
+    <v-card v-show="filterContextMenuVisible" class="menus" style="position: fixed; z-index: 10000"
+        :style="{ top: contextMenuY + 'px', left: contextMenuX + 'px' }">
+        <v-list nav>
+            <v-list-item prepend-icon="mdi-delete-outline" @click="handleFilterAction('delete')">
+                删除过滤项
+            </v-list-item>
+        </v-list>
+    </v-card>
     <v-dialog v-model="editable" max-width="500">
         <v-card prepend-icon="mdi-pencil-box-outline" title="移动分组">
             <v-card-text>

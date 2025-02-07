@@ -95,6 +95,8 @@ watch(
   align-items: center;
   justify-content: center;
   position: relative;
+  backdrop-filter: blur(10px);
+  background: rgba(var(--v-theme-background), 0.9);
 }
 
 .nav-btn {
