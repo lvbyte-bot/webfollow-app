@@ -85,7 +85,7 @@
                       ? '列表视图'
                       : general.defaultView == 'text'
                       ? '清单视图'
-                      : '自动选择'
+                      : '跟随文章'
                   "
                   @click="changeItemView()"
                   class="items-view-toggle"

@@ -19,10 +19,10 @@
       <v-card-title>默认视图</v-card-title>
       <v-card-text>
         <v-radio-group v-model="data.defaultView">
-          <v-radio label="自动选择" value="auto">
+          <v-radio label="跟随文章" value="auto">
             <template v-slot:label>
               <div class="d-flex align-center">
-                自动选择
+                跟随文章
                 <v-icon class="ml-2">mdi-view-dashboard-outline</v-icon>
               </div>
             </template>

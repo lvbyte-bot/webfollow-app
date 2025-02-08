@@ -24,7 +24,7 @@
           <v-radio value="system" color="primary">
             <template v-slot:label>
               <div class="d-flex align-center">
-                <v-icon class="mr-2">mdi-desktop-mac</v-icon>
+                <v-icon class="mr-2">mdi-monitor</v-icon>
                 跟随系统
               </div>
             </template>
