@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
 import { onBeforeMount, onMounted, ref, } from 'vue'
-import { ViewType } from './types'
+import { ViewMode } from './types'
 
 interface GeneralSettings {
     startPage: 'welcome' | 'all' | 'next' | 'firstfolder' | 'explore'
-    defaultView: ViewType
+    defaultView: ViewMode
     hideReadArticles: boolean
     autoRefresh: boolean
     refreshInterval: number
