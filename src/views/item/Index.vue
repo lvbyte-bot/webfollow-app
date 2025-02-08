@@ -229,7 +229,7 @@ defineExpose({
 }
 .items-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   align-items: start; /* 顶部对齐 */
   gap: 0.5rem;
   & > div {
