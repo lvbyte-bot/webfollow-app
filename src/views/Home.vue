@@ -459,4 +459,7 @@ const { showSearch, showHelp } = useHotkeys();
   right: 60px;
   z-index: 1005;
 }
+.v-navigation-drawer--left {
+  border-right-width: 0;
+}
 </style>

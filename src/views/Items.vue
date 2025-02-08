@@ -1,16 +1,11 @@
 <template>
-  <div
-    class="main-warp"
-    :class="{ 'main-col': general.defaultView == 'column' && type }"
-  >
+  <div class="main-warp" :class="{ 'main-col': viewMode == 'column' && type }">
     <reader
       v-if="currentItem && store.items?.length"
       :item="currentItem"
       :items="store.items"
       :open-reader="openReader"
-      :entry-list-disable="
-        mobile || !(general.defaultView != 'column' || !type)
-      "
+      :entry-list-disable="mobile || !(viewMode != 'column' || !type)"
       :modelValue="appStore.readerMode"
       @update:modelValue="appStore.readerMode = $event"
     ></reader>
@@ -75,7 +70,9 @@
                       ? 'mdi-view-sequential-outline'
                       : general.defaultView == 'list'
                       ? 'mdi-list-box-outline'
-                      : 'mdi-text-box-outline'
+                      : general.defaultView == 'text'
+                      ? 'mdi-text-box-outline'
+                      : 'mdi-view-dashboard-outline'
                   "
                   :title="
                     general.defaultView == 'card'
@@ -86,7 +83,9 @@
                       ? '杂志视图'
                       : general.defaultView == 'list'
                       ? '列表视图'
-                      : '清单视图'
+                      : general.defaultView == 'text'
+                      ? '清单视图'
+                      : '自动选择'
                   "
                   @click="changeItemView()"
                   class="items-view-toggle"
@@ -127,7 +126,7 @@
             <template v-if="store.items?.length">
               <Items
                 :items="store.items"
-                :view="general.defaultView"
+                :view="viewMode"
                 :type="type"
                 @open-reader="openReader"
               ></Items>
@@ -204,6 +203,7 @@ import {
 import { FeedItem, LsItemType } from "@/service/types";
 import { useScroll } from "@/utils/scrollListener";
 import { confirm } from "@/plugins/confirm";
+import { useCalViewMode } from "@/utils/useCalView";
 
 const props = defineProps(["type", "id"]);
 
@@ -232,8 +232,10 @@ const currentItem: Ref<FeedItem> = ref({
 const loading = ref(false);
 const settingsStore = useSettingsStore();
 const { general } = storeToRefs(settingsStore);
+const items = computed(() => store.items);
+const view = computed(() => general.value.defaultView);
 const onlyUnread = computed(() => general.value.hideReadArticles);
-
+const { viewMode } = useCalViewMode(view, items);
 const { isBottom } = useScroll(mainRef);
 
 function changeItemView() {
@@ -246,7 +248,7 @@ function changeItemView() {
   } else if (general.value.defaultView == "magazine") {
     general.value.defaultView = "text";
   } else if (general.value.defaultView == "text") {
-    general.value.defaultView = "list";
+    general.value.defaultView = "auto";
   } else {
     general.value.defaultView = "list";
   }

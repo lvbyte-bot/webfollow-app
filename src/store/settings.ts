@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia'
 import { onBeforeMount, onMounted, ref, } from 'vue'
+import { ViewType } from './types'
 
 interface GeneralSettings {
     startPage: 'welcome' | 'all' | 'next' | 'firstfolder' | 'explore'
-    defaultView: 'text' | 'card' | 'magazine' | 'column' | 'list'
+    defaultView: ViewType
     hideReadArticles: boolean
     autoRefresh: boolean
     refreshInterval: number
@@ -58,7 +59,7 @@ interface SettingsState {
 export const useSettingsStore = defineStore('settings', () => {
     const general = ref<GeneralSettings>({
         startPage: 'explore',
-        defaultView: 'list',
+        defaultView: 'auto',
         hideReadArticles: true,
         autoRefresh: false,
         refreshInterval: 30 * 60,
@@ -140,7 +141,7 @@ export const useSettingsStore = defineStore('settings', () => {
     function resetGeneralSettings() {
         general.value = {
             startPage: 'explore',
-            defaultView: 'list',
+            defaultView: 'auto',
             hideReadArticles: true,
             autoRefresh: false,
             refreshInterval: 30 * 60,

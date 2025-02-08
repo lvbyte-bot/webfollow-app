@@ -21,3 +21,5 @@ export interface PageRouteMeta {
     isFailure?: boolean
     url?: string
 }
+
+export type ViewMode = 'text' | 'card' | 'magazine' | 'column' | 'list' | 'auto'

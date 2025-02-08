@@ -2,7 +2,7 @@
   <div
     class="items-list"
     v-if="view == 'card'"
-    :class="{ 'items-list-col': itemsType !== 'VIDEO' }"
+    :class="{ 'items-list-col': itemsType !== ItemType.VIDEO }"
   >
     <card-item
       v-for="(item, index) in items"
@@ -133,8 +133,11 @@ import ContentItem from "./ContentItem.vue";
 import TextItem from "./TextItem.vue";
 import { FeedItem } from "@/service/types";
 import { ClickType } from "./types";
+import { useCalItemType } from "@/utils/useCalView";
+import { ViewMode } from "@/store/types";
+import { ItemType } from "@/service/types";
 const props = defineProps<{
-  view: String;
+  view: ViewMode;
   items: FeedItem[];
   type: string;
 }>();
@@ -142,13 +145,8 @@ const emit = defineEmits(["open-reader"]);
 const store = useAppStore();
 const settingStore = useSettingsStore();
 const currentItem = ref<FeedItem | undefined>(undefined);
-const itemsType = computed(() => {
-  const counts = props.items.slice(0, 50).reduce((acc: any, item: FeedItem) => {
-    acc[item.type] = (acc[item.type] || 0) + 1;
-    return acc;
-  }, {});
-  return Object.entries(counts).sort((a: any, b: any) => b[1] - a[1])[0][0];
-});
+const items = computed(() => props.items);
+const { itemsType } = useCalItemType(items);
 
 function openReader(index: number, item: FeedItem) {
   emit("open-reader", index, item);
