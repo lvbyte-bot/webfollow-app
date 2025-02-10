@@ -58,7 +58,7 @@ interface SettingsState {
 
 export const useSettingsStore = defineStore('settings', () => {
     const general = ref<GeneralSettings>({
-        startPage: 'explore',
+        startPage: 'welcome',
         defaultView: 'auto',
         hideReadArticles: true,
         autoRefresh: false,
@@ -140,7 +140,7 @@ export const useSettingsStore = defineStore('settings', () => {
 
     function resetGeneralSettings() {
         general.value = {
-            startPage: 'explore',
+            startPage: 'welcome',
             defaultView: 'auto',
             hideReadArticles: true,
             autoRefresh: false,
