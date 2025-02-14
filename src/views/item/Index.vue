@@ -27,7 +27,7 @@
       :key="item.id"
       class="entry-item"
       :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
-      :style="{ animationDelay: `${(index % 50) * 0.05}s` }"
+      :style="{ animationDelay: `${(index % 50) * 0.03}s` }"
     />
   </template>
   <template v-else-if="view == 'text'">
@@ -57,7 +57,7 @@
       :key="item.id"
       class="entry-item"
       :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
-      :style="{ animationDelay: `${(index % 50) * 0.05}s` }"
+      :style="{ animationDelay: `${(index % 50) * 0.03}s` }"
     />
   </template>
   <!-- 右键菜单 -->
@@ -126,14 +126,14 @@
 
 <script setup lang="ts">
 import { useAppStore, useSettingsStore } from "@/store";
-import { ref, onMounted, onBeforeUnmount, computed } from "vue";
+import { ref, onMounted, onBeforeUnmount, computed, inject } from "vue";
+import { itemsTypeSymbol } from "../InjectionSymbols";
 import CardItem from "./CardItem.vue";
 import MagazineItem from "./MagazineItem.vue";
 import ContentItem from "./ContentItem.vue";
 import TextItem from "./TextItem.vue";
 import { FeedItem } from "@/service/types";
 import { ClickType } from "./types";
-import { useCalItemType } from "@/utils/useCalView";
 import { ViewMode } from "@/store/types";
 import { ItemType } from "@/service/types";
 const props = defineProps<{
@@ -146,7 +146,7 @@ const store = useAppStore();
 const settingStore = useSettingsStore();
 const currentItem = ref<FeedItem | undefined>(undefined);
 const items = computed(() => props.items);
-const { itemsType } = useCalItemType(items);
+const itemsType = inject(itemsTypeSymbol);
 
 function openReader(index: number, item: FeedItem) {
   emit("open-reader", index, item);

@@ -184,9 +184,10 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, ref, Ref } from "vue";
+import { computed, provide, ref, Ref } from "vue";
 import Reader from "./reader";
 import Items from "./item/Index.vue";
+import { viewModeSymbol, itemsTypeSymbol } from "./InjectionSymbols";
 import { onMounted, watch } from "vue";
 import { Marked } from "@/service";
 import { retrieveRelevantContexts } from "@/service/rag";
@@ -235,8 +236,11 @@ const { general } = storeToRefs(settingsStore);
 const items = computed(() => store.items);
 const view = computed(() => general.value.defaultView);
 const onlyUnread = computed(() => general.value.hideReadArticles);
-const { viewMode } = useCalViewMode(view, items);
+const { viewMode, itemsType } = useCalViewMode(view, items);
 const { isBottom } = useScroll(mainRef);
+
+provide(viewModeSymbol, viewMode);
+provide(itemsTypeSymbol, itemsType);
 
 function changeItemView() {
   if (general.value.defaultView == "list") {

@@ -5,9 +5,7 @@
       :class="{
         'top-sider-border': scrollTop > 120 && !mobile,
         'top-sider-hidden':
-          isScrollingDown &&
-          scrollTop > 960 &&
-          settingsStore.general.defaultView != 'column',
+          isScrollingDown && scrollTop > 960 && viewMode != 'column',
       }"
     >
       <div class="prepend-bar">
@@ -119,7 +117,15 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, watch, ref, computed, provide, onUnmounted } from "vue";
+import {
+  onMounted,
+  watch,
+  ref,
+  computed,
+  provide,
+  onUnmounted,
+  inject,
+} from "vue";
 import { useAppStore, useSettingsStore } from "@/store";
 import { FeedItem } from "@/service/types";
 import { useScroll } from "@/utils/scroll";
@@ -130,9 +136,11 @@ import VideoReader from "./sub/VideoReader.vue";
 import PodcastReader from "./sub/PodcastReader.vue";
 import { Marked } from "@/service";
 import { summarySymbol, summarizingSymbol } from "./InjectionSymbols";
+import { viewModeSymbol } from "../InjectionSymbols";
 
 const readerRef = ref();
 
+const viewMode = inject(viewModeSymbol);
 const props = defineProps<{
   item: FeedItem;
 }>();

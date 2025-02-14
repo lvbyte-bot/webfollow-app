@@ -8,7 +8,7 @@ import { Ref, computed } from 'vue'
  * @param itemsType 项目类型
  * @returns 视图名称
  */
-export function useCalView(view: Ref<ViewMode>, itemsType: Ref<ItemType>): { viewMode: Ref<ViewMode> } {
+function useCalView(view: Ref<ViewMode>, itemsType: Ref<ItemType>): { viewMode: Ref<ViewMode> } {
     const viewMode: Ref<ViewMode> = computed(() => {
         return view.value == "auto"
             ? itemsType.value == ItemType.VIDEO
@@ -28,7 +28,7 @@ export function useCalView(view: Ref<ViewMode>, itemsType: Ref<ItemType>): { vie
  * @param items entry列表
  * @returns entry类型
  */
-export function useCalItemType(items: Ref<FeedItem[]>): { itemsType: Ref<ItemType> } {
+function useCalItemType(items: Ref<FeedItem[]>): { itemsType: Ref<ItemType> } {
     const itemsType: Ref<ItemType> = computed(() => {
         const counts = items.value.slice(0, 50).reduce((acc: any, item: FeedItem) => {
             acc[item.type] = (acc[item.type] || 0) + 1;

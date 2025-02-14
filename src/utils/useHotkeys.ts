@@ -23,9 +23,9 @@ export function useHotkeys() {
         switch (e.key) {
             case 'k':
             case '/':
-                e.preventDefault()
                 // 打开搜索 k | /
                 if (e.ctrlKey) {
+                    e.preventDefault()
                     showSearch.value = true
                     return
                 }
