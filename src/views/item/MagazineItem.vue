@@ -20,7 +20,7 @@
         </div>
         <div
           class="magazine-sec"
-          :class="{ nomagazinethumb: !isVideoOrPodcast }"
+          :class="{ nomagazinethumb: !item.thumbnail && !isVideoOrPodcast }"
         >
           <div class="desc text-ellipsis">
             <p class="mb-2 text-body-1 title">
@@ -49,6 +49,13 @@
               </template>
             </v-img>
           </div>
+          <v-img
+            v-else-if="item.thumbnail"
+            :src="item.thumbnail"
+            cover
+            height="80px"
+          >
+          </v-img>
         </div>
       </div>
     </div>
