@@ -209,6 +209,7 @@ const handleFocus = async () => {
 const handlePaste = async (e: ClipboardEvent) => {
   const text = e.clipboardData?.getData("text");
   if (text && isApiKeyLike(text)) {
+    e.preventDefault();
     data.value.apiKey = text;
     showHint.value = false;
   }
