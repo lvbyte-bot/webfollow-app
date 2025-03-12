@@ -35,7 +35,7 @@ export const usePlayListStore = defineStore('playlist', () => {
         currentPlaying.value = item;
         saveToLocalStorage()
         setTimeout(() => {
-            togglePlaying()
+            togglePlaying(item.currentTime)
         }, 600);
     }
 
@@ -78,8 +78,16 @@ export const usePlayListStore = defineStore('playlist', () => {
     }
 
     function togglePlaying() {
+
         if (tmpTogglePlaying) {
             tmpTogglePlaying()
+        }
+    }
+
+    function setCurrentTime(currentTime: number) {
+        if (currentPlaying.value) {
+            console.log(currentTime)
+            currentPlaying.value.currentTime = currentTime
         }
     }
 
@@ -103,6 +111,7 @@ export const usePlayListStore = defineStore('playlist', () => {
         setPlaying,
         togglePlaying,
         setTogglePlaying,
+        setCurrentTime,
         clear
     }
 })

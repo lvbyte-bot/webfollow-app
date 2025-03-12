@@ -86,6 +86,16 @@ watch(
   }
 );
 
+watch(
+  () => props.modelValue?.currentTime,
+  (v) => {
+    if ((v || 0) - currentTime.value > 3 || (v || 0) - currentTime.value < -3) {
+      currentTime.value = v || 0;
+      seek();
+    }
+  }
+);
+
 onMounted(() => {
   if (audio.value) {
     audio.value.currentTime = props.modelValue?.currentTime || 0;

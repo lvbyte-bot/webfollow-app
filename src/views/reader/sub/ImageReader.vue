@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, computed, Ref } from "vue";
+import { ref, watch, computed } from "vue";
 import { FeedItem } from "@/service/types";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation, Pagination } from "swiper/modules";
@@ -37,7 +37,7 @@ import BasicReader from "./BasicReader.vue";
 // 定义 props
 const props = defineProps<{
   readonly item: FeedItem;
-  readonly readerRef: Ref<any, any>;
+  readonly readerRef: HTMLElement;
 }>();
 
 // 定义 emits（如果需要的话）
@@ -157,7 +157,7 @@ const onSlideChange = (_: any) => {};
     width: 10px;
   }
 }
-@media (max-width: 1200px)  {
+@media (max-width: 1200px) {
   .text-reader {
     img {
       display: block;

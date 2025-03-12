@@ -13,18 +13,22 @@
 - [x] data in local
 - [x] ai search
 - [x] recommend
-- [x] llm summary
+- [x] llm summary + llm filter
 - [x] pwa
 
 **base**
 
+- [x] auto-reader
 - [x] text-reader
 - [x] podcast-reader
 - [x] img-reader
 - [x] video-reader
+- [x] auto-view
 - [x] column-view
 - [x] list-view
 - [x] card-view
+- [x] text-view
+- [x] content-view
 
 **todo list**
 

@@ -31,14 +31,14 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, Ref, inject } from "vue";
+import { computed, inject } from "vue";
 import { FeedItem } from "@/service/types";
 import { useSideChapter } from "@/utils/useSideChapter";
 import { summarySymbol, summarizingSymbol } from "../InjectionSymbols";
 import { md2html } from "@/utils/mdUtils";
 const props = defineProps<{
   readonly item: FeedItem;
-  readonly readerRef: Ref<any, any> | null;
+  readonly readerRef: HTMLElement | null;
 }>();
 const description = computed(() => props.item?.description || "");
 const readerRef = computed(() => props.readerRef);
@@ -148,6 +148,14 @@ const summarizing: boolean | undefined = inject(summarizingSymbol);
     img {
       max-height: 2rem;
       margin-right: 1rem;
+    }
+  }
+  ul {
+    li {
+      &::marker {
+        color: rgb(var(--v-theme-primary));
+        opacity: 1;
+      }
     }
   }
 }

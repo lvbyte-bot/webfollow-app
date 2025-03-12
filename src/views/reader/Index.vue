@@ -138,7 +138,7 @@ import { Marked } from "@/service";
 import { summarySymbol, summarizingSymbol } from "./InjectionSymbols";
 import { viewModeSymbol } from "../InjectionSymbols";
 
-const readerRef = ref();
+const readerRef = ref<HTMLElement>();
 
 const viewMode = inject(viewModeSymbol);
 const props = defineProps<{
@@ -164,7 +164,9 @@ watch(
   () => props.item.id,
   async () => {
     setTimeout(() => {
-      readerRef.value.scrollTop = 0;
+      if (readerRef.value) {
+        readerRef.value.scrollTo(0, 0);
+      }
       summary.value = "";
     }, 100);
     if (!props.item.isRead && props.item.id) {
