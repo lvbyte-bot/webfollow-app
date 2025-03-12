@@ -40,7 +40,7 @@ import { computed, onMounted, onUnmounted, watch, nextTick } from "vue";
 
 const props = defineProps<{
   readonly item: FeedItem;
-  readonly readerRef: HTMLElement;
+  readonly readerRef: HTMLElement | undefined;
 }>();
 const store = usePlayListStore();
 
@@ -67,9 +67,12 @@ function togglePlay() {
 
 let aList: Element[] = [];
 onMounted(() => {
-  aList = Array.from(props.readerRef.querySelectorAll(".content a")).filter(
-    (a) => isTimeStr(a.textContent || "")
-  );
+  if (props.readerRef) {
+    aList = Array.from(props.readerRef.querySelectorAll(".content a")).filter(
+      (a) => isTimeStr(a.textContent || "")
+    );
+  }
+
   addClass(aList);
   aList.forEach((a) => {
     a.addEventListener("click", aclick);
@@ -88,9 +91,11 @@ watch(
       aList.forEach((a) => {
         a.removeEventListener("click", aclick);
       });
-      aList = Array.from(props.readerRef.querySelectorAll(".content a")).filter(
-        (a) => isTimeStr(a.textContent || "")
-      );
+      if (props.readerRef) {
+        aList = Array.from(
+          props.readerRef.querySelectorAll(".content a")
+        ).filter((a) => isTimeStr(a.textContent || ""));
+      }
       addClass(aList);
       aList.forEach((a) => {
         a.addEventListener("click", aclick);

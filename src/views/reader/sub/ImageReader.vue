@@ -37,7 +37,7 @@ import BasicReader from "./BasicReader.vue";
 // 定义 props
 const props = defineProps<{
   readonly item: FeedItem;
-  readonly readerRef: HTMLElement;
+  readonly readerRef: HTMLElement | undefined;
 }>();
 
 // 定义 emits（如果需要的话）

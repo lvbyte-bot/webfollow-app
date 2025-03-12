@@ -138,7 +138,7 @@ import { Marked } from "@/service";
 import { summarySymbol, summarizingSymbol } from "./InjectionSymbols";
 import { viewModeSymbol } from "../InjectionSymbols";
 
-const readerRef = ref<HTMLElement>();
+const readerRef = ref<HTMLElement | undefined>();
 
 const viewMode = inject(viewModeSymbol);
 const props = defineProps<{

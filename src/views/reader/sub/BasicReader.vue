@@ -38,7 +38,7 @@ import { summarySymbol, summarizingSymbol } from "../InjectionSymbols";
 import { md2html } from "@/utils/mdUtils";
 const props = defineProps<{
   readonly item: FeedItem;
-  readonly readerRef: HTMLElement | null;
+  readonly readerRef: HTMLElement | undefined;
 }>();
 const description = computed(() => props.item?.description || "");
 const readerRef = computed(() => props.readerRef);
