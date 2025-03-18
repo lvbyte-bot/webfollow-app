@@ -26,24 +26,6 @@
               </div>
               <div>
                 <c-btn
-                  v-show="
-                    !(
-                      (id == '-1' && type == 'c') ||
-                      type == 'next' ||
-                      type == 'home' ||
-                      type == 'filter'
-                    )
-                  "
-                  :disabled="store.items?.filter((o) => !o.isRead).length == 0"
-                  icon
-                  title="标记为已读"
-                  @click="markRead"
-                  class="items-mark-read"
-                >
-                  <v-icon>mdi-read</v-icon>
-                </c-btn>
-
-                <c-btn
                   icon
                   title="刷新"
                   @click="refresh"
@@ -60,37 +42,42 @@
                 >
                 </c-btn>
                 <c-btn
-                  v-if="!mobile"
-                  :icon="
-                    general.defaultView == 'card'
-                      ? 'mdi-view-grid-outline'
-                      : general.defaultView == 'column'
-                      ? 'mdi-view-column-outline'
-                      : general.defaultView == 'magazine'
-                      ? 'mdi-view-sequential-outline'
-                      : general.defaultView == 'list'
-                      ? 'mdi-list-box-outline'
-                      : general.defaultView == 'text'
-                      ? 'mdi-text-box-outline'
-                      : 'mdi-view-dashboard-outline'
+                  v-show="
+                    !(
+                      (id == '-1' && type == 'c') ||
+                      type == 'next' ||
+                      type == 'home' ||
+                      type == 'filter'
+                    )
                   "
-                  :title="
-                    general.defaultView == 'card'
-                      ? '卡片视图'
-                      : general.defaultView == 'column'
-                      ? '三栏视图'
-                      : general.defaultView == 'magazine'
-                      ? '杂志视图'
-                      : general.defaultView == 'list'
-                      ? '列表视图'
-                      : general.defaultView == 'text'
-                      ? '清单视图'
-                      : '跟随文章'
-                  "
-                  @click="changeItemView()"
-                  class="items-view-toggle"
+                  :disabled="store.items?.filter((o) => !o.isRead).length == 0"
+                  icon
+                  title="全部标记为已读"
+                  @click="markRead"
+                  class="items-mark-read"
                 >
+                  <v-icon>mdi-read</v-icon>
                 </c-btn>
+                <v-menu v-if="!mobile" class="menu">
+                  <template v-slot:activator="{ props }">
+                    <c-btn
+                      icon="mdi-dots-vertical"
+                      variant="text"
+                      v-bind="props"
+                    ></c-btn>
+                  </template>
+
+                  <v-list nav v-model:selected="viewSeleted">
+                    <v-list-item
+                      v-for="(item, index) in views"
+                      :key="index"
+                      :value="item.value"
+                      :prepend-icon="item.icon"
+                    >
+                      <v-list-item-title>{{ item.title }}</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
               </div>
             </div>
           </slot>
@@ -189,6 +176,7 @@ import Reader from "./reader";
 import Items from "./item/Index.vue";
 import { viewModeSymbol, itemsTypeSymbol } from "./InjectionSymbols";
 import { onMounted, watch } from "vue";
+import { ViewMode } from "@/store/types";
 import { Marked } from "@/service";
 import { retrieveRelevantContexts } from "@/service/rag";
 import { storeToRefs } from "pinia";
@@ -242,24 +230,47 @@ const { isBottom } = useScroll(mainRef);
 provide(viewModeSymbol, viewMode);
 provide(itemsTypeSymbol, itemsType);
 
-function changeItemView() {
-  if (general.value.defaultView == "list") {
-    general.value.defaultView = "card";
-  } else if (general.value.defaultView == "card") {
-    general.value.defaultView = "column";
-  } else if (general.value.defaultView == "column") {
-    general.value.defaultView = "magazine";
-  } else if (general.value.defaultView == "magazine") {
-    general.value.defaultView = "text";
-  } else if (general.value.defaultView == "text") {
-    general.value.defaultView = "auto";
-  } else {
-    general.value.defaultView = "list";
-  }
+const views = [
+  {
+    icon: "mdi-view-dashboard-outline",
+    title: "跟随文章",
+    value: "auto",
+  },
+  {
+    icon: "mdi-list-box-outline",
+    title: "列表视图",
+    value: "list",
+  },
+  {
+    icon: "mdi-view-grid-outline",
+    title: "卡片视图",
+    value: "card",
+  },
+  {
+    icon: "mdi-view-column-outline",
+    title: "三栏视图",
+    value: "column",
+  },
+  {
+    icon: "mdi-view-sequential-outline",
+    title: "杂志视图",
+    value: "magazine",
+  },
+  {
+    icon: "mdi-text-box-outline",
+    title: "清单视图",
+    value: "text",
+  },
+];
+
+const viewSeleted: Ref<ViewMode[]> = ref([general.value.defaultView]);
+
+watch(viewSeleted, (vs) => {
+  general.value.defaultView = vs[0];
   mainRef.value.style.width = "";
   mainRef.value.scrollTo(0, 0);
   settingsStore.saveToLocalStorage();
-}
+});
 
 function watchLoadMore() {
   watch(isBottom, (v) => {
@@ -494,7 +505,11 @@ defineExpose({ loadData, openReader });
     }
   }
 }
-
+.menu {
+  .v-list-item--density-default.v-list-item--one-line {
+    min-height: 32px;
+  }
+}
 @media (max-width: 760px) {
   .main-col {
     display: block;

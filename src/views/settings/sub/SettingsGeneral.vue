@@ -59,7 +59,7 @@
               </div>
             </template>
           </v-radio>
-          <v-radio label="标题视图" value="text">
+          <v-radio label="清单视图" value="text">
             <template v-slot:label>
               <div class="d-flex align-center">
                 清单视图

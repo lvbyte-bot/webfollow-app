@@ -28,7 +28,7 @@
     icon="mdi-book-open-page-variant-outline"
   >
     <div class="text-center">
-      <v-btn variant="text" to="/home"> 开始吧 </v-btn>
+      <v-btn variant="text" to="/explore"> 开始吧 </v-btn>
       <br />
       <v-btn
         v-if="appStore.authInfo.username == 'guest'"
