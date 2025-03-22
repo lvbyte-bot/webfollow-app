@@ -194,7 +194,7 @@ const summary = ref<string | null>(null);
 
 // 检查是否可以使用 AI
 const canSummarize = computed(() => {
-  const settings = settingsStore.integrated;
+  const settings = settingsStore.proxyIntegrated;
   return (
     settings.isApiValid &&
     settings.selectedModel &&
@@ -206,7 +206,7 @@ const canSummarize = computed(() => {
 async function generateSummary() {
   if (summarizing.value) return;
 
-  const settings = settingsStore.integrated;
+  const settings = settingsStore.proxyIntegrated;
   summarizing.value = true;
 
   try {

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { onBeforeMount, onMounted, ref, } from 'vue'
+import { computed, onBeforeMount, onMounted, ref, } from 'vue'
 import { ViewMode } from './types'
 
 interface GeneralSettings {
@@ -196,10 +196,19 @@ export const useSettingsStore = defineStore('settings', () => {
         updateCSSVariables()
     })
 
+    const proxyIntegrated = computed(() => ({
+        ...integrated.value,
+        apiUrl: integrated.value.apiKey ? integrated.value.apiUrl : 'https://oneapi.jisuai.cn/v1',
+        apiKey: integrated.value.apiKey ? integrated.value.apiKey : 'sk-z6Qddv96AOIsjwGIL5ivKrfxHjojBOkl6z2MvKOgFbooydV7',
+        selectedModel: integrated.value.apiKey ? integrated.value.selectedModel : 'deepseek-v3',
+        isApiValid: integrated.value.apiKey ? integrated.value.isApiValid : true,
+    }))
+
     return {
         general,
         appearance,
         integrated,
+        proxyIntegrated,
         automation,
         getFilter,
         saveToLocalStorage,
