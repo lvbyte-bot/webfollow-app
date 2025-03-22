@@ -106,6 +106,9 @@
                 <v-list-item prepend-icon="mdi-folder-move-outline" @click="handleAction('edit')">
                     {{ selectedFeeds.length > 1 ? '批量移动分组' : '移动分组' }}
                 </v-list-item>
+                <v-list-item prepend-icon="mdi-dots-horizontal" @click="handleAction('feed')">
+                   订阅源选项
+                </v-list-item>
                 <v-list-item prepend-icon="mdi-delete-outline" @click="handleAction('delete')">
                     {{ selectedFeeds.length > 1 ? '批量取消订阅' : '取消订阅' }}
                 </v-list-item>
@@ -153,11 +156,14 @@
             </v-card-text>
         </v-card>
     </v-dialog>
+    <feed-dialog v-model="feedDialog" :feed="currentItem"/>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, Ref } from "vue";
 import { useFeedsStore, useAppStore, useSettingsStore } from "@/store";
+import FeedDialog from "./FeedDialog.vue";
+
 import { useDisplay } from "vuetify";
 import { Marked } from "@/service";
 
@@ -167,9 +173,11 @@ const appStore = useAppStore();
 const settingsStore = useSettingsStore();
 const editable = ref(false)
 const deleteDialog = ref(false)
+const feedDialog= ref(false);
 const form: Ref<any> = ref()
 const currentItem: Ref<any> = ref({ title: undefined })
 const loading = ref(false)
+
 
 onMounted(() => {
     document.addEventListener("click", hideContextMenu);
@@ -339,6 +347,8 @@ const handleAction = async (action: string) => {
     contextMenuVisible.value = false;
     if (action === "edit") {
         editable.value = true;
+    }else if (action === "feed") {
+        feedDialog.value = true;
     } else if (action === "delete") {
         deleteDialog.value = true;
     } else if (action === "markRead") {
