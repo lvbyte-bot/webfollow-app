@@ -1,7 +1,10 @@
 <template>
   <div>
     <v-container max-width="800">
-      <h3 class="text-center ma-12">添加订阅</h3>
+      <div class="text-center my-12">
+        <div class="text-h3">添加订阅源</div>
+        <p class="my-6 text-subtitle-2">看什么您说了算</p>
+      </div>
       <v-tabs v-model="tab" align-tabs="center">
         <v-tab value="rss">导入RSS</v-tab>
         <v-tab value="ompl">导入OPML</v-tab>
@@ -40,7 +43,7 @@
         </v-tabs-window>
       </v-card-text>
       <v-btn variant="text" href="https://toprss.webfollow.cc/"
-        >看看别人都订阅了啥</v-btn
+        >看看别人都订阅什么</v-btn
       ></v-container
     >
     <h3 class="text-center ma-8">订阅列表</h3>
