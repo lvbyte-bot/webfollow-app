@@ -115,7 +115,7 @@
   </v-btn>
   <!-- 菜单 -->
   <template v-for="i in 2" :key="i">
-    <v-menu :activator="`#menu-activator-${i}`" class="menu" width="200">
+    <v-menu :activator="`#menu-activator-${i}`" class="menu" width="160">
       <v-list nav>
         <v-list-item
           v-for="(item, index) in menus"
@@ -128,7 +128,9 @@
       </v-list>
     </v-menu>
   </template>
-
+  <!-- 搜索弹框 -->
+  <search-dialog v-model="showSearch" />
+  <help-dialog v-model="showHelp" />
   <v-dialog max-width="800px" max-height="70vh" v-model="settingable">
     <Settings
       :activeMenu="activeMenu"
@@ -151,7 +153,8 @@ import {
 import Settings from "./settings/Settings.vue";
 import SideBar from "./sub/SideBar.vue";
 import PlayList from "./sub/PlayList.vue";
-
+import SearchDialog from "./sub/SearchDialog.vue";
+import HelpDialog from "./sub/HelpDialog.vue";
 import { useHotkeys } from "@/utils/useHotkeys";
 
 const appStore = useAppStore();
@@ -172,8 +175,8 @@ const menus = [
   { title: "设置", value: "setting" },
   { title: "套餐", value: "combo" },
   { title: "AI Key", value: "aikey" },
-  { title: "搜索", value: "search" },
-  { title: "快捷键", value: "hotkeys" },
+  { title: "搜索 (ctrl+/)", value: "search" },
+  { title: "快捷键 (ctrl+?)", value: "hotkeys" },
   { title: "反馈", value: "feedback" },
   { title: "注册账号", value: "register" },
   { title: "下载app", value: "app" },
@@ -199,6 +202,7 @@ const handleMenuClick = (value) => {
   } else if (value == "search") {
     showSearch.value = true;
   } else if (value == "hotkeys") {
+    console.log(showHelp)
     showHelp.value = true;
   }
 };
@@ -212,6 +216,9 @@ watch(hideSide, () => {
 onBeforeMount(() => {
   hideSide.value = settingsStore.appearance.hideSidebar;
 });
+
+// 添加快捷键支持
+const { showSearch, showHelp } = useHotkeys();
 </script>
 <style lang="scss" scoped>
 .hideside {

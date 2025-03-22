@@ -14,10 +14,6 @@
         <!-- 主体 -->
         <router-view></router-view>
       </v-main>
-
-      <!-- 搜索弹框 -->
-      <search-dialog v-model="showSearch" />
-      <help-dialog v-model="showHelp" />
     </v-app>
   </v-responsive>
 </template>
@@ -29,9 +25,6 @@ import { storeToRefs } from "pinia";
 import { useElResize } from "@/utils/useElResize";
 import { useSettingsStore, useFeedsStore } from "@/store";
 import SideNav from "./SideNav.vue";
-import SearchDialog from "./sub/SearchDialog.vue";
-import HelpDialog from "./sub/HelpDialog.vue";
-import { useHotkeys } from "@/utils/useHotkeys";
 
 const settingsStore = useSettingsStore();
 const feedStore = useFeedsStore();
@@ -107,9 +100,6 @@ onMounted(() => {
     hideSide.value = !hideSide.value;
   };
 });
-
-// 添加快捷键支持
-const { showSearch, showHelp } = useHotkeys();
 </script>
 <style lang="scss">
 .hideside {

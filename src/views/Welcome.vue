@@ -29,7 +29,7 @@
   >
     <div class="text-center">
       <p class="text-subtitle-2 mb-3">
-        人工智能帮您高效阅读<br />(支持过滤、总结、问答)
+        AI驱动，智能阅读——您的RSS新体验！<br />(支持过滤、总结、问答)
       </p>
       <v-btn variant="text" to="/explore"> 开始吧 </v-btn>
       <br />
