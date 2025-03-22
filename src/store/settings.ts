@@ -200,7 +200,7 @@ export const useSettingsStore = defineStore('settings', () => {
         ...integrated.value,
         apiUrl: integrated.value.apiKey ? integrated.value.apiUrl : 'https://oneapi.jisuai.cn/v1',
         apiKey: integrated.value.apiKey ? integrated.value.apiKey : 'sk-z6Qddv96AOIsjwGIL5ivKrfxHjojBOkl6z2MvKOgFbooydV7',
-        selectedModel: integrated.value.apiKey ? integrated.value.selectedModel : 'deepseek-v3',
+        selectedModel: integrated.value.apiKey ? integrated.value.selectedModel : 'deepseek-chat',
         isApiValid: integrated.value.apiKey ? integrated.value.isApiValid : true,
     }))
 
