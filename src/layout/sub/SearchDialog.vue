@@ -137,7 +137,7 @@ import { useRouter } from "vue-router";
 import { search } from "@/service";
 import type { FeedItem, SubscriptionFeed } from "@/service/types";
 import { debound } from "@/utils/debound";
-import Reader from "../reader";
+import Reader from "@/views/reader";
 import { useSettingsStore } from '@/store';
 import { useItem } from "@/utils/useItem";
 

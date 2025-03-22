@@ -26,12 +26,14 @@
         <div>
           <v-subheader>网站</v-subheader>
           <br />
-          <a :href="feed?.siteUrl" target="_blank" v-text="feed?.siteUrl"></a>
+          <a :href="feed?.siteUrl" target="_blank" v-text="feed?.siteUrl"></a
+          ><v-icon size="small"> mdi-open-in-new</v-icon>
           <br />
           <br />
           <v-subheader class="mt-2">RSS</v-subheader>
           <br />
-          <a :href="feed?.url" target="_blank" v-text="feed?.url"></a>
+          <a :href="feed?.url" target="_blank" v-text="feed?.url"></a
+          ><v-icon size="small"> mdi-open-in-new</v-icon>
         </div>
       </v-card-text>
     </v-card>

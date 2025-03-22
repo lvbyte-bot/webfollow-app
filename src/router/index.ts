@@ -6,7 +6,7 @@ import {
 
 const routes = [{
     path: '/',
-    component: () => import('@/views/Home.vue'),
+    component: () => import('@/layout/IndexLayout.vue'),
     children: [{
         path: '/:type/:id',
         component: () => import('@/views/Items.vue'),
