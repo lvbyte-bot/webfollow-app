@@ -26,22 +26,6 @@
               </div>
               <div>
                 <c-btn
-                  icon
-                  title="刷新"
-                  @click="refresh"
-                  :class="{ rotating: loading }"
-                  class="items-reload"
-                >
-                  <v-icon>{{ loading ? "mdi-loading" : "mdi-reload" }}</v-icon>
-                </c-btn>
-                <c-btn
-                  :icon="onlyUnread ? 'mdi-circle' : 'mdi-circle-outline'"
-                  :title="onlyUnread ? '只看未读' : '看全部'"
-                  @click="changeOnlyUnread(!onlyUnread)"
-                  class="items-unread-toggle"
-                >
-                </c-btn>
-                <c-btn
                   v-show="
                     !(
                       (id == '-1' && type == 'c') ||
@@ -58,7 +42,16 @@
                 >
                   <v-icon>mdi-read</v-icon>
                 </c-btn>
-                <v-menu v-if="!mobile" class="menu">
+                <c-btn
+                  icon
+                  title="刷新"
+                  @click="refresh"
+                  :class="{ rotating: loading }"
+                  class="items-reload"
+                >
+                  <v-icon>{{ loading ? "mdi-loading" : "mdi-reload" }}</v-icon>
+                </c-btn>
+                <v-menu class="menu">
                   <template v-slot:activator="{ props }">
                     <c-btn
                       icon="mdi-dots-vertical"
@@ -66,17 +59,31 @@
                       v-bind="props"
                     ></c-btn>
                   </template>
-
-                  <v-list nav v-model:selected="viewSeleted">
-                    <v-list-item
-                      v-for="(item, index) in views"
-                      :key="index"
-                      :value="item.value"
-                      :prepend-icon="item.icon"
-                    >
-                      <v-list-item-title>{{ item.title }}</v-list-item-title>
-                    </v-list-item>
-                  </v-list>
+                  <v-card>
+                    <v-list nav v-model:selected="viewSeleted">
+                      <v-list-item
+                        v-for="(item, index) in views"
+                        :key="index"
+                        :value="item.value"
+                        :prepend-icon="item.icon"
+                      >
+                        <v-list-item-title>{{ item.title }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                    <v-divider></v-divider>
+                    <v-list nav>
+                      <v-list-item title="只看未读">
+                        <template v-slot:prepend>
+                          <v-list-item-action start>
+                            <v-checkbox-btn
+                              :model-value="onlyUnread"
+                              @click="changeOnlyUnread(!onlyUnread)"
+                              size="small"
+                            ></v-checkbox-btn>
+                          </v-list-item-action>
+                        </template> </v-list-item
+                    ></v-list>
+                  </v-card>
                 </v-menu>
               </div>
             </div>
@@ -123,7 +130,7 @@
               <v-empty-state
                 icon="mdi-book-open-page-variant-outline"
                 v-if="feedStore.nextUnReadUrl"
-                height="calc(100vh - 56px)"
+                height="calc(100vh - 70px)"
                 class="next-unreadlist"
               >
                 <v-btn variant="text" :to="feedStore.nextUnReadUrl">
@@ -135,21 +142,21 @@
               </v-empty-state>
               <v-empty-state
                 v-else-if="!store.items?.length"
-                height="calc(100vh - 56px)"
+                height="calc(100vh - 70px)"
                 icon="mdi-fruit-watermelon"
                 text="全部已读"
               >
               </v-empty-state>
               <v-empty-state
                 v-else
-                height="calc(100vh - 56px)"
+                height="calc(100vh - 70px)"
                 icon="mdi-fruit-cherries"
                 text="我是有底线的"
               >
               </v-empty-state>
               <v-empty-state
                 v-if="!onlyUnread && type == 'f' && store.items?.length == 0"
-                height="calc(100vh - 56px)"
+                height="calc(100vh - 70px)"
                 icon="mdi-cloud-download-outline"
               >
                 <v-btn
@@ -519,5 +526,15 @@ defineExpose({ loadData, openReader });
       resize: none;
     }
   }
+}
+</style>
+<style lang="css">
+/* checkbox */
+.menu .v-selection-control--density-default {
+  --v-selection-control-size: 1.5rem;
+}
+.menu .v-list-item-action--start {
+  margin-inline-end: 0;
+  margin-inline-start: 0;
 }
 </style>

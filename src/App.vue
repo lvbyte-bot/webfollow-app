@@ -27,7 +27,7 @@ html {
   font-family: var(--font-family) !important;
 }
 #app .v-list-item__spacer,
-.v-list-item__prepend .v-list-item__spacer {
+.menu .v-list-item__prepend .v-list-item__spacer {
   width: 1rem !important;
 }
 #app .v-list-group {
