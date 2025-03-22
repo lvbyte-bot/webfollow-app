@@ -55,7 +55,7 @@
                             <v-list-item-title :class="{ 'font-weight-bold': gItem.unreadQty }"
                                 v-text="gItem.title"></v-list-item-title>
                             <template #prepend>
-                                <v-icon :icon="isOpen ? 'mdi-chevron-up' : ' mdi-chevron-down'">
+                                <v-icon :icon="isOpen ? 'mdi-chevron-down' : ' mdi-chevron-right'">
                                 </v-icon>
                             </template>
                             <template #append>

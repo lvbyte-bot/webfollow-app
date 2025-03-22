@@ -26,8 +26,9 @@ html {
   overflow-y: auto !important;
   font-family: var(--font-family) !important;
 }
-#app .v-list-item__spacer {
-  width: 1rem;
+#app .v-list-item__spacer,
+.v-list-item__prepend .v-list-item__spacer {
+  width: 1rem !important;
 }
 #app .v-list-group {
   --prepend-width: 1rem;

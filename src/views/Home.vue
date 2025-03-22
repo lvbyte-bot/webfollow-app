@@ -189,12 +189,16 @@
         class="podcast-player"
         @click="showPlayList = !showPlayList"
       >
-        <v-icon :class="{ spinner: playListStore.isPlaying }">
+        <!-- <v-icon :class="{ spinner: playListStore.isPlaying }">
           {{
             playListStore.isPlaying
               ? "mdi-music-circle-outline"
               : "mdi-headphones"
           }}
+        </v-icon> -->
+        <img v-if="playListStore.isPlaying " style="width: 3rem;border-radius: 50%;" class="spinner" :src="playListStore.currentPlaying.thumbil"></img>
+        <v-icon v-else>
+          mdi-headphones
         </v-icon>
       </v-btn>
       <!-- 菜单 -->
@@ -403,8 +407,8 @@ const { showSearch, showHelp } = useHotkeys();
 }
 .podcast-player {
   position: fixed;
-  bottom: 3rem;
-  left: 60px;
+  bottom: 2rem;
+  left: 1rem;
   z-index: 1005;
 }
 .menu {
@@ -448,16 +452,10 @@ const { showSearch, showHelp } = useHotkeys();
   }
 }
 .spinner {
-  animation: rotate 2s linear infinite;
+  animation: rotate 6s linear infinite;
 }
 .spinner-2 {
   animation: rotate 20s linear infinite;
-}
-.search-btn {
-  position: fixed;
-  bottom: 3rem;
-  right: 60px;
-  z-index: 1005;
 }
 .v-navigation-drawer--left {
   border-right-width: 0;
