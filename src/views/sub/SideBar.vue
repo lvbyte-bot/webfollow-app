@@ -103,11 +103,11 @@
                 <v-list-item v-if="!isMultiSelectMode" prepend-icon="mdi-read" @click="handleAction('markRead')">
                     标记为已读
                 </v-list-item>
+                <v-list-item v-if="!isMultiSelectMode"  prepend-icon="mdi-dots-horizontal" @click="handleAction('feed')">
+                   订阅源选项
+                </v-list-item>
                 <v-list-item prepend-icon="mdi-folder-move-outline" @click="handleAction('edit')">
                     {{ selectedFeeds.length > 1 ? '批量移动分组' : '移动分组' }}
-                </v-list-item>
-                <v-list-item prepend-icon="mdi-dots-horizontal" @click="handleAction('feed')">
-                   订阅源选项
                 </v-list-item>
                 <v-list-item prepend-icon="mdi-delete-outline" @click="handleAction('delete')">
                     {{ selectedFeeds.length > 1 ? '批量取消订阅' : '取消订阅' }}
@@ -130,8 +130,8 @@
                 <v-form ref="form">
                     <template v-if="selectedFeeds.length == 1">
                         <v-text-field label="标题" disabled required v-model="currentItem.title"></v-text-field>
-                        <v-text-field label="rss地址" disabled required v-model="currentItem.url"></v-text-field>
-                        <v-text-field label="网站地址" disabled required v-model="currentItem.siteUrl"></v-text-field>
+                        <!-- <v-text-field label="rss地址" disabled required v-model="currentItem.url"></v-text-field>
+                        <v-text-field label="网站地址" disabled required v-model="currentItem.siteUrl"></v-text-field> -->
                     </template>
                     <v-select label="分组" v-model="currentItem.groupName" required
                         :items="feedStore.groups.map(g => g.title)" :rules="[v => !!v || '分组是必填']">
