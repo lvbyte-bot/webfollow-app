@@ -96,9 +96,6 @@ onMounted(() => {
       }
     }
   }
-  webfollowApp.toogleSidebar = () => {
-    hideSide.value = !hideSide.value;
-  };
 });
 </script>
 <style lang="scss">

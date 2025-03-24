@@ -215,6 +215,9 @@ watch(hideSide, () => {
 
 onBeforeMount(() => {
   hideSide.value = settingsStore.appearance.hideSidebar;
+  webfollowApp.toogleSidebar = () => {
+    hideSide.value = !hideSide.value;
+  };
 });
 
 // 添加快捷键支持
