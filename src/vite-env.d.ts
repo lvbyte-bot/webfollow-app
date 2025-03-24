@@ -20,5 +20,7 @@ declare namespace CryptoJS {
 declare const webfollowApp: {
   getUnReadUrl: (currentUrl: string, isNext: boolean) => string,
   toogleSidebar: () => void,
+  toggleItemView: () => void,
+  toggleItemUnread: () => void,
   upItemsToggleRead: ((item: FeedItem, index: number) => void) | undefined
 }

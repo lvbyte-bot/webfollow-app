@@ -88,10 +88,10 @@ export function useHotkeys() {
                     }
                     break
                 case 'v':
-                    (document.querySelector('.items-container .items-view-toggle') as HTMLElement)?.click()
+                    webfollowApp.toggleItemView()
                     break
                 case 'u':
-                    (document.querySelector('.items-container .items-unread-toggle') as HTMLElement)?.click()
+                    webfollowApp.toggleItemUnread()
                     break
                 case '/':
                 case 'k':

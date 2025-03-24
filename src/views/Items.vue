@@ -439,6 +439,15 @@ async function changeOnlyUnread(onlyUnread0: boolean) {
 }
 
 defineExpose({ loadData, openReader });
+onMounted(() => {
+  webfollowApp.toggleItemUnread = () => changeOnlyUnread(!onlyUnread.value);
+  webfollowApp.toggleItemView = () => {
+    const currentView = viewSeleted.value[0];
+    const index = views.map((v) => v.value).findIndex((v) => v == currentView);
+    const next = (index + 1) % views.length;
+    viewSeleted.value = [views[next].value as ViewMode];
+  };
+});
 </script>
 <style lang="scss" scoped>
 .items-warp {
