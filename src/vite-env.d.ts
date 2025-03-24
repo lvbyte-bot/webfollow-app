@@ -22,5 +22,8 @@ declare const webfollowApp: {
   toogleSidebar: () => void,
   toggleItemView: () => void,
   toggleItemUnread: () => void,
-  upItemsToggleRead: ((item: FeedItem, index: number) => void) | undefined
+  upItemsToggleRead: ((item: FeedItem, index: number) => void) | undefined,
+  view: {
+    changeEntryCurrentIndex: (index: number) => void
+  }
 }

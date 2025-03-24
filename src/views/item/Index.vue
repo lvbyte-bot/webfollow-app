@@ -149,6 +149,7 @@ const items = computed(() => props.items);
 const itemsType = inject(itemsTypeSymbol);
 
 function openReader(index: number, item: FeedItem) {
+  webfollowApp.view.changeEntryCurrentIndex(index);
   emit("open-reader", index, item);
 }
 

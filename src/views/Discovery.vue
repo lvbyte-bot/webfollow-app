@@ -36,7 +36,7 @@
             ></v-file-input>
             <div class="text-center mx-auto">
               <v-btn color="primary" :loading="loading" @click="importOpml">
-                导入导入OPML
+                导入OPML
               </v-btn>
             </div>
           </v-tabs-window-item>

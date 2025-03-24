@@ -11,6 +11,9 @@ export function useHotkeys() {
     let currentIndex = -1
     let currentSearchIndex = 0
     let searchResultTotal = 0
+
+    webfollowApp.view = { changeEntryCurrentIndex: (index: number) => currentIndex = index }
+
     const handleKeydown = (e: KeyboardEvent) => {
         const topReader = document.querySelector('.v-main-top .cover.reading') as HTMLElement
         const listReader = document.querySelector('.main-reader .cover.reading') as HTMLElement
