@@ -153,7 +153,7 @@ export async function listItem(id: any, type: LsItemType, page: number = 0, only
             break
         case LsItemType.RECOMMEND:
             // const ranks = { 366: 0.1, 117: 0.5 }//listRank({ 132: -1 })
-            res = await itemRepo.findTimeAll(Math.floor(new Date().getTime() / 1000) - 3600 * 24 * 7, ranks, item => filterItem0(item, () => true, onlyUnread, unReadItemIds), page)
+            res = await itemRepo.findTimeAll(Math.floor(new Date().getTime() / 1000) - 3600 * 24 * 1, ranks, item => filterItem0(item, () => true, onlyUnread, unReadItemIds), page)
             break
         default:
             throw Error('error')
@@ -233,9 +233,11 @@ export async function listFailFeedIds(): Promise<number[]> {
  * @param id 
  * @param marked|group|feed 
  * @param before 时间戳
+ * @param after 时间戳
+ * @param feedId 时间戳
  * @returns 
  */
-export async function read(id: number, marked: Marked, before?: number, feedId?: number): Promise<any> {
+export async function read(id: number, marked: Marked, before?: number, after?: number, feedId?: number): Promise<any> {
     if (marked == Marked.ITEM && feedId) {
         readItem(feedId, id)
     }
@@ -252,7 +254,8 @@ export async function read(id: number, marked: Marked, before?: number, feedId?:
         id: id,
         as: 'read',
         mark: Marked[marked].toLowerCase(),
-        before: before
+        before: before,
+        after
     })
 }
 
@@ -261,6 +264,7 @@ export async function read(id: number, marked: Marked, before?: number, feedId?:
  * @param id 
  * @param marksed item|group|feed 
  * @param before 时间戳
+ * @param after 时间戳
  * @returns 
  */
 export async function unread(id: number, marked: Marked, before?: number): Promise<any> {

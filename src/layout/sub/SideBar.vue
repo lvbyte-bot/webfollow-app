@@ -4,9 +4,12 @@
         <v-list nav class="sidebar-list" @mousedown.prevent="" @contextmenu.prevent>
             <div class="sidebar-top">
                 <slot name="top"></slot>
-                <v-list-item prepend-icon="mdi-compass-outline" value="explore" title="发现" to="/explore">
+                <v-list-item prepend-icon="mdi-compass-outline" value="explore" title="今天" to="/explore">
+                    <template v-slot:append>
+                        <small v-if="appStore.item7DayUnReadQty" class="font-weight-thin" v-text="appStore.item7DayUnReadQty"></small>
+                    </template>
                 </v-list-item>
-                <v-list-item prepend-icon="mdi-text-search-variant" value="search" title="搜索" to="/search">
+                <v-list-item prepend-icon="mdi-text-search-variant" value="search" title="订阅搜索" to="/search">
                 </v-list-item>
                 <v-list-item prepend-icon="mdi-bookmark-outline" value="next" title="稍后阅读" to="/next">
                     <template v-slot:append>

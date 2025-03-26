@@ -8,7 +8,7 @@ const { create,
     update,
     remove,
     getAll,
-    listAll, findAll, count, whereOne, openStore, exists
+    listAll, findAll, count, getIdsInTimeRange, whereOne, openStore, exists
 } = IndexedDB(db => {
     // 创建 Groups 对象存储
     if (!db.objectStoreNames.contains('groups')) {
@@ -129,6 +129,10 @@ class ItemRepo extends Repo<Item> {
         const feedIndex = store0.index('feedId')
         const req = feedIndex.count(feedId)
         return getOne(req)
+    }
+
+    async getIdsInTimeRange(startTime: number, endTime: number): Promise<number[]> {
+        return await getIdsInTimeRange(this.storename, startTime, endTime)
     }
 }
 

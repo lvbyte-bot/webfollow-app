@@ -174,6 +174,7 @@ watch(
         Number(props.item.id),
         Marked.ITEM,
         appStore.lastRefeshTime,
+        0,
         props.item.feedId
       );
       props.item.isRead = true;
@@ -252,6 +253,7 @@ onMounted(async () => {
       Number(props.item.id),
       Marked.ITEM,
       appStore.lastRefeshTime,
+      0,
       props.item.feedId
     );
     props.item.isRead = true;

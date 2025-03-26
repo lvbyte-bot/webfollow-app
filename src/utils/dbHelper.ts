@@ -266,6 +266,46 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
         });
     }
 
+    // 返回这段时间内所有id
+    function getIdsInTimeRange(storeName: string, startTime: number, endTime: number, timefield: string = 'pubDate'): Promise<number[]> {
+        return new Promise((resolve, reject) => {
+            openDatabase().then(db => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+
+                // 假设有一个基于时间的索引
+                const index = store.index(timefield);
+
+                // 定义时间范围
+                const range = IDBKeyRange.bound(startTime, endTime);
+
+                // 存储所有匹配的 ID
+                const ids: number[] = [];
+
+                // 使用游标遍历范围内的记录
+                const request = index.openCursor(range);
+
+                request.onsuccess = function (event) {
+                    const cursor = (event.target as IDBRequest).result;
+                    if (cursor) {
+                        // 假设每条记录的主键是 ID
+                        ids.push(cursor.primaryKey as number);
+                        cursor.continue(); // 继续到下一条记录
+                    } else {
+                        // 游标遍历完成，返回结果
+                        resolve(ids);
+                    }
+                };
+
+                request.onerror = function (event) {
+                    reject('Error fetching IDs: ' + (event.target as IDBRequest).error?.message);
+                };
+            }).catch(error => {
+                reject('Database open failed: ' + error);
+            });
+        });
+    }
+
     async function openStore(storeName: string): Promise<IDBObjectStore> {
         const db = await openDatabase()
         const transaction = db.transaction([storeName], 'readonly');
@@ -282,9 +322,11 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
         findAll,
         listAll,
         whereOne,
+        getIdsInTimeRange,
         count,
         exists,
-        openStore
+        openStore,
+
     };
 }
 

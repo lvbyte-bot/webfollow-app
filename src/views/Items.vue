@@ -407,6 +407,7 @@ async function pullFeedItems() {
 }
 
 async function markRead() {
+  console.log(props.type);
   const confirmed = await confirm({
     title: "标记已读",
     message: "确定要将全部文章标记为已读吗？",
@@ -416,7 +417,8 @@ async function markRead() {
     await appStore.read(
       Number(props.id),
       props.type == "f" ? Marked.FEED : Marked.GROUP,
-      appStore.lastRefeshTime
+      appStore.lastRefeshTime,
+      props.type == "all" ? undefined : appStore.item7DayTime
     );
   }
 }
