@@ -23,7 +23,7 @@ export function useHotkeys() {
         if (imgPreviewEl && !showSearch.value) {
             return
         }
-        switch (e.key) {
+        switch (e.key.toLowerCase()) {
             case 'k':
             case '/':
                 // 打开搜索 k | /
