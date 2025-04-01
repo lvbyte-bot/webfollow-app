@@ -153,7 +153,8 @@ export async function listItem(id: any, type: LsItemType, page: number = 0, only
             break
         case LsItemType.RECOMMEND:
             // const ranks = { 366: 0.1, 117: 0.5 }//listRank({ 132: -1 })
-            res = await itemRepo.findTimeAll(Math.floor(new Date().getTime() / 1000) - 3600 * 24 * 1, ranks, item => filterItem0(item, () => true, onlyUnread, unReadItemIds), page)
+            console.log(ranks)
+            res = await itemRepo.findTimeAll(Math.floor(new Date().getTime() / 1000) - 3600 * 24 * 1, item => filterItem0(item, () => true, onlyUnread, unReadItemIds), page)
             break
         default:
             throw Error('error')

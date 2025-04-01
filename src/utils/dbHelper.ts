@@ -199,7 +199,7 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
                         }
                         cursor.continue();
                     } else {
-                        resolve(results);
+                        resolve(results.sort(sortFn));
                     }
                 };
 
@@ -314,7 +314,7 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
     }
 
     // 返回这段时间内所有id
-    function findByTimeRange<T extends DbStore>(storeName: string, startTime: number, endTime: number, pageIndex: number, pageSize: number, conditionFn: (item: T) => boolean, timefield: string = 'pubDate'): Promise<T[]> {
+    function findTimeRange<T extends DbStore>(storeName: string, startTime: number, endTime: number, pageIndex: number, pageSize: number, conditionFn: (item: T) => boolean, timefield: string = 'pubDate'): Promise<T[]> {
         return new Promise((resolve, reject) => {
             openDatabase().then(db => {
                 const transaction = db.transaction([storeName], 'readonly');
@@ -383,7 +383,7 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
         listAll,
         whereOne,
         getIdsInTimeRange,
-        findByTimeRange,
+        findTimeRange,
         count,
         exists,
         openStore,

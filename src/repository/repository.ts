@@ -8,7 +8,7 @@ const { create,
     update,
     remove,
     getAll,
-    listAll, findAll, count, getIdsInTimeRange, findByTimeRange, whereOne, openStore, exists
+    listAll, findAll, count, getIdsInTimeRange, findTimeRange, whereOne, openStore, exists
 } = IndexedDB(db => {
     // 创建 Groups 对象存储
     if (!db.objectStoreNames.contains('groups')) {
@@ -99,7 +99,8 @@ class ItemRepo extends Repo<Item> {
      * @param size 
      * @returns 
      */
-    async findTimeAll<Item>(time: number, feedRanks: any | null, condition: ((item: Item) => boolean), page: number = 0, size: number = 50): Promise<Page<Item>> {
+    // time: number, feedRanks: any | null, 
+    async findTimeAll(time: number, condition: ((item: Item) => boolean), page: number = 0, size: number = 50): Promise<Page<Item>> {
         // const store = await openStore(this.storename)
         // const range = IDBKeyRange.lowerBound(time);
         // const request = store.index("pubDate").openCursor(range);
@@ -121,8 +122,8 @@ class ItemRepo extends Repo<Item> {
         // if (startOffset < items.length) {
         //     data = items.slice(startOffset, endOffset)
         // }
-        const data = await findByTimeRange(this.storename, time, new Date().getTime() / 1000, page, size, condition)
-        console.log(page, data.length, data.length != size)
+        const data: Item[] = await findTimeRange(this.storename, time, new Date().getTime() / 1000, page, size, condition)
+        // console.log(page, data.length, data.length != size)
         return { isLast: data.length != size, data }
     }
 
