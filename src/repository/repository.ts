@@ -1,5 +1,5 @@
 
-import { DbStore, IndexedDB, withCursor, getOne } from '../utils/dbHelper'
+import { DbStore, IndexedDB, getOne } from '../utils/dbHelper'
 
 import { Feed, Group, Item } from './model';
 
@@ -8,7 +8,7 @@ const { create,
     update,
     remove,
     getAll,
-    listAll, findAll, count, getIdsInTimeRange, whereOne, openStore, exists
+    listAll, findAll, count, getIdsInTimeRange, findByTimeRange, whereOne, openStore, exists
 } = IndexedDB(db => {
     // 创建 Groups 对象存储
     if (!db.objectStoreNames.contains('groups')) {
@@ -99,28 +99,30 @@ class ItemRepo extends Repo<Item> {
      * @param size 
      * @returns 
      */
-    async findTimeAll(time: number, feedRanks: any | null, condition: ((item: Item) => boolean) | null, page: number = 0, size: number = 50) {
-        const store = await openStore(this.storename)
-        const range = IDBKeyRange.lowerBound(time);
-        const request = store.index("pubDate").openCursor(range);
-        const items: Item[] = await withCursor(request, (item: Item) => {
-            const rank = feedRanks[item.feedId] || 10;
-            item.rank = rank
-            if (condition) {
-                if (condition(item)) {
-                    return [item, true]
-                } else {
-                    return [null, true]
-                }
-            }
-            return [item, true]
-        }, (a, b) => (a.rank && b.rank ? a.rank - b.rank : 1))
-        const startOffset = page * size;
-        const endOffset = startOffset + size;
-        let data: Item[] = []
-        if (startOffset < items.length) {
-            data = items.slice(startOffset, endOffset)
-        }
+    async findTimeAll<Item>(time: number, feedRanks: any | null, condition: ((item: Item) => boolean), page: number = 0, size: number = 50): Promise<Page<Item>> {
+        // const store = await openStore(this.storename)
+        // const range = IDBKeyRange.lowerBound(time);
+        // const request = store.index("pubDate").openCursor(range);
+        // const items: Item[] = await withCursor(request, (item: Item) => {
+        //     const rank = feedRanks[item.feedId] || 10;
+        //     item.rank = rank
+        //     if (condition) {
+        //         if (condition(item)) {
+        //             return [item, true]
+        //         } else {
+        //             return [null, true]
+        //         }
+        //     }
+        //     return [item, true]
+        // }, (a, b) => (a.rank && b.rank ? a.rank - b.rank : 1))
+        // const startOffset = page * size;
+        // const endOffset = startOffset + size;
+        // let data: Item[] = []
+        // if (startOffset < items.length) {
+        //     data = items.slice(startOffset, endOffset)
+        // }
+        const data = await findByTimeRange(this.storename, time, new Date().getTime() / 1000, page, size, condition)
+        console.log(page, data.length, data.length != size)
         return { isLast: data.length != size, data }
     }
 

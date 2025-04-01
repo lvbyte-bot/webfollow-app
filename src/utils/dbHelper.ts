@@ -178,21 +178,28 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
                 }
 
                 const startOffset = pageIndex * pageSize;
-                const endOffset = startOffset + pageSize;
-
+                let currentIndex = 0
                 request.onsuccess = function (event) {
-                    const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
-                    if (cursor) {
-                        const record = cursor.value;
-                        if (conditionFn(record)) {
-                            results.push(record);
+                    const cursor = (event.target as IDBRequest).result;
+                    if (!cursor) {
+                        resolve(results);
+                        return;
+                    }
+
+                    // 跳过前startIndex条记录
+                    if (currentIndex < startOffset) {
+                        currentIndex++;
+                        cursor.continue();
+                        return;
+                    }
+                    // 收集第startIndex到limit条记录
+                    if (results.length < pageSize) {
+                        if (conditionFn(cursor.value)) {
+                            results.push(cursor.value);
                         }
                         cursor.continue();
                     } else {
-                        if (sortFn) {
-                            results.sort(sortFn);
-                        }
-                        resolve(results.slice(startOffset, endOffset)); // 返回符合条件的结果
+                        resolve(results);
                     }
                 };
 
@@ -306,6 +313,59 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
         });
     }
 
+    // 返回这段时间内所有id
+    function findByTimeRange<T extends DbStore>(storeName: string, startTime: number, endTime: number, pageIndex: number, pageSize: number, conditionFn: (item: T) => boolean, timefield: string = 'pubDate'): Promise<T[]> {
+        return new Promise((resolve, reject) => {
+            openDatabase().then(db => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+
+                // 假设有一个基于时间的索引
+                const index = store.index(timefield);
+
+                // 定义时间范围
+                const range = IDBKeyRange.bound(startTime, endTime);
+
+                // 存储所有匹配的 ID
+                const results: T[] = [];
+
+                // 使用游标遍历范围内的记录
+                const request = index.openCursor(range, 'prev');
+                const startOffset = pageIndex * pageSize;
+                let currentIndex = 0
+                request.onsuccess = function (event) {
+                    const cursor = (event.target as IDBRequest).result;
+                    if (!cursor) {
+                        resolve(results);
+                        return;
+                    }
+
+                    // 跳过前startIndex条记录
+                    if (currentIndex < startOffset) {
+                        currentIndex++;
+                        cursor.continue();
+                        return;
+                    }
+                    // 收集第startIndex到limit条记录
+                    if (results.length < pageSize) {
+                        if (conditionFn(cursor.value)) {
+                            results.push(cursor.value);
+                        }
+                        cursor.continue();
+                    } else {
+                        resolve(results);
+                    }
+                };
+
+                request.onerror = function (event) {
+                    reject('Error fetching IDs: ' + (event.target as IDBRequest).error?.message);
+                };
+            }).catch(error => {
+                reject('Database open failed: ' + error);
+            });
+        });
+    }
+
     async function openStore(storeName: string): Promise<IDBObjectStore> {
         const db = await openDatabase()
         const transaction = db.transaction([storeName], 'readonly');
@@ -323,6 +383,7 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
         listAll,
         whereOne,
         getIdsInTimeRange,
+        findByTimeRange,
         count,
         exists,
         openStore,
