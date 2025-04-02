@@ -510,16 +510,16 @@ onMounted(() => {
   }
   .main-container {
     position: relative;
-    // border-right: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
-    border-left: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+    border-right: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+    // border-left: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
     overflow-y: scroll;
     resize: horizontal;
     min-width: 360px;
     max-width: 36vw;
     width: 380px;
-    background-color: rgb(var(--sidbar-bg));
+    //  background-color: rgb(var(--sidbar-bg));
     .top-bar {
-      background-color: rgb(var(--sidbar-bg));
+      //    background-color: rgb(var(--sidbar-bg));
     }
   }
 }

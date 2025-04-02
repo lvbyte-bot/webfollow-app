@@ -21,7 +21,6 @@
                 <div class="d-flex justify-space-between w-100">
                     <span>FILTERS</span>
                     <div>
-                        <span style="color: #ff0000;">new</span>
                         <router-link to="/filter">
                             <v-icon icon="mdi-filter-plus-outline" color="secondary"></v-icon>
                         </router-link>
@@ -46,7 +45,7 @@
                 </div>
             </div>
 
-            <v-list-item prepend-icon="mdi-text-box-multiple-outline" value="all" title="全部文章" to="/all">
+            <v-list-item  prepend-icon="mdi-all-inclusive" value="all" title="全部文章" to="/all">
                 <template v-slot:append>
                     <small v-if="appStore.unReadQty" class="font-weight-thin" v-text="appStore.unReadQty"></small>
                 </template>
@@ -417,5 +416,8 @@ const handleFilterAction = (action: string) => {
 
 .v-list .v-list-item--nav:not(:only-child) {
     margin-bottom: 1px;
+}
+.font-weight-thin{
+    opacity: .6;
 }
 </style>
