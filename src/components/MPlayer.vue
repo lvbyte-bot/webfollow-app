@@ -66,7 +66,7 @@ const audio = ref<HTMLAudioElement | null>(null);
 
 watch(
   () => props.modelValue?.url,
-  (newUrl) => {
+  () => {
     isPlaying.value = false;
     currentTime.value = props.modelValue?.currentTime || 0;
     updateMediaSessionMetadata(); // 更新媒体元数据
