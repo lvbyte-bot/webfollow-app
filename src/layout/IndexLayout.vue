@@ -32,6 +32,7 @@ const { appearance } = storeToRefs(settingsStore);
 const router = useRouter();
 const route = useRoute();
 const hideSide = ref(false);
+const { mobile } = useDisplay();
 
 const themeMode = ref(appearance.value.themeMode);
 
