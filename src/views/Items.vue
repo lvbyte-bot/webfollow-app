@@ -36,7 +36,7 @@
                   "
                   :disabled="store.items?.filter((o) => !o.isRead).length == 0"
                   icon
-                  title="全部标记为已读"
+                  title="全部标记为已读(快捷键：M)"
                   @click="markRead"
                   class="items-mark-read"
                 >
@@ -44,7 +44,7 @@
                 </c-btn>
                 <c-btn
                   icon
-                  title="刷新"
+                  title="刷新(快捷键：R)"
                   @click="refresh"
                   :class="{ rotating: loading }"
                   class="items-reload"

@@ -42,7 +42,7 @@
             </v-list-item>
 
             <v-list-item>
-              <v-list-item-title>S</v-list-item-title>
+              <v-list-item-title>F</v-list-item-title>
               <v-list-item-subtitle>稍后阅读</v-list-item-subtitle>
             </v-list-item>
             <v-list-item>

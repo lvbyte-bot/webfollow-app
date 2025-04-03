@@ -158,7 +158,7 @@ export function useHotkeys() {
 
     function handleReaderKeydown(e: KeyboardEvent, reader: HTMLElement) {
         switch (e.key.toLowerCase()) {
-            case 's':
+            case 'f':
                 // 稍后阅读
                 (reader.querySelector('.entry-saved') as HTMLElement)?.click()
                 break

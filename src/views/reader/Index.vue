@@ -28,7 +28,7 @@
             variant="text"
             :loading="summarizing"
             :disabled="!canSummarize"
-            title="AI 总结"
+            title="AI 总结(快捷键：G)"
             @click="generateSummary"
             class="mr-2 entry-ai-summary"
           >
@@ -37,7 +37,7 @@
           <c-btn
             variant="text"
             icon
-            title="稍后阅读"
+            title="稍后阅读(快捷键：F)"
             @click="toggleSaved"
             class="mr-2 entry-saved"
           >
@@ -48,7 +48,7 @@
           <c-btn
             variant="text"
             :color="readerType == 'default' ? '' : 'primary'"
-            title="内嵌网页"
+            title="内嵌网页(快捷键：I)"
             icon=" mdi-apple-safari"
             class="entry-inner"
             @click="readerType = readerType == 'default' ? 'HTML' : 'default'"
@@ -57,7 +57,7 @@
           <c-btn
             variant="text"
             icon
-            :title="item.isRead ? '未读' : '已读'"
+            :title="item.isRead ? '未读(快捷键：M)' : '已读(快捷键：M)'"
             @click.stop="toggleRead"
             class="entry-read"
           >

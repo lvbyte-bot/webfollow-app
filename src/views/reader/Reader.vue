@@ -16,7 +16,7 @@
                 variant="text"
                 icon="mdi-close"
                 @click="emit('update:modelValue', false)"
-                title="关闭"
+                title="关闭(快捷键：ESC)"
                 class="mr-2"
               ></c-btn>
               <template v-if="entryList.length">
@@ -24,7 +24,7 @@
                   :disabled="currentItemIndex == 0"
                   variant="text"
                   icon="mdi-chevron-up"
-                  title="上一篇文章"
+                  title="上一篇文章(快捷键：LEFT)"
                   @click="openReader?.(currentItemIndex - 1, undefined)"
                   class="mr-2 entry-prev"
                 ></c-btn>
@@ -32,7 +32,7 @@
                   :disabled="currentItemIndex + 1 == items?.length"
                   variant="text"
                   icon="mdi-chevron-down"
-                  title="下一篇文章"
+                  title="下一篇文章(快捷键：RIGHT)"
                   @click="openReader?.(currentItemIndex + 1, undefined)"
                   class="entry-next"
                 ></c-btn>
