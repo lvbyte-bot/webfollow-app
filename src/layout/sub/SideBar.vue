@@ -4,7 +4,7 @@
         <v-list nav class="sidebar-list" @mousedown.prevent="" @contextmenu.prevent>
             <div class="sidebar-top">
                 <slot name="top"></slot>
-                <v-list-item prepend-icon="mdi-compass-outline" value="explore" title="今天" to="/explore">
+                <v-list-item prepend-icon="mdi-sun-compass" value="explore" title="今天" to="/explore">
                     <template v-slot:append>
                         <small v-if="appStore.item7DayUnReadQty" class="font-weight-thin" v-text="appStore.item7DayUnReadQty"></small>
                     </template>
@@ -45,7 +45,7 @@
                 </div>
             </div>
 
-            <v-list-item  prepend-icon="mdi-all-inclusive" value="all" title="全部文章" to="/all">
+            <v-list-item  prepend-icon="mdi-list-box-outline" value="all" title="全部文章" to="/all">
                 <template v-slot:append>
                     <small v-if="appStore.unReadQty" class="font-weight-thin" v-text="appStore.unReadQty"></small>
                 </template>
