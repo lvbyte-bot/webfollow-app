@@ -179,27 +179,29 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
 
                 const startOffset = pageIndex * pageSize;
                 let currentIndex = 0
+
                 request.onsuccess = function (event) {
                     const cursor = (event.target as IDBRequest).result;
                     if (!cursor) {
                         resolve(results);
                         return;
                     }
-
-                    // 跳过前startIndex条记录
-                    if (currentIndex < startOffset) {
-                        currentIndex++;
-                        cursor.continue();
-                        return;
-                    }
-                    // 收集第startIndex到limit条记录
-                    if (results.length < pageSize) {
-                        if (conditionFn(cursor.value)) {
-                            results.push(cursor.value);
+                    if (conditionFn(cursor.value)) {
+                        // 跳过前startIndex条记录
+                        if (currentIndex < startOffset) {
+                            currentIndex++;
+                            cursor.continue();
+                            return;
                         }
-                        cursor.continue();
+                        // 收集第startIndex到limit条记录
+                        if (results.length < pageSize) {
+                            results.push(cursor.value);
+                            cursor.continue();
+                        } else {
+                            resolve(results.sort(sortFn));
+                        }
                     } else {
-                        resolve(results.sort(sortFn));
+                        cursor.continue();
                     }
                 };
 
@@ -339,21 +341,22 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
                         resolve(results);
                         return;
                     }
-
-                    // 跳过前startIndex条记录
-                    if (currentIndex < startOffset) {
-                        currentIndex++;
-                        cursor.continue();
-                        return;
-                    }
-                    // 收集第startIndex到limit条记录
-                    if (results.length < pageSize) {
-                        if (conditionFn(cursor.value)) {
-                            results.push(cursor.value);
+                    if (conditionFn(cursor.value)) {
+                        // 跳过前startIndex条记录
+                        if (currentIndex < startOffset) {
+                            currentIndex++;
+                            cursor.continue();
+                            return;
                         }
-                        cursor.continue();
+                        // 收集第startIndex到limit条记录
+                        if (results.length < pageSize) {
+                            results.push(cursor.value);
+                            cursor.continue();
+                        } else {
+                            resolve(results);
+                        }
                     } else {
-                        resolve(results);
+                        cursor.continue();
                     }
                 };
 
