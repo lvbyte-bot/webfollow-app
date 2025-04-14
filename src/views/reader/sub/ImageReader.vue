@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, computed, Ref } from "vue";
+import { ref, watch, computed } from "vue";
 import { FeedItem } from "@/service/types";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation, Pagination } from "swiper/modules";
@@ -37,7 +37,7 @@ import BasicReader from "./BasicReader.vue";
 // 定义 props
 const props = defineProps<{
   readonly item: FeedItem;
-  readonly readerRef: Ref<any, any>;
+  readonly readerRef: HTMLElement | undefined;
 }>();
 
 // 定义 emits（如果需要的话）
@@ -73,7 +73,7 @@ const onSlideChange = (_: any) => {};
   height: 100%;
   display: grid;
   grid-gap: 1rem;
-  grid-template-columns: minmax(20vw, 5fr) minmax(15vw, 3fr);
+  grid-template-columns: minmax(20vw, 6fr) minmax(15vw, 2fr);
   background: rgb(var(--v-theme-background));
 }
 
@@ -148,12 +148,20 @@ const onSlideChange = (_: any) => {};
     text-align: center;
     margin: 0 auto;
     max-width: 100%;
+    display: none;
   }
   .v-card-title {
     display: none;
   }
   .bar-left {
     width: 10px;
+  }
+}
+@media (max-width: 1200px) {
+  .text-reader {
+    img {
+      display: block;
+    }
   }
 }
 </style>

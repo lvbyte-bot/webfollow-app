@@ -33,11 +33,11 @@ export const useItemsStore = defineStore('items', () => {
 
     let cacheLoadParams: any = {}
 
-    const items = computed(() => data.value?.map(item => {
+    const items: Ref<FeedItem[]> = computed(() => data.value ? data.value?.map(item => {
         item.isSaved = saved_item_ids.has(item.id)
         item.isRead = !unread_item_ids.has(item.id)
         return item
-    }))
+    }) : [])
 
     async function loadData(id: any, type: LsItemType, page: number = 0, onlyUnread: boolean = false, meta?: PageRouteMeta) {
         cacheLoadParams = { id, type, page, onlyUnread }

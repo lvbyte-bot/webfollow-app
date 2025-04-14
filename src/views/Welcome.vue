@@ -14,7 +14,7 @@
     </div>
   </div>
 
-  <v-empty-state height="100vh" v-if="appStore.loading">
+  <v-empty-state height="calc(100vh - 64px)" v-if="appStore.loading">
     <div class="mx-auto text-center">
       <v-icon size="x-large" :class="{ rotating: appStore.loading }"
         >mdi-loading</v-icon
@@ -23,12 +23,15 @@
     <p class="mt-5">正在为你准备中...</p>
   </v-empty-state>
   <v-empty-state
-    height="100vh"
+    height="calc(100vh - 64px)"
     v-else
     icon="mdi-book-open-page-variant-outline"
   >
     <div class="text-center">
-      <v-btn variant="text" to="/recom"> 开始吧 </v-btn>
+      <p class="text-subtitle-2 mb-3">
+        AI驱动，智能阅读——您的RSS新体验！<br />(支持过滤、总结、问答)
+      </p>
+      <v-btn variant="text" to="/explore"> 开始吧 </v-btn>
       <br />
       <v-btn
         v-if="appStore.authInfo.username == 'guest'"

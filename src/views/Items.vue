@@ -1,81 +1,15 @@
 <template>
-  <div
-    class="main-warp"
-    :class="{ 'main-col': general.defaultView == 'magazine' && type }"
-  >
-    <!-- reader -->
-    <v-dialog-transition>
-      <div class="cover" v-show="show">
-        <Reader :item="currentItem">
-          <template #chapter>
-            <div id="chapters" class="chapter-list"></div>
-          </template>
-          <template #prepend-bar>
-            <c-btn
-              variant="text"
-              icon="mdi-close"
-              @click="show = false"
-              title="关闭"
-              class="mr-2"
-            ></c-btn>
-            <c-btn
-              :disabled="currentItemIndex == 0"
-              variant="text"
-              icon="mdi-chevron-up"
-              title="上一篇文章"
-              @click="openReader(currentItemIndex - 1, undefined)"
-              class="mr-2"
-            ></c-btn>
-            <c-btn
-              :disabled="currentItemIndex + 1 == store.items?.length"
-              variant="text"
-              icon="mdi-chevron-down"
-              title="下一篇文章"
-              @click="openReader(currentItemIndex + 1, undefined)"
-            ></c-btn>
-          </template>
-          <template #header>
-            <div
-              class="entry-list"
-              v-if="!mobile && (general.defaultView != 'magazine' || !type)"
-            >
-              <ul>
-                <li
-                  v-for="item in entryList"
-                  @click="openReader(-1, item)"
-                  :class="{ active: item.id == currentItem.id }"
-                  :key="item.id"
-                  :title="item.title"
-                >
-                  <v-icon :color="item.isRead ? 'grey' : 'primary'">
-                    {{ item.isRead ? "" : "mdi-circle-medium" }}
-                  </v-icon>
-                  {{ item.title }}
-                </li>
-              </ul>
-            </div>
-          </template>
-          <template #footer>
-            <v-empty-state
-              v-if="
-                currentItemIndex + 1 != store.items?.length &&
-                currentItem.type == 'BASIC'
-              "
-            >
-              <v-btn
-                variant="text"
-                @click="openReader(currentItemIndex + 1, undefined)"
-              >
-                <template #prepend>
-                  <v-icon> mdi mdi-page-next-outline </v-icon>
-                </template>
-                下一个篇文章
-              </v-btn>
-            </v-empty-state>
-          </template>
-        </Reader>
-      </div>
-    </v-dialog-transition>
+  <div class="main-warp" :class="{ 'main-col': viewMode == 'column' && type }">
+    <reader
+      v-if="currentItem && store.items?.length"
+      :item="currentItem"
+      :items="store.items"
+      :open-reader="openReader"
+      :entry-list-disable="mobile || !(viewMode != 'column' || !type)"
+      :modelValue="appStore.readerMode"
+      @update:modelValue="appStore.readerMode = $event"
+    ></reader>
+    <div class="main-reader"></div>
     <main class="main-container" ref="mainRef">
       <slot v-bind:="{ openReader, loadData }">
         <!-- items -->
@@ -96,54 +30,61 @@
                     !(
                       (id == '-1' && type == 'c') ||
                       type == 'next' ||
-                      type == 'all' ||
-                      type == 'recom' ||
+                      type == 'home' ||
                       type == 'filter'
                     )
                   "
                   :disabled="store.items?.filter((o) => !o.isRead).length == 0"
                   icon
-                  title="标记为已读"
+                  title="全部标记为已读(快捷键：M)"
                   @click="markRead"
-                  class="mr-2"
+                  class="items-mark-read"
                 >
                   <v-icon>mdi-read</v-icon>
                 </c-btn>
-
                 <c-btn
                   icon
-                  title="刷新"
+                  title="刷新(快捷键：R)"
                   @click="refresh"
                   :class="{ rotating: loading }"
-                  class="mr-2"
+                  class="items-reload"
                 >
                   <v-icon>{{ loading ? "mdi-loading" : "mdi-reload" }}</v-icon>
                 </c-btn>
-                <c-btn
-                  :icon="onlyUnread ? 'mdi-circle' : 'mdi-circle-outline'"
-                  :title="onlyUnread ? '只看未读' : '看全部'"
-                  @click="changeOnlyUnread(!onlyUnread)"
-                  class="mr-2"
-                >
-                </c-btn>
-                <c-btn
-                  :icon="
-                    general.defaultView == 'card'
-                      ? 'mdi-view-gallery-outline'
-                      : general.defaultView == 'magazine'
-                      ? 'mdi-view-column-outline'
-                      : 'mdi-view-list-outline'
-                  "
-                  :title="
-                    general.defaultView == 'card'
-                      ? '卡片视图'
-                      : general.defaultView == 'magazine'
-                      ? '三栏视图'
-                      : '列表视图'
-                  "
-                  @click="changeItemView()"
-                >
-                </c-btn>
+                <v-menu class="menu">
+                  <template v-slot:activator="{ props }">
+                    <c-btn
+                      icon="mdi-dots-vertical"
+                      variant="text"
+                      v-bind="props"
+                    ></c-btn>
+                  </template>
+                  <v-card>
+                    <v-list nav v-model:selected="viewSeleted">
+                      <v-list-item
+                        v-for="(item, index) in views"
+                        :key="index"
+                        :value="item.value"
+                        :prepend-icon="item.icon"
+                      >
+                        <v-list-item-title>{{ item.title }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                    <v-divider></v-divider>
+                    <v-list nav>
+                      <v-list-item title="只看未读">
+                        <template v-slot:prepend>
+                          <v-list-item-action start>
+                            <v-checkbox-btn
+                              :model-value="onlyUnread"
+                              @click="changeOnlyUnread(!onlyUnread)"
+                              size="small"
+                            ></v-checkbox-btn>
+                          </v-list-item-action>
+                        </template> </v-list-item
+                    ></v-list>
+                  </v-card>
+                </v-menu>
               </div>
             </div>
           </slot>
@@ -179,7 +120,7 @@
             <template v-if="store.items?.length">
               <Items
                 :items="store.items"
-                :view="general.defaultView"
+                :view="viewMode"
                 :type="type"
                 @open-reader="openReader"
               ></Items>
@@ -189,7 +130,8 @@
               <v-empty-state
                 icon="mdi-book-open-page-variant-outline"
                 v-if="feedStore.nextUnReadUrl"
-                height="calc(100vh - 56px)"
+                height="calc(100vh - 70px)"
+                class="next-unreadlist"
               >
                 <v-btn variant="text" :to="feedStore.nextUnReadUrl">
                   <template #prepend>
@@ -200,21 +142,21 @@
               </v-empty-state>
               <v-empty-state
                 v-else-if="!store.items?.length"
-                height="calc(100vh - 56px)"
+                height="calc(100vh - 70px)"
                 icon="mdi-fruit-watermelon"
                 text="全部已读"
               >
               </v-empty-state>
               <v-empty-state
                 v-else
-                height="calc(100vh - 56px)"
+                height="calc(100vh - 70px)"
                 icon="mdi-fruit-cherries"
                 text="我是有底线的"
               >
               </v-empty-state>
               <v-empty-state
                 v-if="!onlyUnread && type == 'f' && store.items?.length == 0"
-                height="calc(100vh - 56px)"
+                height="calc(100vh - 70px)"
                 icon="mdi-cloud-download-outline"
               >
                 <v-btn
@@ -236,15 +178,17 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, ref, Ref } from "vue";
-
-import Reader from "./reader/Index.vue";
+import { computed, provide, ref, Ref } from "vue";
+import Reader from "./reader";
 import Items from "./item/Index.vue";
+import { viewModeSymbol, itemsTypeSymbol } from "./InjectionSymbols";
 import { onMounted, watch } from "vue";
+import { ViewMode } from "@/store/types";
 import { Marked } from "@/service";
 import { retrieveRelevantContexts } from "@/service/rag";
 import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
+import { debound } from "@/utils/debound";
 import {
   useItemsStore,
   useAppStore,
@@ -254,12 +198,13 @@ import {
 } from "@/store";
 import { FeedItem, LsItemType } from "@/service/types";
 import { useScroll } from "@/utils/scrollListener";
-import { useImgPreview } from "@/utils/useImgPreview";
+import { confirm } from "@/plugins/confirm";
+import { useCalViewMode } from "@/utils/useCalView";
+
 const props = defineProps(["type", "id"]);
 
 const mainRef = ref();
 
-useImgPreview();
 const { mobile } = useDisplay();
 const store = useItemsStore();
 const appStore = useAppStore();
@@ -278,51 +223,61 @@ const currentItem: Ref<FeedItem> = ref({
   pubDate: 0,
   link: "",
 });
-const currentItemIndex = ref(0);
 
-const show = ref(false);
+// const show = ref(false);
 const loading = ref(false);
 const settingsStore = useSettingsStore();
 const { general } = storeToRefs(settingsStore);
+const items = computed(() => store.items);
+const view = computed(() => general.value.defaultView);
 const onlyUnread = computed(() => general.value.hideReadArticles);
-const entryList = computed(() =>
-  getSurroundingItems(store.items || [], currentItem.value)
-);
-
+const { viewMode, itemsType } = useCalViewMode(view, items);
 const { isBottom } = useScroll(mainRef);
 
-function getSurroundingItems(
-  array: FeedItem[],
-  currentItem0: FeedItem,
-  range = 7
-) {
-  let index = 0;
-  for (let i = 0; i < array.length; i++) {
-    if (currentItem0.id == array[i].id) {
-      index = i;
-      if (currentItemIndex.value < 0) {
-        currentItemIndex.value = index;
-      }
-      continue;
-    }
-  }
-  const start = Math.max(0, index - range);
-  const end = Math.min(array.length, index + range + 1);
-  return array.slice(start, end);
-}
+provide(viewModeSymbol, viewMode);
+provide(itemsTypeSymbol, itemsType);
 
-function changeItemView() {
-  if (general.value.defaultView == "text") {
-    general.value.defaultView = "card";
-  } else if (general.value.defaultView == "card") {
-    general.value.defaultView = "magazine";
-  } else {
-    general.value.defaultView = "text";
-  }
+const views = [
+  {
+    icon: "mdi-view-dashboard-outline",
+    title: "跟随文章",
+    value: "auto",
+  },
+  {
+    icon: "mdi-list-box-outline",
+    title: "列表视图",
+    value: "list",
+  },
+  {
+    icon: "mdi-view-grid-outline",
+    title: "卡片视图",
+    value: "card",
+  },
+  {
+    icon: "mdi-view-column-outline",
+    title: "三栏视图",
+    value: "column",
+  },
+  {
+    icon: "mdi-view-sequential-outline",
+    title: "杂志视图",
+    value: "magazine",
+  },
+  {
+    icon: "mdi-text-box-outline",
+    title: "清单视图",
+    value: "text",
+  },
+];
+
+const viewSeleted: Ref<ViewMode[]> = ref([general.value.defaultView]);
+
+watch(viewSeleted, (vs) => {
+  general.value.defaultView = vs[0];
   mainRef.value.style.width = "";
   mainRef.value.scrollTo(0, 0);
   settingsStore.saveToLocalStorage();
-}
+});
 
 function watchLoadMore() {
   watch(isBottom, (v) => {
@@ -332,11 +287,16 @@ function watchLoadMore() {
   });
 }
 
+const debounceLoadData = debound(() => {
+  loadData(0);
+  // show.value = false;
+  appStore.readerMode = false;
+  mainRef.value.scrollTo(0, 0);
+}, 360);
+
 function watchRefresh() {
   watch(props, () => {
-    loadData(0);
-    show.value = false;
-    mainRef.value.scrollTo(0, 0);
+    debounceLoadData();
   });
 }
 
@@ -348,6 +308,7 @@ onMounted(() => {
     watchLoadMore();
     if (props.type) {
       loadData();
+      appStore.readerMode = false;
     }
   }
 });
@@ -413,7 +374,7 @@ async function loadData(
     await loadData0(null, LsItemType.SAVED, page, onlyUnread.value);
   } else if (props.type == "all") {
     await loadData0(null, LsItemType.ALL, page, onlyUnread.value);
-  } else if (props.type == "recom") {
+  } else if (props.type == "home" || props.type == "explore") {
     await loadData0(null, LsItemType.RECOMMEND, page, onlyUnread.value);
   } else if (props.type == "filter") {
     await loadData0(props.id, LsItemType.FILTER, page, onlyUnread.value);
@@ -446,16 +407,25 @@ async function pullFeedItems() {
 }
 
 async function markRead() {
-  await appStore.read(
-    Number(props.id),
-    props.type == "f" ? Marked.FEED : Marked.GROUP,
-    appStore.lastRefeshTime
-  );
+  console.log(props.type);
+  const confirmed = await confirm({
+    title: "标记已读",
+    message: "确定要将全部文章标记为已读吗？",
+  });
+
+  if (confirmed) {
+    await appStore.read(
+      Number(props.id),
+      props.type == "f" ? Marked.FEED : Marked.GROUP,
+      appStore.lastRefeshTime,
+      props.type == "all" ? undefined : appStore.item7DayTime
+    );
+  }
 }
 
-function openReader(index: number, item: any | undefined) {
-  show.value = true;
-  currentItemIndex.value = index;
+function openReader(index: number, item: FeedItem | undefined) {
+  // show.value = true;
+  appStore.readerMode = true;
   if (item) {
     currentItem.value = item;
   } else if (store.items) {
@@ -471,33 +441,21 @@ async function changeOnlyUnread(onlyUnread0: boolean) {
 }
 
 defineExpose({ loadData, openReader });
+onMounted(() => {
+  webfollowApp.toggleItemUnread = () => changeOnlyUnread(!onlyUnread.value);
+  webfollowApp.toggleItemView = () => {
+    const currentView = viewSeleted.value[0];
+    const index = views.map((v) => v.value).findIndex((v) => v == currentView);
+    const next = (index + 1) % views.length;
+    viewSeleted.value = [views[next].value as ViewMode];
+  };
+});
 </script>
 <style lang="scss" scoped>
 .items-warp {
   position: relative;
   padding-top: 0;
   padding-bottom: 0;
-}
-
-.cover {
-  position: sticky;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 100;
-  background-color: rgb(var(--v-theme-background));
-
-  .cover-action {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 100;
-    padding: 0.8rem;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-gap: 2rem;
-  }
 }
 
 @keyframes rotate {
@@ -534,102 +492,40 @@ defineExpose({ loadData, openReader });
 .main-warp {
   font-size: var(--font-size);
 }
-.entry-list {
-  position: absolute;
-  top: 10rem;
-  left: 0.5rem;
-  width: 300px;
-  min-height: 36vh;
-  & > ul {
-    display: none;
-  }
-  &:hover {
-    > ul {
-      display: block;
-    }
-  }
-}
 </style>
 <style lang="scss">
 .main-container {
   height: 100vh;
   overflow-y: scroll;
 }
-
 .v-toolbar {
   background-color: rgb(var(--v-theme-background)) !important;
 }
-.chapter-list,
-.entry-list {
-  padding: 0.5rem 0.8rem;
-  border-radius: 0.5rem;
-  z-index: 1;
-  color: rgba(var(--v-theme-on-code), 0.26);
-  // margin-bottom: 3rem;
-  // max-width: 150px;
-  overflow: hidden;
-  border: 1px solid rgba(var(--v-border-color), 0);
-  // max-height: calc(100vh - 150px);
-  // overflow: auto;
-  img {
-    height: 1.3rem;
-  }
-  ul {
-    list-style: none;
-    font-size: 12px;
-    line-height: 24px;
-    li {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
 
-      > * {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      &:hover {
-        color: rgba(var(--v-theme-on-code), 0.9);
-        cursor: pointer;
-      }
-    }
-  }
-  .active {
-    color: rgb(var(--v-theme-on-code));
-  }
-  &:hover {
-    max-width: none;
-    color: rgba(var(--v-theme-on-code), 0.5);
-    // background-color: rgb(var(--v-theme-background));
-    // box-shadow: 3px 3px 2px rgba(var(--v-theme-on-code), 0.1);
-    // border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
-  }
-}
-@media (max-width: 1280px) {
-  .entry-list {
-    display: none;
-    background: rgb(var(--v-theme-background));
-  }
-}
 .main-col {
   display: grid;
   grid-template-columns: auto 1fr;
-
-  .cover {
+  .main-reader {
     grid-area: 1/2/2/2;
   }
   .main-container {
     position: relative;
     border-right: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+    // border-left: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
     overflow-y: scroll;
     resize: horizontal;
     min-width: 360px;
     max-width: 36vw;
     width: 380px;
-    background-color: rgb(var(--sidbar-bg));
+    //  background-color: rgb(var(--sidbar-bg));
     .top-bar {
-      background-color: rgb(var(--sidbar-bg));
+      //    background-color: rgb(var(--sidbar-bg));
     }
+  }
+}
+.menu {
+  .v-list-item--density-default.v-list-item--one-line {
+    min-height: 32px;
   }
 }
 @media (max-width: 760px) {
@@ -641,5 +537,15 @@ defineExpose({ loadData, openReader });
       resize: none;
     }
   }
+}
+</style>
+<style lang="css">
+/* checkbox */
+.menu .v-selection-control--density-default {
+  --v-selection-control-size: 1.5rem;
+}
+.menu .v-list-item-action--start {
+  margin-inline-end: 0;
+  margin-inline-start: 0;
 }
 </style>

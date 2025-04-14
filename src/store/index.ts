@@ -11,6 +11,7 @@ import { computed, Ref, watch, ref, onMounted, reactive, Reactive } from 'vue'
 import { PageRoute, TopNav } from './types'
 import { LsItemType } from '@/service/types'
 import { useSettingsStore } from './settings'
+import { itemRepo } from '@/repository'
 
 type SyncType = '' | 'sync2local'
 
@@ -27,12 +28,20 @@ export const useAppStore = defineStore('app', () => {
     const lastRefeshTime = ref(0);
     const authInfo: Ref<any> = ref(JSON.parse(localStorage.getItem('auth') || '{"username":"guest"}'))
     const nav: Reactive<TopNav> = reactive({ title: 'loading' })
+    const readerMode = ref(false)
+
+    const item7DayIds: Ref<number[]> = ref([])
+
+    const item7DayTime = ref(0)
 
     async function sync(type: SyncType = '') {
         async function pullData2Local() {
             return await pulllocal()
         }
-        lastRefeshTime.value = new Date().getTime()
+        const item7DayStart = new Date()
+        item7DayStart.setDate(item7DayStart.getDate() - 1)
+        item7DayTime.value = Math.round(item7DayStart.getTime() / 1000)
+        lastRefeshTime.value = Math.round(new Date().getTime() / 1000)
         const tmpPullDataFail = settingsStore.general.pullDataFail
         settingsStore.general.pullDataFail = true
         settingsStore.saveToLocalStorage()
@@ -55,11 +64,12 @@ export const useAppStore = defineStore('app', () => {
             await refreshFeed()
             setRanks(await getRanks())
         }
+        item7DayIds.value = await fetch7dayItemId(item7DayStart.getTime())
         settingsStore.general.pullDataFail = false
         settingsStore.saveToLocalStorage()
         loading.value = false
         setTimeout(() => initNav(pageRoute), 1000)
-        lastRefeshTime.value = new Date().getTime()
+        lastRefeshTime.value = Math.round(new Date().getTime() / 1000)
         info('sync end')
 
     }
@@ -84,6 +94,7 @@ export const useAppStore = defineStore('app', () => {
 
     const savedQty = computed(() => saved_item_ids.size)
     const unReadQty = computed(() => unread_item_ids.size)
+    const item7DayUnReadQty = computed(() => item7DayIds.value.filter(id => unread_item_ids.has(id)).length)
     watch(unReadQty, () => {
         setTitle(unReadQty.value)
     })
@@ -122,8 +133,8 @@ export const useAppStore = defineStore('app', () => {
                 }
                 return
             case LsItemType.RECOMMEND:
-                nav.title = '推荐'
-                nav.qty = 0
+                nav.title = '今天'
+                nav.qty = item7DayUnReadQty.value
                 return
             case LsItemType.FEED:
                 let fs = subscriptions?.value?.flatMap(g => g.feeds).filter(f => f.id == v.id)
@@ -137,9 +148,13 @@ export const useAppStore = defineStore('app', () => {
         }
     }
 
+    async function fetch7dayItemId(start: number): Promise<number[]> {
+
+        return await itemRepo.getIdsInTimeRange(start / 1000, new Date().getTime() / 1000)
+    }
 
 
-    return { reloadBuild, sync, loading, read, unread, save, unsave, savedQty, unReadQty, authInfo, lastRefeshTime, nav }
+    return { reloadBuild, sync, loading, read, unread, save, unsave, savedQty, unReadQty, item7DayUnReadQty, authInfo, lastRefeshTime, item7DayTime, nav, readerMode }
 })
 
 

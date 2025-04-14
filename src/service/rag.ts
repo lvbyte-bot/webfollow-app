@@ -31,7 +31,7 @@ interface RAGResponse {
 
 export async function queryWithRAG(query: string): Promise<RAGResponse> {
     const settingsStore = useSettingsStore()
-    const settings = settingsStore.integrated
+    const settings = settingsStore.proxyIntegrated
 
     if (!settings.isApiValid || !settings.apiKey) {
         throw new Error("LLM 配置无效")
@@ -152,7 +152,7 @@ export async function retrieveRelevantContexts(query: string, keywordsWithWeight
  */
 async function splitToKeywordsWithAI(query: string): Promise<KeywordWeight[]> {
     const settingsStore = useSettingsStore()
-    const settings = settingsStore.integrated
+    const settings = settingsStore.proxyIntegrated
 
     if (!settings.isApiValid || !settings.apiKey) {
         // 如果 AI 配置无效，回退到简单分词，所有权重设为1
@@ -227,7 +227,7 @@ async function splitToKeywordsWithAI(query: string): Promise<KeywordWeight[]> {
  */
 export async function getRelatedKeywords(query: string): Promise<KeywordWeight[]> {
     const settingsStore = useSettingsStore()
-    const settings = settingsStore.integrated
+    const settings = settingsStore.proxyIntegrated
 
     if (!settings.isApiValid || !settings.apiKey) {
         throw new Error("AI 配置无效")
@@ -249,7 +249,7 @@ export async function getRelatedKeywords(query: string): Promise<KeywordWeight[]
                     },
                     {
                         role: "user",
-                        content: `请分析以下语句，返回其中的关键词，以及经常与这些关键词一起出现的其他关键词，包括相关人物、事件和相似词汇等，并给出相应的权重：\n${query}\n只返回JSON数组，不要其他内容和Markdown格式，请按照以下格式返回：[{"keyword": "word", "weight": 1}]。`,
+                        content: `请分析以下语句，\n"${query}"相关人物、事件和相似词汇, 返回其中的关键词，以及经常与这些关键词一起出现的其他关键词，并给出相应的权重,只返回JSON数组，不要其他内容和Markdown格式，请按照以下格式返回：[{"keyword": "word", "weight": 1}]。`,
                     },
                 ],
                 temperature: 0.1,
@@ -311,13 +311,13 @@ function calculateRelevanceScore(text: string, keywords: KeywordWeight[]): numbe
 }
 
 function buildRAGPrompt(query: string, contexts: FeedContext[]): string {
-    let prompt = `问题: ${query}\n\n相关上下文:\n\n`
+    let prompt = `问题: ${query}\n\n相关上下文:"""\n\n`
 
     contexts.forEach((ctx, index) => {
-        prompt += `[${index + 1}] 来自 "${ctx.source}":\n标题: ${ctx.title} \n发布时间:${formattedDate(ctx.pubDate)}\n内容: ${ctx.content}\n\n`
+        prompt += `[${index + 1}] 来自 "${ctx.source}":\n标题: ${ctx.title} \n发布时间:${formattedDate(ctx.pubDate)}\n`
     })
 
-    prompt += `\n基于以上上下文，请回答问题。如果上下文信息不足以回答问题，请说明。`
+    prompt += `"""\n基于以上上下文，请回答问题。如果上下文信息不足以回答问题，请说明。`
 
     return prompt
 }

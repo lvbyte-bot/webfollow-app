@@ -6,7 +6,7 @@ import {
 
 const routes = [{
     path: '/',
-    component: () => import('@/views/Home.vue'),
+    component: () => import('@/layout/IndexLayout.vue'),
     children: [{
         path: '/:type/:id',
         component: () => import('@/views/Items.vue'),
@@ -18,6 +18,10 @@ const routes = [{
     },
     {
         path: '/',
+        component: () => import('@/views/Welcome.vue'),
+    },
+    {
+        path: '/welcome',
         component: () => import('@/views/Welcome.vue'),
     },
     {
@@ -38,6 +42,10 @@ const routes = [{
     }, {
         path: '/login',
         component: () => import('@/views/Login.vue'),
+    }, {
+        path: '/rss',
+        name: 'RSSList',
+        component: () => import('../views/discover/RssList.vue')
     }]
 }]
 

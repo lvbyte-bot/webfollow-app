@@ -1,6 +1,7 @@
 // stores/counter.js
 import {
     defineStore,
+    storeToRefs
 } from 'pinia'
 import {
     ref,
@@ -16,6 +17,7 @@ import { extFeed } from '@/api'
 import {
     useBaseStore
 } from './base'
+import { useSettingsStore } from './settings'
 import { useRoute } from 'vue-router'
 import { Subscription } from '@/service/types'
 import { feedRepo, Group, itemRepo } from '@/repository'
@@ -26,6 +28,9 @@ export const useFeedsStore = defineStore('feeds', () => {
         fail_feed_ids,
         refresh: refreshBase
     } = useBaseStore()
+    const {
+        automation
+    } = storeToRefs(useSettingsStore())
     const groups: Ref<Group[]> = ref([])
     const route = useRoute()
     const data: Ref<Subscription[] | undefined> = ref([])
@@ -80,13 +85,7 @@ export const useFeedsStore = defineStore('feeds', () => {
         })
         subscriptions.value = follow
         // init readUrls
-        readUrls = [{ url: '/all' }, { url: '/next' }, { url: '/recom' }]
-        follow.forEach(g => {
-            readUrls.push({ url: '/c/' + g.id, unreadQty: g.unreadQty })
-            g.feeds.forEach(f => {
-                readUrls.push({ url: '/f/' + f.id, unreadQty: f.unreadQty })
-            })
-        })
+        updateReadUrls()
     }
 
     async function refreshFeedUnreadQty() {
@@ -96,17 +95,11 @@ export const useFeedsStore = defineStore('feeds', () => {
             await Promise.all(g.feeds.map(async f => {
                 f.unreadQty = await sumUnread(items, f.id, unread_item_ids)
             }))
-            g.unreadQty = g.feeds.map(f => f.unreadQty).reduce((x, y) => x + y)
+            g.unreadQty = g.feeds.map(f => f.unreadQty).reduce((x, y) => x + y, 0)
             return g
         })
 
-        readUrls = [{ url: '/all' }, { url: '/next' }, { url: '/recom' }]
-        subscriptions.value?.forEach(g => {
-            readUrls.push({ url: '/c/' + g.id, unreadQty: g.unreadQty })
-            g.feeds.forEach(f => {
-                readUrls.push({ url: '/f/' + f.id, unreadQty: f.unreadQty })
-            })
-        })
+        updateReadUrls()
     }
 
     async function refresh() {
@@ -119,15 +112,27 @@ export const useFeedsStore = defineStore('feeds', () => {
     }
 
     watch(route, () => {
-        nextUnReadUrl.value = getNextUnReadUrl(route.fullPath)
+        updateNextUnReadUrl()
     })
+    watch(automation, () => {
+        updateReadUrls()
+    }, { deep: true })
 
-    watch(subscriptions, () => {
-        setTimeout(() => {
-            nextUnReadUrl.value = getNextUnReadUrl(route.fullPath)
-        }, 500);
-        // console.log(feeds)
-    })
+
+    function updateReadUrls() {
+        readUrls = [{ url: '/explore', unreadQty: 1 }, { url: '/next', unreadQty: 1 }, ...automation.value.filters.map(f => ({ url: '/filter/' + f.id, unreadQty: 1 })), { url: '/all', unreadQty: unread_item_ids.size }]
+        subscriptions.value?.forEach(g => {
+            readUrls.push({ url: '/c/' + g.id, unreadQty: g.unreadQty })
+            g.feeds.forEach(f => {
+                readUrls.push({ url: '/f/' + f.id, unreadQty: f.unreadQty })
+            })
+        })
+        updateNextUnReadUrl()
+    }
+
+    function updateNextUnReadUrl() {
+        nextUnReadUrl.value = getNextUnReadUrl(route.fullPath)
+    }
 
     function getNextUnReadUrl(currentUrl: string): string {
         let canNextUrl = false
@@ -140,6 +145,26 @@ export const useFeedsStore = defineStore('feeds', () => {
             }
         }
         return ''
+    }
+
+    function getPrevUnReadUrl(currentUrl: string): string {
+        let prevUrl = ''
+        for (let i = 0; i < readUrls.length; i++) {
+            if (readUrls[i].url == currentUrl) {
+                return prevUrl
+            }
+            if (readUrls[i].unreadQty && readUrls[i].unreadQty > 0) {
+                prevUrl = readUrls[i].url
+            }
+        }
+        return ''
+    }
+
+    webfollowApp.getUnReadUrl = function (currentUrl: string, isNext: boolean = true): string {
+        if (isNext) {
+            return getNextUnReadUrl(currentUrl)
+        }
+        return getPrevUnReadUrl(currentUrl)
     }
 
     onMounted(async () => {
@@ -169,9 +194,6 @@ export const useFeedsStore = defineStore('feeds', () => {
         }
     }
 
-
-
-
     return {
         groups,
         subscriptions,
@@ -179,6 +201,5 @@ export const useFeedsStore = defineStore('feeds', () => {
         updateFeed,
         nextUnReadUrl,
         refresh,
-        readUrls
     }
 })

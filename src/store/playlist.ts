@@ -78,8 +78,15 @@ export const usePlayListStore = defineStore('playlist', () => {
     }
 
     function togglePlaying() {
+
         if (tmpTogglePlaying) {
             tmpTogglePlaying()
+        }
+    }
+
+    function setCurrentTime(currentTime: number) {
+        if (currentPlaying.value) {
+            currentPlaying.value.currentTime = currentTime
         }
     }
 
@@ -103,6 +110,7 @@ export const usePlayListStore = defineStore('playlist', () => {
         setPlaying,
         togglePlaying,
         setTogglePlaying,
+        setCurrentTime,
         clear
     }
 })

@@ -14,5 +14,13 @@ export function useScroll(el: any) {
             el.value.removeEventListener('scroll', scroll);
         }
     })
-    return { scrollTop }
+    function scrollTo(top: number) {
+        if (el.value) {
+            el.value.scrollTo({
+                top: top,
+                behavior: 'smooth'
+            });
+        }
+    }
+    return { scrollTop, scrollTo }
 }

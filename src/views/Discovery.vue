@@ -1,46 +1,53 @@
 <template>
-  <div class="page">
-    <h3>添加订阅</h3>
-    <v-tabs v-model="tab" align-tabs="center">
-      <v-tab value="rss">导入RSS</v-tab>
-      <v-tab value="ompl">导入OMPL</v-tab>
-    </v-tabs>
+  <div>
+    <v-container max-width="800">
+      <div class="text-center my-12">
+        <div class="text-h3">添加订阅源</div>
+        <p class="my-6 text-subtitle-2">看什么您说了算</p>
+      </div>
+      <v-tabs v-model="tab" align-tabs="center">
+        <v-tab value="rss">导入RSS</v-tab>
+        <v-tab value="ompl">导入OPML</v-tab>
+      </v-tabs>
 
-    <v-card-text class="mt-6">
-      <v-tabs-window v-model="tab">
-        <v-tabs-window-item value="rss">
-          <v-text-field
-            v-model="value"
-            label="RSS网址"
-            required
-            @keyup.enter="add"
-          ></v-text-field>
-          <div class="text-center mx-auto">
-            <v-btn color="primary" :loading="loading" @click="add">
-              添加
-            </v-btn>
-          </div>
-        </v-tabs-window-item>
+      <v-card-text class="mt-6">
+        <v-tabs-window v-model="tab">
+          <v-tabs-window-item value="rss">
+            <v-text-field
+              v-model="value"
+              label="RSS网址"
+              required
+              @keyup.enter="add"
+            ></v-text-field>
+            <div class="text-center mx-auto">
+              <v-btn color="primary" :loading="loading" @click="add">
+                添加
+              </v-btn>
+            </div>
+          </v-tabs-window-item>
 
-        <v-tabs-window-item value="ompl">
-          <v-file-input
-            v-model="omplFile"
-            label="选择OMPL文件"
-            accept=".opml"
-            @change="importOmpl"
-            required
-          ></v-file-input>
-          <div class="text-center mx-auto">
-            <v-btn color="primary" :loading="loading" @click="importOmpl">
-              导入OMPL
-            </v-btn>
-          </div>
-        </v-tabs-window-item>
-      </v-tabs-window>
-    </v-card-text>
-    <v-card-actions>
-      <v-btn href="https://toprss.webfollow.cc/">看看别人都订阅了啥</v-btn>
-    </v-card-actions>
+          <v-tabs-window-item value="ompl">
+            <v-file-input
+              v-model="omplFile"
+              label="选择OPML文件"
+              accept=".opml"
+              @change="importOpml"
+              required
+            ></v-file-input>
+            <div class="text-center mx-auto">
+              <v-btn color="primary" :loading="loading" @click="importOpml">
+                导入OPML
+              </v-btn>
+            </div>
+          </v-tabs-window-item>
+        </v-tabs-window>
+      </v-card-text>
+      <v-btn variant="text" href="https://toprss.webfollow.cc/"
+        >看看别人都订阅什么</v-btn
+      ></v-container
+    >
+    <h3 class="text-center ma-8">订阅列表</h3>
+    <rss-list />
   </div>
 </template>
 
@@ -49,6 +56,7 @@ import { ref } from "vue";
 import { extFeed } from "@/api";
 import { useAppStore } from "@/store";
 
+import RssList from "@/views/discover/RssList.vue";
 const appStore = useAppStore();
 const loading = ref(false);
 const value = ref("");
@@ -69,7 +77,7 @@ async function add() {
   loading.value = false;
 }
 
-async function importOmpl() {
+async function importOpml() {
   if (!omplFile.value) {
     alert("请先选择OMPL文件");
     return;

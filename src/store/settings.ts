@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia'
-import { onBeforeMount, onMounted, ref, } from 'vue'
+import { computed, onBeforeMount, onMounted, ref, } from 'vue'
+import { ViewMode } from './types'
 
 interface GeneralSettings {
-    startPage: 'home' | 'all' | 'next' | 'firstfolder' | 'recom'
-    defaultView: 'text' | 'card' | 'magazine'
+    startPage: 'welcome' | 'all' | 'next' | 'firstfolder' | 'explore'
+    defaultView: ViewMode
     hideReadArticles: boolean
     autoRefresh: boolean
     refreshInterval: number
@@ -17,7 +18,10 @@ interface AppearanceSettings {
     codeFont: string
     fontSize: number
     density: 'comfortable' | 'compact' | 'default'
+    // 减少动画
+    lessAnimation: boolean,
     hideSidebar: boolean
+    sidebarWidth: number
 }
 
 interface IntegratedSettings {
@@ -54,8 +58,8 @@ interface SettingsState {
 
 export const useSettingsStore = defineStore('settings', () => {
     const general = ref<GeneralSettings>({
-        startPage: 'home',
-        defaultView: 'text',
+        startPage: 'welcome',
+        defaultView: 'auto',
         hideReadArticles: true,
         autoRefresh: false,
         refreshInterval: 30 * 60,
@@ -65,11 +69,13 @@ export const useSettingsStore = defineStore('settings', () => {
     const appearance = ref<AppearanceSettings>({
         themeMode: 'system',
         themeColor: '39, 174, 96',
-        fontFamily: 'system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"',
+        fontFamily: 'system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, SN Pro',
         codeFont: 'mono',
         fontSize: 14,
         density: 'default',
-        hideSidebar: false
+        lessAnimation: false,
+        hideSidebar: false,
+        sidebarWidth: 256
     })
 
     const integrated = ref<IntegratedSettings>({
@@ -134,8 +140,8 @@ export const useSettingsStore = defineStore('settings', () => {
 
     function resetGeneralSettings() {
         general.value = {
-            startPage: 'all',
-            defaultView: 'text',
+            startPage: 'welcome',
+            defaultView: 'auto',
             hideReadArticles: true,
             autoRefresh: false,
             refreshInterval: 30 * 60,
@@ -148,11 +154,13 @@ export const useSettingsStore = defineStore('settings', () => {
         appearance.value = {
             themeMode: 'system',
             themeColor: '39, 174, 96',
-            fontFamily: 'system-ui',
+            fontFamily: 'system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, SN Pro',
             codeFont: 'mono',
             fontSize: 14,
             density: 'default',
-            hideSidebar: false
+            lessAnimation: false,
+            hideSidebar: false,
+            sidebarWidth: 256
         }
         saveToLocalStorage()
     }
@@ -188,10 +196,19 @@ export const useSettingsStore = defineStore('settings', () => {
         updateCSSVariables()
     })
 
+    const proxyIntegrated = computed(() => ({
+        ...integrated.value,
+        apiUrl: integrated.value.apiKey ? integrated.value.apiUrl : 'https://oneapi.jisuai.cn/v1',
+        apiKey: integrated.value.apiKey ? integrated.value.apiKey : 'sk-z6Qddv96AOIsjwGIL5ivKrfxHjojBOkl6z2MvKOgFbooydV7',
+        selectedModel: integrated.value.apiKey ? integrated.value.selectedModel : 'deepseek-chat',
+        isApiValid: integrated.value.apiKey ? integrated.value.isApiValid : true,
+    }))
+
     return {
         general,
         appearance,
         integrated,
+        proxyIntegrated,
         automation,
         getFilter,
         saveToLocalStorage,

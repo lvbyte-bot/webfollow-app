@@ -15,3 +15,15 @@ declare function setTitle(arg: number): void
 declare namespace CryptoJS {
   function MD5(str: string): string;
 }
+
+
+declare const webfollowApp: {
+  getUnReadUrl: (currentUrl: string, isNext: boolean) => string,
+  toogleSidebar: () => void,
+  toggleItemView: () => void,
+  toggleItemUnread: () => void,
+  upItemsToggleRead: ((item: FeedItem, index: number) => void) | undefined,
+  view: {
+    changeEntryCurrentIndex: (index: number) => void
+  }
+}

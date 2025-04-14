@@ -5,8 +5,8 @@
       <v-card-title>开始页</v-card-title>
       <v-card-text>
         <v-radio-group v-model="data.startPage">
-          <v-radio label="首页" value="home"></v-radio>
-          <v-radio label="推荐" value="recom"></v-radio>
+          <v-radio label="欢迎页" value="welcome"></v-radio>
+          <v-radio label="发现页面" value="explore"></v-radio>
           <v-radio label="全部文章" value="all"></v-radio>
           <v-radio label="稍后阅读" value="next"></v-radio>
           <v-radio label="第一个文件夹" value="firstfolder"></v-radio>
@@ -19,11 +19,19 @@
       <v-card-title>默认视图</v-card-title>
       <v-card-text>
         <v-radio-group v-model="data.defaultView">
-          <v-radio label="列表视图" value="text">
+          <v-radio label="跟随文章" value="auto">
+            <template v-slot:label>
+              <div class="d-flex align-center">
+                跟随文章
+                <v-icon class="ml-2">mdi-view-dashboard-outline</v-icon>
+              </div>
+            </template>
+          </v-radio>
+          <v-radio label="列表视图" value="list">
             <template v-slot:label>
               <div class="d-flex align-center">
                 列表视图
-                <v-icon class="ml-2">mdi-view-list-outline</v-icon>
+                <v-icon class="ml-2">mdi-list-box-outline</v-icon>
               </div>
             </template>
           </v-radio>
@@ -31,15 +39,31 @@
             <template v-slot:label>
               <div class="d-flex align-center">
                 卡片视图
-                <v-icon class="ml-2">mdi-view-gallery-outline</v-icon>
+                <v-icon class="ml-2">mdi-view-grid-outline</v-icon>
+              </div>
+            </template>
+          </v-radio>
+          <v-radio label="三栏视图" value="column">
+            <template v-slot:label>
+              <div class="d-flex align-center">
+                三栏视图
+                <v-icon class="ml-2">mdi-view-column-outline </v-icon>
               </div>
             </template>
           </v-radio>
           <v-radio label="杂志视图" value="magazine">
             <template v-slot:label>
               <div class="d-flex align-center">
-                三栏视图
-                <v-icon class="ml-2">mdi-view-column-outline </v-icon>
+                杂志视图
+                <v-icon class="ml-2">mdi-view-sequential-outline</v-icon>
+              </div>
+            </template>
+          </v-radio>
+          <v-radio label="清单视图" value="text">
+            <template v-slot:label>
+              <div class="d-flex align-center">
+                清单视图
+                <v-icon class="ml-2">mdi-text-box-outline</v-icon>
               </div>
             </template>
           </v-radio>

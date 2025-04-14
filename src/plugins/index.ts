@@ -8,10 +8,15 @@
 import vuetify from './vuetify'
 import router from '../router'
 import { createPinia } from 'pinia'
+import ConfirmPlugin from './confirm'
+import ImgPreviewPlugin from './ImgPreview'
 const pinia = createPinia()
 export function registerPlugins(app: any) {
+  app.config.globalProperties.$vuetify = vuetify;
   app
     .use(pinia)
     .use(vuetify)
     .use(router)
+    .use(ConfirmPlugin)
+    .use(ImgPreviewPlugin)
 }

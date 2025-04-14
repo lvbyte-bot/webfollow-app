@@ -178,21 +178,30 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
                 }
 
                 const startOffset = pageIndex * pageSize;
-                const endOffset = startOffset + pageSize;
+                let currentIndex = 0
 
                 request.onsuccess = function (event) {
-                    const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
-                    if (cursor) {
-                        const record = cursor.value;
-                        if (conditionFn(record)) {
-                            results.push(record);
+                    const cursor = (event.target as IDBRequest).result;
+                    if (!cursor) {
+                        resolve(results);
+                        return;
+                    }
+                    if (conditionFn(cursor.value)) {
+                        // 跳过前startIndex条记录
+                        if (currentIndex < startOffset) {
+                            currentIndex++;
+                            cursor.continue();
+                            return;
                         }
-                        cursor.continue();
+                        // 收集第startIndex到limit条记录
+                        if (results.length < pageSize) {
+                            results.push(cursor.value);
+                            cursor.continue();
+                        } else {
+                            resolve(results.sort(sortFn));
+                        }
                     } else {
-                        if (sortFn) {
-                            results.sort(sortFn);
-                        }
-                        resolve(results.slice(startOffset, endOffset)); // 返回符合条件的结果
+                        cursor.continue();
                     }
                 };
 
@@ -266,6 +275,100 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
         });
     }
 
+    // 返回这段时间内所有id
+    function getIdsInTimeRange(storeName: string, startTime: number, endTime: number, timefield: string = 'pubDate'): Promise<number[]> {
+        return new Promise((resolve, reject) => {
+            openDatabase().then(db => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+
+                // 假设有一个基于时间的索引
+                const index = store.index(timefield);
+
+                // 定义时间范围
+                const range = IDBKeyRange.bound(startTime, endTime);
+
+                // 存储所有匹配的 ID
+                const ids: number[] = [];
+
+                // 使用游标遍历范围内的记录
+                const request = index.openCursor(range);
+
+                request.onsuccess = function (event) {
+                    const cursor = (event.target as IDBRequest).result;
+                    if (cursor) {
+                        // 假设每条记录的主键是 ID
+                        ids.push(cursor.primaryKey as number);
+                        cursor.continue(); // 继续到下一条记录
+                    } else {
+                        // 游标遍历完成，返回结果
+                        resolve(ids);
+                    }
+                };
+
+                request.onerror = function (event) {
+                    reject('Error fetching IDs: ' + (event.target as IDBRequest).error?.message);
+                };
+            }).catch(error => {
+                reject('Database open failed: ' + error);
+            });
+        });
+    }
+
+    // 返回这段时间内所有id
+    function findTimeRange<T extends DbStore>(storeName: string, startTime: number, endTime: number, pageIndex: number, pageSize: number, conditionFn: (item: T) => boolean, timefield: string = 'pubDate'): Promise<T[]> {
+        return new Promise((resolve, reject) => {
+            openDatabase().then(db => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+
+                // 假设有一个基于时间的索引
+                const index = store.index(timefield);
+
+                // 定义时间范围
+                const range = IDBKeyRange.bound(startTime, endTime);
+
+                // 存储所有匹配的 ID
+                const results: T[] = [];
+
+                // 使用游标遍历范围内的记录
+                const request = index.openCursor(range, 'prev');
+                const startOffset = pageIndex * pageSize;
+                let currentIndex = 0
+                request.onsuccess = function (event) {
+                    const cursor = (event.target as IDBRequest).result;
+                    if (!cursor) {
+                        resolve(results);
+                        return;
+                    }
+                    if (conditionFn(cursor.value)) {
+                        // 跳过前startIndex条记录
+                        if (currentIndex < startOffset) {
+                            currentIndex++;
+                            cursor.continue();
+                            return;
+                        }
+                        // 收集第startIndex到limit条记录
+                        if (results.length < pageSize) {
+                            results.push(cursor.value);
+                            cursor.continue();
+                        } else {
+                            resolve(results);
+                        }
+                    } else {
+                        cursor.continue();
+                    }
+                };
+
+                request.onerror = function (event) {
+                    reject('Error fetching IDs: ' + (event.target as IDBRequest).error?.message);
+                };
+            }).catch(error => {
+                reject('Database open failed: ' + error);
+            });
+        });
+    }
+
     async function openStore(storeName: string): Promise<IDBObjectStore> {
         const db = await openDatabase()
         const transaction = db.transaction([storeName], 'readonly');
@@ -282,9 +385,12 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
         findAll,
         listAll,
         whereOne,
+        getIdsInTimeRange,
+        findTimeRange,
         count,
         exists,
-        openStore
+        openStore,
+
     };
 }
 

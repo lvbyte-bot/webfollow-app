@@ -31,14 +31,14 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, Ref, inject } from "vue";
+import { computed, inject } from "vue";
 import { FeedItem } from "@/service/types";
 import { useSideChapter } from "@/utils/useSideChapter";
-import { summarySymbol, summarizingSymbol } from "./InjectionSymbols";
+import { summarySymbol, summarizingSymbol } from "../InjectionSymbols";
 import { md2html } from "@/utils/mdUtils";
 const props = defineProps<{
   readonly item: FeedItem;
-  readonly readerRef: Ref<any, any> | null;
+  readonly readerRef: HTMLElement | undefined;
 }>();
 const description = computed(() => props.item?.description || "");
 const readerRef = computed(() => props.readerRef);
@@ -76,7 +76,7 @@ const summarizing: boolean | undefined = inject(summarizingSymbol);
 .title-container {
   margin: 0 auto 2rem;
   text-align: center;
-  max-width: 692px;
+  max-width: calc(var(--reader-main-max-width) + 42px);
   padding: 1.5rem;
   border-radius: 0.5rem;
   &:hover {
@@ -103,41 +103,60 @@ const summarizing: boolean | undefined = inject(summarizingSymbol);
   text-decoration: none;
   &:hover {
     text-decoration: underline;
-    color: rgb(var(--v-theme-success));
+    color: rgb(var(--v-theme-primary));
   }
 }
 .chapter-warp {
   float: left;
   position: sticky;
-  top: 80px;
-  left: calc(50% + 340px);
+  top: 10rem;
+  left: calc(50% + var(--reader-main-max-width) / 2 + 2rem);
   max-width: 210px;
 }
 .summary {
   border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
   padding: 1rem !important;
   border-radius: 0.5rem;
+  max-width: calc(var(--reader-main-max-width) + 2rem) !important;
 }
 @media (max-width: 1280px) {
   .chapter-warp {
     position: static;
-    // top: 60px;
     float: none;
-    // background: rgb(var(--v-theme-background));
-    // border-radius: 0.5rem;
-    // max-height: 30vh;
-    // overflow: auto;
+    right: 0;
+    max-width: 100%;
   }
 }
 </style>
 <style lang="scss">
-.bar-left {
-  width: 150px;
-}
-.summary {
-  ol,
+.basic-reader {
+  .bar-left {
+    width: 150px;
+  }
+  .summary {
+    ol,
+    ul {
+      padding-inline-start: 1rem;
+    }
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    img {
+      max-height: 2rem;
+      margin-right: 1rem;
+    }
+  }
   ul {
-    padding-inline-start: 1rem;
+    li {
+      &::marker {
+        color: rgb(var(--v-theme-primary));
+        opacity: 1;
+      }
+    }
   }
 }
 </style>

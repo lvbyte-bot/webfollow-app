@@ -3,7 +3,15 @@
     <template #="{ openReader }">
       <div class="warp">
         <div class="feed-assistant mt-12 pa-3">
-          <h2 class="text-center my-12">相关文章搜索</h2>
+          <div class="text-center my-12">
+            <div class="text-h3">文章过滤</div>
+            <p class="my-6 text-subtitle-2">
+              用AI帮你找到相关内容, (由{{
+                settingsStore.proxyIntegrated.selectedModel
+              }}进行驱动)
+            </p>
+          </div>
+
           <div class="border rounded-lg pa-5">
             <v-textarea
               v-model="searchQuery"

@@ -12,8 +12,8 @@ export const useBaseStore = defineStore('base', () => {
     const unread_item_ids: Reactive<Set<number>> = reactive(new Set(JSON.parse(localStorage.getItem('urids') || "[]")))
     const fail_feed_ids: Reactive<Set<number>> = reactive(new Set(JSON.parse(localStorage.getItem('efids') || "[]")))
 
-    async function read(id: number, marked: Marked = Marked.ITEM, before?: number, feedId?: number) {
-        await read0(id, marked, before, feedId)
+    async function read(id: number, marked: Marked = Marked.ITEM, before?: number, after?: number, feedId?: number) {
+        await read0(id, marked, before, after, feedId)
         if (marked == Marked.ITEM) {
             unread_item_ids.delete(id)
         } else {

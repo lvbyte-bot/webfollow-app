@@ -1,91 +1,109 @@
 <template>
-  <v-card flat class="rounded-lg card">
-    <div
-      v-if="item.thumbnail"
-      @mouseover="showIframe = true"
-      @mouseleave="showIframe = false"
-      :style="{
-        maxHeight:
-          item.type == 'VIDEO' && !mobile ? imageHeight + 'px' : 'none',
-      }"
-      class="rounded-lg"
-      :class="{
-        'iframe-container': showIframe && item.type == 'VIDEO',
-      }"
-    >
-      <template v-if="item.type == 'VIDEO' && showIframe">
-        <iframe
-          type="text/html"
-          class="iframe"
-          :src="videoUrl()"
-          :style="{ height: imageHeight + 2 + 'px' }"
-          frameborder="0"
-          allow="fullscreen"
-          mozallowfullscreen="mozallowfullscreen"
-          msallowfullscreen="msallowfullscreen"
-          oallowfullscreen="oallowfullscreen"
-          webkitallowfullscreen="webkitallowfullscreen"
-        ></iframe>
-        <div
-          class="video-warp"
-          :style="{
-            height: imageHeight + 'px',
-          }"
-        ></div>
-      </template>
-      <v-img
-        v-else
-        ref="imageRef"
-        class="align-end text-white rounded-lg play-preview"
-        :title="item.title"
-        :aspect-ratio="
-          mobile ? (item.enclosure ? 1.78 : 0.7) : item.enclosure ? 1.79 : 0
-        "
-        max-height="360px"
-        min-height="80px"
-        :cover="mobile || item.enclosure"
-        :src="item.thumbnail"
+  <v-list-item v-bind="$attrs" class="pa-0 rounded-lg">
+    <v-card flat class="rounded-lg card">
+      <div
+        v-if="item.thumbnail || isVideoOrPodcast"
+        @mouseover="showIframe = true"
+        @mouseleave="showIframe = false"
+        :style="{
+          maxHeight:
+            item.type == 'VIDEO' && !mobile ? imageHeight + 'px' : 'none',
+        }"
+        class="rounded-lg"
+        :class="{
+          'iframe-container': showIframe && item.type == 'VIDEO',
+        }"
       >
-        <template v-if="item.type == 'VIDEO' || item.type == 'PODCAST'">
-          <div class="play-duration">
-            {{ formatDuration(item.duration) }}
-          </div>
+        <template v-if="item.type == 'VIDEO' && showIframe">
+          <iframe
+            type="text/html"
+            class="iframe"
+            :src="videoUrl()"
+            :style="{ height: imageHeight + 2 + 'px' }"
+            frameborder="0"
+            allow="fullscreen"
+            mozallowfullscreen="mozallowfullscreen"
+            msallowfullscreen="msallowfullscreen"
+            oallowfullscreen="oallowfullscreen"
+            webkitallowfullscreen="webkitallowfullscreen"
+          ></iframe>
+          <div
+            class="video-warp"
+            :style="{
+              height: imageHeight + 'px',
+            }"
+          ></div>
         </template>
-      </v-img>
-    </div>
-    <p
-      v-else
-      v-text="item.summary"
-      :style="{ '--line-clamp': mobile ? 12 : 7 }"
-      class="text-ellipsis text-body-2 px-5 py-4 text-grey border rounded-lg summary-warp"
-    ></p>
-    <div class="mt-2 mx-2">
-      <p class="text-ellipsis">
-        <v-icon
-          v-if="!item.isRead"
-          style="margin-left: -5px"
-          color="primary"
-          :icon="item.isRead ? '' : 'mdi-circle-medium'"
-        ></v-icon>
-        <span class="text-subtitle-1" v-text="item.title"></span>
-      </p>
-      <div class="my-2 d-flex justify-space-between">
-        <div class="text-subtitle-2 text-truncate d-flex align-center">
+        <v-img
+          v-else
+          ref="imageRef"
+          class="align-end text-white rounded-lg play-preview"
+          :title="item.title"
+          :aspect-ratio="
+            mobile ? (item.enclosure ? 1.78 : 0.7) : item.enclosure ? 1.79 : 0
+          "
+          max-height="600px"
+          min-height="80px"
+          :cover="mobile || item.enclosure"
+          :src="item.thumbnail || item.feed?.icon"
+        >
+          <template v-if="isVideoOrPodcast">
+            <div class="play-duration">
+              {{ formatDuration(item.duration) }}
+            </div>
+          </template>
+        </v-img>
+      </div>
+      <div
+        v-else
+        :style="{ '--line-clamp': mobile ? 12 : 7 }"
+        class="text-body-2 px-4 py-3 text-grey border rounded-lg summary-warp"
+      >
+        <p v-text="item.summary" class="text-ellipsis"></p>
+      </div>
+      <!-- 标题信息 -->
+      <div class="my-2 d-flex mx-1">
+        <div class="text-center mr-2 left-info">
+          <v-badge v-if="!item.isRead" color="primary" dot>
+            <img
+              :src="item?.feed?.icon"
+              onerror="this.src='/logo.svg'"
+              style="width: 1.8rem; height: 1.8rem"
+              class="rounded-circle"
+            />
+          </v-badge>
           <img
+            v-else
             :src="item?.feed?.icon"
             onerror="this.src='/logo.svg'"
-            style="width: 1.1rem"
-            class="mr-2"
+            style="width: 1.8rem; height: 1.8rem"
+            class="rounded-circle"
           />
-          {{ getSubtitle() }}
+          <!-- <v-icon
+            v-if="!item.isRead"
+            style="margin-left: -5px"
+            color="primary"
+            :icon="item.isRead ? '' : 'mdi-circle-medium'"
+          ></v-icon> -->
         </div>
-        <small v-text="item.datestr"></small>
+        <div>
+          <p class="text-ellipsis">
+            <span v-text="item.title"></span>
+          </p>
+          <div class="mt-2 text-grey">
+            <small>
+              {{ getSubtitle() }}
+            </small>
+            <br />
+            <small v-text="item.datestr"></small>
+          </div>
+        </div>
       </div>
-    </div>
-  </v-card>
+    </v-card>
+  </v-list-item>
 </template>
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { useDisplay } from "vuetify";
 const props = defineProps(["item", "type"]);
 const { mobile } = useDisplay();
@@ -117,6 +135,10 @@ function getSubtitle() {
   return `${source}`;
 }
 
+const isVideoOrPodcast = computed(() => {
+  return props.item.type === "VIDEO" || props.item.type === "PODCAST";
+});
+
 function videoUrl() {
   const link = props.item.link;
   return link.indexOf("youtube.com/watch")
@@ -137,7 +159,9 @@ function formatDuration(seconds: number) {
 </script>
 <style lang="scss" scoped>
 .summary-warp {
-  min-height: 152px;
+  // min-height: 152px;
+  min-height: 10rem;
+  box-sizing: border-box;
   background-color: rgba(var(--v-theme-surface-light), 0.2);
 }
 .iframe-container {
@@ -170,5 +194,11 @@ iframe {
     border-radius: 4px;
     font-size: 0.8rem;
   }
+}
+.left-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
 }
 </style>

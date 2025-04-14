@@ -2,7 +2,11 @@
   <div class="overflow" ref="readerRef">
     <div
       class="top-sider v-toolbar__content px-2"
-      :class="{ 'top-sider-border': scrollTop > 120 && !mobile }"
+      :class="{
+        'top-sider-border': scrollTop > 120 && !mobile,
+        'top-sider-hidden':
+          isScrollingDown && scrollTop > 960 && viewMode != 'column',
+      }"
     >
       <div class="prepend-bar">
         <slot name="prepend-bar"></slot>
@@ -24,18 +28,18 @@
             variant="text"
             :loading="summarizing"
             :disabled="!canSummarize"
-            title="AI 总结"
+            title="AI 总结(快捷键：G)"
             @click="generateSummary"
-            class="mr-2"
+            class="mr-2 entry-ai-summary"
           >
-            <v-icon>mdi-matrix</v-icon>
+            <v-icon>mdi-auto-fix</v-icon>
           </c-btn>
           <c-btn
             variant="text"
             icon
-            title="稍后阅读"
+            title="稍后阅读(快捷键：F)"
             @click="toggleSaved"
-            class="mr-2"
+            class="mr-2 entry-saved"
           >
             <v-icon>{{
               item.isSaved ? "mdi-playlist-minus" : "mdi-playlist-plus"
@@ -44,16 +48,18 @@
           <c-btn
             variant="text"
             :color="readerType == 'default' ? '' : 'primary'"
-            title="内嵌网页"
+            title="内嵌网页(快捷键：I)"
             icon=" mdi-apple-safari"
+            class="entry-inner"
             @click="readerType = readerType == 'default' ? 'HTML' : 'default'"
           >
           </c-btn>
           <c-btn
             variant="text"
             icon
-            :title="item.isRead ? '未读' : '已读'"
+            :title="item.isRead ? '未读(快捷键：M)' : '已读(快捷键：M)'"
             @click.stop="toggleRead"
+            class="entry-read"
           >
             <v-icon>{{
               item.isRead ? "mdi-circle-outline" : "mdi-circle"
@@ -84,7 +90,18 @@
           :item="item"
           :reader-ref="readerRef"
         >
-          <slot name="chapter"></slot>
+          <div>
+            <slot name="chapter"></slot>
+            <v-btn
+              v-show="isScrollingDown && scrollTop > 960"
+              class="mx-5"
+              size="small"
+              variant="text"
+              icon="mdi-arrow-up"
+              title="回到顶部"
+              @click="scrollTo(0)"
+            ></v-btn>
+          </div>
         </basic-reader>
         <podcast-reader
           v-else-if="item?.type == 'PODCAST'"
@@ -94,47 +111,79 @@
         <video-reader :item="item" v-else-if="item.type == 'VIDEO'" />
       </slot>
     </v-container>
-    <slot name="footer"></slot>
+    <template v-if="readerType != 'HTML'">
+      <slot name="footer"></slot>
+    </template>
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, watch, ref, computed, provide } from "vue";
+import {
+  onMounted,
+  watch,
+  ref,
+  computed,
+  provide,
+  onUnmounted,
+  inject,
+} from "vue";
 import { useAppStore, useSettingsStore } from "@/store";
 import { FeedItem } from "@/service/types";
-// import { useSideChapter } from "@/utils/useSideChapter";
 import { useScroll } from "@/utils/scroll";
 import { useDisplay } from "vuetify";
-import BasicReader from "./BasicReader.vue";
-import ImageReader from "./ImageReader.vue";
-import VideoReader from "./VideoReader.vue";
-import PodcastReader from "./PodcastReader.vue";
+import BasicReader from "./sub/BasicReader.vue";
+import ImageReader from "./sub/ImageReader.vue";
+import VideoReader from "./sub/VideoReader.vue";
+import PodcastReader from "./sub/PodcastReader.vue";
 import { Marked } from "@/service";
 import { summarySymbol, summarizingSymbol } from "./InjectionSymbols";
+import { viewModeSymbol } from "../InjectionSymbols";
 
-const readerRef = ref();
+const readerRef = ref<HTMLElement | undefined>();
 
+const viewMode = inject(viewModeSymbol);
 const props = defineProps<{
   item: FeedItem;
 }>();
-const { scrollTop } = useScroll(readerRef);
+const { scrollTop, scrollTo } = useScroll(readerRef);
 const { mobile } = useDisplay();
 const readerType = ref("default");
+const lastScrollTop = ref(0);
+const isScrollingDown = ref(false);
+
+// 监听滚动方向
+watch(scrollTop, (newScrollTop) => {
+  if (newScrollTop > lastScrollTop.value) {
+    isScrollingDown.value = true;
+  } else {
+    isScrollingDown.value = false;
+  }
+  lastScrollTop.value = newScrollTop;
+});
 
 watch(
   () => props.item.id,
-  () => {
+  async () => {
     setTimeout(() => {
-      readerRef.value.scrollTop = 0;
+      if (readerRef.value) {
+        readerRef.value.scrollTo(0, 0);
+      }
       summary.value = "";
     }, 100);
     if (!props.item.isRead && props.item.id) {
-      appStore.read(
+      await appStore.read(
         Number(props.item.id),
         Marked.ITEM,
         appStore.lastRefeshTime,
+        0,
         props.item.feedId
       );
+      props.item.isRead = true;
     }
+    setTimeout(() => {
+      document.querySelectorAll(".reading .content pre").forEach((pre: any) => {
+        pre?.addEventListener("click", copyCode);
+      });
+    }, 100);
   }
 );
 
@@ -146,7 +195,7 @@ const summary = ref<string | null>(null);
 
 // 检查是否可以使用 AI
 const canSummarize = computed(() => {
-  const settings = settingsStore.integrated;
+  const settings = settingsStore.proxyIntegrated;
   return (
     settings.isApiValid &&
     settings.selectedModel &&
@@ -158,7 +207,7 @@ const canSummarize = computed(() => {
 async function generateSummary() {
   if (summarizing.value) return;
 
-  const settings = settingsStore.integrated;
+  const settings = settingsStore.proxyIntegrated;
   summarizing.value = true;
 
   try {
@@ -200,29 +249,56 @@ async function generateSummary() {
 
 onMounted(async () => {
   if (!props.item.isRead && props.item.id) {
-    appStore.read(
+    await appStore.read(
       Number(props.item.id),
       Marked.ITEM,
       appStore.lastRefeshTime,
+      0,
       props.item.feedId
     );
+    props.item.isRead = true;
   }
 });
 
-function toggleSaved() {
-  if (props.item.isSaved) {
-    appStore.unsave(props.item.id);
-  } else {
-    appStore.save(props.item.id);
+function copyCode(event: any) {
+  event.preventDefault();
+  event.stopPropagation();
+  const rect = event.target.closest("pre").getBoundingClientRect();
+
+  const right = rect.right - event.clientX;
+  const y = event.clientY - rect.top;
+  console.log(right, y);
+  if (right < 42 && y < 35) {
+    navigator.clipboard.writeText(event.target.textContent);
+    event.target.closest("pre").classList.add("copy-success");
+    setTimeout(() => {
+      event.target.closest("pre").classList.remove("copy-success");
+    }, 2000);
   }
 }
 
-function toggleRead() {
-  if (props.item.isRead) {
-    appStore.unread(props.item.id);
+onUnmounted(() => {
+  document.querySelectorAll(".reading .content pre").forEach((pre: any) => {
+    pre?.removeEventListener("click", copyCode);
+  });
+});
+
+async function toggleSaved() {
+  if (props.item.isSaved) {
+    await appStore.unsave(props.item.id);
   } else {
-    appStore.read(props.item.id);
+    await appStore.save(props.item.id);
   }
+  // props.item.isSaved = !props.item.isSaved;
+}
+
+async function toggleRead() {
+  if (props.item.isRead) {
+    await appStore.unread(props.item.id);
+  } else {
+    await appStore.read(props.item.id);
+  }
+  // props.item.isRead = !props.item.isRead;
 }
 
 function getSource() {
@@ -250,11 +326,21 @@ provide(summarizingSymbol, summarizing);
   align-items: center;
   padding: 0.5rem 0.3rem;
   border-bottom: 1px solid rgba(var(--v-border-color), 0);
-  // height: 64px;
   height: 56px;
+  transition: transform 0.3s ease;
+
+  &.top-sider-hidden {
+    transform: translateY(-50%);
+    opacity: 0;
+    &:hover {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
   > * {
     min-width: 120px;
-    max-width: 650px;
+    max-width: var(--reader-main-max-width);
   }
   a {
     text-decoration: none;
@@ -283,7 +369,7 @@ provide(summarizingSymbol, summarizing);
 }
 
 :deep(.reader-warp) .content {
-  max-width: 664px;
+  max-width: calc(var(--reader-main-max-width) + 1rem);
   margin: 0 auto;
   padding: 0.5rem;
   line-height: var(--line-height);
@@ -301,13 +387,44 @@ provide(summarizingSymbol, summarizing);
     padding: 0.8rem 0;
   }
   pre {
+    position: relative;
     margin-top: 1rem;
     margin-bottom: 1rem;
-    background-color: rgba(var(--v-theme-on-code), 0.9);
-    color: rgb(var(--v-theme-code));
+    background-color: rgba(var(--v-theme-code), 0.8);
+    color: rgb(var(--v-theme-on-code));
     padding: 1rem;
-    border-radius: 0.5rem;
+    border-radius: 1rem;
     font-family: var(--code-font);
+    overflow-x: auto;
+    pointer-events: hover;
+    :before {
+      display: none;
+      cursor: pointer;
+      content: "复制";
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 35px;
+      width: 42px;
+      background-color: rgba(var(--v-theme-primary), 0.8);
+      color: rgb(var(--v-theme-on-primary));
+      padding: 0.2rem 0.5rem;
+      border-radius: 0 0.5rem 0 0.5rem;
+      pointer-events: auto;
+    }
+    &:hover {
+      :before {
+        display: block;
+      }
+    }
+  }
+  .copy-success {
+    :before {
+      content: "✓";
+      font-size: 2rem;
+      font-weight: bold;
+      padding-left: 1rem;
+    }
   }
 }
 </style>

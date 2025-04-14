@@ -1,11 +1,14 @@
 <template>
-  <v-list-item class="magazine-item py-3">
-    <div class="magazine">
-      <v-icon :color="item.isRead ? '-' : 'primary'">
-        {{ item.isRead ? "" : "mdi-circle-medium" }}
-      </v-icon>
+  <v-list-item class="magazine-item py-3" v-bind="$attrs">
+    <div class="magazine" :class="{ readly: item.isRead }">
+      <div class="magazine-left">
+        <img :src="item.feed?.icon" alt="" />
+        <v-icon :color="item.isRead ? '-' : 'primary'">
+          {{ item.isRead ? "" : "mdi-circle-medium" }}
+        </v-icon>
+      </div>
       <div>
-        <div class="magazine-one mb-2">
+        <div class="magazine-info mb-2">
           <div class="text-body-2 text-truncate text-medium-emphasis">
             <router-link :to="'/f/' + item.feedId" @click.stop="">
               {{ getSource() }}</router-link
@@ -15,19 +18,21 @@
             {{ item.datestr }}
           </div>
         </div>
-        <div class="magazine-sec" :class="{ nomagazinethumb: !item.thumbnail }">
-          <div class="desc">
-            <p class="text-truncate mb-2 title">{{ item.title }}</p>
-            <p
-              style="--line-clamp: 3"
-              class="text-body-2 text-medium-emphasis text-ellipsis"
-            >
+        <div
+          class="magazine-sec"
+          :class="{ nomagazinethumb: !item.thumbnail && !isVideoOrPodcast }"
+        >
+          <div class="desc text-ellipsis">
+            <p class="mb-2 text-body-1 title">
+              {{ item.title }}
+            </p>
+            <p class="text-medium-emphasis text-body-2">
               {{ item.summary }}
             </p>
           </div>
-          <div v-if="item.thumbnail">
+          <div v-if="isVideoOrPodcast">
             <v-img
-              :src="item.thumbnail"
+              :src="item.thumbnail || item.feed?.icon"
               class="play-preview"
               cover
               height="80px"
@@ -44,6 +49,13 @@
               </template>
             </v-img>
           </div>
+          <v-img
+            v-else-if="item.thumbnail"
+            :src="item.thumbnail"
+            cover
+            height="80px"
+          >
+          </v-img>
         </div>
       </div>
     </div>
@@ -51,6 +63,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 const props = defineProps(["item", "type"]);
 
 function getSource() {
@@ -68,6 +81,9 @@ function formatDuration(seconds: number) {
     .toString()
     .padStart(2, "0")}`;
 }
+const isVideoOrPodcast = computed(() => {
+  return props.item.type === "VIDEO" || props.item.type === "PODCAST";
+});
 </script>
 
 <style lang="scss" scoped>
@@ -79,19 +95,42 @@ function formatDuration(seconds: number) {
   display: grid;
   grid-template-columns: 1rem auto;
   align-items: center;
-  grid-gap: 1rem;
-  .v-img {
-    border-radius: 0.5rem;
+  grid-gap: 0.5rem;
+
+  .magazine-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: flex-start;
+    justify-content: space-between;
+    .v-icon {
+      margin-top: 1rem;
+    }
+    img {
+      width: 14px;
+      border-radius: 2px;
+    }
   }
 }
-.magazine-one {
+.readly {
+  .title {
+    opacity: 0.8;
+  }
+  .text-body-2 {
+    opacity: 0.5;
+  }
+}
+.magazine-info {
   display: grid;
   grid-template-columns: auto 6rem;
 }
 .magazine-sec {
   display: grid;
-  grid-template-columns: auto minmax(6rem, 1fr);
+  grid-template-columns: 3fr minmax(80px, auto);
   grid-gap: 0.5rem;
+  .v-img {
+    border-radius: 0.5rem;
+  }
 }
 .nomagazinethumb {
   grid-template-columns: 1fr;
@@ -100,11 +139,11 @@ function formatDuration(seconds: number) {
   text-align: right;
 }
 .desc {
-  display: grid;
+  --line-clamp: 4;
   width: 100%;
   align-self: flex-start;
   .title {
-    font-weight: bold;
+    font-weight: 500;
   }
 }
 a {
@@ -116,6 +155,7 @@ a {
 }
 .play-preview {
   overflow: hidden;
+  background-color: rgba(var(--v-theme-surface-variant), 0.6);
   .play-icon-wrapper {
     position: absolute;
     inset: 0;
@@ -140,6 +180,7 @@ a {
     padding: 2px 6px;
     border-radius: 4px;
     font-size: 0.8rem;
+    display: none;
   }
 }
 </style>

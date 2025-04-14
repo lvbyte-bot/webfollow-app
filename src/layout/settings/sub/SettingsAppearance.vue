@@ -24,7 +24,7 @@
           <v-radio value="system" color="primary">
             <template v-slot:label>
               <div class="d-flex align-center">
-                <v-icon class="mr-2">mdi-desktop-mac</v-icon>
+                <v-icon class="mr-2">mdi-monitor</v-icon>
                 跟随系统
               </div>
             </template>
@@ -155,6 +155,17 @@
       </v-card-text>
     </v-card>
 
+    <!-- 减少动画 -->
+    <v-card class="mb-4">
+      <v-card-title>其它</v-card-title>
+      <v-card-text>
+        <v-switch
+          v-model="data.lessAnimation"
+          label="减少动画效果"
+          color="primary"
+        />
+      </v-card-text>
+    </v-card>
     <!-- 保存按钮 -->
     <v-row>
       <v-col>

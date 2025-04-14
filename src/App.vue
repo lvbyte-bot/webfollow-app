@@ -10,6 +10,8 @@
   --v-overlay-opacity: 0.7;
   --line-clamp: 2;
   --v-theme-primary: var(--theme-color) !important;
+  --img-min-width: 150px;
+  --reader-main-max-width: 650px;
 }
 .v-theme--dark {
   --sidbar-bg: 41, 41, 45;
@@ -21,11 +23,12 @@
 }
 html {
   background-color: #fff;
-  overflow-y: hidden !important;
+  overflow-y: auto !important;
   font-family: var(--font-family) !important;
 }
-#app .v-list-item__spacer {
-  width: 1rem;
+#app .v-list-item__spacer,
+.menu .v-list-item__prepend .v-list-item__spacer {
+  width: 1rem !important;
 }
 #app .v-list-group {
   --prepend-width: 1rem;
@@ -35,6 +38,8 @@ html {
 }
 .reader-warp a {
   text-decoration: none;
+  word-wrap: break-word;
+  color: rgb(var(--v-theme-primary));
 }
 .reader-warp a:hover {
   text-decoration: underline;
@@ -56,7 +61,7 @@ html {
   font-size: 18px;
 }
 .v-navigation-drawer .v-list {
-  overflow: auto !important;
+  overflow: scroll !important;
 }
 .top-bar .v-btn,
 .top-sider .v-btn {
@@ -69,6 +74,19 @@ html {
   line-clamp: var(--line-clamp);
   overflow: hidden;
   text-overflow: ellipsis;
+  word-break: break-all;
+}
+@media (max-width: 768px) {
+  #app .v-container {
+    padding: 0.5rem;
+  }
+  #app .v-container .v-row {
+    margin: -0.5rem;
+  }
+  :root {
+    --img-min-width: 100px;
+    --sidbar-bg: var(--v-theme-background);
+  }
 }
 /* 滚动条整体区域 */
 ::-webkit-scrollbar {

@@ -153,7 +153,8 @@ export async function listItem(id: any, type: LsItemType, page: number = 0, only
             break
         case LsItemType.RECOMMEND:
             // const ranks = { 366: 0.1, 117: 0.5 }//listRank({ 132: -1 })
-            res = await itemRepo.findTimeAll(Math.floor(new Date().getTime() / 1000) - 3600 * 24 * 7, ranks, item => filterItem0(item, () => true, onlyUnread, unReadItemIds), page)
+            console.log(ranks)
+            res = await itemRepo.findTimeAll(Math.floor(new Date().getTime() / 1000) - 3600 * 24 * 1, item => filterItem0(item, () => true, onlyUnread, unReadItemIds), page)
             break
         default:
             throw Error('error')
@@ -180,7 +181,8 @@ export async function listSubscription(): Promise<[Subscription[], Group[], Feed
         gid2group[item.id] = item
     })
     feeds.forEach(f => {
-        const sf: SubscriptionFeed = { id: f.id, title: f.title, url: f.url, unreadQty: 0, siteUrl: f.siteUrl, groupId: f.groupId, icon: getBaseUrl(f.siteUrl) + "/favicon.ico" }
+
+        const sf: SubscriptionFeed = mapFeed(f)
         if (f.groupId) {
             gid2group[f.groupId].feeds.push(sf)
         } else {
@@ -232,9 +234,11 @@ export async function listFailFeedIds(): Promise<number[]> {
  * @param id 
  * @param marked|group|feed 
  * @param before 时间戳
+ * @param after 时间戳
+ * @param feedId 时间戳
  * @returns 
  */
-export async function read(id: number, marked: Marked, before?: number, feedId?: number): Promise<any> {
+export async function read(id: number, marked: Marked, before?: number, after?: number, feedId?: number): Promise<any> {
     if (marked == Marked.ITEM && feedId) {
         readItem(feedId, id)
     }
@@ -251,7 +255,8 @@ export async function read(id: number, marked: Marked, before?: number, feedId?:
         id: id,
         as: 'read',
         mark: Marked[marked].toLowerCase(),
-        before: before
+        before: before,
+        after
     })
 }
 
@@ -260,6 +265,7 @@ export async function read(id: number, marked: Marked, before?: number, feedId?:
  * @param id 
  * @param marksed item|group|feed 
  * @param before 时间戳
+ * @param after 时间戳
  * @returns 
  */
 export async function unread(id: number, marked: Marked, before?: number): Promise<any> {
@@ -306,6 +312,21 @@ export async function unsave(id: number): Promise<any> {
     })
 }
 
+/**
+ * 搜索
+ * @param keyword 
+ * @returns 
+ */
+export async function search(keyword: string): Promise<{ items: FeedItem[], feeds: SubscriptionFeed[], groups: Group[] }> {
+    // 通过 repository 查询
+    keyword = keyword.toLowerCase()
+    const items = await itemRepo.findAll(item => item.title.toLowerCase().includes(keyword), 0, 500);
+    const feeds = await feedRepo.findAll(feed => feed.title.toLowerCase().includes(keyword) || feed.url.toLowerCase().includes(keyword), 0, 300);
+    const groups = await groupRepo.findAll(group => group.title.toLowerCase().includes(keyword), 0, 300);
+    return { items: items.data.map(map), feeds: feeds.data.map(mapFeed), groups: groups.data };
+}
+
+
 function filterItem(item: Item, feedIds: Set<number>, onlyUnread: boolean = false, unReadItemIds: Set<number>): boolean {
     return feedIds.has(item.feedId) && (!onlyUnread || unReadItemIds.has(item.id))
 }
@@ -342,6 +363,10 @@ function map(item: Item): FeedItem {
         html,
         feed
     }
+}
+
+function mapFeed(feed: Feed): SubscriptionFeed {
+    return { id: feed.id, title: feed.title, url: feed.url, unreadQty: 0, siteUrl: feed.siteUrl, groupId: feed.groupId, icon: `https://unavatar.webp.se/${getBaseDomain(feed.siteUrl)}?fallback=false` }
 }
 
 function extImgs(htmlContent: string): string[] {
@@ -392,9 +417,9 @@ function formatDate(date: number): string {
     return new Date(date).toLocaleDateString("zh-CN", options);
 }
 
-function getBaseUrl(url: string) {
+function getBaseDomain(url: string) {
     try {
-        return url.split('/').slice(0, 3).join('/');
+        return url.split('/')[2];
     } catch {
         return url
     }

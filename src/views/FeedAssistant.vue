@@ -3,7 +3,10 @@
     <template v-slot="{ openReader }">
       <div class="warp">
         <div class="feed-assistant mt-12 pa-3">
-          <h2 class="text-center my-12">向订阅源提问</h2>
+          <div class="text-center my-12">
+            <div class="text-h3">向订阅源提问</div>
+            <p class="my-6 text-subtitle-2">AI帮你回答问题</p>
+          </div>
           <div class="border rounded-lg pa-5">
             <v-textarea
               v-model="query"
