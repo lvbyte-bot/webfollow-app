@@ -34,7 +34,7 @@
           >
             <v-icon>mdi-auto-fix</v-icon>
           </c-btn>
-          <c-btn
+          <!-- <c-btn
             variant="text"
             :color="readerType == 'CONTENT' ? 'primary' : ''"
             title="加载网页全文(快捷键：W)"
@@ -44,7 +44,7 @@
               changeReadType(readerType == 'CONTENT' ? 'default' : 'CONTENT')
             "
           >
-          </c-btn>
+          </c-btn> -->
           <c-btn
             variant="text"
             :color="readerType == 'HTML' ? 'primary' : ''"
@@ -147,9 +147,9 @@ import BasicReader from "./sub/BasicReader.vue";
 import ImageReader from "./sub/ImageReader.vue";
 import VideoReader from "./sub/VideoReader.vue";
 import PodcastReader from "./sub/PodcastReader.vue";
-import { extractContentFromUrl } from "@/utils/extContext";
+// import { extractContentFromUrl } from "@/utils/extContext";
 import { Marked } from "@/service";
-import { html2md, md2html } from "@/utils/mdUtils";
+// import { html2md, md2html } from "@/utils/mdUtils";
 import { summarySymbol, summarizingSymbol } from "./InjectionSymbols";
 import { viewModeSymbol } from "../InjectionSymbols";
 
@@ -199,31 +199,31 @@ watch(
         pre?.addEventListener("click", copyCode);
       });
     }, 100);
-    changeReadType(readerType.value);
+    // changeReadType(readerType.value);
   }
 );
 
-let cacheItems: any = {};
+// let cacheItems: any = {};
 
-async function changeReadType(type: "HTML" | "default" | "CONTENT") {
-  readerType.value = type;
-  if (type == "CONTENT") {
-    if (!cacheItems[props.item.id]) {
-      cacheItems[props.item.id] = {
-        html: props.item.html,
-        description: props.item.description,
-      };
-    }
-    const r = await extractContentFromUrl(props.item.link);
-    props.item.description = html2md(r.content || r.error || "-");
-    props.item.html = md2html(props.item.description);
-  } else if (type == "default") {
-    if (cacheItems[props.item.id]) {
-      props.item.description = cacheItems[props.item.id].description;
-      props.item.html = cacheItems[props.item.id].html;
-    }
-  }
-}
+// async function changeReadType(type: "HTML" | "default" | "CONTENT") {
+//   readerType.value = type;
+//   if (type == "CONTENT") {
+//     if (!cacheItems[props.item.id]) {
+//       cacheItems[props.item.id] = {
+//         html: props.item.html,
+//         description: props.item.description,
+//       };
+//     }
+//     const r = await extractContentFromUrl(props.item.link);
+//     props.item.description = html2md(r.content || r.error || "-");
+//     props.item.html = md2html(props.item.description);
+//   } else if (type == "default") {
+//     if (cacheItems[props.item.id]) {
+//       props.item.description = cacheItems[props.item.id].description;
+//       props.item.html = cacheItems[props.item.id].html;
+//     }
+//   }
+// }
 
 const appStore = useAppStore();
 const settingsStore = useSettingsStore();
