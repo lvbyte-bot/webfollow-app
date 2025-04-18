@@ -36,6 +36,26 @@
           </c-btn>
           <c-btn
             variant="text"
+            :color="readerType == 'CONTENT' ? 'primary' : ''"
+            title="加载网页全文(快捷键：W)"
+            icon="mdi-coffee-outline"
+            class="entry-content"
+            @click="
+              changeReadType(readerType == 'CONTENT' ? 'default' : 'CONTENT')
+            "
+          >
+          </c-btn>
+          <c-btn
+            variant="text"
+            :color="readerType == 'HTML' ? 'primary' : ''"
+            title="内嵌网页(快捷键：I)"
+            icon=" mdi-apple-safari"
+            class="entry-inner"
+            @click="readerType = readerType == 'HTML' ? 'default' : 'HTML'"
+          >
+          </c-btn>
+          <c-btn
+            variant="text"
             icon
             title="稍后阅读(快捷键：F)"
             @click="toggleSaved"
@@ -45,15 +65,7 @@
               item.isSaved ? "mdi-playlist-minus" : "mdi-playlist-plus"
             }}</v-icon>
           </c-btn>
-          <c-btn
-            variant="text"
-            :color="readerType == 'default' ? '' : 'primary'"
-            title="内嵌网页(快捷键：I)"
-            icon=" mdi-apple-safari"
-            class="entry-inner"
-            @click="readerType = readerType == 'default' ? 'HTML' : 'default'"
-          >
-          </c-btn>
+
           <c-btn
             variant="text"
             icon
@@ -125,6 +137,7 @@ import {
   provide,
   onUnmounted,
   inject,
+  Ref,
 } from "vue";
 import { useAppStore, useSettingsStore } from "@/store";
 import { FeedItem } from "@/service/types";
@@ -134,7 +147,9 @@ import BasicReader from "./sub/BasicReader.vue";
 import ImageReader from "./sub/ImageReader.vue";
 import VideoReader from "./sub/VideoReader.vue";
 import PodcastReader from "./sub/PodcastReader.vue";
+import { extractContentFromUrl } from "@/utils/extContext";
 import { Marked } from "@/service";
+import { html2md, md2html } from "@/utils/mdUtils";
 import { summarySymbol, summarizingSymbol } from "./InjectionSymbols";
 import { viewModeSymbol } from "../InjectionSymbols";
 
@@ -146,7 +161,7 @@ const props = defineProps<{
 }>();
 const { scrollTop, scrollTo } = useScroll(readerRef);
 const { mobile } = useDisplay();
-const readerType = ref("default");
+const readerType: Ref<"HTML" | "default" | "CONTENT"> = ref("default");
 const lastScrollTop = ref(0);
 const isScrollingDown = ref(false);
 
@@ -184,8 +199,31 @@ watch(
         pre?.addEventListener("click", copyCode);
       });
     }, 100);
+    changeReadType(readerType.value);
   }
 );
+
+let cacheItems: any = {};
+
+async function changeReadType(type: "HTML" | "default" | "CONTENT") {
+  readerType.value = type;
+  if (type == "CONTENT") {
+    if (!cacheItems[props.item.id]) {
+      cacheItems[props.item.id] = {
+        html: props.item.html,
+        description: props.item.description,
+      };
+    }
+    const r = await extractContentFromUrl(props.item.link);
+    props.item.description = html2md(r.content || r.error || "-");
+    props.item.html = md2html(props.item.description);
+  } else if (type == "default") {
+    if (cacheItems[props.item.id]) {
+      props.item.description = cacheItems[props.item.id].description;
+      props.item.html = cacheItems[props.item.id].html;
+    }
+  }
+}
 
 const appStore = useAppStore();
 const settingsStore = useSettingsStore();

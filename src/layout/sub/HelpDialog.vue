@@ -50,6 +50,10 @@
               <v-list-item-subtitle>标记为已读/未读</v-list-item-subtitle>
             </v-list-item>
             <v-list-item>
+              <v-list-item-title>W</v-list-item-title>
+              <v-list-item-subtitle>加载网页全文</v-list-item-subtitle>
+            </v-list-item>
+            <v-list-item>
               <v-list-item-title>I</v-list-item-title>
               <v-list-item-subtitle>内嵌网页</v-list-item-subtitle>
             </v-list-item>

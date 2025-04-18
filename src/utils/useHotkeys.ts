@@ -166,6 +166,10 @@ export function useHotkeys() {
                 // 标记为已读/未读
                 (reader.querySelector('.entry-read') as HTMLElement)?.click()
                 break
+            case 'w':
+                // 加载网页全文
+                (reader.querySelector('.entry-content') as HTMLElement)?.click()
+                break
             case 'i':
                 // 内嵌网页
                 (reader.querySelector('.entry-inner') as HTMLElement)?.click()
