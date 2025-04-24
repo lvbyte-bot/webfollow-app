@@ -149,6 +149,7 @@ import VideoReader from "./sub/VideoReader.vue";
 import PodcastReader from "./sub/PodcastReader.vue";
 // import { extractContentFromUrl } from "@/utils/extContext";
 import { Marked } from "@/service";
+import { generateArticleSummary } from "@/utils/aiSummary";
 // import { html2md, md2html } from "@/utils/mdUtils";
 import { summarySymbol, summarizingSymbol } from "./InjectionSymbols";
 import { viewModeSymbol } from "../InjectionSymbols";
@@ -245,39 +246,20 @@ const canSummarize = computed(() => {
 async function generateSummary() {
   if (summarizing.value) return;
 
-  const settings = settingsStore.proxyIntegrated;
   summarizing.value = true;
 
   try {
-    const response = await fetch(settings.apiUrl + "/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${settings.apiKey}`,
-      },
-      body: JSON.stringify({
-        model: settings.selectedModel,
-        messages: [
-          {
-            role: "system",
-            content: settings.summaryPrompt,
-          },
-          {
-            role: "user",
-            content: props.item.description,
-          },
-        ],
-        temperature: 0.7,
-        max_tokens: 500,
-      }),
+    const result = await generateArticleSummary({
+      link: props.item.link,
+      title: props.item.title,
+      description: props.item.description
     });
 
-    if (!response.ok) {
-      throw new Error(`API 请求失败: ${response.statusText}`);
+    if (result.error) {
+      throw new Error(result.error);
     }
 
-    const data = await response.json();
-    summary.value = data.choices[0].message.content;
+    summary.value = result.summary;
   } catch (error: any) {
     alert("生成总结失败：" + error.message);
   } finally {
