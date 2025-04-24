@@ -1,11 +1,14 @@
 import { extractContentFromUrl } from "@/utils/extContext";
 import { html2md } from "@/utils/mdUtils";
 import { useSettingsStore } from "@/store";
+import { feedCacheDB } from "./feedCache";
 
 interface SummaryOptions {
   link: string;
   description?: string;
   title?: string;
+  feedItemId?: number;
+  forceRefresh?: boolean;
 }
 
 interface SummaryResult {
@@ -36,6 +39,16 @@ export async function generateArticleSummary(options: SummaryOptions): Promise<S
   };
 
   try {
+    console.log(options.forceRefresh)
+    // 检查缓存，除非强制刷新
+    if (options.feedItemId && !options.forceRefresh) {
+      const cache = await feedCacheDB.getFeedCache(options.feedItemId);
+      if (cache?.aiSummary) {
+        result.summary = cache.aiSummary;
+        return result;
+      }
+    }
+
     // 如果没有description，则从URL获取内容
     if (!options.description && options.link) {
       const extractResult = await extractContentFromUrl(options.link);
@@ -77,6 +90,11 @@ export async function generateArticleSummary(options: SummaryOptions): Promise<S
 
     const data = await response.json();
     result.summary = data.choices[0].message.content;
+
+    // 保存到缓存
+    if (options.feedItemId) {
+      await feedCacheDB.saveFeedCache(options.feedItemId, options.link, result.description, result.summary);
+    }
 
     return result;
   } catch (error: any) {
