@@ -1,5 +1,3 @@
-import { FeedItem } from "@/service/types";
-
 interface FeedCache {
   id: number;
   url: string;
