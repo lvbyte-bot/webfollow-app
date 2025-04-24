@@ -20,9 +20,22 @@
       <slot></slot>
     </div>
     <div class="summary content" v-if="summary || summarizing">
-      <div class="mb-2">
-        <v-icon size="small" class="mr-2">mdi-auto-fix</v-icon>
-        AI 总结
+      <div class="mb-2 d-flex align-center justify-space-between">
+        <div class="d-flex align-center">
+          <v-icon size="small" class="mr-2">mdi-auto-fix</v-icon>
+          AI 总结
+        </div>
+        <c-btn
+          v-if="!summarizing"
+          icon
+          variant="text"
+          size="small"
+          title="强制刷新AI总结"
+          @click="emit('forceRefresh')"
+          class="ml-2"
+        >
+          <v-icon>mdi-refresh</v-icon>
+        </c-btn>
       </div>
       <v-skeleton-loader v-if="summarizing" type="article"></v-skeleton-loader>
       <div v-else v-html="md2html(summary || '')"></div>
@@ -66,6 +79,9 @@ function getSource() {
 }
 const summary: string | undefined = inject(summarySymbol);
 const summarizing: boolean | undefined = inject(summarizingSymbol);
+const emit = defineEmits<{
+  (e: 'forceRefresh'): void
+}>();
 </script>
 <style lang="scss" scoped>
 .text-overflow {

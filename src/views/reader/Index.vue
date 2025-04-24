@@ -29,7 +29,7 @@
             :loading="summarizing"
             :disabled="!canSummarize"
             title="AI 总结(快捷键：G)"
-            @click="generateSummary"
+            @click="generateSummary()"
             class="mr-2 entry-ai-summary"
           >
             <v-icon>mdi-auto-fix</v-icon>
@@ -101,6 +101,7 @@
           v-else-if="item?.type == 'BASIC'"
           :item="item"
           :reader-ref="readerRef"
+          @force-refresh="generateSummary(true)"
         >
           <div>
             <slot name="chapter"></slot>
@@ -243,7 +244,7 @@ const canSummarize = computed(() => {
   );
 });
 
-async function generateSummary() {
+async function generateSummary(forceRefresh = false) {
   if (summarizing.value) return;
 
   summarizing.value = true;
@@ -252,7 +253,9 @@ async function generateSummary() {
     const result = await generateArticleSummary({
       link: props.item.link,
       title: props.item.title,
-      description: props.item.description
+      description: props.item.description,
+      feedItemId: props.item.id,
+      forceRefresh
     });
 
     if (result.error) {
