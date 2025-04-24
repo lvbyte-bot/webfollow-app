@@ -50,7 +50,7 @@ export async function generateArticleSummary(options: SummaryOptions): Promise<S
     }
 
     // 如果没有description，则从URL获取内容
-    if (!options.description && options.link) {
+    if ((!options.description || options.description.length/3 < (  options.title?.length||0))&& options.link) {
       const extractResult = await extractContentFromUrl(options.link);
       if (extractResult.error) {
         throw new Error(`获取文章内容失败: ${extractResult.error}`);
