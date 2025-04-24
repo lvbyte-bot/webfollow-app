@@ -9,6 +9,7 @@ interface GeneralSettings {
     autoRefresh: boolean
     refreshInterval: number
     pullDataFail: boolean
+    enableListAISummary: boolean
 }
 
 interface AppearanceSettings {
@@ -63,7 +64,8 @@ export const useSettingsStore = defineStore('settings', () => {
         hideReadArticles: true,
         autoRefresh: false,
         refreshInterval: 30 * 60,
-        pullDataFail: false
+        pullDataFail: false,
+        enableListAISummary: false
     })
 
     const appearance = ref<AppearanceSettings>({
@@ -145,7 +147,8 @@ export const useSettingsStore = defineStore('settings', () => {
             hideReadArticles: true,
             autoRefresh: false,
             refreshInterval: 30 * 60,
-            pullDataFail: false
+            pullDataFail: false,
+            enableListAISummary: false
         }
         saveToLocalStorage()
     }

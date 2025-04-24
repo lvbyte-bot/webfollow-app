@@ -83,6 +83,21 @@
       </v-card-text>
     </v-card>
 
+    <!-- 列表AI总结设置 -->
+    <v-card class="mb-4">
+      <v-card-title>列表AI总结</v-card-title>
+      <v-card-text>
+        <v-switch
+          v-model="data.enableListAISummary"
+          color="primary"
+          label="在列表视图中显示AI总结"
+        ></v-switch>
+        <div class="text-caption text-medium-emphasis mt-2">
+          注意：启用此功能可能会增加API调用次数
+        </div>
+      </v-card-text>
+    </v-card>
+
     <!-- 自动刷新设置 -->
     <v-card class="mb-4">
       <v-card-title>自动刷新</v-card-title>

@@ -18,17 +18,32 @@
     />
   </div>
   <template v-else-if="view == 'magazine' || view == 'column'">
-    <magazine-item
-      v-for="(item, index) in items"
-      :item="item"
-      @click="openReader(index, item)"
-      @contextmenu.prevent="showContextMenu($event, item, index)"
-      :type="type"
-      :key="item.id"
-      class="entry-item"
-      :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
-      :style="{ animationDelay: `${(index % 50) * 0.03}s` }"
-    />
+    <template v-if="general.enableListAISummary">
+      <ai-summary-item
+        v-for="(item, index) in items"
+        :item="item"
+        @click="openReader(index, item)"
+        @contextmenu.prevent="showContextMenu($event, item, index)"
+        :type="type"
+        :key="item.id"
+        class="entry-item"
+        :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
+        :style="{ animationDelay: `${(index % 50) * 0.03}s` }"
+      />
+    </template>
+    <template v-else>
+      <magazine-item
+        v-for="(item, index) in items"
+        :item="item"
+        @click="openReader(index, item)"
+        @contextmenu.prevent="showContextMenu($event, item, index)"
+        :type="type"
+        :key="item.id"
+        class="entry-item"
+        :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
+        :style="{ animationDelay: `${(index % 50) * 0.03}s` }"
+      />
+    </template>
   </template>
   <template v-else-if="view == 'text'">
     <v-list>
@@ -130,12 +145,15 @@ import { ref, onMounted, onBeforeUnmount, computed, inject } from "vue";
 import { itemsTypeSymbol } from "../InjectionSymbols";
 import CardItem from "./CardItem.vue";
 import MagazineItem from "./MagazineItem.vue";
+import AiSummaryItem from "./AISummaryItem.vue";
+
 import ContentItem from "./ContentItem.vue";
 import TextItem from "./TextItem.vue";
 import { FeedItem } from "@/service/types";
 import { ClickType } from "./types";
 import { ViewMode } from "@/store/types";
 import { ItemType } from "@/service/types";
+import { storeToRefs } from "pinia";
 const props = defineProps<{
   view: ViewMode;
   items: FeedItem[];
@@ -144,6 +162,7 @@ const props = defineProps<{
 const emit = defineEmits(["open-reader"]);
 const store = useAppStore();
 const settingStore = useSettingsStore();
+const { general } = storeToRefs(settingStore);
 const currentItem = ref<FeedItem | undefined>(undefined);
 const items = computed(() => props.items);
 const itemsType = inject(itemsTypeSymbol);

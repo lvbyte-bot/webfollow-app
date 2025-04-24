@@ -81,8 +81,20 @@
                               size="small"
                             ></v-checkbox-btn>
                           </v-list-item-action>
-                        </template> </v-list-item
-                    ></v-list>
+                        </template>
+                      </v-list-item>
+                      <v-list-item title="显示AI总结">
+                        <template v-slot:prepend>
+                          <v-list-item-action start>
+                            <v-checkbox-btn
+                              :model-value="general.enableListAISummary"
+                              @click="toggleAISummary"
+                              size="small"
+                            ></v-checkbox-btn>
+                          </v-list-item-action>
+                        </template>
+                      </v-list-item>
+                    </v-list>
                   </v-card>
                 </v-menu>
               </div>
@@ -435,6 +447,13 @@ function openReader(index: number, item: FeedItem | undefined) {
 
 async function changeOnlyUnread(onlyUnread0: boolean) {
   general.value.hideReadArticles = onlyUnread0;
+  settingsStore.saveToLocalStorage();
+  await loadData(0);
+  mainRef.value.scrollTo(0, 0);
+}
+
+async function toggleAISummary() {
+  general.value.enableListAISummary = !general.value.enableListAISummary;
   settingsStore.saveToLocalStorage();
   await loadData(0);
   mainRef.value.scrollTo(0, 0);
