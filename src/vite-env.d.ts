@@ -1,5 +1,7 @@
 /// <reference types="vite/client" />
 
+import {FeedItem} from "@/service/types";
+
 declare module "*.vue" {
   import type { DefineComponent } from "vue";
   const component: DefineComponent<{}, {}, any>;
@@ -25,5 +27,6 @@ declare const webfollowApp: {
   upItemsToggleRead: ((item: FeedItem, index: number) => void) | undefined,
   view: {
     changeEntryCurrentIndex: (index: number) => void
-  }
+  },
+  tip: (msg: string) => void
 }

@@ -89,9 +89,12 @@
             <slot name="footer"></slot>
         </v-list>
 
-        <div v-if="mobile" class="plus mx-auto">
+        <!-- <div v-if="mobile" class="plus mx-auto">
             <v-btn color="surface-variant" to="/subscribe" icon="mdi-plus"></v-btn>
             <v-btn class="ml-2" variant="flat" to="/download">下载app</v-btn>
+        </div> -->
+        <div class="x-tip" v-show="tipStr">
+            {{ tipStr }}
         </div>
     </div>
 
@@ -179,10 +182,13 @@ const feedDialog= ref(false);
 const form: Ref<any> = ref()
 const currentItem: Ref<any> = ref({ title: undefined })
 const loading = ref(false)
-
+const tipStr = ref('')
 
 onMounted(() => {
     document.addEventListener("click", hideContextMenu);
+    webfollowApp.tip=(tip: string)=>{
+        tipStr.value=tip
+    }
 });
 
 onBeforeUnmount(() => {
@@ -406,12 +412,20 @@ const handleFilterAction = (action: string) => {
     background-color: rgb(var(--sidbar-bg));
 }
 
-.plus {
+.plus, .x-tip {
     display: inline-block;
     position: fixed;
     bottom: 0;
     padding: 1rem;
     z-index: 1000;
+}
+
+.x-tip{
+    background-color: rgba(var(--v-theme-primary),.3);
+    padding: 0.5rem;
+    bottom: 1rem;
+    left: 1rem;
+    border-radius: 0.5rem;
 }
 
 .v-list .v-list-item--nav:not(:only-child) {
