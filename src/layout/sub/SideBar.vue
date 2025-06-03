@@ -22,7 +22,7 @@
                     <span>FILTERS</span>
                     <div>
                         <router-link to="/filter">
-                            <v-icon icon="mdi-filter-plus-outline" color="secondary"></v-icon>
+                            <v-icon icon="mdi-filter-plus-outline" color="primary"></v-icon>
                         </router-link>
                     </div>
                 </div>
@@ -40,7 +40,7 @@
                     <span>FEEDS</span>
                     <div>
                         <v-btn variant="text" to="/subscribe" icon="mdi-plus" size="small" title="订阅" height="20"
-                            width="20" color="secondary"></v-btn>
+                            width="20" color="primary"></v-btn>
                     </div>
                 </div>
             </div>

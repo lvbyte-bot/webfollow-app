@@ -15,10 +15,12 @@
             <template #prepend>
               <v-avatar
                 size="30px"
-                color="secondary"
+                color="primary"
                 :title="appStore.authInfo.username"
+               
               >
-                {{ appStore.authInfo.username.substring(0, 2) }}
+                <!-- {{ appStore.authInfo.username.substring(0, 2) }} -->
+                  <v-img  :src="'https://api.dicebear.com/7.x/avataaars/svg?seed='+ appStore.authInfo.username"></v-img>
               </v-avatar>
             </template>
             <template #append>
@@ -69,12 +71,21 @@
               size="small"
             ></c-btn>
             <c-btn id="menu-activator-1" icon size="small">
-              <v-avatar
+              <!-- <v-avatar
                 size="23px"
                 color="secondary"
                 :title="appStore.authInfo.username"
               >
                 {{ appStore.authInfo.username.substring(0, 2) }}
+              </v-avatar> -->
+              <v-avatar
+                size="24px"
+                color="primary"
+                :title="appStore.authInfo.username"
+               
+              >
+                <!-- {{ appStore.authInfo.username.substring(0, 2) }} -->
+                  <v-img  :src="'https://api.dicebear.com/7.x/avataaars/svg?seed='+ appStore.authInfo.username"></v-img>
               </v-avatar>
             </c-btn>
           </div>

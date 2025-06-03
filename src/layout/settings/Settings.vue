@@ -13,10 +13,16 @@
               <template #prepend>
                 <v-avatar
                   size="36px"
-                  color="secondary"
+                  color="primary"
                   :title="appStore.authInfo.username"
                 >
-                  {{ appStore.authInfo.username.substring(0, 2) }}
+                  <!-- {{ appStore.authInfo.username.substring(0, 2) }} -->
+                  <v-img
+                    :src="
+                      'https://api.dicebear.com/7.x/avataaars/svg?seed=' +
+                      appStore.authInfo.username
+                    "
+                  ></v-img>
                 </v-avatar>
               </template>
               <!-- <template #append>
