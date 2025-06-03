@@ -1,8 +1,8 @@
 <template>
   <div class="d-flex justify-space-between ma-3">
     <div>
-      <v-btn prepend-icon="mdi-download" variant="text" to="/download"
-        >下载app</v-btn
+      <v-btn prepend-icon="mdi-rss" variant="text" to="/subscribe"
+        >添加订阅</v-btn
       >
     </div>
     <div class="d-flex align-center">

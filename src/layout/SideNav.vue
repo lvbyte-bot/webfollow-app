@@ -177,8 +177,9 @@ const menus = [
   { title: "AI Key", value: "aikey" },
   { title: "搜索 (ctrl+/)", value: "search" },
   { title: "快捷键 (ctrl+?)", value: "hotkeys" },
-  { title: "反馈", value: "feedback" },
+  // { title: "反馈", value: "feedback" },
   { title: "注册账号", value: "register" },
+  { title: "登录", value: "login" },
   { title: "下载app", value: "app" },
 ];
 
@@ -195,8 +196,10 @@ const handleMenuClick = (value) => {
     );
   } else if (value == "register") {
     window.open("https://zhidayingxiao.cn/to/06g6yb");
-  } else if (value == "combo") {
-    router.push("/combo");
+  } else if (value == "login") {
+    router.push("/login");
+  }  else if (value == "combo") {
+    window.open("https://www.webfollow.cc/");
   } else if (value == "app") {
     router.push("/download");
   } else if (value == "search") {

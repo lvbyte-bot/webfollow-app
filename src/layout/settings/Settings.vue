@@ -1,12 +1,12 @@
 <template>
   <v-card max-height="70vh" class="rounded-lg">
     <v-container fluid>
-      <v-row>
+      <v-row class="sidebar">
         <!-- 左侧导航菜单 -->
-        <v-col lg="3" cols="12" class="pr-0">
-          <v-list rounded>
+        <v-col lg="3" cols="12" class="pa-0">
+          <v-list rounded class="sidebar">
             <v-list-item
-              subtitle="hello webfollow"
+              subtitle="WebFollow"
               :title="appStore.authInfo.username"
               class="mb-6"
             >
@@ -19,7 +19,7 @@
                   {{ appStore.authInfo.username.substring(0, 2) }}
                 </v-avatar>
               </template>
-              <template #append>
+              <!-- <template #append>
                 <v-btn
                   to="/login"
                   title="退出登录"
@@ -28,7 +28,7 @@
                   variant="text"
                   @click="close"
                 ></v-btn>
-              </template>
+              </template> -->
             </v-list-item>
             <v-list-item
               v-for="item in menuItems"
@@ -46,7 +46,7 @@
         </v-col>
 
         <!-- 右侧内容区域 -->
-        <v-col lg="9" cols="12">
+        <v-col lg="9" cols="12" class="pa-0">
           <v-card flat>
             <v-card-title class="d-flex justify-space-between align-center"
               >{{ getCurrentTitle }}
