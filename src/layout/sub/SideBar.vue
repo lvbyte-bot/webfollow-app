@@ -169,10 +169,10 @@ import { ref, onMounted, onBeforeUnmount, Ref } from "vue";
 import { useFeedsStore, useAppStore, useSettingsStore } from "@/store";
 import FeedDialog from "./FeedDialog.vue";
 
-import { useDisplay } from "vuetify";
+// import { useDisplay } from "vuetify";
 import { Marked } from "@/service";
 
-const { mobile } = useDisplay();
+// const { mobile } = useDisplay();
 const feedStore = useFeedsStore();
 const appStore = useAppStore();
 const settingsStore = useSettingsStore();
@@ -421,11 +421,13 @@ const handleFilterAction = (action: string) => {
 }
 
 .x-tip{
-    background-color: rgba(var(--v-theme-primary),.3);
-    padding: 0.5rem;
+    background-color: rgba(var(--v-theme-background),1);
+    padding: 0.3rem 0.5rem;
     bottom: 1rem;
     left: 1rem;
-    border-radius: 0.5rem;
+    border-radius: .6rem;
+    border: 1px solid rgba(var(--v-theme-kbd),.3);
+    font-size: small;
 }
 
 .v-list .v-list-item--nav:not(:only-child) {

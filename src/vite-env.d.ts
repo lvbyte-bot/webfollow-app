@@ -1,7 +1,5 @@
 /// <reference types="vite/client" />
 
-import {FeedItem} from "@/service/types";
-
 declare module "*.vue" {
   import type { DefineComponent } from "vue";
   const component: DefineComponent<{}, {}, any>;
