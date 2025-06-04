@@ -186,8 +186,15 @@ const tipStr = ref('')
 
 onMounted(() => {
     document.addEventListener("click", hideContextMenu);
-    webfollowApp.tip=(tip: string)=>{
+    let clear:any
+    webfollowApp.tip=(tip: string, time: number = 5000)=>{
         tipStr.value=tip
+        if (clear) {
+          clearTimeout(clear)
+        }
+        clear = setTimeout(() => {
+            tipStr.value=''
+        }, time);
     }
 });
 

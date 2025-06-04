@@ -377,6 +377,10 @@ async function loadData(
 ) {
   loading.value = true;
   page = page0;
+  // 加载时自动将文章已读
+  if (settingsStore.general.autoRead && page0 > 0) {
+    webfollowApp.markCurrentPageRead();
+  }
   // log(onlyUnread.value);
   if (props.type == "f") {
     await loadData0(Number(props.id), LsItemType.FEED, page, onlyUnread.value);
@@ -419,7 +423,7 @@ async function pullFeedItems() {
 }
 
 async function markRead() {
-  console.log(props.type);
+  // console.log(props.type);
   const confirmed = await confirm({
     title: "标记已读",
     message: "确定要将全部文章标记为已读吗？",
@@ -467,6 +471,13 @@ onMounted(() => {
     const index = views.map((v) => v.value).findIndex((v) => v == currentView);
     const next = (index + 1) % views.length;
     viewSeleted.value = [views[next].value as ViewMode];
+  };
+  // 当前页标记已读 （按最后一条item之前的时间）
+  webfollowApp.markCurrentPageRead = () => {
+    const itemIds = store.items
+      .filter((item) => item.isRead == false)
+      .map((item) => item.id);
+    appStore.readItemBatch(itemIds);
   };
 });
 </script>

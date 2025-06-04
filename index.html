@@ -103,16 +103,11 @@
     function err(e, ...args) {
       console.error("%cWebFollow", "padding:3px 5px;border-radius:5px;background:#ff7a61;color:#fff;font-size:1em;", ...args, e)
     }
-    let clear
+    // let clear
     function setTitle(total) {
       if (total) {
         webfollowApp.tip('已同步' + total + '条')
-        if (clear) {
-          clearTimeout(clear)
-        }
-        clear = setTimeout(() => {
-          webfollowApp.tip('')
-        }, 3000);
+
         document.title = `WebFollow - 在线 RSS 阅读器`
       } else {
         webfollowApp.tip('')

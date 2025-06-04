@@ -6,6 +6,7 @@ interface GeneralSettings {
     startPage: 'welcome' | 'all' | 'next' | 'firstfolder' | 'explore'
     defaultView: ViewMode
     hideReadArticles: boolean
+    autoRead: boolean
     autoRefresh: boolean
     refreshInterval: number
     pullDataFail: boolean
@@ -62,6 +63,7 @@ export const useSettingsStore = defineStore('settings', () => {
         startPage: 'welcome',
         defaultView: 'auto',
         hideReadArticles: true,
+        autoRead: false,
         autoRefresh: false,
         refreshInterval: 30 * 60,
         pullDataFail: false,
@@ -145,6 +147,7 @@ export const useSettingsStore = defineStore('settings', () => {
             startPage: 'welcome',
             defaultView: 'auto',
             hideReadArticles: true,
+            autoRead: false,
             autoRefresh: false,
             refreshInterval: 30 * 60,
             pullDataFail: false,

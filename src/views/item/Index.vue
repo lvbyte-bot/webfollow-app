@@ -199,15 +199,23 @@ function toggleRead(item: FeedItem) {
 function upItemsToggleRead(index: number) {
   const isRead = props.items[index].isRead;
   const items = props.items.slice(0, index + 1);
-  items.forEach((item) => {
-    if (item.isRead == isRead) {
-      if (isRead) {
-        store.unread(item.id);
-      } else {
-        store.read(item.id);
-      }
-    }
-  });
+  const itemIds = items
+    .filter((item) => item.isRead == isRead)
+    .map((item) => item.id);
+  if (isRead) {
+    store.unreadItemBatch(itemIds);
+  } else {
+    store.readItemBatch(itemIds);
+  }
+  // items.forEach((item) => {
+  //   if (item.isRead == isRead) {
+  //     if (isRead) {
+  //       store.unread(item.id);
+  //     } else {
+  //       store.read(item.id);
+  //     }
+  //   }
+  // });
 }
 
 const contextMenuVisible = ref(false);

@@ -26,5 +26,8 @@ declare const webfollowApp: {
   view: {
     changeEntryCurrentIndex: (index: number) => void
   },
-  tip: (msg: string) => void
+  // 消息提示
+  tip: (msg: string, time = 5000) => void,
+  // 当前页面标记为已读
+  markCurrentPageRead: () => void
 }

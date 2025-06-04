@@ -239,6 +239,7 @@ export async function listFailFeedIds(): Promise<number[]> {
  * @returns 
  */
 export async function read(id: number, marked: Marked, before?: number, after?: number, feedId?: number): Promise<any> {
+    // 记录已读方便后期只能排寻
     if (marked == Marked.ITEM && feedId) {
         readItem(feedId, id)
     }
@@ -257,6 +258,32 @@ export async function read(id: number, marked: Marked, before?: number, after?: 
         mark: Marked[marked].toLowerCase(),
         before: before,
         after
+    })
+}
+
+/**
+ * 一次读多个
+ * @param ids 
+ * @returns 
+ */
+export async function readItemIds(ids: number[]): Promise<any> {
+    return await mark({
+        ids: ids,
+        as: 'read',
+        mark: Marked.ITEM,
+    })
+}
+
+/**
+ * 一次将多个标记未读
+ * @param ids 
+ * @returns 
+ */
+export async function unReadItemIds(ids: number[]): Promise<any> {
+    return await mark({
+        ids: ids,
+        as: 'unread',
+        mark: Marked.ITEM,
     })
 }
 

@@ -79,6 +79,7 @@
           v-model="data.hideReadArticles"
           color="primary"
           label="自动隐藏已读文章"
+          hide-details
         ></v-switch>
       </v-card-text>
     </v-card>
@@ -91,10 +92,24 @@
           v-model="data.enableListAISummary"
           color="primary"
           label="在列表视图中显示AI总结"
+          hide-details
         ></v-switch>
         <div class="text-caption text-medium-emphasis mt-2">
           注意：启用此功能可能会增加API调用次数
         </div>
+      </v-card-text>
+    </v-card>
+
+    <!-- 自动阅读设置 -->
+    <v-card class="mb-4">
+      <v-card-title>列表滚动标记为已读</v-card-title>
+      <v-card-text>
+        <v-switch
+          v-model="data.autoRead"
+          color="primary"
+          label="启用列表滚动标记为已读"
+          hide-details
+        ></v-switch>
       </v-card-text>
     </v-card>
 
@@ -106,6 +121,7 @@
           v-model="data.autoRefresh"
           color="primary"
           label="启用自动刷新"
+          hide-details
         ></v-switch>
         <v-select
           v-if="data.autoRefresh"

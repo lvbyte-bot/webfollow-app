@@ -17,7 +17,7 @@ type SyncType = '' | 'sync2local'
 
 export const useAppStore = defineStore('app', () => {
     const {
-        saved_item_ids, unread_item_ids, read, unread, save, unsave, refresh, clearFailFeedIds
+        saved_item_ids, unread_item_ids, read, readItemBatch, unread, unreadItemBatch, save, unsave, refresh, clearFailFeedIds
     } = useBaseStore()
     const { clear } = usePlayListStore()
     const { refresh: refreshFeed } = useFeedsStore()
@@ -154,7 +154,7 @@ export const useAppStore = defineStore('app', () => {
     }
 
 
-    return { reloadBuild, sync, loading, read, unread, save, unsave, savedQty, unReadQty, item7DayUnReadQty, authInfo, lastRefeshTime, item7DayTime, nav, readerMode }
+    return { reloadBuild, sync, loading, read, readItemBatch, unread, unreadItemBatch, unread_item_ids, save, unsave, savedQty, unReadQty, item7DayUnReadQty, authInfo, lastRefeshTime, item7DayTime, nav, readerMode }
 })
 
 
