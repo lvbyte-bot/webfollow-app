@@ -75,6 +75,9 @@ export const useFeedsStore = defineStore('feeds', () => {
             }
         }) || [])
         follow.sort((a, b) => {
+            // 如果 title 是 "all"，排到最后
+            if (a.title === "All") return 1;
+            if (b.title === "All") return -1;
             if (a.unreadQty != 0 && b.unreadQty != 0) {
                 return a.title.localeCompare(b.title)
             } else if (a.unreadQty == 0 && b.unreadQty == 0) {

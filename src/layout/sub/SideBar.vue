@@ -51,7 +51,28 @@
                 </template>
             </v-list-item>
             <template v-for="gItem in feedStore.subscriptions">
-                <v-list-group v-if="gItem.feeds.length" :value="gItem.id" :key="gItem.id">
+                <template v-if="gItem.title=='All'">
+                    <v-list-item v-for="subItem in gItem.feeds" :key="gItem.id + '-' + subItem.id"
+                        :class="{ 'text-red-accent-3': subItem.isFailure, 'v-list-item--active': selectedFeeds.map(o => o.id).includes(subItem.id) }"
+                        :value="isMultiSelectMode || contextMenuVisible ? undefined : gItem.id + '-' + subItem.id"
+                        :to="isMultiSelectMode || contextMenuVisible ? undefined : '/f/' + subItem.id"
+                        @click="$event => handleFeedSelect($event, subItem)" @mousedown.prevent=""
+                        @contextmenu.prevent="showContextMenu($event, subItem)">
+                        <template #prepend>
+                            <div class="icon-warp">
+                                <img :src="subItem.icon" onerror="this.src='/logo.svg'" width="17">
+                            </img>
+                            </div>
+                          
+                        </template>
+                        <v-list-item-title :class="{ 'font-weight-bold': subItem.unreadQty }" v-text="subItem.title">
+                        </v-list-item-title>
+                        <template v-slot:append>
+                            <small v-if="subItem.unreadQty" class="font-weight-thin" v-text="subItem.unreadQty"></small>
+                        </template>
+                    </v-list-item>
+                </template>
+                <v-list-group v-else-if="gItem.feeds.length" :value="gItem.id" :key="gItem.id">
                     <template v-slot:activator="{ isOpen, props }">
                         <v-list-item v-bind="props" @contextmenu.prevent="showContextMenu($event, gItem, true)">
                             <v-list-item-title :class="{ 'font-weight-bold': gItem.unreadQty }"
@@ -75,8 +96,10 @@
                         @click="$event => handleFeedSelect($event, subItem)" @mousedown.prevent=""
                         @contextmenu.prevent="showContextMenu($event, subItem)">
                         <template #prepend>
-                            <img :src="subItem.icon" onerror="this.src='/logo.svg'" width="16">
-                            </img>
+                            <div class="icon-warp">
+                                <img :src="subItem.icon" onerror="this.src='/logo.svg'" width="17">
+                                </img>
+                            </div>
                         </template>
                         <v-list-item-title :class="{ 'font-weight-bold': subItem.unreadQty }" v-text="subItem.title">
                         </v-list-item-title>
@@ -442,5 +465,11 @@ const handleFilterAction = (action: string) => {
 }
 .font-weight-thin{
     opacity: .6;
+}
+.icon-warp{
+    width: 21px;
+    display: flex; 
+    align-items: center;
+    justify-content: center;
 }
 </style>
