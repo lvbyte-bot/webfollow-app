@@ -270,7 +270,7 @@ export async function readItemIds(ids: number[]): Promise<any> {
     return await mark({
         ids: ids,
         as: 'read',
-        mark: Marked.ITEM,
+        mark: Marked[Marked.ITEM].toLowerCase(),
     })
 }
 
@@ -283,7 +283,7 @@ export async function unReadItemIds(ids: number[]): Promise<any> {
     return await mark({
         ids: ids,
         as: 'unread',
-        mark: Marked.ITEM,
+        mark: Marked[Marked.ITEM].toLowerCase(),
     })
 }
 
