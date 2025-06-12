@@ -480,7 +480,9 @@ onMounted(() => {
     const itemIds = store.items
       .filter((item) => item.isRead == false)
       .map((item) => item.id);
-    appStore.readItemBatch(itemIds);
+    if (itemIds.length) {
+      appStore.readItemBatch(itemIds);
+    }
   };
 });
 </script>
