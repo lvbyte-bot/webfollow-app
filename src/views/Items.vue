@@ -293,6 +293,12 @@ watch(viewSeleted, (vs) => {
 
 function watchLoadMore() {
   watch(isBottom, (v) => {
+    if (v) {
+      // 加载时自动将文章已读
+      if (settingsStore.general.autoRead) {
+        webfollowApp.markCurrentPageRead();
+      }
+    }
     if (v && !store.isLast) {
       loadData(++page);
     }
@@ -377,10 +383,7 @@ async function loadData(
 ) {
   loading.value = true;
   page = page0;
-  // 加载时自动将文章已读
-  if (settingsStore.general.autoRead && page0 > 0) {
-    webfollowApp.markCurrentPageRead();
-  }
+
   // log(onlyUnread.value);
   if (props.type == "f") {
     await loadData0(Number(props.id), LsItemType.FEED, page, onlyUnread.value);
