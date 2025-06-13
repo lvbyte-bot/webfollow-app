@@ -331,25 +331,12 @@ onMounted(() => {
   }
 });
 
-let autoRefresh: NodeJS.Timeout;
-
 async function loadData0(
   id: any,
   type: LsItemType,
   page: number = 0,
   onlyUnread: boolean = false
 ) {
-  // 自动刷新功能
-  if (general.value.autoRefresh) {
-    if (autoRefresh) {
-      clearTimeout(autoRefresh);
-    }
-    autoRefresh = setTimeout(() => {
-      log("autoRefresh");
-      loadData();
-    }, general.value.refreshInterval * 1000);
-  }
-
   if (type == LsItemType.FILTER) {
     const filter = settingsStore.getFilter(id);
     const articles = await retrieveRelevantContexts(
@@ -467,6 +454,9 @@ async function toggleAISummary() {
 }
 
 defineExpose({ loadData, openReader });
+
+let autoRefresh: NodeJS.Timeout;
+
 onMounted(() => {
   webfollowApp.toggleItemUnread = () => changeOnlyUnread(!onlyUnread.value);
   webfollowApp.toggleItemView = () => {
@@ -484,6 +474,16 @@ onMounted(() => {
       appStore.readItemBatch(itemIds);
     }
   };
+  // 自动刷新功能
+  if (general.value.autoRefresh) {
+    if (autoRefresh) {
+      clearTimeout(autoRefresh);
+    }
+    autoRefresh = setTimeout(() => {
+      log("autoRefresh");
+      loadData();
+    }, general.value.refreshInterval * 1000);
+  }
 });
 </script>
 <style lang="scss" scoped>

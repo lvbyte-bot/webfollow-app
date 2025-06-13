@@ -39,14 +39,18 @@ export const useItemsStore = defineStore('items', () => {
         return item
     }) : [])
 
+    let currentPageUnReadItemIds: Set<number>;
     async function loadData(id: any, type: LsItemType, page: number = 0, onlyUnread: boolean = false, meta?: PageRouteMeta) {
         cacheLoadParams = { id, type, page, onlyUnread }
         id = type == LsItemType.SAVED ? saved_item_ids : id
         id = type == LsItemType.ALL ? null : id
+        if (page == 0) {
+            currentPageUnReadItemIds = unread_item_ids
+        }
         pageRoute.id = id
         pageRoute.type = type
         pageRoute.meta = meta
-        const r = await listItem(id, type, page, onlyUnread, unread_item_ids)
+        const r = await listItem(id, type, page, onlyUnread, currentPageUnReadItemIds)
         if (page == 0) {
             data.value = []
         }
