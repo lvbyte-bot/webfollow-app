@@ -68,9 +68,13 @@ export const useAppStore = defineStore('app', () => {
         settingsStore.general.pullDataFail = false
         settingsStore.saveToLocalStorage()
         loading.value = false
-        setTimeout(() => initNav(pageRoute), 1000)
+        setTimeout(() => {
+            initNav(pageRoute)
+            webfollowApp.tip('同步完成')
+        }, 1000)
         lastRefeshTime.value = Math.round(new Date().getTime() / 1000)
         info('sync end')
+
 
     }
 

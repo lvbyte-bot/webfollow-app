@@ -22,11 +22,13 @@ export async function request(params: any, options: any = {
     try {
         const response = await fetch(fullUrl, options)
         if (!response.ok) {
+            webfollowApp.tip('Network response was not ok')
             throw new Error('Network response was not ok');
         } else {
             return response.json()
         }
-    } catch (e) {
+    } catch (e: any) {
+        webfollowApp.tip(e)
         throw e;
     }
 
