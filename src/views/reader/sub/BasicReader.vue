@@ -19,17 +19,18 @@
     <div class="chapter-warp">
       <slot></slot>
     </div>
-    <div class="summary content" v-if="summary || summarizing">
+    <div class="summary content bg-gradient" v-if="summary || summarizing">
       <div class="mb-2 d-flex align-center justify-space-between">
-        <div class="d-flex align-center">
-          <v-icon size="small" class="mr-2">mdi-auto-fix</v-icon>
+        <div class="d-flex align-center text-primary">
+          <v-icon size="small" class="mr-2">mdi-creation</v-icon>
           AI 总结
         </div>
         <c-btn
           v-if="!summarizing"
           icon
-          variant="text"
           size="small"
+          variant="text"
+          color="primary"
           title="强制刷新AI总结"
           @click="emit('forceRefresh')"
           class="ml-2"
@@ -80,7 +81,7 @@ function getSource() {
 const summary: string | undefined = inject(summarySymbol);
 const summarizing: boolean | undefined = inject(summarizingSymbol);
 const emit = defineEmits<{
-  (e: 'forceRefresh'): void
+  (e: "forceRefresh"): void;
 }>();
 </script>
 <style lang="scss" scoped>

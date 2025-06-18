@@ -199,35 +199,35 @@ import { Marked } from "@/service";
 const feedStore = useFeedsStore();
 const appStore = useAppStore();
 const settingsStore = useSettingsStore();
-const editable = ref(false)
-const deleteDialog = ref(false)
-const feedDialog= ref(false);
-const form: Ref<any> = ref()
-const currentItem: Ref<any> = ref({ title: undefined })
-const loading = ref(false)
-const tipStr = ref('')
+const editable = ref(false);
+const deleteDialog = ref(false);
+const feedDialog = ref(false);
+const form: Ref<any> = ref();
+const currentItem: Ref<any> = ref({ title: undefined });
+const loading = ref(false);
+const tipStr = ref("");
 
 onMounted(() => {
-    document.addEventListener("click", hideContextMenu);
-    let clear:any
-    webfollowApp.tip=(tip: string, time: number = 5000)=>{
-        tipStr.value=tip
-        if (clear) {
-          clearTimeout(clear)
-        }
-        clear = setTimeout(() => {
-            tipStr.value=''
-        }, time);
+  document.addEventListener("click", hideContextMenu);
+  let clear: any;
+  webfollowApp.tip = (tip: string, time: number = 8000) => {
+    tipStr.value = tip;
+    if (clear) {
+      clearTimeout(clear);
     }
+    clear = setTimeout(() => {
+      tipStr.value = "";
+    }, time);
+  };
 });
 
 onBeforeUnmount(() => {
-    document.removeEventListener("click", hideContextMenu);
+  document.removeEventListener("click", hideContextMenu);
 });
 
 const hideContextMenu = () => {
-    contextMenuVisible.value = false;
-    filterContextMenuVisible.value = false;
+  contextMenuVisible.value = false;
+  filterContextMenuVisible.value = false;
 };
 
 const contextMenuVisible = ref(false);
@@ -241,235 +241,237 @@ const filterContextMenuVisible = ref(false);
 const currentFilter = ref<any>(null);
 
 const handlerClear = () => {
-    selectedFeeds.value = [];
-    lastSelectedFeed.value = null;
-    isMultiSelectMode.value = false;
-}
+  selectedFeeds.value = [];
+  lastSelectedFeed.value = null;
+  isMultiSelectMode.value = false;
+};
 
 // 添加选择处理函数
 const handleFeedSelect = (event: MouseEvent | KeyboardEvent, feed: any) => {
-    if (event.ctrlKey) {
-        // Ctrl 键多选
-        event.preventDefault();
-        isMultiSelectMode.value = true;
-        if (selectedFeeds.value.find(f => f.id === feed.id)) {
-            selectedFeeds.value = selectedFeeds.value.filter(f => f.id !== feed.id);
-        } else {
-            selectedFeeds.value.push(feed);
-        }
-        lastSelectedFeed.value = feed;
-    } else if (event.shiftKey && lastSelectedFeed.value) {
-        event.preventDefault();
-        isMultiSelectMode.value = true;
-
-        let allFeeds: any[] = [];
-
-        feedStore.subscriptions?.forEach(group => {
-            allFeeds = [...allFeeds, ...group.feeds];
-        });
-
-        const startIndex = allFeeds.findIndex(f => f.id === lastSelectedFeed.value.id);
-        const endIndex = allFeeds.findIndex(f => f.id === feed.id);
-
-        if (startIndex !== -1 && endIndex !== -1) {
-            // 获取范围内的所有feeds
-            const start = Math.min(startIndex, endIndex);
-            const end = Math.max(startIndex, endIndex);
-
-            selectedFeeds.value = allFeeds.slice(start, end + 1);
-        }
+  if (event.ctrlKey) {
+    // Ctrl 键多选
+    event.preventDefault();
+    isMultiSelectMode.value = true;
+    if (selectedFeeds.value.find((f) => f.id === feed.id)) {
+      selectedFeeds.value = selectedFeeds.value.filter((f) => f.id !== feed.id);
     } else {
-        selectedFeeds.value = [feed];
-        lastSelectedFeed.value = feed;
-        isMultiSelectMode.value = false;
+      selectedFeeds.value.push(feed);
     }
+    lastSelectedFeed.value = feed;
+  } else if (event.shiftKey && lastSelectedFeed.value) {
+    event.preventDefault();
+    isMultiSelectMode.value = true;
+
+    let allFeeds: any[] = [];
+
+    feedStore.subscriptions?.forEach((group) => {
+      allFeeds = [...allFeeds, ...group.feeds];
+    });
+
+    const startIndex = allFeeds.findIndex(
+      (f) => f.id === lastSelectedFeed.value.id
+    );
+    const endIndex = allFeeds.findIndex((f) => f.id === feed.id);
+
+    if (startIndex !== -1 && endIndex !== -1) {
+      // 获取范围内的所有feeds
+      const start = Math.min(startIndex, endIndex);
+      const end = Math.max(startIndex, endIndex);
+
+      selectedFeeds.value = allFeeds.slice(start, end + 1);
+    }
+  } else {
+    selectedFeeds.value = [feed];
+    lastSelectedFeed.value = feed;
+    isMultiSelectMode.value = false;
+  }
 };
 
-
-
 async function markRead(id: number, marked: Marked) {
-    await appStore.read(
-        id,
-        marked,
-        appStore.lastRefeshTime
-    );
+  await appStore.read(id, marked, appStore.lastRefeshTime);
 }
 
 // 添加批量操作函数
 async function onBatchUpdate() {
-    loading.value = true;
-    if (!currentItem.value.groupName) {
-        alert('请选择分组')
-        return
+  loading.value = true;
+  if (!currentItem.value.groupName) {
+    alert("请选择分组");
+    return;
+  }
+  const groupId = feedStore.groups.filter(
+    (g) => g.title == currentItem.value.groupName
+  )[0].id;
+  for (const feed of selectedFeeds.value) {
+    try {
+      await feedStore.updateFeed(feed.id, groupId);
+    } catch (e) {
+      err(e, "feed删除失败[" + feed.title + "]");
     }
-    const groupId = feedStore.groups.filter(g => g.title == currentItem.value.groupName)[0].id
-    for (const feed of selectedFeeds.value) {
-        try {
-            await feedStore.updateFeed(feed.id, groupId);
-        } catch (e) {
-            err(e, 'feed删除失败[' + feed.title + ']')
-        }
-    }
-    loading.value = false;
-    editable.value = false;
-    handlerClear()
+  }
+  loading.value = false;
+  editable.value = false;
+  handlerClear();
 }
 
 async function onBatchDelete() {
-    loading.value = true;
-    for (let i = 0; i < selectedFeeds.value.length; i++) {
-        const feed = selectedFeeds.value[i]
-        try {
-            await feedStore.deleteFeed(feed.id, i + 1 == selectedFeeds.value.length);
-        } catch (e) {
-            err(e, 'feed更新失败[' + feed.title + ']')
-        }
+  loading.value = true;
+  for (let i = 0; i < selectedFeeds.value.length; i++) {
+    const feed = selectedFeeds.value[i];
+    try {
+      await feedStore.deleteFeed(feed.id, i + 1 == selectedFeeds.value.length);
+    } catch (e) {
+      err(e, "feed更新失败[" + feed.title + "]");
     }
-    loading.value = false;
-    deleteDialog.value = false;
-    handlerClear()
+  }
+  loading.value = false;
+  deleteDialog.value = false;
+  handlerClear();
 }
 
-
-
 async function onUpdate() {
-    // console.log(currentItem.value)
-    loading.value = true
-    if (!currentItem.value.groupName) {
-        alert('请选择分组')
-        return
-    }
-    const group_id = feedStore.groups.filter(g => g.title == currentItem.value.groupName)[0].id
-    try {
-        await feedStore.updateFeed(currentItem.value.id, group_id)
-    } catch (e) {
-        err(e, 'feed更新失败[' + currentItem.value.title + ']')
-    }
-    loading.value = false
-    editable.value = false
+  // console.log(currentItem.value)
+  loading.value = true;
+  if (!currentItem.value.groupName) {
+    alert("请选择分组");
+    return;
+  }
+  const group_id = feedStore.groups.filter(
+    (g) => g.title == currentItem.value.groupName
+  )[0].id;
+  try {
+    await feedStore.updateFeed(currentItem.value.id, group_id);
+  } catch (e) {
+    err(e, "feed更新失败[" + currentItem.value.title + "]");
+  }
+  loading.value = false;
+  editable.value = false;
 }
 
 async function onDelete() {
-    loading.value = true
-    try {
-        await feedStore.deleteFeed(currentItem.value.id)
-    } catch (e) {
-        err(e, 'feed删除失败[' + currentItem.value.title + ']')
-    }
-    loading.value = false
-    deleteDialog.value = false
+  loading.value = true;
+  try {
+    await feedStore.deleteFeed(currentItem.value.id);
+  } catch (e) {
+    err(e, "feed删除失败[" + currentItem.value.title + "]");
+  }
+  loading.value = false;
+  deleteDialog.value = false;
 }
 
-let currentGroup: any = null
+let currentGroup: any = null;
 
 // 修改右键菜单处理函数
 const showContextMenu = (event: any, item: any, isGroup = false) => {
-    filterContextMenuVisible.value = false;
-    contextMenuX.value = event.clientX > 130 ? event.clientX - 120 : event.clientX;
-    contextMenuY.value = event.clientY;
-    contextMenuVisible.value = true;
-    if (isGroup) {
-        currentGroup = item;
-        selectedFeeds.value = [];
-    } else {
-        currentGroup = null;
-        currentItem.value = item;
-        if (!isMultiSelectMode.value && item) {
-            item.groupName = feedStore.groups.filter(g => g.id == item.groupId)[0].title;
-            selectedFeeds.value = [item];
-        }
+  filterContextMenuVisible.value = false;
+  contextMenuX.value =
+    event.clientX > 130 ? event.clientX - 120 : event.clientX;
+  contextMenuY.value = event.clientY;
+  contextMenuVisible.value = true;
+  if (isGroup) {
+    currentGroup = item;
+    selectedFeeds.value = [];
+  } else {
+    currentGroup = null;
+    currentItem.value = item;
+    if (!isMultiSelectMode.value && item) {
+      item.groupName = feedStore.groups.filter(
+        (g) => g.id == item.groupId
+      )[0].title;
+      selectedFeeds.value = [item];
     }
+  }
 };
 
 const handleAction = async (action: string) => {
-    contextMenuVisible.value = false;
-    if (action === "edit") {
-        editable.value = true;
-    }else if (action === "feed") {
-        feedDialog.value = true;
-    } else if (action === "delete") {
-        deleteDialog.value = true;
-    } else if (action === "markRead") {
-        let id = currentGroup ? currentGroup.id : currentItem.value.id
-        try {
-            markRead(id, currentGroup ? Marked.GROUP : Marked.FEED)
-        } catch (e) {
-            console.error(e);
-        }
+  contextMenuVisible.value = false;
+  if (action === "edit") {
+    editable.value = true;
+  } else if (action === "feed") {
+    feedDialog.value = true;
+  } else if (action === "delete") {
+    deleteDialog.value = true;
+  } else if (action === "markRead") {
+    let id = currentGroup ? currentGroup.id : currentItem.value.id;
+    try {
+      markRead(id, currentGroup ? Marked.GROUP : Marked.FEED);
+    } catch (e) {
+      console.error(e);
     }
+  }
 };
 
 const showFilterContextMenu = (event: MouseEvent, filter: any) => {
-    contextMenuVisible.value = false;
-    event.preventDefault();
-    contextMenuX.value = event.clientX > 130 ? event.clientX - 120 : event.clientX;
-    contextMenuY.value = event.clientY;
-    filterContextMenuVisible.value = true;
-    currentFilter.value = filter;
+  contextMenuVisible.value = false;
+  event.preventDefault();
+  contextMenuX.value =
+    event.clientX > 130 ? event.clientX - 120 : event.clientX;
+  contextMenuY.value = event.clientY;
+  filterContextMenuVisible.value = true;
+  currentFilter.value = filter;
 };
 
 const handleFilterAction = (action: string) => {
-    filterContextMenuVisible.value = false;
+  filterContextMenuVisible.value = false;
 
-    if (action === 'delete' && currentFilter.value) {
-        if (confirm('确定要删除这个过滤项吗？')) {
-            const index = settingsStore.automation.filters.findIndex(
-                f => f.id === currentFilter.value.id
-            );
-            if (index !== -1) {
-                settingsStore.automation.filters.splice(index, 1);
-                settingsStore.saveToLocalStorage();
-            }
-        }
+  if (action === "delete" && currentFilter.value) {
+    if (confirm("确定要删除这个过滤项吗？")) {
+      const index = settingsStore.automation.filters.findIndex(
+        (f) => f.id === currentFilter.value.id
+      );
+      if (index !== -1) {
+        settingsStore.automation.filters.splice(index, 1);
+        settingsStore.saveToLocalStorage();
+      }
     }
+  }
 };
-
 </script>
 <style scoped>
 .sidebar-list {
-    position: relative;
-    overflow: scroll;
-    background-color: transparent;
-    padding-top: 0;
-    height: 100vh;
+  position: relative;
+  overflow: scroll;
+  background-color: transparent;
+  padding-top: 0;
+  height: 100vh;
 }
 
 .sidebar-top {
-    padding-top: 0.5rem;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    background-color: rgb(var(--sidbar-bg));
+  padding-top: 0.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: rgb(var(--sidbar-bg));
 }
 
-.plus, .x-tip {
-    display: inline-block;
-    position: fixed;
-    bottom: 0;
-    padding: 1rem;
-    z-index: 1000;
+.plus,
+.x-tip {
+  display: inline-block;
+  position: fixed;
+  bottom: 0;
+  padding: 1rem;
+  z-index: 1000;
 }
 
-.x-tip{
-    background-color: rgba(var(--v-theme-background),1);
-    padding: 0.3rem 0.5rem;
-    bottom: 1rem;
-    left: 1rem;
-    border-radius: .6rem;
-    border: 1px solid rgba(var(--v-theme-kbd),.3);
-    font-size: small;
+.x-tip {
+  background-color: rgba(var(--v-theme-background), 1);
+  padding: 0.3rem 0.5rem;
+  bottom: 1rem;
+  left: 1rem;
+  border-radius: 0.6rem;
+  border: 1px solid rgba(var(--v-theme-kbd), 0.3);
+  font-size: small;
 }
 
 .v-list .v-list-item--nav:not(:only-child) {
-    margin-bottom: 1px;
+  margin-bottom: 1px;
 }
-.font-weight-thin{
-    opacity: .6;
+.font-weight-thin {
+  opacity: 0.6;
 }
-.icon-warp{
-    width: 21px;
-    display: flex; 
-    align-items: center;
-    justify-content: center;
+.icon-warp {
+  width: 21px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

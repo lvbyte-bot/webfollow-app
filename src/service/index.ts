@@ -60,25 +60,43 @@ export async function pull() {
     const localMaxId = await itemRepo.maxId()
     const remoteIds = Array.from(syncItemIds)
     if (localMaxId >= Math.max(...remoteIds)) {
+        console.log('本地数据最新')
         return
     }
 
-    let syncItemIdArray = await asyncFilter(remoteIds, async id => !await itemRepo.existsId(id))
+    let syncItemIdArray = (await asyncFilter(remoteIds, async id => !await itemRepo.existsId(id))).sort((a: number, b: number) => a - b)
     let total = remoteIds.length - syncItemIdArray.length
-    for (let with_ids of idsto50str(syncItemIdArray)) {
-        let fItems = (await items({ with_ids })).items
-        for (let item of fItems) {
-            try {
+    async function pullItems(with_ids: string, try_count: number = 3) {
+        try {
+            try_count = try_count - 1
+            let fItems = (await items({ with_ids })).items
+            for (let item of fItems) {
                 await itemRepo.save({ id: item.id instanceof Number ? item.id : Number.parseInt(item.id), feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
-            } catch (e) {
-                err(e, '同步item出错' + with_ids)
+            }
+            total = total + 50
+            if (total > syncItemIds.size) {
+                total = syncItemIds.size
+            }
+            webfollowApp.tip('已同步' + total + '条')
+        } catch (e) {
+            err(e, '同步item出错')
+            // 等待3s
+            await new Promise(resolve => setTimeout(resolve, 3000))
+            if (try_count > 0) {
+                await pullItems(with_ids, try_count)
+            } else {
+                throw e
             }
         }
-        total = total + 50
-        if (total > syncItemIds.size) {
-            total = syncItemIds.size
+
+    }
+    try {
+        for (let with_ids of idsto50str(syncItemIdArray)) {
+            await pullItems(with_ids)
         }
-        setTitle(total)
+    } catch (e) {
+        webfollowApp.tip('网络开小差了，同步中断了')
+        throw e
     }
 
 }

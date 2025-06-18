@@ -4,7 +4,7 @@ import { useBaseStore } from './base'
 import { useFeedsStore } from './feeds'
 import { useItemsStore } from './items'
 import { usePlayListStore } from './playlist'
-import { pull as pulllocal, setRanks } from '@/service'
+import { pull as pullData2Local, setRanks } from '@/service'
 import { ranks as getRanks } from '@/service/recommend'
 import { clearIndexedDB } from '@/utils/dbHelper'
 import { computed, Ref, watch, ref, onMounted, reactive, Reactive } from 'vue'
@@ -35,17 +35,15 @@ export const useAppStore = defineStore('app', () => {
     const item7DayTime = ref(0)
 
     async function sync(type: SyncType = '') {
-        async function pullData2Local() {
-            return await pulllocal()
-        }
         const item7DayStart = new Date()
         item7DayStart.setDate(item7DayStart.getDate() - 1)
         item7DayTime.value = Math.round(item7DayStart.getTime() / 1000)
         lastRefeshTime.value = Math.round(new Date().getTime() / 1000)
-        const tmpPullDataFail = settingsStore.general.pullDataFail
+        // const tmpPullDataFail = settingsStore.general.pullDataFail
         settingsStore.general.pullDataFail = true
         settingsStore.saveToLocalStorage()
         loading.value = true
+        webfollowApp.tip('准备同步数据中...')
         if (type == '') {
             await refresh(async () => {
                 await pullData2Local()
@@ -53,9 +51,8 @@ export const useAppStore = defineStore('app', () => {
                 setRanks(await getRanks())
                 await refreshItems()
             }, async () => {
-                if (tmpPullDataFail) {
-                    await pullData2Local()
-                }
+                await pullData2Local()
+                await refreshFeed()
                 setRanks(await getRanks())
                 await refreshItems()
             })
@@ -100,7 +97,7 @@ export const useAppStore = defineStore('app', () => {
     const unReadQty = computed(() => unread_item_ids.size)
     const item7DayUnReadQty = computed(() => item7DayIds.value.filter(id => unread_item_ids.has(id)).length)
     watch(unReadQty, () => {
-        setTitle(unReadQty.value)
+        // setTitle(unReadQty.value)
     })
     onMounted(async () => {
         await sync()
