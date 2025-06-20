@@ -4,13 +4,8 @@
       <a class="title-warp" :href="item.link">
         <p class="text-h4 title">{{ item.title }}</p>
         <p class="text-subtitle-2 mb-2">
-          <router-link
-            @click.stop=""
-            class="a"
-            title="前往订阅源"
-            :to="'/f/' + item?.feed?.id"
-            v-text="props.item.feed?.title"
-          ></router-link>
+          <router-link @click.stop="" class="a" title="前往订阅源" :to="'/f/' + item?.feed?.id"
+            v-text="props.item.feed?.title"></router-link>
           <span v-text="getSource()"></span>
         </p>
         <p class="text-subtitle-2 text-body-2" v-text="getDate()"></p>
@@ -25,16 +20,8 @@
           <v-icon size="small" class="mr-2">mdi-creation</v-icon>
           AI 总结
         </div>
-        <c-btn
-          v-if="!summarizing"
-          icon
-          size="small"
-          variant="text"
-          color="primary"
-          title="强制刷新AI总结"
-          @click="emit('forceRefresh')"
-          class="ml-2"
-        >
+        <c-btn v-if="!summarizing" icon size="small" variant="text" color="primary" title="强制刷新AI总结"
+          @click="emit('forceRefresh')" class="ml-2">
           <v-icon>mdi-refresh</v-icon>
         </c-btn>
       </div>
@@ -90,22 +77,27 @@ const emit = defineEmits<{
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .title-container {
   margin: 0 auto 2rem;
   text-align: center;
   max-width: calc(var(--reader-main-max-width) + 42px);
   padding: 1.5rem;
   border-radius: 0.5rem;
+
   &:hover {
     background-color: rgb(var(--v-theme-surface-light));
   }
+
   a {
     text-decoration: none;
     color: rgb(var(--v-theme-surface-variant));
   }
+
   .title-warp {
     text-align: start;
   }
+
   .title {
     margin-bottom: 1rem;
     line-height: 3rem;
@@ -115,14 +107,17 @@ const emit = defineEmits<{
 .basic-reader {
   background-color: rgb(var(--v-theme-background));
 }
+
 .a {
   color: rgb(var(--v-theme-surface-variant));
   text-decoration: none;
+
   &:hover {
     text-decoration: underline;
     color: rgb(var(--v-theme-primary));
   }
 }
+
 .chapter-warp {
   float: left;
   position: sticky;
@@ -130,12 +125,14 @@ const emit = defineEmits<{
   left: calc(50% + var(--reader-main-max-width) / 2 + 2rem);
   max-width: 210px;
 }
+
 .summary {
   border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
   padding: 1rem !important;
   border-radius: 0.5rem;
   max-width: calc(var(--reader-main-max-width) + 2rem) !important;
 }
+
 @media (max-width: 1280px) {
   .chapter-warp {
     position: static;
@@ -150,12 +147,15 @@ const emit = defineEmits<{
   .bar-left {
     width: 150px;
   }
+
   .summary {
+
     ol,
     ul {
       padding-inline-start: 1rem;
     }
   }
+
   h1,
   h2,
   h3,
@@ -167,6 +167,7 @@ const emit = defineEmits<{
       margin-right: 1rem;
     }
   }
+
   ul {
     li {
       &::marker {
