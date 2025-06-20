@@ -1,14 +1,8 @@
 <template>
   <div class="main-warp" :class="{ 'main-col': viewMode == 'column' && type }">
-    <reader
-      v-if="currentItem && store.items?.length"
-      :item="currentItem"
-      :items="store.items"
-      :open-reader="openReader"
-      :entry-list-disable="mobile || !(viewMode != 'column' || !type)"
-      :modelValue="appStore.readerMode"
-      @update:modelValue="appStore.readerMode = $event"
-    ></reader>
+    <reader v-if="currentItem && store.items?.length" :item="currentItem" :items="store.items" :open-reader="openReader"
+      :entry-list-disable="mobile || !(viewMode != 'column' || !type)" :modelValue="appStore.readerMode"
+      @update:modelValue="appStore.readerMode = $event"></reader>
     <div class="main-reader"></div>
     <main class="main-container" ref="mainRef">
       <slot v-bind:="{ openReader, loadData }">
@@ -18,79 +12,47 @@
             <div class="top-bar">
               <div class="v-toolbar-title v-app-bar-title text-truncate">
                 {{ (appStore.nav && appStore.nav.title) || "未分类" }}
-                <small
-                  class="mx-2 text-medium-emphasis font-weight-light"
-                  v-if="appStore.nav.qty"
-                  v-text="appStore.nav.qty"
-                ></small>
+                <small class="mx-2 text-medium-emphasis font-weight-light" v-if="appStore.nav.qty"
+                  v-text="appStore.nav.qty"></small>
               </div>
               <div>
-                <c-btn
-                  v-show="
-                    !(
-                      (id == '-1' && type == 'c') ||
-                      type == 'next' ||
-                      type == 'home' ||
-                      type == 'filter'
-                    )
-                  "
-                  :disabled="store.items?.filter((o) => !o.isRead).length == 0"
-                  icon
-                  title="全部标记为已读(快捷键：M)"
-                  @click="markRead"
-                  class="items-mark-read"
-                >
+                <c-btn v-show="!(
+                  (id == '-1' && type == 'c') ||
+                  type == 'next' ||
+                  type == 'home' ||
+                  type == 'filter'
+                )
+                  " :disabled="store.items?.filter((o) => !o.isRead).length == 0" icon title="全部标记为已读(快捷键：M)"
+                  @click="markRead" class="items-mark-read">
                   <v-icon>mdi-read</v-icon>
                 </c-btn>
-                <c-btn
-                  icon
-                  title="刷新(快捷键：R)"
-                  @click="refresh"
-                  :class="{ rotating: loading }"
-                  class="items-reload"
-                >
+                <c-btn icon title="刷新(快捷键：R)" @click="refresh" :class="{ rotating: loading }" class="items-reload">
                   <v-icon>{{ loading ? "mdi-loading" : "mdi-reload" }}</v-icon>
                 </c-btn>
                 <v-menu class="menu">
                   <template v-slot:activator="{ props }">
-                    <c-btn
-                      icon="mdi-dots-vertical"
-                      variant="text"
-                      v-bind="props"
-                    ></c-btn>
+                    <c-btn icon="mdi-dots-vertical" variant="text" v-bind="props"></c-btn>
                   </template>
                   <v-card>
                     <v-list nav v-model:selected="viewSeleted">
-                      <v-list-item
-                        v-for="(item, index) in views"
-                        :key="index"
-                        :value="item.value"
-                        :prepend-icon="item.icon"
-                      >
+                      <v-list-item v-for="(item, index) in views" :key="index" :value="item.value"
+                        :prepend-icon="item.icon">
                         <v-list-item-title>{{ item.title }}</v-list-item-title>
                       </v-list-item>
                     </v-list>
                     <v-divider></v-divider>
                     <v-list nav>
-                      <v-list-item title="只看未读">
+                      <v-list-item title="只看未读" @click="changeOnlyUnread(!onlyUnread)">
                         <template v-slot:prepend>
                           <v-list-item-action start>
-                            <v-checkbox-btn
-                              :model-value="onlyUnread"
-                              @click="changeOnlyUnread(!onlyUnread)"
-                              size="small"
-                            ></v-checkbox-btn>
+                            <v-checkbox-btn :model-value="onlyUnread"></v-checkbox-btn>
                           </v-list-item-action>
                         </template>
                       </v-list-item>
-                      <v-list-item title="显示AI总结">
+                      <v-list-item title="显示AI总结" @click="toggleAISummary">
                         <template v-slot:prepend>
                           <v-list-item-action start>
-                            <v-checkbox-btn
-                              :model-value="general.enableListAISummary"
-                              @click="toggleAISummary"
-                              size="small"
-                            ></v-checkbox-btn>
+                            <v-checkbox-btn :model-value="general.enableListAISummary"></v-checkbox-btn>
                           </v-list-item-action>
                         </template>
                       </v-list-item>
@@ -101,21 +63,11 @@
             </div>
           </slot>
           <v-container class="mx-auto items-warp">
-            <v-alert
-              class="my-3"
-              v-show="appStore.nav.isFailure"
-              border="top"
-              border-color="warning"
-            >
+            <v-alert class="my-3" v-show="appStore.nav.isFailure" border="top" border-color="warning">
               <div class="d-flex justify-space-between">
                 <v-icon class="mr-3">mdi-alert-circle-outline</v-icon>
                 此订阅源有问题。请检查并在必要时重新订阅。
-                <v-btn
-                  class="ml-3"
-                  size="small"
-                  variant="text"
-                  :href="appStore.nav.url"
-                >
+                <v-btn class="ml-3" variant="text" :href="appStore.nav.url">
                   查看订阅源
                 </v-btn>
               </div>
@@ -130,21 +82,12 @@
           <div class="mt-2 text-body-2">正在刷新...</div>
         </div> -->
             <template v-if="store.items?.length">
-              <Items
-                :items="store.items"
-                :view="viewMode"
-                :type="type"
-                @open-reader="openReader"
-              ></Items>
+              <Items :items="store.items" :view="viewMode" :type="type" @open-reader="openReader"></Items>
             </template>
 
             <template v-if="store.isLast && !loading">
-              <v-empty-state
-                icon="mdi-book-open-page-variant-outline"
-                v-if="feedStore.nextUnReadUrl"
-                height="calc(100vh - 70px)"
-                class="next-unreadlist"
-              >
+              <v-empty-state icon="mdi-book-open-page-variant-outline" v-if="feedStore.nextUnReadUrl"
+                height="calc(100vh - 70px)" class="next-unreadlist">
                 <v-btn variant="text" :to="feedStore.nextUnReadUrl">
                   <template #prepend>
                     <v-icon color="primary"> mdi-circle-medium </v-icon>
@@ -152,30 +95,14 @@
                   打开下一个未读的订阅源
                 </v-btn>
               </v-empty-state>
-              <v-empty-state
-                v-else-if="!store.items?.length"
-                height="calc(100vh - 70px)"
-                icon="mdi-fruit-watermelon"
-                text="全部已读"
-              >
+              <v-empty-state v-else-if="!store.items?.length" height="calc(100vh - 70px)" icon="mdi-fruit-watermelon"
+                text="全部已读">
               </v-empty-state>
-              <v-empty-state
-                v-else
-                height="calc(100vh - 70px)"
-                icon="mdi-fruit-cherries"
-                text="我是有底线的"
-              >
+              <v-empty-state v-else height="calc(100vh - 70px)" icon="mdi-fruit-cherries" text="我是有底线的">
               </v-empty-state>
-              <v-empty-state
-                v-if="!onlyUnread && type == 'f' && store.items?.length == 0"
-                height="calc(100vh - 70px)"
-                icon="mdi-cloud-download-outline"
-              >
-                <v-btn
-                  variant="text"
-                  @click="pullFeedItems"
-                  :disabled="loading"
-                >
+              <v-empty-state v-if="!onlyUnread && type == 'f' && store.items?.length == 0" height="calc(100vh - 70px)"
+                icon="mdi-cloud-download-outline">
+                <v-btn variant="text" @click="pullFeedItems" :disabled="loading">
                   <template #prepend>
                     <v-icon>mdi-sync</v-icon>
                   </template>
@@ -353,7 +280,7 @@ async function loadData0(
         title: filter?.name || "过滤文章",
         qty: onlyUnread
           ? articles.filter((item) => baseStore.unread_item_ids.has(item.id))
-              .length
+            .length
           : articles.length,
       }
     );
@@ -400,6 +327,7 @@ async function refresh() {
   loading.value = true;
   await appStore.sync();
   mainRef.value.scrollTo(0, 0);
+  await loadData()
   loading.value = false;
 }
 
@@ -457,6 +385,46 @@ defineExpose({ loadData, openReader });
 
 let autoRefresh: NodeJS.Timeout;
 
+function initWatchRefresh() {
+  function initRefresh() {
+    if (autoRefresh) {
+      clearTimeout(autoRefresh);
+    }
+    autoRefresh = setTimeout(() => {
+      log("autoRefresh");
+      refresh();
+      initRefresh()
+    }, general.value.refreshInterval * 1000);
+  }
+  // 自动刷新功能
+  if (general.value.autoRefresh) {
+    initRefresh()
+  }
+  // 页面出显触发检查时间
+  window.addEventListener("visibilitychange", () => {
+    if (document.visibilityState == "visible" && general.value.autoRefresh) {
+      log("visibilitychange", document.visibilityState, appStore.lastRefeshTime + general.value.refreshInterval, Math.round(new Date().getTime() / 1000));
+      if (appStore.lastRefeshTime + general.value.refreshInterval < Math.round(new Date().getTime() / 1000)) {
+        log("refresh");
+        refresh();
+        initRefresh()
+      }
+    }
+  });
+  watch(
+    () => general.value.autoRefresh,
+    (v) => {
+      if (v) {
+        initRefresh()
+      } else {
+        if (autoRefresh) {
+          clearTimeout(autoRefresh);
+        }
+      }
+    }
+  );
+}
+
 onMounted(() => {
   webfollowApp.toggleItemUnread = () => changeOnlyUnread(!onlyUnread.value);
   webfollowApp.toggleItemView = () => {
@@ -474,16 +442,7 @@ onMounted(() => {
       appStore.readItemBatch(itemIds);
     }
   };
-  // 自动刷新功能
-  if (general.value.autoRefresh) {
-    if (autoRefresh) {
-      clearTimeout(autoRefresh);
-    }
-    autoRefresh = setTimeout(() => {
-      log("autoRefresh");
-      loadData();
-    }, general.value.refreshInterval * 1000);
-  }
+  initWatchRefresh()
 });
 </script>
 <style lang="scss" scoped>
@@ -497,10 +456,12 @@ onMounted(() => {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
 }
+
 .top-bar {
   position: sticky !important;
   top: 0;
@@ -514,16 +475,20 @@ onMounted(() => {
 
   // height: 64px;
   height: 56px;
+
   &:last-child {
     min-width: 170px;
   }
 }
+
 .rotating .v-icon {
   animation: rotate 1s linear infinite;
 }
+
 .reader-warp {
   font-size: 1.2em;
 }
+
 .main-warp {
   font-size: var(--font-size);
 }
@@ -533,6 +498,7 @@ onMounted(() => {
   height: 100vh;
   overflow-y: scroll;
 }
+
 .v-toolbar {
   background-color: rgb(var(--v-theme-background)) !important;
 }
@@ -540,9 +506,11 @@ onMounted(() => {
 .main-col {
   display: grid;
   grid-template-columns: auto 1fr;
+
   .main-reader {
     grid-area: 1/2/2/2;
   }
+
   .main-container {
     position: relative;
     border-right: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
@@ -552,20 +520,24 @@ onMounted(() => {
     min-width: 360px;
     max-width: 36vw;
     width: 380px;
+
     //  background-color: rgb(var(--sidbar-bg));
     .top-bar {
       //    background-color: rgb(var(--sidbar-bg));
     }
   }
 }
+
 .menu {
   .v-list-item--density-default.v-list-item--one-line {
     min-height: 32px;
   }
 }
+
 @media (max-width: 760px) {
   .main-col {
     display: block;
+
     .main-container {
       width: 100%;
       max-width: 100%;
@@ -579,6 +551,7 @@ onMounted(() => {
 .menu .v-selection-control--density-default {
   --v-selection-control-size: 1.5rem;
 }
+
 .menu .v-list-item-action--start {
   margin-inline-end: 0;
   margin-inline-start: 0;

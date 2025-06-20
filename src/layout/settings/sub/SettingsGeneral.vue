@@ -6,7 +6,7 @@
       <v-card-text>
         <v-radio-group v-model="data.startPage">
           <v-radio label="欢迎页" value="welcome"></v-radio>
-          <v-radio label="发现页面" value="explore"></v-radio>
+          <v-radio label="今天" value="explore"></v-radio>
           <v-radio label="全部文章" value="all"></v-radio>
           <v-radio label="稍后阅读" value="next"></v-radio>
           <v-radio label="第一个文件夹" value="firstfolder"></v-radio>
@@ -75,12 +75,7 @@
     <v-card class="mb-4">
       <v-card-title>隐藏已读文章</v-card-title>
       <v-card-text>
-        <v-switch
-          v-model="data.hideReadArticles"
-          color="primary"
-          label="自动隐藏已读文章"
-          hide-details
-        ></v-switch>
+        <v-switch v-model="data.hideReadArticles" color="primary" label="自动隐藏已读文章" hide-details></v-switch>
       </v-card-text>
     </v-card>
 
@@ -88,12 +83,7 @@
     <v-card class="mb-4">
       <v-card-title>列表AI总结</v-card-title>
       <v-card-text>
-        <v-switch
-          v-model="data.enableListAISummary"
-          color="primary"
-          label="在列表视图中显示AI总结"
-          hide-details
-        ></v-switch>
+        <v-switch v-model="data.enableListAISummary" color="primary" label="在列表视图中显示AI总结" hide-details></v-switch>
         <div class="text-caption text-medium-emphasis mt-2">
           注意：启用此功能可能会增加API调用次数
         </div>
@@ -104,12 +94,7 @@
     <v-card class="mb-4">
       <v-card-title>列表滚动标记为已读</v-card-title>
       <v-card-text>
-        <v-switch
-          v-model="data.autoRead"
-          color="primary"
-          label="启用列表滚动标记为已读"
-          hide-details
-        ></v-switch>
+        <v-switch v-model="data.autoRead" color="primary" label="启用列表滚动标记为已读" hide-details></v-switch>
       </v-card-text>
     </v-card>
 
@@ -117,21 +102,9 @@
     <v-card class="mb-4">
       <v-card-title>自动刷新</v-card-title>
       <v-card-text>
-        <v-switch
-          v-model="data.autoRefresh"
-          color="primary"
-          label="启用自动刷新"
-          hide-details
-        ></v-switch>
-        <v-select
-          v-if="data.autoRefresh"
-          v-model="data.refreshInterval"
-          :items="refreshIntervals"
-          label="刷新间隔"
-          variant="outlined"
-          density="comfortable"
-          class="mt-2"
-        ></v-select>
+        <v-switch v-model="data.autoRefresh" color="primary" label="启用自动刷新" hide-details></v-switch>
+        <v-select v-if="data.autoRefresh" v-model="data.refreshInterval" :items="refreshIntervals" label="刷新间隔"
+          variant="outlined" density="comfortable" class="mt-2"></v-select>
       </v-card-text>
     </v-card>
 
@@ -142,12 +115,7 @@
           保存设置
           <v-icon right class="ml-2">mdi-content-save</v-icon>
         </v-btn>
-        <v-btn
-          color="error"
-          variant="outlined"
-          class="ml-2"
-          @click="resetSettings"
-        >
+        <v-btn color="error" variant="outlined" class="ml-2" @click="resetSettings">
           重置默认
           <v-icon right class="ml-2">mdi-refresh</v-icon>
         </v-btn>

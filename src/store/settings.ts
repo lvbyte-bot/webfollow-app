@@ -63,8 +63,8 @@ export const useSettingsStore = defineStore('settings', () => {
         startPage: 'welcome',
         defaultView: 'auto',
         hideReadArticles: true,
-        autoRead: false,
-        autoRefresh: false,
+        autoRead: true,
+        autoRefresh: true,
         refreshInterval: 30 * 60,
         pullDataFail: false,
         enableListAISummary: false
@@ -147,8 +147,8 @@ export const useSettingsStore = defineStore('settings', () => {
             startPage: 'welcome',
             defaultView: 'auto',
             hideReadArticles: true,
-            autoRead: false,
-            autoRefresh: false,
+            autoRead: true,
+            autoRefresh: true,
             refreshInterval: 30 * 60,
             pullDataFail: false,
             enableListAISummary: false
