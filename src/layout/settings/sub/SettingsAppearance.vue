@@ -1,58 +1,42 @@
 <template>
   <v-container>
     <!-- 主题设置 -->
-    <v-card class="mb-4">
+    <v-card class="mb-0">
       <v-card-title>主题</v-card-title>
       <v-card-text>
-        <v-radio-group v-model="data.themeMode" class="mb-4">
-          <v-radio value="light" color="primary">
-            <template v-slot:label>
-              <div class="d-flex align-center">
-                <v-icon class="mr-2">mdi-white-balance-sunny</v-icon>
-                浅色模式
-              </div>
+        <!-- 主题模式选择 -->
+        <div class="d-flex align-center mb-8 justify-space-between">
+          <span>主题模式</span>
+          <v-btn-toggle v-model="data.themeMode" mandatory rounded="pill" density="comfortable">
+            <v-btn value="system">
+              <v-icon start>mdi-monitor</v-icon>
+              跟随系统
+            </v-btn>
+            <v-btn value="light">
+              <v-icon start>mdi-white-balance-sunny</v-icon>
+              浅色
+            </v-btn>
+            <v-btn value="dark">
+              <v-icon start>mdi-moon-waning-crescent</v-icon>
+              深色
+            </v-btn>
+          </v-btn-toggle>
+        </div>
+        <div class="d-flex align-center mb-4 justify-space-between">
+          <span>主题色</span>
+          <v-select v-model="data.themeColor" :items="themeColors" label="主题色" variant="outlined" density="comfortable"
+            hide-details :max-width="260">
+            <template v-slot:selection="{ item }">
+              <v-icon :color="value2color(item.value)" class="mr-2">mdi-circle</v-icon>
+              {{ item.title }}
             </template>
-          </v-radio>
-          <v-radio value="dark" color="primary">
-            <template v-slot:label>
-              <div class="d-flex align-center">
-                <v-icon class="mr-2">mdi-moon-waning-crescent</v-icon>
-                深色模式
-              </div>
+            <template v-slot:item="{ item, props }">
+              <v-list-item v-bind="props">
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
             </template>
-          </v-radio>
-          <v-radio value="system" color="primary">
-            <template v-slot:label>
-              <div class="d-flex align-center">
-                <v-icon class="mr-2">mdi-monitor</v-icon>
-                跟随系统
-              </div>
-            </template>
-          </v-radio>
-        </v-radio-group>
-
-        <v-select
-          v-model="data.themeColor"
-          :items="themeColors"
-          label="主题色"
-          variant="outlined"
-          density="comfortable"
-        >
-          <template v-slot:selection="{ item }">
-            <v-icon :color="value2color(item.value)" class="mr-2"
-              >mdi-circle</v-icon
-            >
-            {{ item.title }}
-          </template>
-          <template v-slot:item="{ item, props }">
-            <v-list-item v-bind="props">
-              <!-- <template v-slot:prepend>
-                <v-icon :color="value2color(item.value)"">mdi-circle</v-icon>
-              </template> -->
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
-            </v-list-item>
-          </template>
-        </v-select>
+          </v-select>
+        </div>
       </v-card-text>
     </v-card>
 
@@ -60,38 +44,33 @@
     <v-card class="mb-4">
       <v-card-title>字体</v-card-title>
       <v-card-text>
-        <v-select
-          v-model="data.fontFamily"
-          :items="fontFamilies"
-          label="系统字体"
-          variant="outlined"
-          density="comfortable"
-          class="mb-4"
-        >
-          <template v-slot:item="{ item, props }">
-            <v-list-item v-bind="props">
-              <v-list-item-title :style="{ fontFamily: item.value }">
-                {{ item.title }}
-              </v-list-item-title>
-            </v-list-item>
-          </template>
-        </v-select>
+        <div class="d-flex align-center mb-4 justify-space-between">
+          <span>系统字体</span>
+          <v-select v-model="data.fontFamily" :items="fontFamilies" variant="outlined" density="comfortable"
+            hide-details :max-width="260">
+            <template v-slot:item="{ item, props }">
+              <v-list-item v-bind="props">
+                <v-list-item-title :style="{ fontFamily: item.value }">
+                  {{ item.title }}
+                </v-list-item-title>
+              </v-list-item>
+            </template>
+          </v-select>
+        </div>
 
-        <v-select
-          v-model="data.codeFont"
-          :items="codeFonts"
-          label="代码字体"
-          variant="outlined"
-          density="comfortable"
-        >
-          <template v-slot:item="{ item, props }">
-            <v-list-item v-bind="props">
-              <v-list-item-title :style="{ fontFamily: item.value }">
-                {{ item.title }}
-              </v-list-item-title>
-            </v-list-item>
-          </template>
-        </v-select>
+        <div class="d-flex align-center mb-4 justify-space-between">
+          <span>代码字体</span>
+          <v-select v-model="data.codeFont" :items="codeFonts" variant="outlined" density="comfortable" hide-details
+            :max-width="260">
+            <template v-slot:item="{ item, props }">
+              <v-list-item v-bind="props">
+                <v-list-item-title :style="{ fontFamily: item.value }">
+                  {{ item.title }}
+                </v-list-item-title>
+              </v-list-item>
+            </template>
+          </v-select>
+        </div>
       </v-card-text>
     </v-card>
 
@@ -99,23 +78,16 @@
     <v-card class="mb-4">
       <v-card-title>文字大小</v-card-title>
       <v-card-text>
-        <v-slider
-          v-model="data.fontSize"
-          :min="12"
-          :max="20"
-          :step="1"
-          thumb-label
-          label="基础字号"
-        >
-          <template v-slot:thumb-label="{ modelValue }">
-            {{ modelValue }}px
-          </template>
-        </v-slider>
+        <div class="d-flex align-center mb-4 justify-space-between">
+          <span>基础字号</span>
+          <v-slider v-model="data.fontSize" :min="12" :max="20" :step="1" thumb-label class="w-75" max-width="250">
+            <template v-slot:thumb-label="{ modelValue }">
+              {{ modelValue }}px
+            </template>
+          </v-slider>
+        </div>
 
-        <div
-          class="text-preview pa-4 rounded"
-          :style="{ fontSize: `${data.fontSize}px` }"
-        >
+        <div class="text-preview pa-3 rounded" :style="{ fontSize: `${data.fontSize}px` }">
           预览文本效果
           <div class="text-caption">当前字号: {{ data.fontSize }}px</div>
         </div>
@@ -126,44 +98,31 @@
     <v-card class="mb-4">
       <v-card-title>显示密度</v-card-title>
       <v-card-text>
-        <v-radio-group v-model="data.density" class="mb-4">
-          <v-radio value="comfortable" color="primary">
-            <template v-slot:label>
-              <div class="d-flex align-center">
-                <v-icon class="mr-2">mdi-format-align-justify</v-icon>
-                舒适
-              </div>
+        <div class="d-flex align-center mb-4 justify-space-between">
+          <span>界面密度</span>
+          <v-select v-model="data.density" :items="densityOptions" variant="outlined" density="comfortable" hide-details
+            :max-width="260">
+            <template v-slot:selection="{ item }">
+              {{ item.title }}
             </template>
-          </v-radio>
-          <v-radio value="compact" color="primary">
-            <template v-slot:label>
-              <div class="d-flex align-center">
-                <v-icon class="mr-2">mdi-format-align-center</v-icon>
-                紧凑
-              </div>
+            <template v-slot:item="{ item, props }">
+              <v-list-item v-bind="props">
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
             </template>
-          </v-radio>
-          <v-radio value="default" color="primary">
-            <template v-slot:label>
-              <div class="d-flex align-center">
-                <v-icon class="mr-2">mdi-format-align-left</v-icon>
-                默认
-              </div>
-            </template>
-          </v-radio>
-        </v-radio-group>
+          </v-select>
+        </div>
       </v-card-text>
     </v-card>
 
-    <!-- 减少动画 -->
+    <!-- 其它设置 -->
     <v-card class="mb-4">
       <v-card-title>其它</v-card-title>
       <v-card-text>
-        <v-switch
-          v-model="data.lessAnimation"
-          label="减少动画效果"
-          color="primary"
-        />
+        <div class="d-flex align-center justify-space-between">
+          <span>减少动画效果</span>
+          <v-switch v-model="data.lessAnimation" color="primary" hide-details />
+        </div>
       </v-card-text>
     </v-card>
     <!-- 保存按钮 -->
@@ -197,6 +156,13 @@ const themeColors = [
   { title: "紫色", value: "123, 31, 162", color: "purple" },
   { title: "橙色", value: "245, 124, 0", color: "orange" },
   { title: "红色", value: "211, 47, 47", color: "red" },
+];
+
+// 显示密度选项
+const densityOptions = [
+  { title: "舒适", value: "comfortable", icon: "mdi-format-align-justify" },
+  { title: "紧凑", value: "compact", icon: "mdi-format-align-center" },
+  { title: "默认", value: "default", icon: "mdi-format-align-left" },
 ];
 
 function value2color(value: string) {

@@ -1,48 +1,26 @@
 <template>
-  <v-card max-height="70vh" class="rounded-lg">
+  <v-card min-height="80vh" class="rounded-lg">
     <v-container fluid>
-      <v-row class="sidebar">
+      <v-row>
         <!-- 左侧导航菜单 -->
-        <v-col lg="3" cols="12" class="pa-0">
+        <v-col lg="3" cols="12" class="pa-0 sidebar">
           <v-list rounded class="sidebar">
-            <v-list-item
-              subtitle="WebFollow"
-              :title="appStore.authInfo.username"
-              class="mb-6"
-            >
+            <v-list-item subtitle="WebFollow" :title="appStore.authInfo.username" class="mb-6">
               <template #prepend>
-                <v-avatar
-                  size="36px"
-                  color="primary"
-                  :title="appStore.authInfo.username"
-                >
+                <v-avatar size="36px" color="primary" :title="appStore.authInfo.username">
                   <!-- {{ appStore.authInfo.username.substring(0, 2) }} -->
-                  <v-img
-                    :src="
-                      'https://api.dicebear.com/7.x/avataaars/svg?seed=' +
-                      appStore.authInfo.username
-                    "
-                  ></v-img>
+                  <v-img :src="'https://api.dicebear.com/7.x/avataaars/svg?seed=' +
+                    appStore.authInfo.username
+                    "></v-img>
                 </v-avatar>
               </template>
               <!-- <template #append>
-                <v-btn
-                  to="/login"
-                  title="退出登录"
-                  icon="mdi-exit-to-app"
-                  size="small"
-                  variant="text"
-                  @click="close"
-                ></v-btn>
+                <v-btn to="/login" title="退出登录" icon="mdi-exit-to-app" size="small" variant="text"
+                  @click="close"></v-btn>
               </template> -->
             </v-list-item>
-            <v-list-item
-              v-for="item in menuItems"
-              :key="item.key"
-              :active="currentSection === item.key"
-              @click="currentSection = item.key"
-              color="primary"
-            >
+            <v-list-item v-for="item in menuItems" :key="item.key" :active="currentSection === item.key"
+              @click="currentSection = item.key" color="primary">
               <template v-slot:prepend>
                 <v-icon>{{ item.icon }}</v-icon>
               </template>
@@ -54,8 +32,7 @@
         <!-- 右侧内容区域 -->
         <v-col lg="9" cols="12" class="pa-0">
           <v-card flat>
-            <v-card-title class="d-flex justify-space-between align-center"
-              >{{ getCurrentTitle }}
+            <v-card-title class="d-flex justify-space-between align-center">{{ getCurrentTitle }}
               <v-btn @click="close" icon flat>
                 <v-icon>mdi-close</v-icon>
               </v-btn>
@@ -129,14 +106,21 @@ watch(props.activeMenu, (newVal) => {
 .v-list-item--active {
   border-radius: 0 50px 50px 0;
 }
+
 :deep(.scroll) {
-  height: 60vh;
+  height: 75vh;
   overflow: scroll;
+
   .v-card--variant-elevated {
     box-shadow: none;
   }
+
   .v-card-title {
     font-size: 1rem;
   }
+}
+
+.sidebar {
+  background-color: rgb(var(--sidbar-bg));
 }
 </style>
