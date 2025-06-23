@@ -297,7 +297,7 @@ async function loadData(
 ) {
   loading.value = true;
   page = page0;
-
+  initRefresh();
   // log(onlyUnread.value);
   if (props.type == "f") {
     await loadData0(Number(props.id), LsItemType.FEED, page, onlyUnread.value);
@@ -385,8 +385,8 @@ defineExpose({ loadData, openReader });
 
 let autoRefresh: NodeJS.Timeout;
 
-function initWatchRefresh() {
-  function initRefresh() {
+function initRefresh() {
+  if (general.value.autoRefresh) {
     if (autoRefresh) {
       clearTimeout(autoRefresh);
     }
@@ -396,36 +396,35 @@ function initWatchRefresh() {
       initRefresh()
     }, general.value.refreshInterval * 1000);
   }
-  // 自动刷新功能
-  if (general.value.autoRefresh) {
-    initRefresh()
-  }
-  // 页面出显触发检查时间
-  window.addEventListener("visibilitychange", () => {
-    if (document.visibilityState == "visible" && general.value.autoRefresh) {
-      log("visibilitychange", document.visibilityState, appStore.lastRefeshTime + general.value.refreshInterval, Math.round(new Date().getTime() / 1000));
-      if (appStore.lastRefeshTime + general.value.refreshInterval < Math.round(new Date().getTime() / 1000)) {
-        log("refresh");
-        refresh();
-        initRefresh()
-      }
-    }
-  });
-  watch(
-    () => general.value.autoRefresh,
-    (v) => {
-      if (v) {
-        initRefresh()
-      } else {
-        if (autoRefresh) {
-          clearTimeout(autoRefresh);
-        }
-      }
-    }
-  );
 }
 
+
 onMounted(() => {
+
+  function initWatchRefresh() {
+    // 自动刷新功能
+    initRefresh()
+    // 页面出显触发检查时间
+    window.addEventListener("visibilitychange", () => {
+      if (document.visibilityState == "visible" && general.value.autoRefresh) {
+        if (appStore.lastRefeshTime + general.value.refreshInterval < Math.round(new Date().getTime() / 1000)) {
+          initRefresh()
+        }
+      }
+    });
+    watch(
+      () => general.value.autoRefresh,
+      (v) => {
+        if (v) {
+          initRefresh()
+        } else {
+          if (autoRefresh) {
+            clearTimeout(autoRefresh);
+          }
+        }
+      }
+    );
+  }
   webfollowApp.toggleItemUnread = () => changeOnlyUnread(!onlyUnread.value);
   webfollowApp.toggleItemView = () => {
     const currentView = viewSeleted.value[0];
