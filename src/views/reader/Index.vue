@@ -18,7 +18,7 @@
       <div class="append-bar">
         <slot name="append-bar">
           <c-btn icon variant="text" :loading="summarizing" :disabled="!canSummarize" title="AI 总结(快捷键：G)"
-            @click="generateSummary()" class="mr-2 entry-ai-summary">
+            @click="generateSummary()" class="entry-ai-summary">
             <v-icon>mdi-creation</v-icon>
           </c-btn>
           <!-- <c-btn
@@ -33,19 +33,19 @@
           >
           </c-btn> -->
 
-          <c-btn variant="text" icon title="稍后阅读(快捷键：F)" @click="toggleSaved" class="mr-2 entry-saved">
+          <c-btn variant="text" icon title="稍后阅读(快捷键：F)" @click="toggleSaved" class=" entry-saved">
             <v-icon :color="item.isSaved ? 'primary' : ''">
               mdi-bookmark-outline</v-icon>
           </c-btn>
           <c-btn variant="text" :color="readerType == 'HTML' ? 'primary' : ''" title="内嵌网页(快捷键：I)"
-            icon=" mdi-compass-outline" class="entry-inner mr-2 "
+            icon=" mdi-compass-outline" class="entry-inner  "
             @click="readerType = readerType == 'HTML' ? 'default' : 'HTML'">
           </c-btn>
           <c-btn variant="text" icon :title="item.isRead ? '未读(快捷键：M)' : '已读(快捷键：M)'" @click.stop="toggleRead"
             class="entry-read">
             <v-icon>{{
               item.isRead ? "mdi-circle-outline" : "mdi-circle"
-              }}</v-icon>
+            }}</v-icon>
           </c-btn>
         </slot>
       </div>
