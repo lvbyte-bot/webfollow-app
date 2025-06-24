@@ -1,31 +1,31 @@
 <template>
   <v-container>
     <!-- 主题设置 -->
-    <v-card class="mb-0">
+    <v-card class="mb-0" flat>
       <v-card-title>主题</v-card-title>
       <v-card-text>
         <!-- 主题模式选择 -->
-        <div class="d-flex align-center mb-8 justify-space-between">
-          <span>主题模式</span>
+        <div class="d-flex align-center mb-4 justify-space-between">
+          <label>主题模式</label>
           <v-btn-toggle v-model="data.themeMode" mandatory rounded="pill" density="comfortable">
-            <v-btn value="system">
+            <v-btn value="system" size="small">
               <v-icon start>mdi-monitor</v-icon>
               跟随系统
             </v-btn>
-            <v-btn value="light">
+            <v-btn value="light" size="small">
               <v-icon start>mdi-white-balance-sunny</v-icon>
               浅色
             </v-btn>
-            <v-btn value="dark">
+            <v-btn value="dark" size="small">
               <v-icon start>mdi-moon-waning-crescent</v-icon>
               深色
             </v-btn>
           </v-btn-toggle>
         </div>
-        <div class="d-flex align-center mb-4 justify-space-between">
-          <span>主题色</span>
-          <v-select v-model="data.themeColor" :items="themeColors" label="主题色" variant="outlined" density="comfortable"
-            hide-details :max-width="260">
+        <div class="d-flex align-center justify-space-between">
+          <label>主题色</label>
+          <v-select v-model="data.themeColor" :items="themeColors" variant="outlined" density="comfortable" hide-details
+            :max-width="200">
             <template v-slot:selection="{ item }">
               <v-icon :color="value2color(item.value)" class="mr-2">mdi-circle</v-icon>
               {{ item.title }}
@@ -41,13 +41,13 @@
     </v-card>
 
     <!-- 字体设置 -->
-    <v-card class="mb-4">
+    <v-card class="mb-4" flat>
       <v-card-title>字体</v-card-title>
       <v-card-text>
         <div class="d-flex align-center mb-4 justify-space-between">
-          <span>系统字体</span>
+          <label>系统字体</label>
           <v-select v-model="data.fontFamily" :items="fontFamilies" variant="outlined" density="comfortable"
-            hide-details :max-width="260">
+            hide-details :max-width="200">
             <template v-slot:item="{ item, props }">
               <v-list-item v-bind="props">
                 <v-list-item-title :style="{ fontFamily: item.value }">
@@ -58,10 +58,10 @@
           </v-select>
         </div>
 
-        <div class="d-flex align-center mb-4 justify-space-between">
-          <span>代码字体</span>
+        <div class="d-flex align-center  justify-space-between">
+          <label>代码字体</label>
           <v-select v-model="data.codeFont" :items="codeFonts" variant="outlined" density="comfortable" hide-details
-            :max-width="260">
+            :max-width="200">
             <template v-slot:item="{ item, props }">
               <v-list-item v-bind="props">
                 <v-list-item-title :style="{ fontFamily: item.value }">
@@ -75,11 +75,11 @@
     </v-card>
 
     <!-- 文字大小设置 -->
-    <v-card class="mb-4">
+    <v-card class="mb-4" flat>
       <v-card-title>文字大小</v-card-title>
       <v-card-text>
         <div class="d-flex align-center mb-4 justify-space-between">
-          <span>基础字号</span>
+          <label>基础字号</label>
           <v-slider v-model="data.fontSize" :min="12" :max="20" :step="1" thumb-label class="w-75" max-width="250">
             <template v-slot:thumb-label="{ modelValue }">
               {{ modelValue }}px
@@ -95,13 +95,13 @@
     </v-card>
 
     <!-- 显示密度设置 -->
-    <v-card class="mb-4">
+    <v-card class="mb-4" flat>
       <v-card-title>显示密度</v-card-title>
       <v-card-text>
         <div class="d-flex align-center mb-4 justify-space-between">
-          <span>界面密度</span>
+          <label>界面密度</label>
           <v-select v-model="data.density" :items="densityOptions" variant="outlined" density="comfortable" hide-details
-            :max-width="260">
+            :max-width="200">
             <template v-slot:selection="{ item }">
               {{ item.title }}
             </template>
@@ -116,11 +116,11 @@
     </v-card>
 
     <!-- 其它设置 -->
-    <v-card class="mb-4">
+    <v-card class="mb-4" flat>
       <v-card-title>其它</v-card-title>
       <v-card-text>
         <div class="d-flex align-center justify-space-between">
-          <span>减少动画效果</span>
+          <label>减少动画效果</label>
           <v-switch v-model="data.lessAnimation" color="primary" hide-details />
         </div>
       </v-card-text>
