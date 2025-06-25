@@ -45,7 +45,7 @@
             class="entry-read">
             <v-icon>{{
               item.isRead ? "mdi-circle-outline" : "mdi-circle"
-            }}</v-icon>
+              }}</v-icon>
           </c-btn>
         </slot>
       </div>
@@ -328,6 +328,10 @@ provide(summarizingSymbol, summarizing);
 
 .top-sider-border {
   border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+}
+
+.append-bar {
+  text-align: right;
 }
 
 .text-overflow {

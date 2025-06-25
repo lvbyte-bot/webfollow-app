@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-card flat class="pa-1">
-      <v-list-item subtitle="0.8.2" title="WebFollow" class="mb-6">
+      <v-list-item subtitle="0.8.6" title="WebFollow" class="mb-6">
         <template #prepend>
           <v-img src="/logo.svg" width="64px" class="mr-3"></v-img>
         </template>
@@ -17,19 +17,14 @@
       <a href="https://github.com/weekend-project-space/webfollow-app">
         <img
           src="https://img.shields.io/github/stars/weekend-project-space/webfollow-app.svg?style=social&amp;label=Stars"
-          alt=""
-      /></a>
+          alt="" /></a>
       <br />
       <br />
       遇到问题：
       <br />
       <br />
-      <v-btn
-        size="small"
-        prepend-icon="mdi-help-circle-outline"
-        href="https://github.com/weekend-project-space/webfollow-app/issues"
-        >反馈</v-btn
-      >
+      <v-btn size="small" prepend-icon="mdi-help-circle-outline"
+        href="https://github.com/weekend-project-space/webfollow-app/issues">反馈</v-btn>
     </v-card>
   </v-container>
 </template>
