@@ -139,6 +139,8 @@ import { FeedItem, LsItemType } from "@/service/types";
 import { useScroll } from "@/utils/scrollListener";
 import { confirm } from "@/plugins/confirm";
 import { useCalViewMode } from "@/utils/useCalView";
+import { filterItems } from "@/service/itemsFilter";
+import { FeedContext } from "@/service/rag";
 
 const props = defineProps(["type", "id"]);
 
@@ -266,24 +268,41 @@ async function loadData0(
 ) {
   if (type == LsItemType.FILTER) {
     const filter = settingsStore.getFilter(id);
-    const articles = await retrieveRelevantContexts(
-      "",
-      filter?.keywords || [],
-      300
-    );
-    await store.loadData(
-      articles.map((item) => item.id),
-      LsItemType.ITEMS,
-      page,
-      onlyUnread,
-      {
-        title: filter?.name || "过滤文章",
-        qty: onlyUnread
-          ? articles.filter((item) => baseStore.unread_item_ids.has(item.id))
-            .length
-          : articles.length,
-      }
-    );
+    console.log(page)
+    if (filter?.query) {
+      // 如果过滤器有query字段，使用SQL过滤器
+      const result = await filterItems(filter.query, page, 50);
+      await store.loadData(
+        result.ids,
+        LsItemType.ITEMS,
+        page,
+        onlyUnread,
+        {
+          title: filter?.name || "过滤文章"
+        }
+      );
+      // TODO 后期移除
+    } else if (filter?.keywords) {
+      // 兼容旧版基于关键词的过滤器
+      const articles = await retrieveRelevantContexts(
+        "",
+        filter?.keywords || [],
+        300
+      );
+      await store.loadData(
+        articles.map((item: FeedContext) => item.id),
+        LsItemType.ITEMS,
+        page,
+        onlyUnread,
+        {
+          title: filter?.name || "过滤文章",
+          qty: onlyUnread
+            ? articles.filter((item: FeedContext) => baseStore.unread_item_ids.has(item.id))
+              .length
+            : articles.length,
+        }
+      );
+    }
   } else {
     await store.loadData(id, type, page, onlyUnread);
   }

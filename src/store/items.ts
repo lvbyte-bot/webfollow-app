@@ -46,7 +46,6 @@ export const useItemsStore = defineStore('items', () => {
         id = type == LsItemType.ALL ? null : id
         if (page == 0) {
             currentPageUnReadItemIds = unread_item_ids
-            console.log('count:', currentPageUnReadItemIds.size, onlyUnread)
         }
         pageRoute.id = id
         pageRoute.type = type

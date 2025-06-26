@@ -35,12 +35,14 @@ interface IntegratedSettings {
     selectedModel?: string;
 }
 
-interface FilterItem {
+export interface QueryFilterItem {
     id: string;
     name: string;
     keywords: KeywordWeight[];
     createTime: number;
+    query?: string;
 }
+
 
 interface KeywordWeight {
     keyword: string;
@@ -48,7 +50,7 @@ interface KeywordWeight {
 }
 
 interface AutomationSettings {
-    filters: FilterItem[];
+    filters: QueryFilterItem[];
 }
 
 interface SettingsState {
@@ -92,7 +94,7 @@ export const useSettingsStore = defineStore('settings', () => {
     })
 
     const automation = ref<AutomationSettings>({
-        filters: []
+        filters: [],
     })
 
     function updateCSSVariables() {
@@ -185,7 +187,7 @@ export const useSettingsStore = defineStore('settings', () => {
 
     function resetAutomationSettings() {
         automation.value = {
-            filters: []
+            filters: [],
         }
         saveToLocalStorage()
     }

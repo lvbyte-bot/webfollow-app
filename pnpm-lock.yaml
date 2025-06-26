@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@mdi/font': 7.0.96
+  '@mdi/font': ^7.4.47
   '@tauri-apps/api': '>=2.0.0'
   '@tauri-apps/cli': '>=2.0.0'
   '@tauri-apps/plugin-shell': '>=2.0.0'
@@ -27,7 +27,7 @@ specifiers:
   vuetify: ^3.0.0
 
 dependencies:
-  '@mdi/font': 7.0.96
+  '@mdi/font': 7.4.47
   '@tauri-apps/api': 2.0.2
   '@tauri-apps/plugin-shell': 2.0.0
   '@types/turndown': 5.0.5
@@ -1559,8 +1559,8 @@ packages:
     resolution: {integrity: sha512-+//cqVWKis//t0YH62EDtwaFSPG/CDtYNg4CZmzNmG2d5W17Iu3fuDAdpQXCDHUDrrU9q0veze4A7tPZXlR/mg==}
     dev: false
 
-  /@mdi/font/7.0.96:
-    resolution: {integrity: sha512-rzlxTfR64hqY8yiBzDjmANfcd8rv+T5C0Yedv/TWk2QyAQYdc66e0kaN1ipmnYU3RukHRTRcBARHzzm+tIhL7w==}
+  /@mdi/font/7.4.47:
+    resolution: {integrity: sha512-43MtGpd585SNzHZPcYowu/84Vz2a2g31TvPMTm9uTiCSWzaheQySUcSyUH/46fPnuPQWof2yd0pGBtzee/IQWw==}
     dev: false
 
   /@mixmark-io/domino/2.2.0:

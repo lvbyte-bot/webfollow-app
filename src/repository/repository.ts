@@ -8,7 +8,7 @@ const { create,
     update,
     remove,
     getAll,
-    listAll, findAll, count, getIdsInTimeRange, findTimeRange, whereOne, openStore, exists
+    listAll, findAll, count, countAll, listAllIds, getIdsInTimeRange, findTimeRange, whereOne, openStore, exists
 } = IndexedDB(db => {
     // 创建 Groups 对象存储
     if (!db.objectStoreNames.contains('groups')) {
@@ -69,7 +69,12 @@ class Repo<T extends DbStore> {
     }
     async findAll(conditionFn: (item: T) => boolean, page: number = 0, size: number = 50, sortFn?: (x: T, y: T) => number): Promise<Page<T>> {
         const data = await findAll(this.storename, conditionFn, size, page, sortFn)
-        return { isLast: data.length != size, data }
+        if (this.storename == 'items') {
+            const ids = await listAllIds(this.storename, conditionFn)
+            return { isLast: data.length != size, data, total: ids.length, ids }
+        }
+        const total = await countAll(this.storename, conditionFn)
+        return { isLast: data.length != size, data, total }
     }
     async count(): Promise<number> {
         return count(this.storename)
@@ -84,7 +89,9 @@ class Repo<T extends DbStore> {
 
 export interface Page<T> {
     isLast: boolean,
-    data: T[]
+    data: T[],
+    total: number,
+    ids?: number[]
 }
 
 
@@ -123,8 +130,9 @@ class ItemRepo extends Repo<Item> {
         //     data = items.slice(startOffset, endOffset)
         // }
         const data: Item[] = await findTimeRange(this.storename, time, new Date().getTime() / 1000, page, size, condition)
+        const total = await countAll(this.storename, condition)
         // console.log(page, data.length, data.length != size)
-        return { isLast: data.length != size, data }
+        return { isLast: data.length != size, data, total }
     }
 
     async countByFeedId(feedId: number): Promise<number> {
