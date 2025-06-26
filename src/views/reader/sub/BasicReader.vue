@@ -3,12 +3,27 @@
     <div class="title-container">
       <a class="title-warp" :href="item.link">
         <p class="text-h4 title">{{ item.title }}</p>
-        <p class="text-subtitle-2 mb-2">
-          <router-link @click.stop="" class="a" title="前往订阅源" :to="'/f/' + item?.feed?.id"
-            v-text="props.item.feed?.title"></router-link>
-          <span v-text="getSource()"></span>
+        <p class="text-subtitle-2 opacity-70 sub-ext">
+          <span>
+            <v-icon size="small" class="mr-2">
+              <img :src="item?.feed?.icon" class="noclick" onerror="this.src='/logo.svg'"
+                style="width:16px;border-radius: 3px; margin-top: -2px;">
+              </img>
+            </v-icon>
+            <span>
+              <router-link @click.stop="" class="a" title="前往订阅源" :to="'/f/' + item?.feed?.id"
+                v-text="props.item.feed?.title"></router-link>
+              <span v-text="getSource()"></span>
+            </span>
+          </span>
+
+          <span>
+
+            <v-icon size="small" class="mr-1">mdi-clipboard-text-clock-outline</v-icon>
+            {{ getDate() }}
+          </span>
         </p>
-        <p class="text-subtitle-2 text-body-2" v-text="getDate()"></p>
+
       </a>
     </div>
     <div class="chapter-warp">
@@ -133,12 +148,24 @@ const emit = defineEmits<{
   max-width: calc(var(--reader-main-max-width) + 2rem) !important;
 }
 
+.sub-ext {
+  column-gap: 2rem;
+  display: flex;
+  align-items: center;
+}
+
 @media (max-width: 1280px) {
   .chapter-warp {
     position: static;
     float: none;
     right: 0;
     max-width: 100%;
+  }
+
+  .sub-ext {
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 1rem;
   }
 }
 </style>

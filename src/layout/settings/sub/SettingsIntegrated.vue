@@ -1,87 +1,45 @@
 <template>
   <v-container>
     <!-- API设置 -->
-    <v-card>
+    <v-card flat>
       <v-card-title class="mb-2">OpenAI 接口设置</v-card-title>
       <v-card-text>
-        <v-text-field
-          v-model="data.apiUrl"
-          label="API 地址"
-          variant="outlined"
-          placeholder="https://api.openai.com/v1"
-          class="mb-4"
-        ></v-text-field>
+        <v-text-field v-model="data.apiUrl" label="API 地址" variant="outlined" placeholder="https://api.openai.com/v1"
+          class="mb-4"></v-text-field>
 
-        <v-text-field
-          v-model="data.apiKey"
-          label="API Key"
-          variant="outlined"
-          placeholder="sk-..."
-          :type="showKey ? 'text' : 'password'"
-          :append-inner-icon="showKey ? 'mdi-eye-off' : 'mdi-eye'"
-          @click:append-inner="showKey = !showKey"
-          @focus="handleFocus"
-          :hint="showHint ? '检测到剪贴板中有 API Key，按 Ctrl+V 粘贴' : ''"
-          persistent-hint
-        ></v-text-field>
+        <v-text-field v-model="data.apiKey" label="API Key" variant="outlined" placeholder="sk-..."
+          :type="showKey ? 'text' : 'password'" :append-inner-icon="showKey ? 'mdi-eye-off' : 'mdi-eye'"
+          @click:append-inner="showKey = !showKey" @focus="handleFocus"
+          :hint="showHint ? '检测到剪贴板中有 API Key，按 Ctrl+V 粘贴' : ''" persistent-hint></v-text-field>
 
         <!-- 添加测试按钮 -->
         <div class="d-flex mt-2 mb-6">
-          <v-btn
-            color="info"
-            size="small"
-            :loading="testing"
-            @click="testConnection"
-          >
+          <v-btn color="info" size="small" :loading="testing" @click="testConnection">
             <v-icon v-if="data.isApiValid" left color="success" class="mr-2">
               mdi-check-circle
             </v-icon>
             测试连接
             <v-icon right class="ml-2">mdi-connection</v-icon>
           </v-btn>
-          <v-chip
-            v-if="data.lastTestTime"
-            size="small"
-            class="ml-6"
-            :color="data.isApiValid ? 'success' : 'error'"
-          >
+          <v-chip v-if="data.lastTestTime" size="small" class="ml-6" :color="data.isApiValid ? 'success' : 'error'">
             上次检测: {{ formatDate(data.lastTestTime) }}
           </v-chip>
         </div>
-        <v-textarea
-          v-model="data.summaryPrompt"
-          label="文章总结提示词"
-          variant="outlined"
-          rows="4"
-          placeholder="请用简洁的语言总结这篇文章的主要内容..."
-        ></v-textarea>
+        <v-textarea v-model="data.summaryPrompt" label="文章总结提示词" variant="outlined" rows="4"
+          placeholder="请用简洁的语言总结这篇文章的主要内容..."></v-textarea>
 
         <!-- 模型选择部分 -->
         <div v-if="data.isApiValid">
           <v-divider class="my-4"></v-divider>
           <div class="d-flex align-center justify-space-between mb-4">
-            <v-select
-              v-model="data.selectedModel"
-              :items="availableModels"
-              label="选择模型"
-              variant="outlined"
-              :loading="loadingModels"
-              :disabled="loadingModels"
-              class="flex-grow-1"
-              hide-details
-            >
+            <v-select v-model="data.selectedModel" :items="availableModels" label="选择模型" variant="outlined"
+              :loading="loadingModels" :disabled="loadingModels" class="flex-grow-1" hide-details>
               <template v-slot:prepend>
                 <v-icon>mdi-robot-outline</v-icon>
               </template>
             </v-select>
-            <v-btn
-              color="primary"
-              variant="text"
-              height="50"
-              class="ml-2"
-              :loading="loadingModels"
-              @click="fetchModels"
-            >
+            <v-btn color="primary" variant="text" height="50" class="ml-2" :loading="loadingModels"
+              @click="fetchModels">
               <v-icon>mdi-refresh</v-icon>
             </v-btn>
           </div>
@@ -101,12 +59,7 @@
           保存设置
           <v-icon right class="ml-2">mdi-content-save</v-icon>
         </v-btn>
-        <v-btn
-          color="error"
-          variant="outlined"
-          class="ml-2"
-          @click="resetSettings"
-        >
+        <v-btn color="error" variant="outlined" class="ml-2" @click="resetSettings">
           重置默认
           <v-icon right class="ml-2">mdi-refresh</v-icon>
         </v-btn>
