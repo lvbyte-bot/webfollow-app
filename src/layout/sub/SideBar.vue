@@ -21,11 +21,8 @@
       <div class="v-list-subheader" style="padding: 0.3rem;">
         <div class="d-flex justify-space-between w-100">
           <span>FILTERS</span>
-          <div>
-            <router-link to="/filter">
-              <v-icon icon="mdi-filter-plus-outline" color="primary"></v-icon>
-            </router-link>
-          </div>
+          <v-btn variant="text" to="/filter" icon="mdi-filter-plus-outline" size="small" title="订阅" height="20"
+            width="20"></v-btn>
         </div>
       </div>
       <v-list-item v-for="filter in settingsStore.automation.filters" :key="filter.id" :title="filter.name"
@@ -39,8 +36,8 @@
         <div class="d-flex justify-space-between w-100">
           <span>FEEDS</span>
           <div>
-            <v-btn variant="text" to="/subscribe" icon="mdi-plus" size="small" title="订阅" height="20" width="20"
-              color="primary"></v-btn>
+            <v-btn variant="text" to="/subscribe" icon="mdi-plus" size="small" title="订阅" height="20"
+              width="20"></v-btn>
           </div>
         </div>
       </div>
