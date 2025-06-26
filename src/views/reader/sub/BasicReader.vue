@@ -3,7 +3,7 @@
     <div class="title-container">
       <a class="title-warp" :href="item.link">
         <p class="text-h4 title">{{ item.title }}</p>
-        <p class="text-subtitle-2 opacity-70 sub-ext">
+        <p class=" opacity-70 sub-ext">
           <span>
             <v-icon size="small" class="mr-2">
               <img :src="item?.feed?.icon" class="noclick" onerror="this.src='/logo.svg'"
@@ -32,7 +32,7 @@
     <div class="summary content bg-gradient" v-if="summary || summarizing">
       <div class="mb-2 d-flex align-center justify-space-between">
         <div class="d-flex align-center text-primary">
-          <v-icon size="small" class="mr-2">mdi-creation</v-icon>
+          <v-icon size="small" class="mr-2">mdi-creation-outline</v-icon>
           AI 总结
         </div>
         <c-btn v-if="!summarizing" icon size="small" variant="text" color="primary" title="强制刷新AI总结"
@@ -152,6 +152,7 @@ const emit = defineEmits<{
   column-gap: 2rem;
   display: flex;
   align-items: center;
+  font-size: 0.9rem;
 }
 
 @media (max-width: 1280px) {

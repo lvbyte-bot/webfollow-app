@@ -18,8 +18,8 @@
       <div class="append-bar">
         <slot name="append-bar">
           <c-btn icon variant="text" :loading="summarizing" :disabled="!canSummarize" title="AI 总结(快捷键：G)"
-            @click="generateSummary()" class="entry-ai-summary">
-            <v-icon>mdi-creation</v-icon>
+            @click="generateSummary()" class="entry-ai-summary" :color="summary ? 'primary' : ''">
+            <v-icon>mdi-creation-outline</v-icon>
           </c-btn>
           <!-- <c-btn
             variant="text"
@@ -45,7 +45,7 @@
             class="entry-read">
             <v-icon>{{
               item.isRead ? "mdi-circle-outline" : "mdi-circle"
-            }}</v-icon>
+              }}</v-icon>
           </c-btn>
         </slot>
       </div>
