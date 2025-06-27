@@ -4,7 +4,7 @@ import { itemRepo, feedRepo, groupRepo } from '../repository/repository';
 //  TODO 后期增加根据阅读的feed自动打分，然后排名
 
 // SQL语法解析器类型
-type Operator = '=' | '!=' | '>' | '<' | '>=' | '<=' | 'LIKE' | 'IN' | 'NOT IN' | 'BETWEEN';
+type Operator = '=' | '!=' | '>' | '<' | '>=' | '<=' | 'LIKE' | 'NOT LIKE' | 'IN' | 'NOT IN' | 'BETWEEN';
 type LogicalOperator = 'AND' | 'OR';
 
 interface Condition {
@@ -81,6 +81,9 @@ export class ItemFilter {
             return query;
         }
 
+        // 预处理时间函数
+        sqlLike = this.preprocessTimeFunctions(sqlLike);
+        // console.log(sqlLike); // 添加日志，查看预处理后的SQL
         // 提取WHERE条件
         let whereClause = sqlLike;
         if (sqlLike.toUpperCase().includes('WHERE')) {
@@ -146,8 +149,8 @@ export class ItemFilter {
     }
 
     private parseCondition(conditionStr: string, query: FilterQuery): void {
-        // 支持各种操作符
-        const operatorPattern = /(=|!=|>=|<=|>|<|LIKE|IN|NOT IN|BETWEEN)/i;
+        // Support compound operators like 'NOT LIKE' and 'NOT IN'
+        const operatorPattern = /(!=|>=|<=|>|<|=|NOT LIKE|LIKE|NOT IN|IN|BETWEEN)/i;
         const parts = conditionStr.split(operatorPattern);
 
         if (parts.length >= 3) {
@@ -225,10 +228,10 @@ export class ItemFilter {
     }
 
     // 执行过滤
-    async execute(page: number = 0, size: number = 50): Promise<{ isLast: boolean, data: Item[], total: number, ids?: number[] }> {
+    async execute(page: number = 0, size: number = 50, excludeData: boolean): Promise<{ isLast: boolean, data: Item[], total: number, ids?: number[] }> {
         // 如果没有条件，返回所有项目
         if (this.query.conditions.length === 0) {
-            return await itemRepo.findAll(() => true, page, size);
+            return await itemRepo.findAll(() => true, page, size, undefined, excludeData);
         }
 
         // 创建过滤函数
@@ -270,9 +273,46 @@ export class ItemFilter {
 
         // 使用itemRepo执行查询
         const limit = this.query.limit || size;
-        const result = await itemRepo.findAll(filterFn, page, limit, sortFn);
+        const result = await itemRepo.findAll(filterFn, page, limit, sortFn, excludeData);
 
         console.log(`查询结果: ${result.total} 条记录`, page, limit);
+        return result;
+    }
+
+
+    async executeIds(): Promise<number[]> {
+        // 如果没有条件，返回所有项目
+        if (this.query.conditions.length === 0) {
+            return await itemRepo.listAllIds(() => true);
+        }
+
+        // 创建过滤函数
+        const filterFn = (item: Item) => {
+            let result = true;
+
+            for (let i = 0; i < this.query.conditions.length; i++) {
+                const condition = this.query.conditions[i];
+                const itemValue = this.getItemValue(item, condition.field);
+                let conditionResult = this.evaluateCondition(itemValue, condition.operator, condition.value);
+                if (i === 0) {
+                    result = conditionResult;
+                } else {
+                    const logicalOp = this.query.logicalOperators[i - 1];
+                    if (logicalOp === 'AND') {
+                        result = result && conditionResult;
+                    } else {
+                        result = result || conditionResult;
+                    }
+                }
+            }
+
+            return result;
+        };
+
+
+        // 使用itemRepo执行查询
+        const result = await itemRepo.listAllIds(filterFn);
+
         return result;
     }
 
@@ -347,6 +387,14 @@ export class ItemFilter {
                     conditionValue = String(conditionValue);
                 }
                 return itemValue.toLowerCase().includes(conditionValue.toLowerCase());
+            case 'NOT LIKE':
+                if (typeof itemValue !== 'string') {
+                    itemValue = String(itemValue);
+                }
+                if (typeof conditionValue !== 'string') {
+                    conditionValue = String(conditionValue);
+                }
+                return !itemValue.toLowerCase().includes(conditionValue.toLowerCase());
             case 'IN':
                 return Array.isArray(conditionValue) && conditionValue.includes(itemValue);
             case 'NOT IN':
@@ -380,12 +428,59 @@ export class ItemFilter {
                 return false;
         }
     }
+
+    // 添加新方法：预处理时间函数
+    private preprocessTimeFunctions(sqlLike: string): string {
+        // 先处理最内层的NOW()函数
+        const nowTimestamp = Math.floor(Date.now() / 1000);
+        sqlLike = sqlLike.replace(/NOW\(\)/gi, nowTimestamp.toString());
+
+        // 处理 UNIX_TIMESTAMP(NOW()) 函数
+        sqlLike = sqlLike.replace(/UNIX_TIMESTAMP\((\d+)\)/gi, "$1");
+
+        // 处理 DATE_SUB 函数，例如：DATE_SUB(1750930315, INTERVAL 1 WEEK)
+        const dateSub = /DATE_SUB\((\d+),\s*INTERVAL\s+(\d+)\s+(DAY|WEEK|MONTH|YEAR)\)/gi;
+        sqlLike = sqlLike.replace(dateSub, (_, timestamp, amount, unit) => {
+            const date = new Date(parseInt(timestamp) * 1000); // 转换为毫秒
+            const amountNum = parseInt(amount);
+
+            switch (unit.toUpperCase()) {
+                case 'DAY':
+                    date.setDate(date.getDate() - amountNum);
+                    break;
+                case 'WEEK':
+                    date.setDate(date.getDate() - (amountNum * 7));
+                    break;
+                case 'MONTH':
+                    date.setMonth(date.getMonth() - amountNum);
+                    break;
+                case 'YEAR':
+                    date.setFullYear(date.getFullYear() - amountNum);
+                    break;
+            }
+
+            return Math.floor(date.getTime() / 1000).toString();
+        });
+
+        // 再次检查是否有未处理的嵌套函数
+        if (sqlLike.includes('UNIX_TIMESTAMP') || sqlLike.includes('DATE_SUB')) {
+            sqlLike = this.preprocessTimeFunctions(sqlLike);
+        }
+
+        return sqlLike;
+    }
 }
 
+const filter = new ItemFilter();
+
+
 // 使用 quickstart
-export async function filterItems(sqlQuery: string, page: number = 0, size: number = 50) {
-    const filter = new ItemFilter();
-    return await filter.setQuery(sqlQuery).execute(page, size);
+export async function filterItems(sqlQuery: string, page: number = 0, size: number = 50): Promise<{ isLast: boolean, data: Item[], total: number, ids?: number[] }> {
+    return await filter.setQuery(sqlQuery).execute(page, size, true);
+}
+
+export async function filterItemIds(sqlQuery: string): Promise<number[]> {
+    return await new ItemFilter().setQuery(sqlQuery).executeIds();
 }
 
 // 添加到全局对象，方便调试
