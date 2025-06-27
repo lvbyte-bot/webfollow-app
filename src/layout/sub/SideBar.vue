@@ -25,10 +25,13 @@
             width="20"></v-btn>
         </div>
       </div>
-      <v-list-item v-for="filter in settingsStore.automation.filters" :key="filter.id" :title="filter.name"
+      <v-list-item v-for="filter in feedStore.subscriptionFilters" :key="filter.id" :title="filter.name"
         :to="`/filter/${filter.id}`" :value="filter.id" @contextmenu.prevent="showFilterContextMenu($event, filter)">
         <template #prepend>
           <v-icon size="small">mdi-filter-outline</v-icon>
+        </template>
+        <template #append>
+          <small v-if="filter.unreadQty" class="font-weight-thin" v-text="filter.unreadQty"></small>
         </template>
       </v-list-item>
       <!-- <v-list-subheader>FEEDS</v-list-subheader> -->
@@ -53,7 +56,7 @@
             :class="{ 'text-red-accent-3': subItem.isFailure, 'v-list-item--active': selectedFeeds.map(o => o.id).includes(subItem.id) }"
             :value="isMultiSelectMode || contextMenuVisible ? undefined : gItem.id + '-' + subItem.id"
             :to="isMultiSelectMode || contextMenuVisible ? undefined : '/f/' + subItem.id"
-            @click="($event: MouseEvent) => handleFeedSelect($event, subItem)" @mousedown.prevent=""
+            @click="($event: MouseEvent | KeyboardEvent) => handleFeedSelect($event, subItem)" @mousedown.prevent=""
             @contextmenu.prevent="showContextMenu($event, subItem)">
             <template #prepend>
               <div class="icon-warp">
@@ -90,7 +93,7 @@
             :class="{ 'text-red-accent-3': subItem.isFailure, 'v-list-item--active': selectedFeeds.map(o => o.id).includes(subItem.id) }"
             :value="isMultiSelectMode || contextMenuVisible ? undefined : gItem.id + '-' + subItem.id"
             :to="isMultiSelectMode || contextMenuVisible ? undefined : '/f/' + subItem.id"
-            @click="($event: MouseEvent) => handleFeedSelect($event, subItem)" @mousedown.prevent=""
+            @click="($event: MouseEvent | KeyboardEvent) => handleFeedSelect($event, subItem)" @mousedown.prevent=""
             @contextmenu.prevent="showContextMenu($event, subItem)">
             <template #prepend>
               <div class="icon-warp">

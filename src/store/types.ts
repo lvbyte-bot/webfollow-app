@@ -17,7 +17,7 @@ export interface PageRoute {
 
 export interface PageRouteMeta {
     title?: string
-    qty?: number
+    qty?: number | ((unread_item_ids: Set<number>) => number)
     isFailure?: boolean
     url?: string
 }

@@ -180,7 +180,7 @@ export async function listItem(id: any, type: LsItemType, page: number = 0, only
     if (type != LsItemType.ITEMS) {
         res.data.sort((x: Item, y: Item) => x.rank && y.rank ? x.rank - y.rank : y.pubDate - x.pubDate)
     }
-    return { data: res.data.map(map), isLast: res.isLast }
+    return { data: res.data.map(map), isLast: res.isLast, total: res.total, ids: res.ids }
 }
 
 /**
@@ -190,16 +190,15 @@ export async function listItem(id: any, type: LsItemType, page: number = 0, only
 export async function listSubscription(): Promise<[Subscription[], Group[], Feed[]] | undefined> {
     const groups: Group[] = await groupRepo.getAll();
     const feeds: Feed[] = await feedRepo.getAll()
-    let all: Subscription[] = groups.map(g => ({ id: g.id, title: g.title, feeds: [] }))
+    let subscriptions: Subscription[] = groups.map(g => ({ id: g.id, title: g.title, feeds: [] }))
     if (feeds.filter(f => !f.groupId).length > 0) {
-        all.push({ id: -1, title: '未分类', feeds: [] })
+        subscriptions.push({ id: -1, title: '未分类', feeds: [] })
     }
     let gid2group: any = {}
-    all.forEach(item => {
+    subscriptions.forEach(item => {
         gid2group[item.id] = item
     })
     feeds.forEach(f => {
-
         const sf: SubscriptionFeed = mapFeed(f)
         if (f.groupId) {
             gid2group[f.groupId].feeds.push(sf)
@@ -208,7 +207,7 @@ export async function listSubscription(): Promise<[Subscription[], Group[], Feed
         }
         feedsCache[f.id] = sf
     })
-    return [all, groups, feeds]
+    return [subscriptions, groups, feeds]
 }
 
 /**

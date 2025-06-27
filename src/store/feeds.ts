@@ -19,8 +19,9 @@ import {
 } from './base'
 import { useSettingsStore } from './settings'
 import { useRoute } from 'vue-router'
-import { Subscription } from '@/service/types'
+import { Subscription, SubscriptionFilter } from '@/service/types'
 import { feedRepo, Group, itemRepo } from '@/repository'
+import { filterItemIds } from '@/service/itemsFilter'
 
 export const useFeedsStore = defineStore('feeds', () => {
     const {
@@ -28,20 +29,23 @@ export const useFeedsStore = defineStore('feeds', () => {
         fail_feed_ids,
         refresh: refreshBase
     } = useBaseStore()
+    const settingsStore = useSettingsStore();
+    const { getFilter } = settingsStore
     const {
         automation
-    } = storeToRefs(useSettingsStore())
+    } = storeToRefs(settingsStore)
     const groups: Ref<Group[]> = ref([])
     const route = useRoute()
     const data: Ref<Subscription[] | undefined> = ref([])
 
     const subscriptions: Ref<Subscription[] | undefined> = ref([])
+    const subscriptionFilters: Ref<SubscriptionFilter[]> = ref([])
     const nextUnReadUrl = ref('')
 
     let readUrls: any[] = []
 
 
-    async function buildFeeds() {
+    async function buildSubscriptions() {
         // init  subscriptions
         const efids = new Set(fail_feed_ids)
         const items = await itemRepo.listAll(undefined)
@@ -87,6 +91,7 @@ export const useFeedsStore = defineStore('feeds', () => {
             }
         })
         subscriptions.value = follow
+        subscriptionFilters.value = await Promise.all(automation.value.filters.map(async f => ({ id: f.id, name: f.name, unreadQty: f.query ? (await filterItemIds(f.query)).filter(id => unread_item_ids.has(id)).length : 0 })))
         // init readUrls
         updateReadUrls()
     }
@@ -101,7 +106,12 @@ export const useFeedsStore = defineStore('feeds', () => {
             g.unreadQty = g.feeds.map(f => f.unreadQty).reduce((x, y) => x + y, 0)
             return g
         })
-
+        subscriptionFilters.value.forEach(async f => {
+            const filter = getFilter(f.id)
+            if (filter?.query) {
+                f.unreadQty = (await filterItemIds(filter.query)).filter(id => unread_item_ids.has(id)).length
+            }
+        })
         updateReadUrls()
     }
 
@@ -110,7 +120,7 @@ export const useFeedsStore = defineStore('feeds', () => {
         if (r) {
             data.value = r[0]
             groups.value = r[1]
-            await buildFeeds()
+            await buildSubscriptions()
         }
     }
 
@@ -124,6 +134,9 @@ export const useFeedsStore = defineStore('feeds', () => {
 
     function updateReadUrls() {
         readUrls = [{ url: '/explore', unreadQty: 1 }, { url: '/next', unreadQty: 1 }, ...automation.value.filters.map(f => ({ url: '/filter/' + f.id, unreadQty: 1 })), { url: '/all', unreadQty: unread_item_ids.size }]
+        subscriptionFilters.value.forEach(f => {
+            readUrls.push({ url: '/filter/' + f.id, unreadQty: f.unreadQty })
+        })
         subscriptions.value?.forEach(g => {
             readUrls.push({ url: '/c/' + g.id, unreadQty: g.unreadQty })
             g.feeds.forEach(f => {
@@ -200,6 +213,7 @@ export const useFeedsStore = defineStore('feeds', () => {
     return {
         groups,
         subscriptions,
+        subscriptionFilters,
         deleteFeed,
         updateFeed,
         nextUnReadUrl,

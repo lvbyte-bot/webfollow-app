@@ -192,7 +192,7 @@ export const useSettingsStore = defineStore('settings', () => {
         saveToLocalStorage()
     }
 
-    function getFilter(filterId: string): FilterItem | undefined {
+    function getFilter(filterId: string): QueryFilterItem | undefined {
         return automation.value.filters.find(f => f.id === filterId);
     }
 

@@ -108,31 +108,13 @@ class ItemRepo extends Repo<Item> {
      */
     // time: number, feedRanks: any | null, 
     async findTimeAll(time: number, condition: ((item: Item) => boolean), page: number = 0, size: number = 50): Promise<Page<Item>> {
-        // const store = await openStore(this.storename)
-        // const range = IDBKeyRange.lowerBound(time);
-        // const request = store.index("pubDate").openCursor(range);
-        // const items: Item[] = await withCursor(request, (item: Item) => {
-        //     const rank = feedRanks[item.feedId] || 10;
-        //     item.rank = rank
-        //     if (condition) {
-        //         if (condition(item)) {
-        //             return [item, true]
-        //         } else {
-        //             return [null, true]
-        //         }
-        //     }
-        //     return [item, true]
-        // }, (a, b) => (a.rank && b.rank ? a.rank - b.rank : 1))
-        // const startOffset = page * size;
-        // const endOffset = startOffset + size;
-        // let data: Item[] = []
-        // if (startOffset < items.length) {
-        //     data = items.slice(startOffset, endOffset)
-        // }
         const data: Item[] = await findTimeRange(this.storename, time, new Date().getTime() / 1000, page, size, condition)
         const total = await countAll(this.storename, condition)
-        // console.log(page, data.length, data.length != size)
         return { isLast: data.length != size, data, total }
+    }
+
+    async listAllIds(conditionFn: (item: Item) => boolean): Promise<number[]> {
+        return await listAllIds(this.storename, conditionFn)
     }
 
     async countByFeedId(feedId: number): Promise<number> {

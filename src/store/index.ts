@@ -21,7 +21,7 @@ export const useAppStore = defineStore('app', () => {
     } = useBaseStore()
     const { clear } = usePlayListStore()
     const { refresh: refreshFeed } = useFeedsStore()
-    const { subscriptions } = storeToRefs(useFeedsStore())
+    const { subscriptions, subscriptionFilters } = storeToRefs(useFeedsStore())
     const settingsStore = useSettingsStore()
     const { refreshItems, pageRoute } = useItemsStore()
     const loading: Ref<boolean> = ref(false)
@@ -74,7 +74,6 @@ export const useAppStore = defineStore('app', () => {
 
 
     }
-
 
 
     async function reloadBuild() {
@@ -130,12 +129,18 @@ export const useAppStore = defineStore('app', () => {
             case LsItemType.ITEMS:
                 if (v.meta) {
                     nav.title = v.meta.title
-                    nav.qty = v.meta.qty
+                    nav.qty = typeof v.meta.qty === 'number' ? v.meta.qty : (typeof v.meta.qty === 'function' ? v.meta.qty(unread_item_ids) : 0)
                 }
                 return
             case LsItemType.RECOMMEND:
                 nav.title = '今天'
                 nav.qty = item7DayUnReadQty.value
+                return
+            case LsItemType.FILTER:
+                nav.qty = subscriptionFilters.value.find(f => f.id == (v.id ? v.id.toString() : v.id))?.unreadQty
+                if (v.meta) {
+                    nav.title = v.meta.title
+                }
                 return
             case LsItemType.FEED:
                 let fs = subscriptions?.value?.flatMap(g => g.feeds).filter(f => f.id == v.id)
