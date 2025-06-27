@@ -91,9 +91,13 @@ export const useFeedsStore = defineStore('feeds', () => {
             }
         })
         subscriptions.value = follow
-        subscriptionFilters.value = await Promise.all(automation.value.filters.map(async f => ({ id: f.id, name: f.name, unreadQty: f.query ? (await filterItemIds(f.query)).filter(id => unread_item_ids.has(id)).length : 0 })))
+        await buildSubscriptionFilters()
         // init readUrls
         updateReadUrls()
+    }
+
+    async function buildSubscriptionFilters() {
+        subscriptionFilters.value = await Promise.all(automation.value.filters.map(async f => ({ id: f.id, name: f.name, unreadQty: f.query ? (await filterItemIds(f.query)).filter(id => unread_item_ids.has(id)).length : 0 })))
     }
 
     async function refreshFeedUnreadQty() {
@@ -126,7 +130,8 @@ export const useFeedsStore = defineStore('feeds', () => {
     watch(route, () => {
         updateNextUnReadUrl()
     })
-    watch(automation, () => {
+    watch(automation, async () => {
+        await buildSubscriptionFilters()
         updateReadUrls()
     }, { deep: true })
 
