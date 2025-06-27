@@ -1,6 +1,6 @@
 <template>
   <div class="main-warp" :class="{ 'main-col': viewMode == 'column' && type }">
-    <reader v-if="currentItem && store.items?.length" :item="currentItem" :items="store.items" :open-reader="openReader"
+    <reader v-if="currentItem && items?.length" :item="currentItem" :items="items" :open-reader="openReader"
       :entry-list-disable="mobile || !(viewMode != 'column' || !type)" :modelValue="appStore.readerMode"
       @update:modelValue="appStore.readerMode = $event"></reader>
     <div class="main-reader"></div>
@@ -22,7 +22,7 @@
                   type == 'home' ||
                   type == 'filter'
                 )
-                  " :disabled="store.items?.filter((o) => !o.isRead).length == 0" icon title="全部标记为已读(快捷键：M)"
+                  " :disabled="itemStore.items?.filter((o) => !o.isRead).length == 0" icon title="全部标记为已读(快捷键：M)"
                   @click="markRead" class="items-mark-read">
                   <v-icon>mdi-read</v-icon>
                 </c-btn>
@@ -81,11 +81,11 @@
           </div>
           <div class="mt-2 text-body-2">正在刷新...</div>
         </div> -->
-            <template v-if="store.items?.length">
-              <Items :items="store.items" :view="viewMode" :type="type" @open-reader="openReader"></Items>
+            <template v-if="items?.length">
+              <Items :items="items" :view="viewMode" :type="type" @open-reader="openReader"></Items>
             </template>
 
-            <template v-if="store.isLast && !loading">
+            <template v-if="itemStore.isLast && !loading">
               <v-empty-state icon="mdi-book-open-page-variant-outline" v-if="feedStore.nextUnReadUrl"
                 height="calc(100vh - 70px)" class="next-unreadlist">
                 <v-btn variant="text" :to="feedStore.nextUnReadUrl">
@@ -95,12 +95,12 @@
                   打开下一个未读的订阅源
                 </v-btn>
               </v-empty-state>
-              <v-empty-state v-else-if="!store.items?.length" height="calc(100vh - 70px)" icon="mdi-fruit-watermelon"
+              <v-empty-state v-else-if="!items?.length" height="calc(100vh - 70px)" icon="mdi-fruit-watermelon"
                 text="全部已读">
               </v-empty-state>
               <v-empty-state v-else height="calc(100vh - 70px)" icon="mdi-fruit-cherries" text="我是有底线的">
               </v-empty-state>
-              <v-empty-state v-if="!onlyUnread && type == 'f' && store.items?.length == 0" height="calc(100vh - 70px)"
+              <v-empty-state v-if="!onlyUnread && type == 'f' && items?.length == 0" height="calc(100vh - 70px)"
                 icon="mdi-cloud-download-outline">
                 <v-btn variant="text" @click="pullFeedItems" :disabled="loading">
                   <template #prepend>
@@ -124,7 +124,6 @@ import { viewModeSymbol, itemsTypeSymbol } from "./InjectionSymbols";
 import { onMounted, watch } from "vue";
 import { ViewMode } from "@/store/types";
 import { Marked } from "@/service";
-import { retrieveRelevantContexts } from "@/service/rag";
 import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
 import { debound } from "@/utils/debound";
@@ -133,24 +132,21 @@ import {
   useAppStore,
   useFeedsStore,
   useSettingsStore,
-  useBaseStore,
 } from "@/store";
 import { FeedItem, LsItemType } from "@/service/types";
 import { useScroll } from "@/utils/scrollListener";
 import { confirm } from "@/plugins/confirm";
 import { useCalViewMode } from "@/utils/useCalView";
 import { filterItems } from "@/service/itemsFilter";
-import { FeedContext } from "@/service/rag";
 
 const props = defineProps(["type", "id"]);
 
 const mainRef = ref();
 
 const { mobile } = useDisplay();
-const store = useItemsStore();
+const itemStore = useItemsStore();
 const appStore = useAppStore();
 const feedStore = useFeedsStore();
-const baseStore = useBaseStore();
 const currentItem: Ref<FeedItem> = ref({
   id: 0,
   title: "",
@@ -169,7 +165,7 @@ const currentItem: Ref<FeedItem> = ref({
 const loading = ref(false);
 const settingsStore = useSettingsStore();
 const { general } = storeToRefs(settingsStore);
-const items = computed(() => store.items);
+const items = computed(() => itemStore.items);
 const view = computed(() => general.value.defaultView);
 const onlyUnread = computed(() => general.value.hideReadArticles);
 const { viewMode, itemsType } = useCalViewMode(view, items);
@@ -228,7 +224,7 @@ function watchLoadMore() {
         webfollowApp.markCurrentPageRead();
       }
     }
-    if (v && !store.isLast) {
+    if (v && !itemStore.isLast) {
       loadData(++page);
     }
   });
@@ -268,43 +264,23 @@ async function loadData0(
 ) {
   if (type == LsItemType.FILTER) {
     const filter = settingsStore.getFilter(id);
-    console.log(page)
     if (filter?.query) {
       // 如果过滤器有query字段，使用SQL过滤器
-      const result = await filterItems(filter.query, page, 50);
-      await store.loadData(
+      const result = await filterItems(filter.query, page);
+      await itemStore.loadData(
         result.ids,
         LsItemType.ITEMS,
         page,
         onlyUnread,
         {
-          title: filter?.name || "过滤文章"
-        }
-      );
-      // TODO 后期移除
-    } else if (filter?.keywords) {
-      // 兼容旧版基于关键词的过滤器
-      const articles = await retrieveRelevantContexts(
-        "",
-        filter?.keywords || [],
-        300
-      );
-      await store.loadData(
-        articles.map((item: FeedContext) => item.id),
-        LsItemType.ITEMS,
-        page,
-        onlyUnread,
-        {
           title: filter?.name || "过滤文章",
-          qty: onlyUnread
-            ? articles.filter((item: FeedContext) => baseStore.unread_item_ids.has(item.id))
-              .length
-            : articles.length,
+          id: id,
+          type: LsItemType.FILTER
         }
       );
     }
   } else {
-    await store.loadData(id, type, page, onlyUnread);
+    await itemStore.loadData(id, type, page, onlyUnread);
   }
 }
 let tmpIds: number[] = [];
@@ -353,7 +329,7 @@ async function refresh() {
 async function pullFeedItems() {
   if (props.type == "f") {
     loading.value = true;
-    await store.pullFeedItems(Number(props.id));
+    await itemStore.pullFeedItems(Number(props.id));
     changeOnlyUnread(false);
     loading.value = false;
   }
@@ -381,8 +357,8 @@ function openReader(index: number, item: FeedItem | undefined) {
   appStore.readerMode = true;
   if (item) {
     currentItem.value = item;
-  } else if (store.items) {
-    currentItem.value = store.items[index];
+  } else if (itemStore.items) {
+    currentItem.value = itemStore.items[index];
   }
 }
 
@@ -453,7 +429,7 @@ onMounted(() => {
   };
   // 当前页标记已读 （按最后一条item之前的时间）
   webfollowApp.markCurrentPageRead = () => {
-    const itemIds = store.items
+    const itemIds = itemStore.items
       .filter((item) => item.isRead == false)
       .map((item) => item.id);
     if (itemIds.length) {

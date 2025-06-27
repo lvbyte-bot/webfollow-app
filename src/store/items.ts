@@ -41,15 +41,21 @@ export const useItemsStore = defineStore('items', () => {
 
     let currentPageUnReadItemIds: Set<number>;
     async function loadData(id: any, type: LsItemType, page: number = 0, onlyUnread: boolean = false, meta?: PageRouteMeta) {
-        cacheLoadParams = { id, type, page, onlyUnread }
+        cacheLoadParams = { id, type, page, onlyUnread, meta }
         id = type == LsItemType.SAVED ? saved_item_ids : id
         id = type == LsItemType.ALL ? null : id
         if (page == 0) {
             currentPageUnReadItemIds = unread_item_ids
         }
-        pageRoute.id = id
-        pageRoute.type = type
+        if (meta?.id && meta?.type) {
+            pageRoute.id = meta.id
+            pageRoute.type = meta.type
+        } else {
+            pageRoute.id = id
+            pageRoute.type = type
+        }
         pageRoute.meta = meta
+        // console.log('run loadData', pageRoute.meta)
         const r = await listItem(id, type, page, onlyUnread, currentPageUnReadItemIds)
         if (page == 0) {
             data.value = []
@@ -60,7 +66,7 @@ export const useItemsStore = defineStore('items', () => {
 
     async function refreshItems() {
         if (Object.keys(cacheLoadParams).length) {
-            await loadData(cacheLoadParams.id, cacheLoadParams.type, cacheLoadParams.page, cacheLoadParams.onlyUnread)
+            await loadData(cacheLoadParams.id, cacheLoadParams.type, cacheLoadParams.page, cacheLoadParams.onlyUnread, cacheLoadParams.meta)
         }
     }
 

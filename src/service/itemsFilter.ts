@@ -13,8 +13,18 @@ interface Condition {
     value: any;
 }
 
+// 添加新的接口来支持嵌套条件
+interface NestedCondition {
+    type: 'simple' | 'group';
+    condition?: Condition;
+    group?: {
+        conditions: NestedCondition[];
+        logicalOperators: LogicalOperator[];
+    };
+}
+
 interface FilterQuery {
-    conditions: Condition[];
+    conditions: NestedCondition[];
     logicalOperators: LogicalOperator[];
     orderBy?: {
         field: string;
@@ -70,7 +80,7 @@ export class ItemFilter {
 
     // 解析SQL类似语句
     parseQuery(sqlLike: string): FilterQuery {
-        console.log("解析查询:", sqlLike);
+        // console.log("解析查询:", sqlLike);
         const query: FilterQuery = {
             conditions: [],
             logicalOperators: []
@@ -83,7 +93,7 @@ export class ItemFilter {
 
         // 预处理时间函数
         sqlLike = this.preprocessTimeFunctions(sqlLike);
-        // console.log(sqlLike); // 添加日志，查看预处理后的SQL
+
         // 提取WHERE条件
         let whereClause = sqlLike;
         if (sqlLike.toUpperCase().includes('WHERE')) {
@@ -92,42 +102,13 @@ export class ItemFilter {
                 whereClause = whereMatch[1];
             }
         } else {
-            // 如果没有WHERE关键字，需要处理可能包含ORDER BY或LIMIT的条件
             whereClause = sqlLike.replace(/\s+ORDER BY.*$/i, '').replace(/\s+LIMIT.*$/i, '');
         }
 
-        // 处理BETWEEN特殊情况
-        if (whereClause.toUpperCase().includes('BETWEEN')) {
-            // 先检查是否有BETWEEN条件
-            const betweenMatch = whereClause.match(/(\w+(?:\.\w+)?)\s+BETWEEN\s+(\d+)\s+AND\s+(\d+)/i);
-            if (betweenMatch) {
-                const [fullMatch, field, min, max] = betweenMatch;
-                // 替换BETWEEN条件为占位符，避免AND被错误分割
-                whereClause = whereClause.replace(fullMatch, `${field} BETWEEN_PLACEHOLDER ${min},${max}`);
-            }
-        }
-
-        // 分割AND/OR条件
-        const conditionRegex = /\s+(AND|OR)\s+/i;
-        if (conditionRegex.test(whereClause)) {
-            const conditionParts = whereClause.split(conditionRegex);
-
-            for (let i = 0; i < conditionParts.length; i++) {
-                if (i % 2 === 0) {
-                    // 这是一个条件
-                    // 还原BETWEEN占位符
-                    const condition = conditionParts[i].replace('BETWEEN_PLACEHOLDER', 'BETWEEN');
-                    this.parseCondition(condition, query);
-                } else {
-                    // 这是一个逻辑运算符
-                    query.logicalOperators.push(conditionParts[i].toUpperCase() as LogicalOperator);
-                }
-            }
-        } else {
-            // 只有一个条件，还原BETWEEN占位符
-            const condition = whereClause.replace('BETWEEN_PLACEHOLDER', 'BETWEEN');
-            this.parseCondition(condition, query);
-        }
+        // 解析嵌套条件
+        const parsedConditions = this.parseNestedConditions(whereClause);
+        query.conditions = parsedConditions.conditions;
+        query.logicalOperators = parsedConditions.logicalOperators;
 
         // 提取ORDER BY
         const orderMatch = sqlLike.match(/ORDER BY\s+(\w+(?:\.\w+)?)\s+(ASC|DESC)/i);
@@ -144,77 +125,169 @@ export class ItemFilter {
             query.limit = parseInt(limitMatch[1]);
         }
 
-        console.log("解析结果:", JSON.stringify(query, null, 2));
+        // console.log("解析结果:", JSON.stringify(query, null, 2));
         return query;
     }
 
-    private parseCondition(conditionStr: string, query: FilterQuery): void {
+    // 新增方法：解析嵌套条件
+    private parseNestedConditions(conditionStr: string): { conditions: NestedCondition[], logicalOperators: LogicalOperator[] } {
+        const result = {
+            conditions: [] as NestedCondition[],
+            logicalOperators: [] as LogicalOperator[]
+        };
+
+        // 处理空条件
+        if (!conditionStr || conditionStr.trim() === '') {
+            return result;
+        }
+
+        // 处理括号嵌套
+        let i = 0;
+        let currentCondition = '';
+        let bracketCount = 0;
+
+        while (i < conditionStr.length) {
+            const char = conditionStr[i];
+
+            if (char === '(' && bracketCount === 0) {
+                // 找到嵌套条件的开始
+                bracketCount++;
+                i++;
+                let nestedCondition = '';
+
+                // 收集嵌套条件内的所有内容
+                while (i < conditionStr.length) {
+                    const nestedChar = conditionStr[i];
+
+                    if (nestedChar === '(') {
+                        bracketCount++;
+                        nestedCondition += nestedChar;
+                    } else if (nestedChar === ')') {
+                        bracketCount--;
+                        if (bracketCount === 0) {
+                            break;
+                        }
+                        nestedCondition += nestedChar;
+                    } else {
+                        nestedCondition += nestedChar;
+                    }
+                    i++;
+                }
+
+                // 递归解析嵌套条件
+                const nestedResult = this.parseNestedConditions(nestedCondition);
+
+                // 添加嵌套组条件
+                result.conditions.push({
+                    type: 'group',
+                    group: {
+                        conditions: nestedResult.conditions,
+                        logicalOperators: nestedResult.logicalOperators
+                    }
+                });
+
+                // 检查是否有逻辑运算符
+                i++;
+                while (i < conditionStr.length && /\s/.test(conditionStr[i])) {
+                    i++;
+                }
+
+                if (i < conditionStr.length) {
+                    const logicalOpMatch = conditionStr.substring(i).match(/^(AND|OR)\s+/i);
+                    if (logicalOpMatch) {
+                        result.logicalOperators.push(logicalOpMatch[1].toUpperCase() as LogicalOperator);
+                        i += logicalOpMatch[0].length;
+                    }
+                }
+            } else if (/\s+(AND|OR)\s+/i.test(conditionStr.substring(i))) {
+                // 找到逻辑运算符
+                const logicalOpMatch = conditionStr.substring(i).match(/^\s+(AND|OR)\s+/i);
+                if (logicalOpMatch) {
+                    // 处理当前条件
+                    if (currentCondition.trim()) {
+                        const simpleCondition: NestedCondition = {
+                            type: 'simple'
+                        };
+
+                        // 解析简单条件
+                        const condition: Condition = { field: '', operator: '=' as Operator, value: null };
+                        this.parseSimpleCondition(currentCondition.trim(), condition);
+                        simpleCondition.condition = condition;
+
+                        result.conditions.push(simpleCondition);
+                        currentCondition = '';
+                    }
+
+                    // 添加逻辑运算符
+                    result.logicalOperators.push(logicalOpMatch[1].toUpperCase() as LogicalOperator);
+                    i += logicalOpMatch[0].length;
+                } else {
+                    currentCondition += conditionStr[i];
+                    i++;
+                }
+            } else {
+                currentCondition += conditionStr[i];
+                i++;
+            }
+        }
+
+        // 处理最后一个条件
+        if (currentCondition.trim()) {
+            const simpleCondition: NestedCondition = {
+                type: 'simple'
+            };
+
+            // 解析简单条件
+            const condition: Condition = { field: '', operator: '=' as Operator, value: null };
+            this.parseSimpleCondition(currentCondition.trim(), condition);
+            simpleCondition.condition = condition;
+
+            result.conditions.push(simpleCondition);
+        }
+
+        return result;
+    }
+
+    // 解析简单条件
+    private parseSimpleCondition(conditionStr: string, condition: Condition): void {
         // Support compound operators like 'NOT LIKE' and 'NOT IN'
         const operatorPattern = /(!=|>=|<=|>|<|=|NOT LIKE|LIKE|NOT IN|IN|BETWEEN)/i;
         const parts = conditionStr.split(operatorPattern);
 
         if (parts.length >= 3) {
-            const field = parts[0].trim();
-            const operator = parts[1].trim().toUpperCase() as Operator;
-            const valueStr = parts.slice(2).join('').trim();
+            // 清理字段名中可能的括号
+            condition.field = parts[0].trim().replace(/^\(+|\)+$/g, '');
+            condition.operator = parts[1].trim().toUpperCase() as Operator;
 
-            let value: any;
+            // 清理值中可能的括号
+            let valueStr = parts.slice(2).join('').trim();
+            valueStr = valueStr.replace(/\)+$/g, '');
 
             // 处理特殊值类型
-            if (operator === 'IN' || operator === 'NOT IN') {
-                value = valueStr.replace(/^\(|\)$/g, '').split(',').map(v => this.parseValue(v.trim()));
-            } else if (operator === 'BETWEEN') {
+            if (condition.operator === 'IN' || condition.operator === 'NOT IN') {
+                condition.value = valueStr.replace(/^\(|\)$/g, '').split(',').map(v => this.parseValue(v.trim()));
+            } else if (condition.operator === 'BETWEEN') {
                 // 处理BETWEEN操作符
                 // 检查是否是我们预处理的格式 (min,max)
                 const commaMatch = valueStr.match(/\s*(\d+),(\d+)\s*/);
                 if (commaMatch) {
                     const [_, min, max] = commaMatch;
-                    value = [this.parseValue(min), this.parseValue(max)];
+                    condition.value = [this.parseValue(min), this.parseValue(max)];
                 } else {
                     // 尝试标准格式 min AND max
                     const betweenMatch = valueStr.match(/\s*(\d+)\s+AND\s+(\d+)\s*/i);
                     if (betweenMatch) {
                         const [_, min, max] = betweenMatch;
-                        value = [this.parseValue(min), this.parseValue(max)];
+                        condition.value = [this.parseValue(min), this.parseValue(max)];
                     } else {
                         console.error(`BETWEEN语法错误: ${valueStr}`);
-                        value = [0, 0]; // 默认值，避免后续错误
+                        condition.value = [0, 0]; // 默认值，避免后续错误
                     }
                 }
-                console.log(`BETWEEN解析结果: [${value[0]}, ${value[1]}]`);
             } else {
-                value = this.parseValue(valueStr);
+                condition.value = this.parseValue(valueStr);
             }
-
-            query.conditions.push({
-                field,
-                operator,
-                value
-            });
         }
-    }
-
-    private parseValue(valueStr: string): any {
-        // 去除引号
-        if (/^(['"]).*\1$/.test(valueStr)) {
-            return valueStr.substring(1, valueStr.length - 1);
-        }
-
-        // 尝试解析数字
-        if (/^-?\d+$/.test(valueStr)) {
-            return parseInt(valueStr);
-        } else if (/^-?\d+\.\d+$/.test(valueStr)) {
-            return parseFloat(valueStr);
-        } else if (valueStr.toUpperCase() === 'TRUE') {
-            return true;
-        } else if (valueStr.toUpperCase() === 'FALSE') {
-            return false;
-        } else if (valueStr.toUpperCase() === 'NULL') {
-            return null;
-        }
-
-        // 默认返回字符串
-        return valueStr;
     }
 
     // 设置查询
@@ -236,26 +309,7 @@ export class ItemFilter {
 
         // 创建过滤函数
         const filterFn = (item: Item) => {
-            let result = true;
-
-            for (let i = 0; i < this.query.conditions.length; i++) {
-                const condition = this.query.conditions[i];
-                const itemValue = this.getItemValue(item, condition.field);
-                let conditionResult = this.evaluateCondition(itemValue, condition.operator, condition.value);
-
-                if (i === 0) {
-                    result = conditionResult;
-                } else {
-                    const logicalOp = this.query.logicalOperators[i - 1];
-                    if (logicalOp === 'AND') {
-                        result = result && conditionResult;
-                    } else {
-                        result = result || conditionResult;
-                    }
-                }
-            }
-
-            return result;
+            return this.evaluateNestedConditions(item, this.query.conditions, this.query.logicalOperators);
         };
 
         // 获取排序函数
@@ -275,7 +329,7 @@ export class ItemFilter {
         const limit = this.query.limit || size;
         const result = await itemRepo.findAll(filterFn, page, limit, sortFn, excludeData);
 
-        console.log(`查询结果: ${result.total} 条记录`, page, limit);
+        // console.log(`查询结果: ${result.total} 条记录`, page, limit);
         return result;
     }
 
@@ -288,27 +342,8 @@ export class ItemFilter {
 
         // 创建过滤函数
         const filterFn = (item: Item) => {
-            let result = true;
-
-            for (let i = 0; i < this.query.conditions.length; i++) {
-                const condition = this.query.conditions[i];
-                const itemValue = this.getItemValue(item, condition.field);
-                let conditionResult = this.evaluateCondition(itemValue, condition.operator, condition.value);
-                if (i === 0) {
-                    result = conditionResult;
-                } else {
-                    const logicalOp = this.query.logicalOperators[i - 1];
-                    if (logicalOp === 'AND') {
-                        result = result && conditionResult;
-                    } else {
-                        result = result || conditionResult;
-                    }
-                }
-            }
-
-            return result;
+            return this.evaluateNestedConditions(item, this.query.conditions, this.query.logicalOperators);
         };
-
 
         // 使用itemRepo执行查询
         const result = await itemRepo.listAllIds(filterFn);
@@ -318,6 +353,12 @@ export class ItemFilter {
 
     // 获取Item对象的字段值
     private getItemValue(item: Item, field: string): any {
+        // 检查字段是否为空
+        if (!field) {
+            console.error('字段名为空');
+            return undefined;
+        }
+
         // 处理特殊字段
         if (field === 'isRead') {
             return !this.unreadItemIds.has(item.id);
@@ -468,6 +509,66 @@ export class ItemFilter {
         }
 
         return sqlLike;
+    }
+
+    // 评估嵌套条件
+    private evaluateNestedConditions(item: Item, conditions: NestedCondition[], logicalOperators: LogicalOperator[]): boolean {
+        if (conditions.length === 0) {
+            return true;
+        }
+
+        let result = this.evaluateSingleNestedCondition(item, conditions[0]);
+
+        for (let i = 0; i < logicalOperators.length; i++) {
+            const nextResult = this.evaluateSingleNestedCondition(item, conditions[i + 1]);
+
+            if (logicalOperators[i] === 'AND') {
+                result = result && nextResult;
+            } else {
+                result = result || nextResult;
+            }
+        }
+
+        return result;
+    }
+
+    // 评估单个嵌套条件
+    private evaluateSingleNestedCondition(item: Item, nestedCondition: NestedCondition): boolean {
+        if (nestedCondition.type === 'simple' && nestedCondition.condition) {
+            const condition = nestedCondition.condition;
+            const itemValue = this.getItemValue(item, condition.field);
+            return this.evaluateCondition(itemValue, condition.operator, condition.value);
+        } else if (nestedCondition.type === 'group' && nestedCondition.group) {
+            return this.evaluateNestedConditions(
+                item,
+                nestedCondition.group.conditions,
+                nestedCondition.group.logicalOperators
+            );
+        }
+
+        return false;
+    }
+
+    // 添加 parseValue 方法
+    private parseValue(valueStr: string): any {
+        // 移除引号
+        valueStr = valueStr.trim().replace(/^['"]|['"]$/g, '');
+
+        // 尝试解析为数字
+        if (/^-?\d+$/.test(valueStr)) {
+            return parseInt(valueStr, 10);
+        } else if (/^-?\d+\.\d+$/.test(valueStr)) {
+            return parseFloat(valueStr);
+        } else if (valueStr.toLowerCase() === 'true') {
+            return true;
+        } else if (valueStr.toLowerCase() === 'false') {
+            return false;
+        } else if (valueStr.toLowerCase() === 'null') {
+            return null;
+        }
+
+        // 默认返回字符串
+        return valueStr;
     }
 }
 

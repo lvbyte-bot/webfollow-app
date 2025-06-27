@@ -54,7 +54,6 @@ export const useAppStore = defineStore('app', () => {
                 await pullData2Local()
                 await refreshFeed()
                 setRanks(await getRanks())
-                await refreshItems()
             })
         } else if (type = 'sync2local') {
             await pullData2Local()
@@ -102,7 +101,7 @@ export const useAppStore = defineStore('app', () => {
         await sync()
         setTitle(unReadQty.value)
         setTimeout(() => {
-            watchAll([pageRoute, subscriptions, savedQty], () => initNav(pageRoute))
+            watchAll([pageRoute, subscriptions, subscriptionFilters, savedQty], () => initNav(pageRoute))
         }, 1000);
         // 都是为了更新nav
     })
@@ -111,6 +110,10 @@ export const useAppStore = defineStore('app', () => {
     function initNav(v: PageRoute) {
         nav.isFailure = false
         switch (v.type) {
+            case LsItemType.RECOMMEND:
+                nav.title = '今天'
+                nav.qty = item7DayUnReadQty.value
+                return
             case LsItemType.ALL:
                 nav.title = '全部文章'
                 nav.qty = unReadQty.value
@@ -126,22 +129,6 @@ export const useAppStore = defineStore('app', () => {
                     nav.qty = ga[0].unreadQty
                 }
                 return
-            case LsItemType.ITEMS:
-                if (v.meta) {
-                    nav.title = v.meta.title
-                    nav.qty = typeof v.meta.qty === 'number' ? v.meta.qty : (typeof v.meta.qty === 'function' ? v.meta.qty(unread_item_ids) : 0)
-                }
-                return
-            case LsItemType.RECOMMEND:
-                nav.title = '今天'
-                nav.qty = item7DayUnReadQty.value
-                return
-            case LsItemType.FILTER:
-                nav.qty = subscriptionFilters.value.find(f => f.id == (v.id ? v.id.toString() : v.id))?.unreadQty
-                if (v.meta) {
-                    nav.title = v.meta.title
-                }
-                return
             case LsItemType.FEED:
                 let fs = subscriptions?.value?.flatMap(g => g.feeds).filter(f => f.id == v.id)
                 if (fs?.length) {
@@ -149,6 +136,18 @@ export const useAppStore = defineStore('app', () => {
                     nav.qty = fs[0].unreadQty
                     nav.isFailure = fs[0].isFailure
                     nav.url = fs[0].url
+                }
+                return
+            case LsItemType.ITEMS:
+                if (v.meta) {
+                    nav.title = v.meta.title
+                    nav.qty = v.meta.qty
+                }
+                return
+            case LsItemType.FILTER:
+                nav.qty = subscriptionFilters.value.find(f => f.id == (v.id ? v.id.toString() : v.id))?.unreadQty
+                if (v.meta) {
+                    nav.title = v.meta.title
                 }
                 return
         }

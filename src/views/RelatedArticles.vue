@@ -29,11 +29,11 @@
           <!-- 手动SQL输入区域 - 可折叠 -->
           <div class="border rounded-lg">
             <v-expansion-panels v-model="sqlPanelOpen" flat>
-              <v-expansion-panel>
+              <v-expansion-panel class="rounded-lg">
                 <v-expansion-panel-title>
                   <div class="d-flex align-center">
                     <v-icon class="mr-2">mdi-code-tags</v-icon>
-                    手动输入SQL查询
+                    查询语句
                   </div>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
@@ -110,14 +110,12 @@ import { ref, onMounted } from "vue";
 import { useItemsStore } from "@/store";
 import { useSettingsStore } from "@/store";
 import { filterItems } from "@/service/itemsFilter";
-import { Item } from "@/repository";
 import { QueryFilterItem } from "@/store/settings";
 
 const sqlQuery = ref("");
 const loading = ref(false);
 const savedQueries = ref<QueryFilterItem[]>([]);
 const selectedQueryIndex = ref([]);
-const articles = ref<Item[]>([]);
 const total = ref(0);
 const itemStore = useItemsStore();
 const itemsRef = ref();
@@ -159,7 +157,6 @@ function applyExample(query: string) {
 
 async function handleSavedQuerySelect() {
   if (selectedQueryIndex.value.length === 0) {
-    articles.value = [];
     itemsRef.value.loadData(0, [], true);
     return;
   }
@@ -179,15 +176,14 @@ async function handleSearch() {
 
   try {
     // 使用itemsFilter进行查询
-    const result = await filterItems(sqlQuery.value, 0, 300);
+    const result = await filterItems(sqlQuery.value, 10);
     total.value = result.total;
-    articles.value = result.data;
 
     // 加载到itemsStore中
-    if (articles.value.length > 0) {
+    if (result.total) {
       itemsRef.value.loadData(
         0,
-        articles.value.map((item) => item.id)
+        result.ids
       );
     }
   } catch (error) {
@@ -199,7 +195,6 @@ async function handleSearch() {
 }
 
 function init() {
-  articles.value = [];
   selectedQueryIndex.value = [];
   itemsRef.value.loadData(0, []);
 }
@@ -264,6 +259,7 @@ async function generateSQL() {
     - 布尔条件：isRead = true/false, isSaved = true/false
     - 排序：ORDER BY pubDate DESC/ASC
     - 限制：LIMIT 数量
+    - 不要在语句最外层用()包裹
 
     注意：不要生成完整的SELECT语句，只需要生成WHERE条件部分（不包含WHERE关键字）以及可能的ORDER BY和LIMIT子句。
 
@@ -295,7 +291,7 @@ async function generateSQL() {
     });
 
     if (!response.ok) {
-      throw new Error(`API 请求失败: ${response.statusText}`);
+      throw new Error(`API 请求失败: ${(await response.json()).error?.message || response.statusText}`);
     }
 
     const data = await response.json();
@@ -320,7 +316,7 @@ async function generateSQL() {
 
   } catch (error: any) {
     console.error("AI生成SQL失败:", error);
-    alert("AI调用失败：" + error.message);
+    alert(error.message);
   } finally {
     aiLoading.value = false;
   }

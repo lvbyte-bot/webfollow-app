@@ -99,19 +99,18 @@ export const useFeedsStore = defineStore('feeds', () => {
     async function refreshFeedUnreadQty() {
         // 直接使用 unread_item_ids 计算未读数量
         const items = await itemRepo.listAll(undefined)
-        subscriptions.value?.forEach(async g => {
+        await Promise.all(subscriptions.value ? subscriptions.value?.map(async g => {
             await Promise.all(g.feeds.map(async f => {
                 f.unreadQty = await sumUnread(items, f.id, unread_item_ids)
             }))
             g.unreadQty = g.feeds.map(f => f.unreadQty).reduce((x, y) => x + y, 0)
-            return g
-        })
-        subscriptionFilters.value.forEach(async f => {
+        }) : [])
+        await Promise.all(subscriptionFilters.value.map(async f => {
             const filter = getFilter(f.id)
             if (filter?.query) {
                 f.unreadQty = (await filterItemIds(filter.query)).filter(id => unread_item_ids.has(id)).length
             }
-        })
+        }))
         updateReadUrls()
     }
 
@@ -133,10 +132,11 @@ export const useFeedsStore = defineStore('feeds', () => {
 
 
     function updateReadUrls() {
-        readUrls = [{ url: '/explore', unreadQty: 1 }, { url: '/next', unreadQty: 1 }, ...automation.value.filters.map(f => ({ url: '/filter/' + f.id, unreadQty: 1 })), { url: '/all', unreadQty: unread_item_ids.size }]
+        readUrls = [{ url: '/explore', unreadQty: 1 }, { url: '/next', unreadQty: 1 }]
         subscriptionFilters.value.forEach(f => {
             readUrls.push({ url: '/filter/' + f.id, unreadQty: f.unreadQty })
         })
+        readUrls.push({ url: '/all', unreadQty: unread_item_ids.size })
         subscriptions.value?.forEach(g => {
             readUrls.push({ url: '/c/' + g.id, unreadQty: g.unreadQty })
             g.feeds.forEach(f => {
