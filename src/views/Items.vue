@@ -528,17 +528,6 @@ onMounted(() => {
   }
 }
 
-@media (max-width: 767px) {
-  .main-col {
-    display: block;
-
-    .main-container {
-      width: 100%;
-      max-width: 100%;
-      resize: none;
-    }
-  }
-}
 
 @media (max-width: 1024px) {
   .main-col {
@@ -547,6 +536,18 @@ onMounted(() => {
       min-width: 38vw;
       width: 38vw;
       max-width: 39vw;
+      resize: none;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .main-col {
+    display: block;
+
+    .main-container {
+      width: 100%;
+      max-width: 100%;
       resize: none;
     }
   }

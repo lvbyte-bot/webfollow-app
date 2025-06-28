@@ -252,6 +252,9 @@ async function generateSQL() {
       - isSaved: 是否已保存（true/false）
       - feed.title: 订阅源标题
       - feed.id: 订阅源ID
+      - feed.url: 订阅地址
+      - feed.siteUrl: 网址
+      - group.title: 分组的名称
 
     支持的SQL语法：
     - 条件语法：title LIKE '关键词', content LIKE '关键词'
