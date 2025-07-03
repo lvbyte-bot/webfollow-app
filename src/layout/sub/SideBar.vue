@@ -450,7 +450,7 @@ const handleFilterAction = (action: string) => {
   background-color: rgba(var(--v-theme-background), 1);
   padding: 0.3rem 0.5rem;
   bottom: 1rem;
-  left: 1rem;
+  right: 1rem;
   border-radius: 0.6rem;
   border: 1px solid rgba(var(--v-theme-kbd), 0.3);
   font-size: small;
