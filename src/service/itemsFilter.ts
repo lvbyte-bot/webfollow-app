@@ -94,6 +94,51 @@ export class ItemFilter {
         // 预处理时间函数
         sqlLike = this.preprocessTimeFunctions(sqlLike);
 
+        // 特殊处理BETWEEN操作符
+        // 先检查是否有BETWEEN子句
+        if (sqlLike.toUpperCase().includes('BETWEEN')) {
+            // 尝试直接匹配BETWEEN模式
+            const betweenRegex = /(\w+(?:\.\w+)?)\s+BETWEEN\s+(\d+)\s+AND\s+(\d+)/i;
+            const betweenMatch = sqlLike.match(betweenRegex);
+
+            if (betweenMatch) {
+                const field = betweenMatch[1];
+                const min = parseInt(betweenMatch[2], 10);
+                const max = parseInt(betweenMatch[3], 10);
+
+                // console.log(`直接匹配BETWEEN: ${field} BETWEEN ${min} AND ${max}`);
+
+                // 创建条件
+                query.conditions.push({
+                    type: 'simple',
+                    condition: {
+                        field: field,
+                        operator: 'BETWEEN',
+                        value: [min, max]
+                    }
+                });
+
+                // 提取ORDER BY
+                const orderMatch = sqlLike.match(/ORDER BY\s+(\w+(?:\.\w+)?)\s+(ASC|DESC)/i);
+                if (orderMatch) {
+                    query.orderBy = {
+                        field: orderMatch[1],
+                        direction: orderMatch[2].toUpperCase() as 'ASC' | 'DESC'
+                    };
+                }
+
+                // 提取LIMIT
+                const limitMatch = sqlLike.match(/LIMIT\s+(\d+)/i);
+                if (limitMatch) {
+                    query.limit = parseInt(limitMatch[1]);
+                }
+
+                // console.log("直接解析BETWEEN结果:", JSON.stringify(query, null, 2));
+                return query;
+            }
+        }
+
+        // 如果没有直接匹配到BETWEEN，使用原来的解析逻辑
         // 提取WHERE条件
         let whereClause = sqlLike;
         if (sqlLike.toUpperCase().includes('WHERE')) {
@@ -212,14 +257,17 @@ export class ItemFilter {
                         // 解析简单条件
                         const condition: Condition = { field: '', operator: '=' as Operator, value: null };
                         this.parseSimpleCondition(currentCondition.trim(), condition);
-                        simpleCondition.condition = condition;
 
-                        result.conditions.push(simpleCondition);
+                        // 只有当字段名不为空时才添加条件
+                        if (condition.field) {
+                            simpleCondition.condition = condition;
+                            result.conditions.push(simpleCondition);
+                            // 只有当添加了条件时才添加逻辑运算符
+                            result.logicalOperators.push(logicalOpMatch[1].toUpperCase() as LogicalOperator);
+                        }
                         currentCondition = '';
                     }
 
-                    // 添加逻辑运算符
-                    result.logicalOperators.push(logicalOpMatch[1].toUpperCase() as LogicalOperator);
                     i += logicalOpMatch[0].length;
                 } else {
                     currentCondition += conditionStr[i];
@@ -240,9 +288,12 @@ export class ItemFilter {
             // 解析简单条件
             const condition: Condition = { field: '', operator: '=' as Operator, value: null };
             this.parseSimpleCondition(currentCondition.trim(), condition);
-            simpleCondition.condition = condition;
 
-            result.conditions.push(simpleCondition);
+            // 只有当字段名不为空时才添加条件
+            if (condition.field) {
+                simpleCondition.condition = condition;
+                result.conditions.push(simpleCondition);
+            }
         }
 
         return result;
@@ -263,27 +314,43 @@ export class ItemFilter {
             let valueStr = parts.slice(2).join('').trim();
             valueStr = valueStr.replace(/\)+$/g, '');
 
+            // console.log(`解析条件: 字段=${condition.field}, 操作符=${condition.operator}, 值字符串=${valueStr}`);
+
             // 处理特殊值类型
             if (condition.operator === 'IN' || condition.operator === 'NOT IN') {
                 condition.value = valueStr.replace(/^\(|\)$/g, '').split(',').map(v => this.parseValue(v.trim()));
             } else if (condition.operator === 'BETWEEN') {
-                // 处理BETWEEN操作符
-                // 检查是否是我们预处理的格式 (min,max)
-                const commaMatch = valueStr.match(/\s*(\d+),(\d+)\s*/);
-                if (commaMatch) {
-                    const [_, min, max] = commaMatch;
-                    condition.value = [this.parseValue(min), this.parseValue(max)];
+                // 完全重写BETWEEN解析逻辑
+                // console.log(`处理BETWEEN: ${valueStr}`);
+
+                // 尝试匹配 "value1 AND value2" 格式
+                const andPattern = /^\s*(\d+)\s+AND\s+(\d+)\s*$/i;
+                const andMatch = valueStr.match(andPattern);
+
+                if (andMatch) {
+                    // console.log(`匹配AND格式: ${andMatch[1]}, ${andMatch[2]}`);
+                    condition.value = [
+                        parseInt(andMatch[1], 10),
+                        parseInt(andMatch[2], 10)
+                    ];
                 } else {
-                    // 尝试标准格式 min AND max
-                    const betweenMatch = valueStr.match(/\s*(\d+)\s+AND\s+(\d+)\s*/i);
-                    if (betweenMatch) {
-                        const [_, min, max] = betweenMatch;
-                        condition.value = [this.parseValue(min), this.parseValue(max)];
+                    // 尝试匹配逗号分隔格式 "value1,value2"
+                    const commaPattern = /^\s*(\d+)\s*,\s*(\d+)\s*$/;
+                    const commaMatch = valueStr.match(commaPattern);
+
+                    if (commaMatch) {
+                        // console.log(`匹配逗号格式: ${commaMatch[1]}, ${commaMatch[2]}`);
+                        condition.value = [
+                            parseInt(commaMatch[1], 10),
+                            parseInt(commaMatch[2], 10)
+                        ];
                     } else {
                         console.error(`BETWEEN语法错误: ${valueStr}`);
                         condition.value = [0, 0]; // 默认值，避免后续错误
                     }
                 }
+
+                // console.log(`BETWEEN最终值: [${condition.value[0]}, ${condition.value[1]}]`);
             } else {
                 condition.value = this.parseValue(valueStr);
             }
@@ -301,10 +368,10 @@ export class ItemFilter {
     }
 
     // 执行过滤
-    async execute(page: number = 0, size: number = 50, excludeData: boolean): Promise<{ isLast: boolean, data: Item[], total: number, ids?: number[] }> {
+    async execute(page: number = 0, size: number = 50): Promise<{ isLast: boolean, data: Item[], total: number, ids?: number[] }> {
         // 如果没有条件，返回所有项目
         if (this.query.conditions.length === 0) {
-            return await itemRepo.findAll(() => true, page, size, undefined, excludeData);
+            return await itemRepo.findAll(() => true, page, size);
         }
 
         // 创建过滤函数
@@ -312,25 +379,12 @@ export class ItemFilter {
             return this.evaluateNestedConditions(item, this.query.conditions, this.query.logicalOperators);
         };
 
-        // 获取排序函数
-        let sortFn: ((a: Item, b: Item) => number) | undefined;
-        if (this.query.orderBy) {
-            sortFn = (a: Item, b: Item) => {
-                const aValue = this.getItemValue(a, this.query.orderBy!.field);
-                const bValue = this.getItemValue(b, this.query.orderBy!.field);
-
-                if (aValue < bValue) return this.query.orderBy!.direction === 'ASC' ? -1 : 1;
-                if (aValue > bValue) return this.query.orderBy!.direction === 'ASC' ? 1 : -1;
-                return 0;
-            };
-        }
 
         // 使用itemRepo执行查询
         const limit = this.query.limit || size;
-        const result = await itemRepo.findAll(filterFn, page, limit, sortFn, excludeData);
-
-        // console.log(`查询结果: ${result.total} 条记录`, page, limit);
-        return result;
+        const result = await itemRepo.listAllIds(filterFn, { index: this.query.orderBy?.field || 'pubDate', direction: (this.query.orderBy ? (this.query.orderBy?.direction === 'DESC' ? 'prev' : 'next') : 'prev') });
+        const data = await itemRepo.getbyIdsInOrder(result.slice(page * limit, (page + 1) * limit));
+        return { isLast: data.length != limit, data, total: result.length, ids: result };
     }
 
 
@@ -513,13 +567,25 @@ export class ItemFilter {
 
     // 评估嵌套条件
     private evaluateNestedConditions(item: Item, conditions: NestedCondition[], logicalOperators: LogicalOperator[]): boolean {
-        if (conditions.length === 0) {
+        if (!conditions || conditions.length === 0) {
             return true;
+        }
+
+        // 确保第一个条件存在
+        if (!conditions[0]) {
+            console.error('条件数组中的第一个条件为undefined');
+            return false;
         }
 
         let result = this.evaluateSingleNestedCondition(item, conditions[0]);
 
         for (let i = 0; i < logicalOperators.length; i++) {
+            // 确保下一个条件存在
+            if (!conditions[i + 1]) {
+                console.error(`条件数组中索引 ${i + 1} 的条件为undefined`);
+                continue;
+            }
+
             const nextResult = this.evaluateSingleNestedCondition(item, conditions[i + 1]);
 
             if (logicalOperators[i] === 'AND') {
@@ -534,6 +600,12 @@ export class ItemFilter {
 
     // 评估单个嵌套条件
     private evaluateSingleNestedCondition(item: Item, nestedCondition: NestedCondition): boolean {
+        // 添加空值检查
+        if (!nestedCondition) {
+            console.error('嵌套条件为undefined');
+            return false;
+        }
+
         if (nestedCondition.type === 'simple' && nestedCondition.condition) {
             const condition = nestedCondition.condition;
             const itemValue = this.getItemValue(item, condition.field);
@@ -546,6 +618,7 @@ export class ItemFilter {
             );
         }
 
+        console.error(`无效的嵌套条件类型: ${nestedCondition.type}`);
         return false;
     }
 
@@ -577,7 +650,7 @@ const filter = new ItemFilter();
 
 // 使用 quickstart
 export async function filterItems(sqlQuery: string, page: number = 0, size: number = 50): Promise<{ isLast: boolean, data: Item[], total: number, ids?: number[] }> {
-    return await filter.setQuery(sqlQuery).execute(page, size, true);
+    return await filter.setQuery(sqlQuery).execute(page, size)
 }
 
 export async function filterItemIds(sqlQuery: string): Promise<number[]> {

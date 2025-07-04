@@ -1,5 +1,5 @@
 
-import { DbStore, IndexedDB, getOne } from '../utils/dbHelper'
+import { DbStore, IndexedDB, SortDefine, getOne } from '../utils/dbHelper'
 
 import { Feed, Group, Item } from './model';
 
@@ -8,7 +8,7 @@ const { create,
     update,
     remove,
     getAll,
-    listAll, findAll, count, countAll, listAllIds, getIdsInTimeRange, findTimeRange, whereOne, openStore, exists
+    listAll, findAll, count, countAll, listAllIds, getByIdsInOrder, getIdsInTimeRange, findTimeRange, whereOne, openStore, exists
 } = IndexedDB(db => {
     // 创建 Groups 对象存储
     if (!db.objectStoreNames.contains('groups')) {
@@ -67,15 +67,8 @@ class Repo<T extends DbStore> {
             return getAll(this.storename)
         }
     }
-    async findAll(conditionFn: (item: T) => boolean, page: number = 0, size: number = 50, sortFn?: (x: T, y: T) => number, excludeData?: boolean): Promise<Page<T>> {
-        const data = excludeData ? [] : await findAll(this.storename, conditionFn, size, page, sortFn)
-        if (this.storename == 'items') {
-            const ids = await listAllIds(this.storename, conditionFn)
-            return { isLast: data.length != size, data, total: ids.length, ids }
-        }
-        const total = await countAll(this.storename, conditionFn)
-        return { isLast: data.length != size, data, total }
-    }
+
+
     async count(): Promise<number> {
         return count(this.storename)
     }
@@ -113,10 +106,17 @@ class ItemRepo extends Repo<Item> {
         return { isLast: data.length != size, data, total }
     }
 
-    async listAllIds(conditionFn: (item: Item) => boolean): Promise<number[]> {
-        return await listAllIds(this.storename, conditionFn)
+    async listAllIds(conditionFn: (item: Item) => boolean, sort?: SortDefine): Promise<number[]> {
+        return await listAllIds(this.storename, conditionFn, sort)
     }
-
+    async getbyIdsInOrder(ids: number[]): Promise<Item[]> {
+        return await getByIdsInOrder(this.storename, ids)
+    }
+    async findAll(conditionFn: (item: Item) => boolean, page: number = 0, size: number = 50): Promise<Page<Item>> {
+        const data = await findAll(this.storename, conditionFn, size, page)
+        const total = await countAll(this.storename, conditionFn)
+        return { isLast: data.length != size, data, total }
+    }
     async countByFeedId(feedId: number): Promise<number> {
         const store0 = await openStore(this.storename)
         const feedIndex = store0.index('feedId')

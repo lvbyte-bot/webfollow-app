@@ -155,15 +155,15 @@ export async function listItem(id: any, type: LsItemType, page: number = 0, only
             break
         case LsItemType.SAVED:
             const ids: Set<number> = new Set(id)
-            res = (await itemRepo.findAll(item => filterItem0(item, (id) => ids.has(id), onlyUnread, unReadItemIds), page, 50))
+            res = (await itemRepo.findAll(item => filterItem0(item, (id) => ids.has(id), onlyUnread, unReadItemIds), page))
             break
         case LsItemType.ITEMS:
-            const id2Index = id.map((i: any, index: number) => ({ i, index })).reduce((acc: any, item: any) => {
-                acc[item.i] = item.index
-                return acc
-            }, {})
-            let itemIds: Set<number> = new Set(id)
-            res = (await itemRepo.findAll(item => filterItem0(item, (id) => itemIds.has(id), onlyUnread, unReadItemIds), page, 50, (x: Item, y: Item) => id2Index[x.id] > id2Index[y.id] ? 1 : -1))
+            // let itemIds: Set<number> = new Set(id)
+            // res = (await itemRepo.findAll(item => filterItem0(item, (id) => itemIds.has(id), onlyUnread, unReadItemIds), page))
+            //  ids sub page 
+            const subIds = id.filter((id0: number) => filterItemId(id0, onlyUnread, unReadItemIds)).slice(page * 50, (page + 1) * 50)
+            console.log('subids', subIds)
+            res = { isLast: subIds.length < 50, data: await itemRepo.getbyIdsInOrder(subIds), total: id.length, ids: id }
             break
         case LsItemType.ALL:
             res = (await itemRepo.findAll(item => filterItem0(item, () => true, onlyUnread, unReadItemIds), page))
@@ -179,7 +179,7 @@ export async function listItem(id: any, type: LsItemType, page: number = 0, only
     if (type != LsItemType.ITEMS) {
         res.data.sort((x: Item, y: Item) => x.rank && y.rank ? x.rank - y.rank : y.pubDate - x.pubDate)
     }
-    return { data: res.data.map(map), isLast: res.isLast, total: res.total, ids: res.ids }
+    return { ...res, data: res.data.map(map) }
 }
 
 /**
@@ -364,9 +364,9 @@ export async function search(keyword: string): Promise<{ items: FeedItem[], feed
     // 通过 repository 查询
     keyword = keyword.toLowerCase()
     const items = await itemRepo.findAll(item => item.title.toLowerCase().includes(keyword), 0, 500);
-    const feeds = await feedRepo.findAll(feed => feed.title.toLowerCase().includes(keyword) || feed.url.toLowerCase().includes(keyword), 0, 300);
-    const groups = await groupRepo.findAll(group => group.title.toLowerCase().includes(keyword), 0, 300);
-    return { items: items.data.map(map), feeds: feeds.data.map(mapFeed), groups: groups.data };
+    const feeds = await feedRepo.listAll(feed => feed.title.toLowerCase().includes(keyword) || feed.url.toLowerCase().includes(keyword));
+    const groups = await groupRepo.listAll(group => group.title.toLowerCase().includes(keyword));
+    return { items: items.data.map(map), feeds: feeds.map(mapFeed), groups };
 }
 
 
@@ -376,6 +376,10 @@ function filterItem(item: Item, feedIds: Set<number>, onlyUnread: boolean = fals
 
 function filterItem0(item: Item, itemIdFilter: (id: any) => boolean, onlyUnread: boolean = false, unReadItemIds: Set<number>): boolean {
     return itemIdFilter(item.id) && (!onlyUnread || unReadItemIds.has(item.id))
+}
+
+function filterItemId(id: number, onlyUnread: boolean = false, unReadItemIds: Set<number>): boolean {
+    return (!onlyUnread || unReadItemIds.has(id))
 }
 
 function map(item: Item): FeedItem {
