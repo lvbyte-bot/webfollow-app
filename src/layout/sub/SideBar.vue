@@ -37,10 +37,13 @@
       <!-- <v-list-subheader>FEEDS</v-list-subheader> -->
       <div class="v-list-subheader" style="padding: 0.3rem;">
         <div class="d-flex justify-space-between w-100">
-          <span>FEEDS</span>
+          <span class="d-flex align-center">FEEDS <v-btn variant="text" @click="exportOPML" icon="mdi-export"
+              size="small" title="导出OPML" height="20" width="20"></v-btn></span>
           <div>
+
             <v-btn variant="text" to="/subscribe" icon="mdi-plus-circle-outline" size="small" title="订阅" height="20"
-              width="20"></v-btn>
+              width="20" class="mr-1"></v-btn>
+
           </div>
         </div>
       </div>
@@ -417,6 +420,56 @@ const handleFilterAction = (action: string) => {
         settingsStore.saveToLocalStorage();
       }
     }
+  }
+};
+
+const exportOPML = async () => {
+  try {
+    // Create OPML content
+    let opmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    opmlContent += '<opml version="1.0">\n';
+    opmlContent += '  <head>\n';
+    opmlContent += '    <title>WebFollow Subscriptions</title>\n';
+    opmlContent += `    <dateCreated>${new Date().toISOString()}</dateCreated>\n`;
+    opmlContent += '  </head>\n';
+    opmlContent += '  <body>\n';
+
+    // Add groups and feeds
+    feedStore.subscriptions.forEach(group => {
+      if (group.feeds.length > 0) {
+        if (group.title !== 'All') {
+          opmlContent += `    <outline text="${group.title}" title="${group.title}">\n`;
+        }
+
+        group.feeds.forEach(feed => {
+          opmlContent += `      <outline type="rss" text="${feed.title}" title="${feed.title}" xmlUrl="${feed.url}" htmlUrl="${feed.siteUrl || ''}" />\n`;
+        });
+
+        if (group.title !== 'All') {
+          opmlContent += '    </outline>\n';
+        }
+      }
+    });
+
+    opmlContent += '  </body>\n';
+    opmlContent += '</opml>';
+
+    // Create download link
+    const blob = new Blob([opmlContent], { type: 'text/xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'webfollow-subscriptions.opml';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    // Show success message
+    tipStr.value = "OPML导出成功";
+  } catch (e) {
+    console.error("导出OPML失败", e);
+    tipStr.value = "导出OPML失败";
   }
 };
 </script>
