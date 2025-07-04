@@ -1,81 +1,35 @@
 <template>
-  <v-list-item :class="{  readly: item.isRead }" class="rounded hover-bg "   >
-
-    <v-list-item-title class="d-flex justify-space-between align-center">
-      
+  <v-list-item :class="{ readly: item.isRead }" class="rounded hover-bg ">
+    <div class="text-item-warp">
       <div class="text-item">
         <v-icon :color="item.isRead ? 'grey' : 'primary'">
-        {{ item.isRead ? "" : "mdi-circle-medium" }}
-      </v-icon>
-        <div class="d-flex align-center ">
-          <img class="noclick mr-2 rounded" :src=" item?.feed?.icon" onerror="this.src='/logo.svg'" style="width:1rem" >
-            </img>
-        <small
-          class="text-truncate  text-medium-emphasis "
-          v-text="getSource()"
-        ></small>
-        </div>
-        
+          {{ item.isRead ? "" : "mdi-circle-medium" }}
+        </v-icon>
         <div class="text-truncate">
           <span class="mr-2 text-body-1 title" v-text="item.title"></span>
           <span class="text-body-2 text-medium-emphasis" v-text="item.summary">
           </span>
         </div>
+        <div class="d-flex align-center ">
+          <img class="noclick mr-2 rounded" :src="item?.feed?.icon" onerror="this.src='/logo.svg'" style="width:1rem">
+          </img>
+          <small class="text-truncate  text-medium-emphasis " v-text="getSource()"></small>
+        </div>
       </div>
-      <span
-        class="sub-text text-caption ml-2 flex-shrink-0"
-        v-text="item.datestr"
-      >
+      <span class="sub-text text-caption ml-2 flex-shrink-0" v-text="item.datestr">
       </span>
       <div class="buttons">
-        <!-- <v-btn
-            size="small"
-              variant="text"
-              icon
-              :title="item.feed?.title"
-              :to="'/f/' + item?.feed?.id"
-              @click.stop="()=>{}"
-            >
-            <img class="noclick" :src=" item?.feed?.icon" onerror="this.src='/logo.svg'" style="width:16px">
-            </img>
-        </v-btn> -->
-        <!-- <v-btn
-          size="small"
-          variant="text"
-          icon
-          :title="item.isRead ? '未读' : '已读'"
-          @click.stop="toggleRead"
-        >
-          <v-icon>{{
-            item.isRead ? "mdi-radiobox-blank" : "mdi-radiobox-marked"
-          }}</v-icon>
-        </v-btn> -->
-
-        <v-btn
-          size="small"
-          height="24"
-          width="24"
-          icon="mdi-open-in-new"
-          variant="text"
-          title="打开原文"
-          class="mr-2"
-          :href="item.link"
-        ></v-btn>
-        <v-btn
-          size="small"
-          variant="text"
-          height="24"
-          width="24"
-          icon
-          title="稍后阅读"
-          @click.stop="toggleSaved"
-        >
+        <v-btn size="small" height="24" width="24" icon="mdi-open-in-new" variant="text" title="打开原文" class="mr-2"
+          :href="item.link"></v-btn>
+        <v-btn size="small" variant="text" height="24" width="24" icon title="稍后阅读" @click.stop="toggleSaved">
           <v-icon>{{
             item.isSaved ? "mdi-playlist-minus" : "mdi-playlist-plus"
           }}</v-icon>
         </v-btn>
       </div>
-    </v-list-item-title>
+    </div>
+
+
   </v-list-item>
 </template>
 
@@ -105,9 +59,11 @@ function getSource() {
 .readly {
   opacity: 0.6;
 }
+
 .readly .title {
   font-weight: none;
 }
+
 .hover-bg:hover {
   background-color: rgba(var(--v-theme-surface-variant), 0.1);
 }
@@ -121,24 +77,35 @@ function getSource() {
 .buttons {
   display: none;
 }
+
 .text-item {
   display: grid;
-  grid-template-columns: 1.5rem 150px 1fr;
+  grid-template-columns: 1rem 1fr 8rem;
   gap: 1rem;
 }
+
 .hover-bg:hover .buttons {
   display: block;
 }
+
 .hover-bg:hover .sub-text {
   display: none;
 }
 
-.v-list-item-title {
-  flex: 1;
-  min-width: 0;
+.text-item-warp {
+  display: grid;
+  grid-template-columns: 1fr 5rem;
+  align-items: center;
+  gap: 1rem;
 }
 
 .title {
   font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .text-item {
+    grid-template-columns: 1rem 1fr 1rem;
+  }
 }
 </style>

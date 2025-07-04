@@ -39,7 +39,7 @@
         <div class="d-flex justify-space-between w-100">
           <span>FEEDS</span>
           <div>
-            <v-btn variant="text" to="/subscribe" icon="mdi-plus" size="small" title="订阅" height="20"
+            <v-btn variant="text" to="/subscribe" icon="mdi-plus-circle-outline" size="small" title="订阅" height="20"
               width="20"></v-btn>
           </div>
         </div>
