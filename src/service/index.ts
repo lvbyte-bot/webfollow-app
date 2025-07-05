@@ -161,8 +161,8 @@ export async function listItem(id: any, type: LsItemType, page: number = 0, only
             // let itemIds: Set<number> = new Set(id)
             // res = (await itemRepo.findAll(item => filterItem0(item, (id) => itemIds.has(id), onlyUnread, unReadItemIds), page))
             //  ids sub page 
-            const subIds = id.filter((id0: number) => filterItemId(id0, onlyUnread, unReadItemIds)).slice(page * 50, (page + 1) * 50)
-            console.log('subids', subIds)
+            // const subIds = id.filter((id0: number) => filterItemId(id0, onlyUnread, unReadItemIds)).slice(page * 50, (page + 1) * 50)
+            const subIds = id.slice(page * 50).filter((id0: number) => filterItemId(id0, onlyUnread, unReadItemIds)).slice(0, 50)
             res = { isLast: subIds.length < 50, data: await itemRepo.getbyIdsInOrder(subIds), total: id.length, ids: id }
             break
         case LsItemType.ALL:
