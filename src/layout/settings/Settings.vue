@@ -5,7 +5,7 @@
         <!-- 左侧导航菜单 -->
         <v-col lg="3" cols="12" class="pa-0 sidebar">
           <v-list rounded class="sidebar">
-            <v-list-item subtitle="WebFollow" :title="appStore.authInfo.username" class="mb-6">
+            <v-list-item subtitle="IFeed" :title="appStore.authInfo.username" class="mb-6">
               <template #prepend>
                 <v-avatar size="36px" color="primary" :title="appStore.authInfo.username">
                   <!-- {{ appStore.authInfo.username.substring(0, 2) }} -->

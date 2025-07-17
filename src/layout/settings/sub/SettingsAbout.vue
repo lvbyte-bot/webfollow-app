@@ -1,12 +1,12 @@
 <template>
   <v-container>
     <v-card flat class="pa-1">
-      <v-list-item subtitle="0.8.7" title="WebFollow" class="mb-6">
+      <v-list-item subtitle="0.8.7" title="IFeed" class="mb-6">
         <template #prepend>
           <v-img src="/logo.svg" width="64px" class="mr-3"></v-img>
         </template>
       </v-list-item>
-      WebFollow是一个基于RSS fever api 协议的开源阅读器，未来将支持google reader
+      IFeed是一个基于RSS fever api 协议的开源阅读器，未来将支持google reader
       等开放rss api协议, 集成AI能力 ,开源协议为 GPL协议
 
       <br />
