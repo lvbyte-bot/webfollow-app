@@ -17,7 +17,7 @@ declare namespace CryptoJS {
 }
 
 
-declare const webfollowApp: {
+declare const ifeedApp: {
   getUnReadUrl: (currentUrl: string, isNext: boolean) => string,
   toogleSidebar: () => void,
   toggleItemView: () => void,
@@ -26,8 +26,13 @@ declare const webfollowApp: {
   view: {
     changeEntryCurrentIndex: (index: number) => void
   },
+  filterItems(sqlQuery: string, page: number = 0, size: number = 50): Promise<{ data: FeedItem[], isLast: boolean }>,
   // 消息提示
-  tip: (msg: string, time = 5000) => void,
+  tip: (msg: string, time = 8000) => void,
   // 当前页面标记为已读
   markCurrentPageRead: () => void
+}
+
+declare const responsiveVoice: {
+  speak: (text: string, voice: string, options: any) => void
 }
