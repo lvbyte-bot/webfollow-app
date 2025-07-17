@@ -43,7 +43,7 @@ export const useAppStore = defineStore('app', () => {
         settingsStore.general.pullDataFail = true
         settingsStore.saveToLocalStorage()
         loading.value = true
-        webfollowApp.tip('准备同步数据中...')
+        ifeedApp.tip('准备同步数据中...')
         if (type == '') {
             await refresh(async () => {
                 await pullData2Local()
@@ -66,7 +66,7 @@ export const useAppStore = defineStore('app', () => {
         loading.value = false
         setTimeout(() => {
             initNav(pageRoute)
-            webfollowApp.tip('同步完成')
+            ifeedApp.tip('同步完成')
         }, 1000)
         lastRefeshTime.value = Math.round(new Date().getTime() / 1000)
         info('sync end')

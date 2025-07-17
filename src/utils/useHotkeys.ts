@@ -12,7 +12,7 @@ export function useHotkeys() {
     let currentSearchIndex = 0
     let searchResultTotal = 0
 
-    webfollowApp.view = { changeEntryCurrentIndex: (index: number) => currentIndex = index }
+    ifeedApp.view = { changeEntryCurrentIndex: (index: number) => currentIndex = index }
 
     const handleKeydown = (e: KeyboardEvent) => {
         const topReader = document.querySelector('.v-main-top .cover.reading') as HTMLElement
@@ -44,7 +44,7 @@ export function useHotkeys() {
             case 'b':
                 // 打开侧边栏
                 if (e.ctrlKey) {
-                    webfollowApp.toogleSidebar()
+                    ifeedApp.toogleSidebar()
                     return
                 }
                 break
@@ -85,16 +85,16 @@ export function useHotkeys() {
                     break
                 case 'n':
                     if (e.shiftKey) {
-                        router.push(webfollowApp.getUnReadUrl(route.fullPath, false))
+                        router.push(ifeedApp.getUnReadUrl(route.fullPath, false))
                     } else {
-                        router.push(webfollowApp.getUnReadUrl(route.fullPath, true))
+                        router.push(ifeedApp.getUnReadUrl(route.fullPath, true))
                     }
                     break
                 case 'v':
-                    webfollowApp.toggleItemView()
+                    ifeedApp.toggleItemView()
                     break
                 case 'u':
-                    webfollowApp.toggleItemUnread()
+                    ifeedApp.toggleItemUnread()
                     break
                 case '/':
                 case 'k':

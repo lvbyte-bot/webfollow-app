@@ -221,7 +221,7 @@ function watchLoadMore() {
     if (v) {
       // 加载时自动将文章已读
       if (settingsStore.general.autoRead) {
-        webfollowApp.markCurrentPageRead();
+        ifeedApp.markCurrentPageRead();
       }
     }
     if (v && !itemStore.isLast) {
@@ -420,15 +420,15 @@ onMounted(() => {
       }
     );
   }
-  webfollowApp.toggleItemUnread = () => changeOnlyUnread(!onlyUnread.value);
-  webfollowApp.toggleItemView = () => {
+  ifeedApp.toggleItemUnread = () => changeOnlyUnread(!onlyUnread.value);
+  ifeedApp.toggleItemView = () => {
     const currentView = viewSeleted.value[0];
     const index = views.map((v) => v.value).findIndex((v) => v == currentView);
     const next = (index + 1) % views.length;
     viewSeleted.value = [views[next].value as ViewMode];
   };
   // 当前页标记已读 （按最后一条item之前的时间）
-  webfollowApp.markCurrentPageRead = () => {
+  ifeedApp.markCurrentPageRead = () => {
     const itemIds = itemStore.items
       .filter((item) => item.isRead == false)
       .map((item) => item.id);

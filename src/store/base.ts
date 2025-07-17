@@ -40,7 +40,7 @@ export const useBaseStore = defineStore('base', () => {
                 try {
                     await Promise.all(batch.map((id) => read(id)));
                 } catch (error) {
-                    webfollowApp.tip("网络异常");
+                    ifeedApp.tip("网络异常");
                     // Continue with next batch even if current batch fails
                     continue;
                 }
@@ -66,7 +66,7 @@ export const useBaseStore = defineStore('base', () => {
                 try {
                     await Promise.all(batch.map((id) => unread(id)));
                 } catch (error) {
-                    webfollowApp.tip("网络异常");
+                    ifeedApp.tip("网络异常");
                     // Continue with next batch even if current batch fails
                     continue;
                 }

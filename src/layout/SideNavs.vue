@@ -38,7 +38,7 @@
         <div class="mb-2 d-flex justify-space-between align-center">
           <div class="d-flex align-center cursor-pointer" @click="router.push('/')">
             <v-img src="/logo.svg" alt="" width="30" class="mx-2" />
-            <span class="font-weight-bold">WebFollow</span>
+            <span class="font-weight-bold">IFeed</span>
           </div>
           <!-- <c-btn id="menu-activator-1" icon size="small">
             <v-avatar size="24px" color="primary" :title="appStore.authInfo.username">
@@ -191,7 +191,7 @@ watch(hideSide, () => {
 
 onBeforeMount(() => {
   hideSide.value = settingsStore.appearance.hideSidebar;
-  webfollowApp.toogleSidebar = () => {
+  ifeedApp.toogleSidebar = () => {
     hideSide.value = !hideSide.value;
   };
 });

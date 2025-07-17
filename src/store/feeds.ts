@@ -181,7 +181,7 @@ export const useFeedsStore = defineStore('feeds', () => {
         return ''
     }
 
-    webfollowApp.getUnReadUrl = function (currentUrl: string, isNext: boolean = true): string {
+    ifeedApp.getUnReadUrl = function (currentUrl: string, isNext: boolean = true): string {
         if (isNext) {
             return getNextUnReadUrl(currentUrl)
         }

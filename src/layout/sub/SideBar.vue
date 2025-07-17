@@ -37,8 +37,8 @@
       <!-- <v-list-subheader>FEEDS</v-list-subheader> -->
       <div class="v-list-subheader" style="padding: 0.3rem;">
         <div class="d-flex justify-space-between w-100">
-          <span class="d-flex align-center">FEEDS <v-btn variant="text" @click="exportOPML" icon="mdi-export"
-              size="small" title="导出OPML" height="20" width="20"></v-btn></span>
+          <span class="d-flex align-center">FEEDS <v-btn class="ml-2" variant="text" @click="exportOPML"
+              icon="mdi-export" size="small" title="导出OPML" height="20" width="20"></v-btn></span>
           <div>
 
             <v-btn variant="text" to="/subscribe" icon="mdi-plus-circle-outline" size="small" title="订阅" height="20"
@@ -207,7 +207,7 @@ const tipStr = ref("");
 onMounted(() => {
   document.addEventListener("click", hideContextMenu);
   let clear: any;
-  webfollowApp.tip = (tip: string, time: number = 8000) => {
+  ifeedApp.tip = (tip: string, time: number = 8000) => {
     tipStr.value = tip;
     if (clear) {
       clearTimeout(clear);
@@ -435,7 +435,7 @@ const exportOPML = async () => {
     opmlContent += '  <body>\n';
 
     // Add groups and feeds
-    feedStore.subscriptions.forEach(group => {
+    feedStore.subscriptions?.forEach(group => {
       if (group.feeds.length > 0) {
         if (group.title !== 'All') {
           opmlContent += `    <outline text="${group.title}" title="${group.title}">\n`;

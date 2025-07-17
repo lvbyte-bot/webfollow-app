@@ -77,7 +77,7 @@ export async function pull() {
             if (total > syncItemIds.size) {
                 total = syncItemIds.size
             }
-            webfollowApp.tip('已同步' + total + '条')
+            ifeedApp.tip('已同步' + total + '条')
         } catch (e) {
             err(e, '同步item出错')
             // 等待3s
@@ -95,7 +95,7 @@ export async function pull() {
             await pullItems(with_ids)
         }
     } catch (e) {
-        webfollowApp.tip('网络开小差了，同步中断了')
+        ifeedApp.tip('网络开小差了，同步中断了')
         throw e
     }
 
