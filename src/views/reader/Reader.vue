@@ -191,6 +191,7 @@ onMounted(() => {
   border: 1px solid rgba(var(--v-border-color), 0);
   max-height: calc(60vh - 56px);
   overflow: hidden;
+  z-index: 100;
   img {
     height: 1.1rem;
     margin: 0;

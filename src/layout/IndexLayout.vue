@@ -1,15 +1,13 @@
 <template>
   <v-responsive @contextmenu.prevent>
     <v-app :theme="themeMode">
-      <side-nav />
+      <side-navs />
       <!-- 主体 -->
-      <v-main
-        :class="{
-          hideside: settingsStore.appearance.hideSidebar || mobile,
-          'h-screen': route.matched[1].components.default.__name == 'Items',
-          'm-main': mobile,
-        }"
-      >
+      <v-main :class="{
+        hideside: settingsStore.appearance.hideSidebar || mobile,
+        'h-screen': route.matched[1].components.default.__name == 'Items',
+        'm-main': mobile,
+      }">
         <div class="v-main-top"></div>
         <!-- 主体 -->
         <router-view></router-view>
@@ -24,7 +22,7 @@ import { onBeforeMount, onMounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useElResize } from "@/utils/useElResize";
 import { useSettingsStore, useFeedsStore } from "@/store";
-import SideNav from "./SideNav.vue";
+import SideNavs from "./SideNavs.vue";
 
 const settingsStore = useSettingsStore();
 const feedStore = useFeedsStore();

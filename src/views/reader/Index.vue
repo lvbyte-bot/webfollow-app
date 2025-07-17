@@ -1,113 +1,74 @@
 <template>
   <div class="overflow" ref="readerRef">
-    <div
-      class="top-sider v-toolbar__content px-2"
-      :class="{
-        'top-sider-border': scrollTop > 120 && !mobile,
-        'top-sider-hidden':
-          isScrollingDown && scrollTop > 960 && viewMode != 'column',
-      }"
-    >
+    <div class="top-sider v-toolbar__content px-2" :class="{
+      'top-sider-border': scrollTop > 120 && !mobile,
+      'top-sider-hidden':
+        isScrollingDown && scrollTop > 960 && viewMode != 'column',
+    }">
       <div class="prepend-bar">
         <slot name="prepend-bar"></slot>
       </div>
       <div class="top-sider-title mx-auto w-100">
         <v-dialog-transition>
-          <div
-            class="text-truncate text-subtitle-1"
-            v-show="scrollTop > 120 && !mobile"
-          >
+          <div class="text-truncate text-subtitle-1" v-show="scrollTop > 120 && !mobile">
             {{ item.title }} | <small v-text="getSource()"></small>
           </div>
         </v-dialog-transition>
       </div>
       <div class="append-bar">
         <slot name="append-bar">
-          <c-btn
-            icon
-            variant="text"
-            :loading="summarizing"
-            :disabled="!canSummarize"
-            title="AI 总结(快捷键：G)"
-            @click="generateSummary"
-            class="mr-2 entry-ai-summary"
-          >
-            <v-icon>mdi-auto-fix</v-icon>
+          <c-btn icon variant="text" :loading="summarizing" :disabled="!canSummarize" title="AI 总结(快捷键：G)"
+            @click="generateSummary()" class="entry-ai-summary" :color="summary ? 'primary' : ''">
+            <v-icon>mdi-creation-outline</v-icon>
           </c-btn>
-          <c-btn
+          <!-- <c-btn
             variant="text"
-            icon
-            title="稍后阅读(快捷键：F)"
-            @click="toggleSaved"
-            class="mr-2 entry-saved"
+            :color="readerType == 'CONTENT' ? 'primary' : ''"
+            title="加载网页全文(快捷键：W)"
+            icon="mdi-coffee-outline"
+            class="entry-content"
+            @click="
+              changeReadType(readerType == 'CONTENT' ? 'default' : 'CONTENT')
+            "
           >
-            <v-icon>{{
-              item.isSaved ? "mdi-playlist-minus" : "mdi-playlist-plus"
-            }}</v-icon>
+          </c-btn> -->
+
+          <c-btn variant="text" icon title="稍后阅读(快捷键：F)" @click="toggleSaved" class=" entry-saved">
+            <v-icon :color="item.isSaved ? 'primary' : ''">
+              mdi-bookmark-outline</v-icon>
           </c-btn>
-          <c-btn
-            variant="text"
-            :color="readerType == 'default' ? '' : 'primary'"
-            title="内嵌网页(快捷键：I)"
-            icon=" mdi-apple-safari"
-            class="entry-inner"
-            @click="readerType = readerType == 'default' ? 'HTML' : 'default'"
-          >
+          <c-btn variant="text" :color="readerType == 'HTML' ? 'primary' : ''" title="内嵌网页(快捷键：I)"
+            icon=" mdi-compass-outline" class="entry-inner  "
+            @click="readerType = readerType == 'HTML' ? 'default' : 'HTML'">
           </c-btn>
-          <c-btn
-            variant="text"
-            icon
-            :title="item.isRead ? '未读(快捷键：M)' : '已读(快捷键：M)'"
-            @click.stop="toggleRead"
-            class="entry-read"
-          >
+          <c-btn variant="text" icon :title="item.isRead ? '未读(快捷键：M)' : '已读(快捷键：M)'" @click.stop="toggleRead"
+            class="entry-read">
             <v-icon>{{
               item.isRead ? "mdi-circle-outline" : "mdi-circle"
-            }}</v-icon>
+              }}</v-icon>
           </c-btn>
         </slot>
       </div>
     </div>
     <slot name="header"></slot>
+    <!-- <text-speaker></text-speaker> -->
+
     <v-container class="reader-warp" @contextmenu.stop>
       <slot name="prepend"></slot>
       <slot>
-        <iframe
-          class="iframe"
-          v-if="readerType == 'HTML'"
-          :src="item.link"
-          frameborder="0"
-          referrerpolicy="origin"
-          sandbox="allow-same-origin allow-popups allow-downloads allow-forms allow-scripts"
-        ></iframe>
-        <image-reader
-          v-else-if="item?.type == 'IMAGE'"
-          :item="item"
-          :reader-ref="readerRef"
-        />
-        <basic-reader
-          v-else-if="item?.type == 'BASIC'"
-          :item="item"
-          :reader-ref="readerRef"
-        >
+
+        <iframe class="iframe" v-if="readerType == 'HTML'" :src="item.link" frameborder="0" referrerpolicy="origin"
+          sandbox="allow-same-origin allow-popups allow-downloads allow-forms allow-scripts"></iframe>
+        <image-reader v-else-if="item?.type == 'IMAGE'" :item="item" :reader-ref="readerRef" />
+        <basic-reader v-else-if="item?.type == 'BASIC'" :item="item" :reader-ref="readerRef"
+          @force-refresh="generateSummary(true)">
           <div>
             <slot name="chapter"></slot>
-            <v-btn
-              v-show="isScrollingDown && scrollTop > 960"
-              class="mx-5"
-              size="small"
-              variant="text"
-              icon="mdi-arrow-up"
-              title="回到顶部"
-              @click="scrollTo(0)"
-            ></v-btn>
+            <v-btn v-show="isScrollingDown && scrollTop > 960" class="mx-5" size="small" variant="text"
+              icon="mdi-arrow-up" title="回到顶部" @click="scrollTo(0)"></v-btn>
           </div>
         </basic-reader>
-        <podcast-reader
-          v-else-if="item?.type == 'PODCAST'"
-          :item="item"
-          :reader-ref="readerRef"
-        />
+        <podcast-reader v-else-if="item?.type == 'PODCAST'" :item="item" :reader-ref="readerRef" />
         <video-reader :item="item" v-else-if="item.type == 'VIDEO'" />
       </slot>
     </v-container>
@@ -125,6 +86,7 @@ import {
   provide,
   onUnmounted,
   inject,
+  Ref,
 } from "vue";
 import { useAppStore, useSettingsStore } from "@/store";
 import { FeedItem } from "@/service/types";
@@ -134,7 +96,10 @@ import BasicReader from "./sub/BasicReader.vue";
 import ImageReader from "./sub/ImageReader.vue";
 import VideoReader from "./sub/VideoReader.vue";
 import PodcastReader from "./sub/PodcastReader.vue";
+// import { extractContentFromUrl } from "@/utils/extContext";
 import { Marked } from "@/service";
+import { generateArticleSummary } from "@/utils/aiSummary";
+// import { html2md, md2html } from "@/utils/mdUtils";
 import { summarySymbol, summarizingSymbol } from "./InjectionSymbols";
 import { viewModeSymbol } from "../InjectionSymbols";
 
@@ -146,7 +111,7 @@ const props = defineProps<{
 }>();
 const { scrollTop, scrollTo } = useScroll(readerRef);
 const { mobile } = useDisplay();
-const readerType = ref("default");
+const readerType: Ref<"HTML" | "default" | "CONTENT"> = ref("default");
 const lastScrollTop = ref(0);
 const isScrollingDown = ref(false);
 
@@ -184,8 +149,31 @@ watch(
         pre?.addEventListener("click", copyCode);
       });
     }, 100);
+    // changeReadType(readerType.value);
   }
 );
+
+// let cacheItems: any = {};
+
+// async function changeReadType(type: "HTML" | "default" | "CONTENT") {
+//   readerType.value = type;
+//   if (type == "CONTENT") {
+//     if (!cacheItems[props.item.id]) {
+//       cacheItems[props.item.id] = {
+//         html: props.item.html,
+//         description: props.item.description,
+//       };
+//     }
+//     const r = await extractContentFromUrl(props.item.link);
+//     props.item.description = html2md(r.content || r.error || "-");
+//     props.item.html = md2html(props.item.description);
+//   } else if (type == "default") {
+//     if (cacheItems[props.item.id]) {
+//       props.item.description = cacheItems[props.item.id].description;
+//       props.item.html = cacheItems[props.item.id].html;
+//     }
+//   }
+// }
 
 const appStore = useAppStore();
 const settingsStore = useSettingsStore();
@@ -204,42 +192,25 @@ const canSummarize = computed(() => {
   );
 });
 
-async function generateSummary() {
+async function generateSummary(forceRefresh = false) {
   if (summarizing.value) return;
 
-  const settings = settingsStore.proxyIntegrated;
   summarizing.value = true;
 
   try {
-    const response = await fetch(settings.apiUrl + "/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${settings.apiKey}`,
-      },
-      body: JSON.stringify({
-        model: settings.selectedModel,
-        messages: [
-          {
-            role: "system",
-            content: settings.summaryPrompt,
-          },
-          {
-            role: "user",
-            content: props.item.description,
-          },
-        ],
-        temperature: 0.7,
-        max_tokens: 500,
-      }),
+    const result = await generateArticleSummary({
+      link: props.item.link,
+      title: props.item.title,
+      description: props.item.description,
+      feedItemId: props.item.id,
+      forceRefresh
     });
 
-    if (!response.ok) {
-      throw new Error(`API 请求失败: ${response.statusText}`);
+    if (result.error) {
+      throw new Error(result.error);
     }
 
-    const data = await response.json();
-    summary.value = data.choices[0].message.content;
+    summary.value = result.summary;
   } catch (error: any) {
     alert("生成总结失败：" + error.message);
   } finally {
@@ -316,13 +287,14 @@ provide(summarizingSymbol, summarizing);
   height: 100vh;
   overflow-y: scroll;
 }
+
 .top-sider {
   position: sticky !important;
   top: 0;
   z-index: 10;
   background-color: rgb(var(--v-theme-background));
   display: grid;
-  grid-template-columns: minmax(180px, auto) minmax(0, 1fr) minmax(180px, auto);
+  grid-template-columns: minmax(160px, auto) minmax(0, 1fr) minmax(160px, auto);
   align-items: center;
   padding: 0.5rem 0.3rem;
   border-bottom: 1px solid rgba(var(--v-border-color), 0);
@@ -332,35 +304,46 @@ provide(summarizingSymbol, summarizing);
   &.top-sider-hidden {
     transform: translateY(-50%);
     opacity: 0;
+
     &:hover {
       transform: translateY(0);
       opacity: 1;
     }
   }
 
-  > * {
+  >* {
     min-width: 120px;
     max-width: var(--reader-main-max-width);
   }
+
   a {
     text-decoration: none;
     color: rgb(var(--v-border-color));
   }
+
   .top-sider-title {
     text-align: center;
   }
 }
+
 .top-sider-border {
   border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
 }
+
+.append-bar {
+  text-align: right;
+}
+
 .text-overflow {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
 .title {
   margin-bottom: 1rem;
 }
+
 .iframe {
   position: relative;
   width: 100%;
@@ -373,9 +356,11 @@ provide(summarizingSymbol, summarizing);
   margin: 0 auto;
   padding: 0.5rem;
   line-height: var(--line-height);
+
   * {
     max-width: 100%;
   }
+
   h1,
   h2,
   h3,
@@ -383,9 +368,11 @@ provide(summarizingSymbol, summarizing);
     margin-top: var(--line-height);
     margin-bottom: 1rem;
   }
+
   p {
     padding: 0.8rem 0;
   }
+
   pre {
     position: relative;
     margin-top: 1rem;
@@ -397,6 +384,7 @@ provide(summarizingSymbol, summarizing);
     font-family: var(--code-font);
     overflow-x: auto;
     pointer-events: hover;
+
     :before {
       display: none;
       cursor: pointer;
@@ -412,12 +400,14 @@ provide(summarizingSymbol, summarizing);
       border-radius: 0 0.5rem 0 0.5rem;
       pointer-events: auto;
     }
+
     &:hover {
       :before {
         display: block;
       }
     }
   }
+
   .copy-success {
     :before {
       content: "✓";

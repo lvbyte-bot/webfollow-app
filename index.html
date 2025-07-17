@@ -3,25 +3,25 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>WebFollow - 在线 RSS 阅读器</title>
+  <title>IFeed - 在线 RSS 阅读器</title>
   <meta name="description" content="简单、高效、全平台、网页版RSS 阅读器">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <meta name="dc.title" content="WebFollow - 在线 RSS 阅读器<">
+  <meta name="dc.title" content="IFeed - 在线 RSS 阅读器<">
   <meta name="dc.description" content="简单、高效、全平台、网页版RSS 阅读器">
-  <meta name="dc.source" content="https://www.webfollow.cc/">
+  <meta name="dc.source" content="https://ifeed.cc/">
   <meta name="dc.language" content="zh_CN">
   <meta name="robots" content="index, follow">
   <meta name="google-adsense-account" content="ca-pub-1354874712972588">
   <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
   <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-  <meta property="og:url" content="https://www.webfollow.cc/">
-  <meta property="og:site_name" content="webfollow">
+  <meta property="og:url" content="https://ifeed.cc/">
+  <meta property="og:site_name" content="IFeed">
   <meta property="og:locale" content="zh_CN">
   <meta property="og:type" content="article">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:site" content="@webfollow">
-  <meta name="twitter:creator" content="@webfollow">
-  <meta name="twitter:title" content="WebFollow - 在线 RSS 阅读器">
+  <meta name="twitter:site" content="@ifeed">
+  <meta name="twitter:creator" content="@ifeed">
+  <meta name="twitter:title" content="IFeed - 在线 RSS 阅读器">
   <meta name="twitter:description" content="简单、高效、全平台、网页版RSS 阅读器">
   <meta name="twitter:image" content="">
   <!-- 谷歌浏览器 -->
@@ -32,7 +32,7 @@
   <link rel="icon" type="image" href="/favicon.ico" />
   <link rel="apple-touch-icon" href="/favicon.ico" sizes="180x180">
   <link rel="mask-icon" href="/favicon.ico">
-  <title>Webfollow</title>
+  <title>ifeed</title>
   <style>
     @keyframes r {
       0% {
@@ -89,29 +89,33 @@
     .loding-text {
       animation: r-text 3s infinite;
     }
+
+    .bg-gradient {
+      background: linear-gradient(to bottom right, rgba(var(--v-theme-primary), .1), rgb(var(--v-theme-background)) 50%);
+    }
   </style>
   <script>
     function log(...args) {
-      console.log("%cWebFollow", "padding:3px 5px;border-radius:5px;background:#999;color:#fff;font-size:1em;", ...args)
+      console.log("%cifeed", "padding:3px 5px;border-radius:5px;background:#999;color:#fff;font-size:1em;", ...args)
     }
     function info(...args) {
-      console.log("%cWebFollow", "padding:3px 5px;border-radius:5px;background:#ff7a61;color:#fff;font-size:1em;", ...args)
+      console.log("%cifeed", "padding:3px 5px;border-radius:5px;background:#ff7a61;color:#fff;font-size:1em;", ...args)
     }
     function debug(...args) {
-      console.log("%cWebFollow", "padding:3px 5px;border-radius:5px;background:green;color:#fff;font-size:1em;", ...args)
+      console.log("%cifeed", "padding:3px 5px;border-radius:5px;background:green;color:#fff;font-size:1em;", ...args)
     }
     function err(e, ...args) {
-      console.error("%cWebFollow", "padding:3px 5px;border-radius:5px;background:#ff7a61;color:#fff;font-size:1em;", ...args, e)
+      console.error("%cifeed", "padding:3px 5px;border-radius:5px;background:#ff7a61;color:#fff;font-size:1em;", ...args, e)
     }
-
+    // let clear
     function setTitle(total) {
       if (total) {
-        document.title = `WebFollow - 在线 RSS 阅读器`
+        ifeedApp.tip('已同步' + total + '条')
       } else {
-        document.title = `WebFollow - 在线 RSS 阅读器`
+        ifeedApp.tip('')
       }
     }
-    const webfollowApp = {};
+    const ifeedApp = {};
     // if (!window.location.host.includes("local")) {
     //   var _hmt = _hmt || [];
     //   (function () {
@@ -132,7 +136,10 @@
     gtag('config', 'G-E4PSK55B0V');
   </script>
   <script async src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-
+  <!-- 引入 Readability.js -->
+  <script src="https://unpkg.com/@mozilla/readability@0.4.4/Readability.js"></script>
+  <!-- responsivevoice -->
+  <script src="https://code.responsivevoice.org/responsivevoice.js"></script>
 </head>
 
 <body>

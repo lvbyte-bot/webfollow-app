@@ -1,5 +1,5 @@
 
-import { DbStore, IndexedDB, getOne } from '../utils/dbHelper'
+import { DbStore, IndexedDB, SortDefine, getOne } from '../utils/dbHelper'
 
 import { Feed, Group, Item } from './model';
 
@@ -8,7 +8,7 @@ const { create,
     update,
     remove,
     getAll,
-    listAll, findAll, count, getIdsInTimeRange, findTimeRange, whereOne, openStore, exists
+    listAll, findAll, count, countAll, listAllIds, getByIdsInOrder, getIdsInTimeRange, findTimeRange, whereOne, openStore, exists
 } = IndexedDB(db => {
     // 创建 Groups 对象存储
     if (!db.objectStoreNames.contains('groups')) {
@@ -67,10 +67,8 @@ class Repo<T extends DbStore> {
             return getAll(this.storename)
         }
     }
-    async findAll(conditionFn: (item: T) => boolean, page: number = 0, size: number = 50, sortFn?: (x: T, y: T) => number): Promise<Page<T>> {
-        const data = await findAll(this.storename, conditionFn, size, page, sortFn)
-        return { isLast: data.length != size, data }
-    }
+
+
     async count(): Promise<number> {
         return count(this.storename)
     }
@@ -84,7 +82,9 @@ class Repo<T extends DbStore> {
 
 export interface Page<T> {
     isLast: boolean,
-    data: T[]
+    data: T[],
+    total: number,
+    ids?: number[]
 }
 
 
@@ -101,32 +101,22 @@ class ItemRepo extends Repo<Item> {
      */
     // time: number, feedRanks: any | null, 
     async findTimeAll(time: number, condition: ((item: Item) => boolean), page: number = 0, size: number = 50): Promise<Page<Item>> {
-        // const store = await openStore(this.storename)
-        // const range = IDBKeyRange.lowerBound(time);
-        // const request = store.index("pubDate").openCursor(range);
-        // const items: Item[] = await withCursor(request, (item: Item) => {
-        //     const rank = feedRanks[item.feedId] || 10;
-        //     item.rank = rank
-        //     if (condition) {
-        //         if (condition(item)) {
-        //             return [item, true]
-        //         } else {
-        //             return [null, true]
-        //         }
-        //     }
-        //     return [item, true]
-        // }, (a, b) => (a.rank && b.rank ? a.rank - b.rank : 1))
-        // const startOffset = page * size;
-        // const endOffset = startOffset + size;
-        // let data: Item[] = []
-        // if (startOffset < items.length) {
-        //     data = items.slice(startOffset, endOffset)
-        // }
         const data: Item[] = await findTimeRange(this.storename, time, new Date().getTime() / 1000, page, size, condition)
-        // console.log(page, data.length, data.length != size)
-        return { isLast: data.length != size, data }
+        const total = await countAll(this.storename, condition)
+        return { isLast: data.length != size, data, total }
     }
 
+    async listAllIds(conditionFn: (item: Item) => boolean, sort?: SortDefine): Promise<number[]> {
+        return await listAllIds(this.storename, conditionFn, sort)
+    }
+    async getbyIdsInOrder(ids: number[]): Promise<Item[]> {
+        return await getByIdsInOrder(this.storename, ids)
+    }
+    async findAll(conditionFn: (item: Item) => boolean, page: number = 0, size: number = 50): Promise<Page<Item>> {
+        const data = await findAll(this.storename, conditionFn, size, page)
+        const total = await countAll(this.storename, conditionFn)
+        return { isLast: data.length != size, data, total }
+    }
     async countByFeedId(feedId: number): Promise<number> {
         const store0 = await openStore(this.storename)
         const feedIndex = store0.index('feedId')

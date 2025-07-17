@@ -4,7 +4,7 @@ import { useBaseStore } from './base'
 import { useFeedsStore } from './feeds'
 import { useItemsStore } from './items'
 import { usePlayListStore } from './playlist'
-import { pull as pulllocal, setRanks } from '@/service'
+import { pull as pullData2Local, setRanks } from '@/service'
 import { ranks as getRanks } from '@/service/recommend'
 import { clearIndexedDB } from '@/utils/dbHelper'
 import { computed, Ref, watch, ref, onMounted, reactive, Reactive } from 'vue'
@@ -17,11 +17,11 @@ type SyncType = '' | 'sync2local'
 
 export const useAppStore = defineStore('app', () => {
     const {
-        saved_item_ids, unread_item_ids, read, unread, save, unsave, refresh, clearFailFeedIds
+        saved_item_ids, unread_item_ids, read, readItemBatch, unread, unreadItemBatch, save, unsave, refresh, clearFailFeedIds
     } = useBaseStore()
     const { clear } = usePlayListStore()
     const { refresh: refreshFeed } = useFeedsStore()
-    const { subscriptions } = storeToRefs(useFeedsStore())
+    const { subscriptions, subscriptionFilters } = storeToRefs(useFeedsStore())
     const settingsStore = useSettingsStore()
     const { refreshItems, pageRoute } = useItemsStore()
     const loading: Ref<boolean> = ref(false)
@@ -35,17 +35,15 @@ export const useAppStore = defineStore('app', () => {
     const item7DayTime = ref(0)
 
     async function sync(type: SyncType = '') {
-        async function pullData2Local() {
-            return await pulllocal()
-        }
         const item7DayStart = new Date()
         item7DayStart.setDate(item7DayStart.getDate() - 1)
         item7DayTime.value = Math.round(item7DayStart.getTime() / 1000)
         lastRefeshTime.value = Math.round(new Date().getTime() / 1000)
-        const tmpPullDataFail = settingsStore.general.pullDataFail
+        // const tmpPullDataFail = settingsStore.general.pullDataFail
         settingsStore.general.pullDataFail = true
         settingsStore.saveToLocalStorage()
         loading.value = true
+        ifeedApp.tip('准备同步数据中...')
         if (type == '') {
             await refresh(async () => {
                 await pullData2Local()
@@ -53,11 +51,9 @@ export const useAppStore = defineStore('app', () => {
                 setRanks(await getRanks())
                 await refreshItems()
             }, async () => {
-                if (tmpPullDataFail) {
-                    await pullData2Local()
-                }
+                await pullData2Local()
+                await refreshFeed()
                 setRanks(await getRanks())
-                await refreshItems()
             })
         } else if (type = 'sync2local') {
             await pullData2Local()
@@ -68,12 +64,15 @@ export const useAppStore = defineStore('app', () => {
         settingsStore.general.pullDataFail = false
         settingsStore.saveToLocalStorage()
         loading.value = false
-        setTimeout(() => initNav(pageRoute), 1000)
+        setTimeout(() => {
+            initNav(pageRoute)
+            ifeedApp.tip('同步完成')
+        }, 1000)
         lastRefeshTime.value = Math.round(new Date().getTime() / 1000)
         info('sync end')
 
-    }
 
+    }
 
 
     async function reloadBuild() {
@@ -96,13 +95,13 @@ export const useAppStore = defineStore('app', () => {
     const unReadQty = computed(() => unread_item_ids.size)
     const item7DayUnReadQty = computed(() => item7DayIds.value.filter(id => unread_item_ids.has(id)).length)
     watch(unReadQty, () => {
-        setTitle(unReadQty.value)
+        // setTitle(unReadQty.value)
     })
     onMounted(async () => {
         await sync()
         setTitle(unReadQty.value)
         setTimeout(() => {
-            watchAll([pageRoute, subscriptions, savedQty], () => initNav(pageRoute))
+            watchAll([pageRoute, subscriptions, subscriptionFilters, savedQty], () => initNav(pageRoute))
         }, 1000);
         // 都是为了更新nav
     })
@@ -111,6 +110,10 @@ export const useAppStore = defineStore('app', () => {
     function initNav(v: PageRoute) {
         nav.isFailure = false
         switch (v.type) {
+            case LsItemType.RECOMMEND:
+                nav.title = '今天'
+                nav.qty = item7DayUnReadQty.value
+                return
             case LsItemType.ALL:
                 nav.title = '全部文章'
                 nav.qty = unReadQty.value
@@ -126,16 +129,6 @@ export const useAppStore = defineStore('app', () => {
                     nav.qty = ga[0].unreadQty
                 }
                 return
-            case LsItemType.ITEMS:
-                if (v.meta) {
-                    nav.title = v.meta.title
-                    nav.qty = v.meta.qty
-                }
-                return
-            case LsItemType.RECOMMEND:
-                nav.title = '今天'
-                nav.qty = item7DayUnReadQty.value
-                return
             case LsItemType.FEED:
                 let fs = subscriptions?.value?.flatMap(g => g.feeds).filter(f => f.id == v.id)
                 if (fs?.length) {
@@ -143,6 +136,18 @@ export const useAppStore = defineStore('app', () => {
                     nav.qty = fs[0].unreadQty
                     nav.isFailure = fs[0].isFailure
                     nav.url = fs[0].url
+                }
+                return
+            case LsItemType.ITEMS:
+                if (v.meta) {
+                    nav.title = v.meta.title
+                    nav.qty = v.meta.qty
+                }
+                return
+            case LsItemType.FILTER:
+                nav.qty = subscriptionFilters.value.find(f => f.id == (v.id ? v.id.toString() : v.id))?.unreadQty
+                if (v.meta) {
+                    nav.title = v.meta.title
                 }
                 return
         }
@@ -154,7 +159,7 @@ export const useAppStore = defineStore('app', () => {
     }
 
 
-    return { reloadBuild, sync, loading, read, unread, save, unsave, savedQty, unReadQty, item7DayUnReadQty, authInfo, lastRefeshTime, item7DayTime, nav, readerMode }
+    return { reloadBuild, sync, loading, read, readItemBatch, unread, unreadItemBatch, unread_item_ids, save, unsave, savedQty, unReadQty, item7DayUnReadQty, authInfo, lastRefeshTime, item7DayTime, nav, readerMode }
 })
 
 

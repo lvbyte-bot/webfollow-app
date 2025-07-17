@@ -8,7 +8,7 @@ export async function request(params: any, options: any = {
     method: "POST",
 }): Promise<any> {
     const api_key = JSON.parse(localStorage.getItem('auth') || '{}')?.token || key
-    const url = localStorage.getItem('url') || 'https://api.webfollow.cc/plugins/fever/'
+    const url = localStorage.getItem('url') || 'https://api.ifeed.cc/plugins/fever/'
     let fullUrl = url;
     const reqParams = Object.assign({
         api_key,
@@ -22,11 +22,13 @@ export async function request(params: any, options: any = {
     try {
         const response = await fetch(fullUrl, options)
         if (!response.ok) {
+            ifeedApp.tip('Network response was not ok')
             throw new Error('Network response was not ok');
         } else {
             return response.json()
         }
-    } catch (e) {
+    } catch (e: any) {
+        ifeedApp.tip(e)
         throw e;
     }
 

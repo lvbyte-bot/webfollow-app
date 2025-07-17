@@ -19,8 +19,9 @@ import {
 } from './base'
 import { useSettingsStore } from './settings'
 import { useRoute } from 'vue-router'
-import { Subscription } from '@/service/types'
+import { Subscription, SubscriptionFilter } from '@/service/types'
 import { feedRepo, Group, itemRepo } from '@/repository'
+import { filterItemIds } from '@/service/itemsFilter'
 
 export const useFeedsStore = defineStore('feeds', () => {
     const {
@@ -28,20 +29,23 @@ export const useFeedsStore = defineStore('feeds', () => {
         fail_feed_ids,
         refresh: refreshBase
     } = useBaseStore()
+    const settingsStore = useSettingsStore();
+    const { getFilter } = settingsStore
     const {
         automation
-    } = storeToRefs(useSettingsStore())
+    } = storeToRefs(settingsStore)
     const groups: Ref<Group[]> = ref([])
     const route = useRoute()
     const data: Ref<Subscription[] | undefined> = ref([])
 
     const subscriptions: Ref<Subscription[] | undefined> = ref([])
+    const subscriptionFilters: Ref<SubscriptionFilter[]> = ref([])
     const nextUnReadUrl = ref('')
 
     let readUrls: any[] = []
 
 
-    async function buildFeeds() {
+    async function buildSubscriptions() {
         // init  subscriptions
         const efids = new Set(fail_feed_ids)
         const items = await itemRepo.listAll(undefined)
@@ -75,6 +79,9 @@ export const useFeedsStore = defineStore('feeds', () => {
             }
         }) || [])
         follow.sort((a, b) => {
+            // 如果 title 是 "all"，排到最后
+            if (a.title === "All") return 1;
+            if (b.title === "All") return -1;
             if (a.unreadQty != 0 && b.unreadQty != 0) {
                 return a.title.localeCompare(b.title)
             } else if (a.unreadQty == 0 && b.unreadQty == 0) {
@@ -84,21 +91,30 @@ export const useFeedsStore = defineStore('feeds', () => {
             }
         })
         subscriptions.value = follow
+        await buildSubscriptionFilters()
         // init readUrls
         updateReadUrls()
+    }
+
+    async function buildSubscriptionFilters() {
+        subscriptionFilters.value = await Promise.all(automation.value.filters.map(async f => ({ id: f.id, name: f.name, unreadQty: f.query ? (await filterItemIds(f.query)).filter(id => unread_item_ids.has(id)).length : 0 })))
     }
 
     async function refreshFeedUnreadQty() {
         // 直接使用 unread_item_ids 计算未读数量
         const items = await itemRepo.listAll(undefined)
-        subscriptions.value?.forEach(async g => {
+        await Promise.all(subscriptions.value ? subscriptions.value?.map(async g => {
             await Promise.all(g.feeds.map(async f => {
                 f.unreadQty = await sumUnread(items, f.id, unread_item_ids)
             }))
             g.unreadQty = g.feeds.map(f => f.unreadQty).reduce((x, y) => x + y, 0)
-            return g
-        })
-
+        }) : [])
+        await Promise.all(subscriptionFilters.value.map(async f => {
+            const filter = getFilter(f.id)
+            if (filter?.query) {
+                f.unreadQty = (await filterItemIds(filter.query)).filter(id => unread_item_ids.has(id)).length
+            }
+        }))
         updateReadUrls()
     }
 
@@ -107,20 +123,25 @@ export const useFeedsStore = defineStore('feeds', () => {
         if (r) {
             data.value = r[0]
             groups.value = r[1]
-            await buildFeeds()
+            await buildSubscriptions()
         }
     }
 
     watch(route, () => {
         updateNextUnReadUrl()
     })
-    watch(automation, () => {
+    watch(automation, async () => {
+        await buildSubscriptionFilters()
         updateReadUrls()
     }, { deep: true })
 
 
     function updateReadUrls() {
-        readUrls = [{ url: '/explore', unreadQty: 1 }, { url: '/next', unreadQty: 1 }, ...automation.value.filters.map(f => ({ url: '/filter/' + f.id, unreadQty: 1 })), { url: '/all', unreadQty: unread_item_ids.size }]
+        readUrls = [{ url: '/explore', unreadQty: 1 }, { url: '/next', unreadQty: 1 }]
+        subscriptionFilters.value.forEach(f => {
+            readUrls.push({ url: '/filter/' + f.id, unreadQty: f.unreadQty })
+        })
+        readUrls.push({ url: '/all', unreadQty: unread_item_ids.size })
         subscriptions.value?.forEach(g => {
             readUrls.push({ url: '/c/' + g.id, unreadQty: g.unreadQty })
             g.feeds.forEach(f => {
@@ -160,7 +181,7 @@ export const useFeedsStore = defineStore('feeds', () => {
         return ''
     }
 
-    webfollowApp.getUnReadUrl = function (currentUrl: string, isNext: boolean = true): string {
+    ifeedApp.getUnReadUrl = function (currentUrl: string, isNext: boolean = true): string {
         if (isNext) {
             return getNextUnReadUrl(currentUrl)
         }
@@ -197,6 +218,7 @@ export const useFeedsStore = defineStore('feeds', () => {
     return {
         groups,
         subscriptions,
+        subscriptionFilters,
         deleteFeed,
         updateFeed,
         nextUnReadUrl,

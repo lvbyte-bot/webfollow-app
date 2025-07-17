@@ -1,13 +1,13 @@
 <template>
   <v-container>
     <v-card flat class="pa-1">
-      <v-list-item subtitle="0.8.1" title="WebFollow" class="mb-6">
+      <v-list-item subtitle="0.8.7" title="WebFollow" class="mb-6">
         <template #prepend>
           <v-img src="/logo.svg" width="64px" class="mr-3"></v-img>
         </template>
       </v-list-item>
       WebFollow是一个基于RSS fever api 协议的开源阅读器，未来将支持google reader
-      等开放rss api协议, 开源协议为 GPL协议
+      等开放rss api协议, 集成AI能力 ,开源协议为 GPL协议
 
       <br />
       <br />
@@ -17,19 +17,14 @@
       <a href="https://github.com/weekend-project-space/webfollow-app">
         <img
           src="https://img.shields.io/github/stars/weekend-project-space/webfollow-app.svg?style=social&amp;label=Stars"
-          alt=""
-      /></a>
+          alt="" /></a>
       <br />
       <br />
       遇到问题：
       <br />
       <br />
-      <v-btn
-        size="small"
-        prepend-icon="mdi-help-circle-outline"
-        href="https://github.com/weekend-project-space/webfollow-app/issues"
-        >反馈</v-btn
-      >
+      <v-btn size="small" prepend-icon="mdi-help-circle-outline"
+        href="https://github.com/weekend-project-space/webfollow-app/issues">反馈</v-btn>
     </v-card>
   </v-container>
 </template>

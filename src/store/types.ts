@@ -19,7 +19,9 @@ export interface PageRouteMeta {
     title?: string
     qty?: number
     isFailure?: boolean
-    url?: string
+    url?: string,
+    id?: number,
+    type?: LsItemType
 }
 
 export type ViewMode = 'text' | 'card' | 'magazine' | 'column' | 'list' | 'auto'

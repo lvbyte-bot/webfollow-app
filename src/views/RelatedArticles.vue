@@ -6,101 +6,92 @@
           <div class="text-center my-12">
             <div class="text-h3">文章过滤</div>
             <p class="my-6 text-subtitle-2">
-              用AI帮你找到相关内容, (由{{
-                settingsStore.proxyIntegrated.selectedModel
-              }}进行驱动)
+              用SQL风格语法过滤文章, 支持复杂条件查询
             </p>
           </div>
 
-          <div class="border rounded-lg pa-5">
-            <v-textarea
-              v-model="searchQuery"
-              label="输入关键词搜索相关内容"
-              @keyup.enter="handleSearch"
-              rows="3"
-              variant="plain"
-              auto-grow
-              hide-details
-            >
+          <!-- AI助手区域 -->
+          <div class="border rounded-lg pa-5 mb-4">
+            <!-- <div class="d-flex align-center mb-5">
+              <v-icon class="mr-2" color="primary">mdi-creation-outline</v-icon>
+              <div class="text-h6">AI 过滤助手</div>
+            </div> -->
+            <v-textarea v-model="aiQuestion" label="描述你想要查找的文章" placeholder="例如: 我想找最近一周关于人工智能的技术文章" rows="3"
+              variant="plain" auto-grow hide-details class="mb-3" @keyup.enter="generateSQL">
             </v-textarea>
-            <div class="d-flex align-center justify-space-between">
-              <v-chip-group
-                v-if="keywords.length"
-                v-model="selectedKeywords"
-                @update:model-value="handleKeywordsChange"
-                column
-                multiple
-                selected-class="text-primary"
-              >
-                <v-chip
-                  v-for="kw in keywords"
-                  :key="kw.keyword"
-                  :text="kw.keyword"
-                  :color="getTagColor(kw.weight)"
-                  class="ma-1"
-                  size="small"
-                  filter
-                >
-                </v-chip>
-              </v-chip-group>
-              <div class="d-flex gap-2">
-                <c-btn
-                  v-if="keywords.length"
-                  icon="mdi-filter-plus-outline"
-                  @click="saveAsFilter"
-                  :disabled="loading"
-                >
-                </c-btn>
-                <c-btn
-                  icon="mdi-magnify"
-                  @click="handleSearch"
-                  :loading="loading"
-                  :disabled="loading"
-                ></c-btn>
-              </div>
+            <div class="d-flex gap-2 align-center justify-end">
+              <c-btn icon="mdi-send" @click="generateSQL" :loading="aiLoading" title="发送"
+                :disabled="!aiQuestion.trim() || aiLoading" flat>
+              </c-btn>
             </div>
           </div>
 
-          <v-card
-            v-if="articles.length || loading || isSearching"
-            class="mt-4 border rounded-lg"
-            :loading="loading"
-            flat
-          >
+          <!-- 手动SQL输入区域 - 可折叠 -->
+          <div class="border rounded-lg">
+            <v-expansion-panels v-model="sqlPanelOpen" flat>
+              <v-expansion-panel class="rounded-lg">
+                <v-expansion-panel-title>
+                  <div class="d-flex align-center">
+                    <v-icon class="mr-2">mdi-code-tags</v-icon>
+                    查询语句
+                  </div>
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <div class="py-2">
+                    <v-textarea v-model="sqlQuery" label="输入SQL风格查询语句"
+                      placeholder="例如: title LIKE '技术' AND pubDate > 1600000000 ORDER BY pubDate DESC"
+                      @keyup.enter="handleSearch" rows="3" auto-grow hide-details>
+                    </v-textarea>
+                    <div class="d-flex align-center justify-space-between mt-3">
+                      <v-chip-group v-if="savedQueries.length" v-model="selectedQueryIndex"
+                        @update:model-value="handleSavedQuerySelect" column multiple selected-class="text-primary">
+                        <v-chip v-for="(query, index) in savedQueries" :key="index" :text="query.name" class="ma-1"
+                          size="small" filter>
+                        </v-chip>
+                      </v-chip-group>
+                      <div class="d-flex gap-2">
+                        <c-btn v-if="sqlQuery" icon="mdi-filter-plus-outline" @click="saveAsFilter" :disabled="loading">
+                        </c-btn>
+                        <c-btn icon="mdi-text-search" @click="handleSearch" :loading="loading"
+                          :disabled="loading"></c-btn>
+                      </div>
+                    </div>
+                  </div>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+            </v-expansion-panels>
+          </div>
+
+          <div class="mt-4 border rounded-lg pa-3">
+            <div class="text-subtitle-1 mb-3">常用查询示例</div>
+            <v-chip-group>
+              <v-chip v-for="(example, index) in queryExamples" :key="index" :text="example.name" class="ma-1"
+                size="small" @click="applyExample(example.query)">
+              </v-chip>
+            </v-chip-group>
+          </div>
+
+          <v-card v-if="total || loading || isSearching" class="mt-4 border rounded-lg" :loading="loading" flat>
             <v-card-text>
               <div class="text-subtitle-2 ma-2">
                 {{
                   loading
                     ? "加载中..."
-                    : "搜索到 " + articles.length + " 条相关结果"
+                    : "搜索到 " + total + " 条相关结果"
                 }}
               </div>
               <v-row v-if="loading">
                 <v-col cols="12" md="12" v-for="index in 6" :key="index">
                   <v-skeleton-loader type="paragraph"></v-skeleton-loader>
-                  <v-skeleton-loader
-                    type="card-avatar"
-                    class="mx-5"
-                  ></v-skeleton-loader>
+                  <v-skeleton-loader type="card-avatar" class="mx-5"></v-skeleton-loader>
                 </v-col>
               </v-row>
-              <v-empty-state
-                v-else-if="articles.length == 0"
-                icon="mdi-magnify"
-                text="尝试使用其他关键词"
-                title="没有找到相关文章"
-              ></v-empty-state>
+              <v-empty-state v-else-if="total == 0" icon="mdi-magnify" text="尝试使用其他查询条件"
+                title="没有找到相关文章"></v-empty-state>
               <v-expand-transition>
-                <v-row v-if="articles.length && !loading">
-                  <v-col
-                    cols="12"
-                    v-for="(item, index) in itemStore.items"
-                    :key="item.id"
-                  >
-                    <ContentItem
-                      :item="item"
-                      @click="openReader(index, item)"
-                    ></ContentItem>
+                <v-row v-if="total && !loading">
+                  <v-col cols="12" v-for="(item, index) in itemStore.items" :key="item.id">
+                    <ContentItem :item="item" @click="openReader(index, item)"></ContentItem>
                   </v-col>
                 </v-row>
               </v-expand-transition>
@@ -115,88 +106,244 @@
 <script setup lang="ts">
 import Items from "./Items.vue";
 import ContentItem from "./item/ContentItem.vue";
-import { ref } from "vue";
-import { getRelatedKeywords, retrieveRelevantContexts } from "@/service/rag";
-import type { KeywordWeight, FeedContext } from "@/service/rag";
+import { ref, onMounted } from "vue";
 import { useItemsStore } from "@/store";
 import { useSettingsStore } from "@/store";
+import { filterItems } from "@/service/itemsFilter";
+import { QueryFilterItem } from "@/store/settings";
 
-const searchQuery = ref("");
+const sqlQuery = ref("");
 const loading = ref(false);
-const keywords = ref<KeywordWeight[]>([]);
-const selectedKeywords = ref<number[]>([]);
-const articles = ref<FeedContext[]>([]);
+const savedQueries = ref<QueryFilterItem[]>([]);
+const selectedQueryIndex = ref([]);
+const total = ref(0);
 const itemStore = useItemsStore();
 const itemsRef = ref();
 const isSearching = ref(false);
 const settingsStore = useSettingsStore();
 
-const getTagColor = (weight: number) => {
-  if (weight >= 50) return "error";
-  if (weight >= 20) return "warning";
-  if (weight >= 10) return "success";
-  return "info";
-};
+// AI相关的响应式变量
+const aiQuestion = ref("");
+const aiLoading = ref(false);
+// 不再需要显示生成的SQL，但仍需要变量用于内部处理
+const generatedSQL = ref("");
+const sqlPanelOpen = ref<number[]>([]);
 
-async function handleKeywordsChange() {
-  const newVal = selectedKeywords.value;
-  loading.value = true;
-  if (newVal.length > 0) {
-    const selectedWords = newVal.map((index) => keywords.value[index]);
-    articles.value = await retrieveRelevantContexts("", selectedWords, 300);
-    itemsRef.value.loadData(
-      0,
-      articles.value.map((item) => item.id)
-    );
-  } else {
-    articles.value = [];
+// 预设查询示例
+const queryExamples = [
+  { name: "最近一周文章", query: "pubDate > UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 1 WEEK))" },
+  { name: "技术相关", query: "title LIKE '技术' OR title LIKE 'tech' OR feed.title LIKE '技术'" },
+  { name: "新闻文章", query: "feed.title LIKE '新闻' OR feed.title LIKE 'news'" },
+  { name: "最新文章(降序)", query: "pubDate > 0 ORDER BY pubDate DESC LIMIT 50" },
+  { name: "最早文章(升序)", query: "pubDate > 0 ORDER BY pubDate ASC LIMIT 50" },
+  { name: "特定日期范围", query: "pubDate BETWEEN " + Math.floor((Date.now() / 1000) - 30 * 24 * 60 * 60) + " AND " + Math.floor(Date.now() / 1000) },
+  { name: "未读文章", query: "isRead = false" },
+  { name: "已保存文章", query: "isSaved = true" },
+];
+
+// 加载保存的查询
+onMounted(() => {
+  loadSavedQueries();
+});
+
+function loadSavedQueries() {
+  savedQueries.value = settingsStore.automation.filters || [];
+}
+
+function applyExample(query: string) {
+  sqlQuery.value = query;
+  handleSearch();
+}
+
+async function handleSavedQuerySelect() {
+  if (selectedQueryIndex.value.length === 0) {
     itemsRef.value.loadData(0, [], true);
+    return;
   }
-  loading.value = false;
+
+  const selectedQuery = savedQueries.value[selectedQueryIndex.value[0]];
+  if (selectedQuery) {
+    sqlQuery.value = selectedQuery.query || "";
+    await handleSearch();
+  }
 }
 
 async function handleSearch() {
-  if (!searchQuery.value.trim()) return;
+  if (!sqlQuery.value.trim()) return;
   loading.value = true;
   isSearching.value = true;
   init();
 
   try {
-    // 获取相关关键词
-    keywords.value = await getRelatedKeywords(searchQuery.value);
-    selectedKeywords.value = keywords.value.map((_, index) => index);
-    await handleKeywordsChange();
-  } catch (error: any) {
-    console.error("搜索失败:", error);
-    alert(error.message || "搜索失败");
+    // 使用itemsFilter进行查询
+    const result = await filterItems(sqlQuery.value, 10);
+    total.value = result.total;
+
+    // 加载到itemsStore中
+    if (result.total) {
+      itemsRef.value.loadData(
+        0,
+        result.ids
+      );
+    }
+  } catch (error) {
+    console.error("查询失败:", error);
+    alert(error instanceof Error ? error.message : "查询失败");
   } finally {
     loading.value = false;
   }
 }
 
 function init() {
-  keywords.value = [];
-  articles.value = [];
-  selectedKeywords.value = [];
+  selectedQueryIndex.value = [];
   itemsRef.value.loadData(0, []);
 }
 
 async function saveAsFilter() {
-  const name = prompt("请输入过滤项名称");
+  const name = prompt("请输入过滤器名称");
   if (!name) return;
 
-  const filter = {
+  // 保存SQL查询
+  const query = {
     id: Date.now().toString(),
     name,
-    keywords: selectedKeywords.value.map((index) => keywords.value[index]),
+    keywords: [],
+    query: sqlQuery.value,
     createTime: Date.now(),
   };
 
-  settingsStore.automation.filters.push(filter);
+  // 检查是否已存在sqlQueries数组
+  if (!settingsStore.automation.filters) {
+    settingsStore.automation.filters = [];
+  }
+
+  settingsStore.automation.filters.push(query);
   settingsStore.saveToLocalStorage();
+
+  // 重新加载保存的查询
+  loadSavedQueries();
 
   alert("保存成功");
 }
+
+// AI生成SQL相关函数
+async function generateSQL() {
+  if (!aiQuestion.value.trim()) return;
+
+  const settings = settingsStore.proxyIntegrated;
+  if (!settings.isApiValid || !settings.apiKey) {
+    alert("请先在设置中配置AI服务");
+    return;
+  }
+
+  aiLoading.value = true;
+  generatedSQL.value = "";
+
+  try {
+    const prompt = `你是一个MYSQL SQL查询生成助手。根据用户的自然语言描述，生成对应的SQL风格查询语句。
+
+    数据库表结构说明：
+    - 主表：文章表，包含以下字段：
+      - id: 文章ID
+      - title: 文章标题
+      - content: 文章内容
+      - pubDate: 发布时间戳（Unix时间戳）
+      - isRead: 是否已读（true/false）
+      - isSaved: 是否已保存（true/false）
+      - feed.title: 订阅源标题
+      - feed.id: 订阅源ID
+      - feed.url: 订阅地址
+      - feed.siteUrl: 网址
+      - group.title: 分组的名称
+
+    支持的SQL语法：
+    - 条件语法：title LIKE '关键词', content LIKE '关键词'
+    - 时间条件：pubDate > 时间戳, pubDate BETWEEN 开始时间 AND 结束时间
+    - 布尔条件：isRead = true/false, isSaved = true/false
+    - 排序：ORDER BY pubDate DESC/ASC
+    - 限制：LIMIT 数量
+    - 不要在语句最外层用()包裹
+
+    注意：不要生成完整的SELECT语句，只需要生成WHERE条件部分（不包含WHERE关键字）以及可能的ORDER BY和LIMIT子句。
+
+    用户需求：${aiQuestion.value}
+
+    请直接返回SQL查询条件，不要包含SELECT语句，也不要包含WHERE关键字，不要包含任何解释文字。`;
+
+    const response = await fetch(settings.apiUrl + "/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${settings.apiKey}`,
+      },
+      body: JSON.stringify({
+        model: settings.selectedModel,
+        messages: [
+          {
+            role: "system",
+            content: "你是一个SQL查询生成助手。根据用户描述生成准确的SQL查询条件。只返回条件部分，不要包含SELECT语句或WHERE关键字。",
+          },
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+        temperature: 0.3,
+        max_tokens: 200,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`API 请求失败: ${(await response.json()).error?.message || response.statusText}`);
+    }
+
+    const data = await response.json();
+    let sqlResult = data.choices[0].message.content.trim();
+
+    // 清理返回的SQL，移除可能的markdown格式
+    sqlResult = sqlResult.replace(/```sql\n?/g, '').replace(/```\n?/g, '').trim();
+
+    // 移除可能的SELECT语句和WHERE关键字
+    sqlResult = sqlResult
+      .replace(/^SELECT\s+.*?\s+FROM\s+.*?\s+WHERE\s+/i, '')
+      .replace(/^SELECT\s+.*?\s+FROM\s+.*?$/i, '')
+      .replace(/^WHERE\s+/i, '')
+      .replace(/%/g, '')
+      .trim();
+
+    generatedSQL.value = sqlResult;
+
+    // 自动应用SQL并执行查询
+    sqlQuery.value = sqlResult;
+    await handleSearch();
+
+  } catch (error: any) {
+    console.error("AI生成SQL失败:", error);
+    alert(error.message);
+  } finally {
+    aiLoading.value = false;
+  }
+}
+
+// function copySQL() {
+//   if (generatedSQL.value) {
+//     navigator.clipboard.writeText(generatedSQL.value).then(() => {
+//       alert("SQL已复制到剪贴板");
+//     }).catch(() => {
+//       alert("复制失败，请手动复制");
+//     });
+//   }
+// }
+
+// function useGeneratedSQL() {
+//   if (generatedSQL.value) {
+//     sqlQuery.value = generatedSQL.value;
+//     // 展开手动SQL面板
+//     sqlPanelOpen.value = [0];
+//     // 自动执行搜索
+//     handleSearch();
+//   }
+// }
 </script>
 
 <style scoped>

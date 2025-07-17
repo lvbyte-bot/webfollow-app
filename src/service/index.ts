@@ -60,25 +60,43 @@ export async function pull() {
     const localMaxId = await itemRepo.maxId()
     const remoteIds = Array.from(syncItemIds)
     if (localMaxId >= Math.max(...remoteIds)) {
+        console.log('本地数据最新')
         return
     }
 
-    let syncItemIdArray = await asyncFilter(remoteIds, async id => !await itemRepo.existsId(id))
+    let syncItemIdArray = (await asyncFilter(remoteIds, async id => !await itemRepo.existsId(id))).sort((a: number, b: number) => a - b)
     let total = remoteIds.length - syncItemIdArray.length
-    for (let with_ids of idsto50str(syncItemIdArray)) {
-        let fItems = (await items({ with_ids })).items
-        for (let item of fItems) {
-            try {
+    async function pullItems(with_ids: string, try_count: number = 3) {
+        try {
+            try_count = try_count - 1
+            let fItems = (await items({ with_ids })).items
+            for (let item of fItems) {
                 await itemRepo.save({ id: item.id instanceof Number ? item.id : Number.parseInt(item.id), feedId: item.feed_id, title: item.title, author: item.author, description: html2md(item.html), pubDate: item.created_on_time, link: item.url, enclosure: item.enclosure })
-            } catch (e) {
-                err(e, '同步item出错' + with_ids)
+            }
+            total = total + 50
+            if (total > syncItemIds.size) {
+                total = syncItemIds.size
+            }
+            ifeedApp.tip('已同步' + total + '条')
+        } catch (e) {
+            err(e, '同步item出错')
+            // 等待3s
+            await new Promise(resolve => setTimeout(resolve, 3000))
+            if (try_count > 0) {
+                await pullItems(with_ids, try_count)
+            } else {
+                throw e
             }
         }
-        total = total + 50
-        if (total > syncItemIds.size) {
-            total = syncItemIds.size
+
+    }
+    try {
+        for (let with_ids of idsto50str(syncItemIdArray)) {
+            await pullItems(with_ids)
         }
-        setTitle(total)
+    } catch (e) {
+        ifeedApp.tip('网络开小差了，同步中断了')
+        throw e
     }
 
 }
@@ -137,17 +155,16 @@ export async function listItem(id: any, type: LsItemType, page: number = 0, only
             break
         case LsItemType.SAVED:
             const ids: Set<number> = new Set(id)
-            res = (await itemRepo.findAll(item => filterItem0(item, (id) => ids.has(id), onlyUnread, unReadItemIds), page, 50))
+            res = (await itemRepo.findAll(item => filterItem0(item, (id) => ids.has(id), onlyUnread, unReadItemIds), page))
             break
         case LsItemType.ITEMS:
-            const id2Index = id.map((i: any, index: number) => ({ i, index })).reduce((acc: any, item: any) => {
-                acc[item.i] = item.index
-                return acc
-            }, {})
-            let itemIds: Set<number> = new Set(id)
-            res = (await itemRepo.findAll(item => filterItem0(item, (id) => itemIds.has(id), onlyUnread, unReadItemIds), page, 50, (x: Item, y: Item) => id2Index[x.id] > id2Index[y.id] ? 1 : -1))
+            // let itemIds: Set<number> = new Set(id)
+            // res = (await itemRepo.findAll(item => filterItem0(item, (id) => itemIds.has(id), onlyUnread, unReadItemIds), page))
+            //  ids sub page 
+            // const subIds = id.filter((id0: number) => filterItemId(id0, onlyUnread, unReadItemIds)).slice(page * 50, (page + 1) * 50)
+            const subIds = id.slice(page * 50).filter((id0: number) => filterItemId(id0, onlyUnread, unReadItemIds)).slice(0, 50)
+            res = { isLast: subIds.length < 50, data: await itemRepo.getbyIdsInOrder(subIds), total: id.length, ids: id }
             break
-
         case LsItemType.ALL:
             res = (await itemRepo.findAll(item => filterItem0(item, () => true, onlyUnread, unReadItemIds), page))
             break
@@ -162,7 +179,7 @@ export async function listItem(id: any, type: LsItemType, page: number = 0, only
     if (type != LsItemType.ITEMS) {
         res.data.sort((x: Item, y: Item) => x.rank && y.rank ? x.rank - y.rank : y.pubDate - x.pubDate)
     }
-    return { data: res.data.map(map), isLast: res.isLast }
+    return { ...res, data: res.data.map(map) }
 }
 
 /**
@@ -172,16 +189,15 @@ export async function listItem(id: any, type: LsItemType, page: number = 0, only
 export async function listSubscription(): Promise<[Subscription[], Group[], Feed[]] | undefined> {
     const groups: Group[] = await groupRepo.getAll();
     const feeds: Feed[] = await feedRepo.getAll()
-    let all: Subscription[] = groups.map(g => ({ id: g.id, title: g.title, feeds: [] }))
+    let subscriptions: Subscription[] = groups.map(g => ({ id: g.id, title: g.title, feeds: [] }))
     if (feeds.filter(f => !f.groupId).length > 0) {
-        all.push({ id: -1, title: '未分类', feeds: [] })
+        subscriptions.push({ id: -1, title: '未分类', feeds: [] })
     }
     let gid2group: any = {}
-    all.forEach(item => {
+    subscriptions.forEach(item => {
         gid2group[item.id] = item
     })
     feeds.forEach(f => {
-
         const sf: SubscriptionFeed = mapFeed(f)
         if (f.groupId) {
             gid2group[f.groupId].feeds.push(sf)
@@ -190,7 +206,7 @@ export async function listSubscription(): Promise<[Subscription[], Group[], Feed
         }
         feedsCache[f.id] = sf
     })
-    return [all, groups, feeds]
+    return [subscriptions, groups, feeds]
 }
 
 /**
@@ -239,6 +255,7 @@ export async function listFailFeedIds(): Promise<number[]> {
  * @returns 
  */
 export async function read(id: number, marked: Marked, before?: number, after?: number, feedId?: number): Promise<any> {
+    // 记录已读方便后期只能排寻
     if (marked == Marked.ITEM && feedId) {
         readItem(feedId, id)
     }
@@ -257,6 +274,32 @@ export async function read(id: number, marked: Marked, before?: number, after?: 
         mark: Marked[marked].toLowerCase(),
         before: before,
         after
+    })
+}
+
+/**
+ * 一次读多个
+ * @param ids 
+ * @returns 
+ */
+export async function readItemIds(ids: number[]): Promise<any> {
+    return await mark({
+        ids: ids,
+        as: 'read',
+        mark: Marked[Marked.ITEM].toLowerCase(),
+    })
+}
+
+/**
+ * 一次将多个标记未读
+ * @param ids 
+ * @returns 
+ */
+export async function unReadItemIds(ids: number[]): Promise<any> {
+    return await mark({
+        ids: ids,
+        as: 'unread',
+        mark: Marked[Marked.ITEM].toLowerCase(),
     })
 }
 
@@ -321,9 +364,9 @@ export async function search(keyword: string): Promise<{ items: FeedItem[], feed
     // 通过 repository 查询
     keyword = keyword.toLowerCase()
     const items = await itemRepo.findAll(item => item.title.toLowerCase().includes(keyword), 0, 500);
-    const feeds = await feedRepo.findAll(feed => feed.title.toLowerCase().includes(keyword) || feed.url.toLowerCase().includes(keyword), 0, 300);
-    const groups = await groupRepo.findAll(group => group.title.toLowerCase().includes(keyword), 0, 300);
-    return { items: items.data.map(map), feeds: feeds.data.map(mapFeed), groups: groups.data };
+    const feeds = await feedRepo.listAll(feed => feed.title.toLowerCase().includes(keyword) || feed.url.toLowerCase().includes(keyword));
+    const groups = await groupRepo.listAll(group => group.title.toLowerCase().includes(keyword));
+    return { items: items.data.map(map), feeds: feeds.map(mapFeed), groups };
 }
 
 
@@ -333,6 +376,10 @@ function filterItem(item: Item, feedIds: Set<number>, onlyUnread: boolean = fals
 
 function filterItem0(item: Item, itemIdFilter: (id: any) => boolean, onlyUnread: boolean = false, unReadItemIds: Set<number>): boolean {
     return itemIdFilter(item.id) && (!onlyUnread || unReadItemIds.has(item.id))
+}
+
+function filterItemId(id: number, onlyUnread: boolean = false, unReadItemIds: Set<number>): boolean {
+    return (!onlyUnread || unReadItemIds.has(id))
 }
 
 function map(item: Item): FeedItem {

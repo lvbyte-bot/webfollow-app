@@ -1,7 +1,7 @@
 // stores/counter.js
 import { defineStore } from 'pinia'
 import { reactive, Reactive } from 'vue'
-import { Marked, listSavedIds, listUnreadIds, listFailFeedIds, read as read0, unread as unread0, save as save0, unsave as unsave0 } from '@/service'
+import { Marked, listSavedIds, listUnreadIds, listFailFeedIds, read as read0, unread as unread0, save as save0, unsave as unsave0, readItemIds, unReadItemIds } from '@/service'
 
 function setItem(key: string, dataset: Set<number>) {
     localStorage.setItem(key, JSON.stringify(Array.from(dataset)))
@@ -21,6 +21,57 @@ export const useBaseStore = defineStore('base', () => {
             (await listUnreadIds()).forEach((item: number) => unread_item_ids.add(item));
         }
         setItem('urids', unread_item_ids)
+    }
+
+    async function readItemBatch(ids: number[]) {
+        try {
+            await readItemIds(ids)
+            ids.forEach(id => unread_item_ids.delete(id))
+            setItem('urids', unread_item_ids)
+        } catch {
+            const batchSize = 5;
+            const batches = [];
+            // Split ids into batches of 5
+            for (let i = 0; i < ids.length; i += batchSize) {
+                batches.push(ids.slice(i, i + batchSize));
+            }
+            // Process each batch
+            for (const batch of batches) {
+                try {
+                    await Promise.all(batch.map((id) => read(id)));
+                } catch (error) {
+                    ifeedApp.tip("网络异常");
+                    // Continue with next batch even if current batch fails
+                    continue;
+                }
+            }
+        }
+
+    }
+
+    async function unreadItemBatch(ids: number[]) {
+        try {
+            await unReadItemIds(ids)
+            ids.forEach(id => unread_item_ids.add(id))
+            setItem('urids', unread_item_ids)
+        } catch {
+            const batchSize = 5;
+            const batches = [];
+            // Split ids into batches of 5
+            for (let i = 0; i < ids.length; i += batchSize) {
+                batches.push(ids.slice(i, i + batchSize));
+            }
+            // Process each batch
+            for (const batch of batches) {
+                try {
+                    await Promise.all(batch.map((id) => unread(id)));
+                } catch (error) {
+                    ifeedApp.tip("网络异常");
+                    // Continue with next batch even if current batch fails
+                    continue;
+                }
+            }
+        }
     }
 
     async function unread(id: number, marked: Marked = Marked.ITEM, before?: number) {
@@ -80,6 +131,6 @@ export const useBaseStore = defineStore('base', () => {
 
     }
 
-    return { saved_item_ids, unread_item_ids, fail_feed_ids, read, unread, save, unsave, refresh, clearFailFeedIds }
+    return { saved_item_ids, unread_item_ids, fail_feed_ids, read, readItemBatch, unread, unreadItemBatch, save, unsave, refresh, clearFailFeedIds }
 })
 

@@ -4,6 +4,11 @@ export interface DbStore {
     id: number
 }
 
+export interface SortDefine {
+    index: string,
+    direction: IDBCursorDirection,
+}
+
 export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
     const dbName = 'WebFollowDatabase';
 
@@ -163,6 +168,7 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
         });
     }
 
+    //  后期移除
     function findAll<T extends DbStore>(storeName: string, conditionFn: (item: T) => boolean, pageSize: number, pageIndex: number, sortFn?: (a: T, b: T) => number): Promise<T[]> {
         return new Promise((resolve, reject) => {
             openDatabase().then(db => {
@@ -211,6 +217,109 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
             });
         });
     }
+
+    // 基于findAll 写一个listIds
+    function listAllIds<T extends DbStore>(storeName: string, conditionFn: (item: T) => boolean, sort: SortDefine = { index: 'pubDate', direction: 'prev' }): Promise<number[]> {
+        return new Promise((resolve, reject) => {
+            openDatabase().then(db => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                const results: number[] = [];
+                let request
+                if (storeName == 'items') {
+                    const index = store.index(sort.index);
+                    request = index.openCursor(null, sort.direction); // 使用 'prev' 进行降序
+                } else {
+                    request = store.openCursor()
+                }
+
+                request.onsuccess = function (event) {
+                    const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
+                    if (cursor) {
+                        if (conditionFn(cursor.value)) {
+                            results.push(cursor.value.id);
+                        }
+                        cursor.continue();
+                    } else {
+                        resolve(results); // 返回符合条件的结果
+                    }
+                };
+
+                request.onerror = function (event) {
+                    reject('Error during cursor operation: ' + (event.target as IDBRequest).error?.message);
+                };
+            });
+        });
+    }
+
+    // Function to get items by IDs in the same order as the input array
+    function getByIdsInOrder<T extends DbStore>(storeName: string, ids: number[]): Promise<T[]> {
+        return new Promise((resolve, reject) => {
+            if (ids.length === 0) {
+                resolve([]);
+                return;
+            }
+
+            openDatabase().then(db => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                const results: (T | undefined)[] = new Array(ids.length);
+                let completed = 0;
+
+                // Process each ID and maintain original order
+                ids.forEach((id, index) => {
+                    const request = store.get(id);
+
+                    request.onsuccess = function () {
+                        results[index] = request.result; // Place result at same index as ID
+                        completed++;
+
+                        // Check if all requests are completed
+                        if (completed === ids.length) {
+                            // Filter out undefined values (IDs that weren't found)
+                            resolve(results.filter(item => item !== undefined) as T[]);
+                        }
+                    };
+
+                    request.onerror = function (event) {
+                        reject('Error fetching item: ' + (event.target as IDBRequest).error?.message);
+                    };
+                });
+            }).catch(error => {
+                reject('Database open failed: ' + error);
+            });
+        });
+    }
+
+
+    // 基于findall 写一个countAll
+    function countAll<T extends DbStore>(storeName: string, conditionFn: (item: T) => boolean): Promise<number> {
+        return new Promise((resolve, reject) => {
+            openDatabase().then(db => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                let count = 0;
+
+                const request = store.openCursor();
+
+                request.onsuccess = function (event) {
+                    const cursor = (event.target as IDBRequest<IDBCursorWithValue>).result;
+                    if (cursor) {
+                        if (conditionFn(cursor.value)) {
+                            count++;
+                        }
+                        cursor.continue();
+                    } else {
+                        resolve(count); // 返回符合条件的结果
+                    }
+                };
+                request.onerror = function (event) {
+                    reject('Error during cursor operation: ' + (event.target as IDBRequest).error?.message);
+                };
+            });
+        });
+    }
+
 
 
     function whereOne<T extends DbStore>(storeName: string, applyFn: (item: T, y: T) => T): Promise<T> {
@@ -383,6 +492,9 @@ export const IndexedDB = function (initDB: (idb: IDBDatabase) => void) {
         remove,
         getAll,
         findAll,
+        countAll,
+        listAllIds,
+        getByIdsInOrder,
         listAll,
         whereOne,
         getIdsInTimeRange,
@@ -512,3 +624,5 @@ export async function getOne<T>(request: IDBRequest<T>): Promise<T> {
         };
     });
 }
+
+

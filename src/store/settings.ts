@@ -6,9 +6,11 @@ interface GeneralSettings {
     startPage: 'welcome' | 'all' | 'next' | 'firstfolder' | 'explore'
     defaultView: ViewMode
     hideReadArticles: boolean
+    autoRead: boolean
     autoRefresh: boolean
     refreshInterval: number
     pullDataFail: boolean
+    enableListAISummary: boolean
 }
 
 interface AppearanceSettings {
@@ -33,12 +35,14 @@ interface IntegratedSettings {
     selectedModel?: string;
 }
 
-interface FilterItem {
+export interface QueryFilterItem {
     id: string;
     name: string;
     keywords: KeywordWeight[];
     createTime: number;
+    query?: string;
 }
+
 
 interface KeywordWeight {
     keyword: string;
@@ -46,7 +50,7 @@ interface KeywordWeight {
 }
 
 interface AutomationSettings {
-    filters: FilterItem[];
+    filters: QueryFilterItem[];
 }
 
 interface SettingsState {
@@ -61,9 +65,11 @@ export const useSettingsStore = defineStore('settings', () => {
         startPage: 'welcome',
         defaultView: 'auto',
         hideReadArticles: true,
-        autoRefresh: false,
+        autoRead: true,
+        autoRefresh: true,
         refreshInterval: 30 * 60,
-        pullDataFail: false
+        pullDataFail: false,
+        enableListAISummary: false
     })
 
     const appearance = ref<AppearanceSettings>({
@@ -88,7 +94,7 @@ export const useSettingsStore = defineStore('settings', () => {
     })
 
     const automation = ref<AutomationSettings>({
-        filters: []
+        filters: [],
     })
 
     function updateCSSVariables() {
@@ -143,9 +149,11 @@ export const useSettingsStore = defineStore('settings', () => {
             startPage: 'welcome',
             defaultView: 'auto',
             hideReadArticles: true,
-            autoRefresh: false,
+            autoRead: true,
+            autoRefresh: true,
             refreshInterval: 30 * 60,
-            pullDataFail: false
+            pullDataFail: false,
+            enableListAISummary: false
         }
         saveToLocalStorage()
     }
@@ -179,12 +187,12 @@ export const useSettingsStore = defineStore('settings', () => {
 
     function resetAutomationSettings() {
         automation.value = {
-            filters: []
+            filters: [],
         }
         saveToLocalStorage()
     }
 
-    function getFilter(filterId: string): FilterItem | undefined {
+    function getFilter(filterId: string): QueryFilterItem | undefined {
         return automation.value.filters.find(f => f.id === filterId);
     }
 

@@ -12,7 +12,7 @@ export function useHotkeys() {
     let currentSearchIndex = 0
     let searchResultTotal = 0
 
-    webfollowApp.view = { changeEntryCurrentIndex: (index: number) => currentIndex = index }
+    ifeedApp.view = { changeEntryCurrentIndex: (index: number) => currentIndex = index }
 
     const handleKeydown = (e: KeyboardEvent) => {
         const topReader = document.querySelector('.v-main-top .cover.reading') as HTMLElement
@@ -44,7 +44,7 @@ export function useHotkeys() {
             case 'b':
                 // 打开侧边栏
                 if (e.ctrlKey) {
-                    webfollowApp.toogleSidebar()
+                    ifeedApp.toogleSidebar()
                     return
                 }
                 break
@@ -85,16 +85,16 @@ export function useHotkeys() {
                     break
                 case 'n':
                     if (e.shiftKey) {
-                        router.push(webfollowApp.getUnReadUrl(route.fullPath, false))
+                        router.push(ifeedApp.getUnReadUrl(route.fullPath, false))
                     } else {
-                        router.push(webfollowApp.getUnReadUrl(route.fullPath, true))
+                        router.push(ifeedApp.getUnReadUrl(route.fullPath, true))
                     }
                     break
                 case 'v':
-                    webfollowApp.toggleItemView()
+                    ifeedApp.toggleItemView()
                     break
                 case 'u':
-                    webfollowApp.toggleItemUnread()
+                    ifeedApp.toggleItemUnread()
                     break
                 case '/':
                 case 'k':
@@ -166,6 +166,10 @@ export function useHotkeys() {
                 // 标记为已读/未读
                 (reader.querySelector('.entry-read') as HTMLElement)?.click()
                 break
+            case 'w':
+                // 加载网页全文
+                (reader.querySelector('.entry-content') as HTMLElement)?.click()
+                break
             case 'i':
                 // 内嵌网页
                 (reader.querySelector('.entry-inner') as HTMLElement)?.click()
@@ -215,11 +219,10 @@ export function useHotkeys() {
                 break
             case 'Enter':
                 // 释放焦点
-                for (let i = 0; i < 3; i++) {
-                    setTimeout(() => {
-                        (document.querySelectorAll('.entry-item')[currentIndex] as HTMLElement)?.blur();
-                        (reader.querySelector('.overflow') as HTMLElement)?.click()
-                    }, 200 * i + 300);
+                e.preventDefault()
+                if (document.querySelectorAll('.entry-item')[currentIndex]) {
+                    (document.querySelectorAll('.entry-item')[currentIndex] as HTMLElement).blur();
+                    (reader.querySelector('.overflow') as HTMLElement)?.focus();
                 }
                 break
         }

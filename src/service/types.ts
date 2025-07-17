@@ -18,6 +18,12 @@ export interface SubscriptionFeed {
     groupId?: number
 }
 
+export interface SubscriptionFilter {
+    id: string,
+    name: string,
+    unreadQty?: number
+}
+
 export enum ItemType { BASIC, IMAGE, VIDEO, PODCAST }
 
 

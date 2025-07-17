@@ -11,10 +11,12 @@
 
 - [x] fever api
 - [x] data in local
-- [x] ai search
+- [x] ai search (rag)
 - [x] recommend
 - [x] llm summary + llm filter
 - [x] pwa
+- [x] List entry ai summary
+- [x] List scroll mark as read
 
 **base**
 
@@ -32,6 +34,7 @@
 
 **todo list**
 
+- [ ] ai search 2.0 (mcp / function-call)
 - [ ] export opml
 - [ ] data reset
 
