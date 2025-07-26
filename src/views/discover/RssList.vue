@@ -4,45 +4,23 @@
       <!-- 搜索框 -->
       <v-row class="search-row">
         <v-col cols="12" md="4">
-          <v-text-field
-            v-model="searchQuery"
-            label="搜索服务"
-            prepend-inner-icon="mdi-magnify"
-            clearable
-            hide-details
-            density="compact"
-          />
+          <v-text-field v-model="searchQuery" label="搜索服务" prepend-inner-icon="mdi-magnify" clearable hide-details
+            density="compact" />
         </v-col>
       </v-row>
 
       <!-- 服务列表网格 -->
       <v-row>
-        <v-col
-          v-for="service in filteredServices"
-          :key="service.key"
-          cols="12"
-          sm="6"
-          md="4"
-          lg="3"
-          xl="2"
-        >
+        <v-col v-for="service in filteredServices" :key="service.key" cols="12" sm="6" md="4" lg="3" xl="2">
           <v-card class="service-card rounded-lg" variant="outlined">
             <!-- 服务图标和名称 -->
-            <v-card-item
-              class="pb-3"
-              :style="{
-                backgroundColor:
-                  iconColors.get(service.url) || 'rgba(0, 0, 0, 0.3)',
-              }"
-            >
+            <v-card-item class="pb-3" :style="{
+              backgroundColor:
+                iconColors.get(service.url) || 'rgba(0, 0, 0, 0.3)',
+            }">
               <template v-slot:prepend>
-                <v-avatar
-                  :image="getServiceIcon(service.url)"
-                  :alt="service.name"
-                  :data-url="service.url"
-                  class="service-icon"
-                  size="20"
-                />
+                <v-avatar :image="getServiceIcon(service.url)" :alt="service.name" :data-url="service.url"
+                  class="service-icon" size="20" />
               </template>
               <v-card-title class="text-truncate ps-3">
                 {{ service.name }}
@@ -52,18 +30,10 @@
             <!-- 路由列表 -->
             <v-card-text class="py-5">
               <div class="route-list">
-                <v-chip
-                  v-for="(route, path) in getServiceRoutes(service.key)"
-                  :key="path"
-                  size="small"
-                  variant="text"
-                  class="route-chip"
-                  @click="openConfigDialog(service, path, route)"
-                >
+                <v-chip v-for="(route, path) in getServiceRoutes(service.key)" :key="path" size="small" variant="text"
+                  class="route-chip" @click="openConfigDialog(service, path, route)">
                   <template #prepend>
-                    <v-icon color="primary" class="mr-1"
-                      >mdi-circle-medium</v-icon
-                    >
+                    <v-icon color="primary" class="mr-1">mdi-circle-medium</v-icon>
                   </template>
                   {{ route.name }}
                 </v-chip>
@@ -73,25 +43,15 @@
             <!-- 分类标签 -->
             <v-card-text class="pt-0">
               <v-icon size="small" class="mr-1">mdi-tag-outline</v-icon>
-              <v-chip
-                size="x-small"
-                variant="flat"
-                class="category-chip"
-                color="grey"
-              >
+              <v-chip size="x-small" variant="flat" class="category-chip" color="grey">
                 {{ getServiceCategory(service) }}
               </v-chip>
             </v-card-text>
 
             <!-- 维护者信息 -->
             <v-card-text class="maintainers pt-0">
-              <v-icon size="small" class="mr-1"
-                >mdi-account-group-outline</v-icon
-              >
-              <template
-                v-for="maintainer in getServiceMaintainers(service.key)"
-                :key="maintainer"
-              >
+              <v-icon size="small" class="mr-1">mdi-account-group-outline</v-icon>
+              <template v-for="maintainer in getServiceMaintainers(service.key)" :key="maintainer">
                 <span class="maintainer">@{{ maintainer }}</span>
               </template>
             </v-card-text>
@@ -99,61 +59,35 @@
         </v-col>
       </v-row>
       <div class="text-center ma-8">
-        <v-btn variant="text" href="https://rsshub.app/" target="_blank"
-          >该列表由rsshub驱动</v-btn
-        >
+        <v-btn variant="text" href="https://rsshub.app/" target="_blank">该列表由rsshub驱动</v-btn>
       </div>
     </v-container>
 
     <!-- 配置对话框 -->
     <v-dialog v-model="configDialog.show" max-width="700px">
       <v-card v-if="configDialog.service" class="rounded-lg">
-        <v-card-title
-          class="d-flex align-center pa-6"
-          :style="{
-            backgroundColor:
-              iconColors.get(configDialog.service.url) || 'rgba(0, 0, 0, 0.3)',
-          }"
-        >
-          <v-avatar
-            :image="getServiceIcon(configDialog.service.url)"
-            :alt="configDialog.service.name"
-            size="26"
-            class="service-icon mr-2"
-          />
+        <v-card-title class="d-flex align-center pa-6" :style="{
+          backgroundColor:
+            iconColors.get(configDialog.service.url) || 'rgba(0, 0, 0, 0.3)',
+        }">
+          <v-avatar :image="getServiceIcon(configDialog.service.url)" :alt="configDialog.service.name" size="26"
+            class="service-icon mr-2" />
           {{ configDialog.service.name }}
           <v-spacer></v-spacer>
-          <v-select
-            v-model="configDialog.route.path"
-            :items="
-              Object.entries(getServiceRoutes(configDialog.service.key)).map(
-                ([path, route]) => ({
-                  title: route.name,
-                  value: path,
-                })
-              )
-            "
-            item-title="title"
-            item-value="value"
-            density="compact"
-            hide-details
-            class="route-select mx-4"
-            @update:model-value="switchRoute"
-          />
-          <v-btn
-            icon="mdi-close"
-            variant="text"
-            @click="configDialog.show = false"
-            title="关闭"
-          >
+          <v-select v-model="configDialog.route.path" :items="Object.entries(getServiceRoutes(configDialog.service.key)).map(
+            ([path, route]) => ({
+              title: route.name,
+              value: path,
+            })
+          )
+            " item-title="title" item-value="value" density="compact" hide-details class="route-select mx-4"
+            @update:model-value="switchRoute" />
+          <v-btn icon="mdi-close" variant="text" @click="configDialog.show = false" title="关闭">
           </v-btn>
         </v-card-title>
         <v-card-text>
-          <rss-editor
-            :service-key="configDialog.service?.key || ''"
-            :route-path="configDialog.route.path"
-            @close="configDialog.show = false"
-          />
+          <rss-editor :service-key="configDialog.service?.key || ''" :route-path="configDialog.route.path"
+            @close="configDialog.show = false" />
         </v-card-text>
       </v-card>
     </v-dialog>

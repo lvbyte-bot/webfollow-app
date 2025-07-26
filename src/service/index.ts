@@ -413,7 +413,7 @@ function map(item: Item): FeedItem {
 }
 
 function mapFeed(feed: Feed): SubscriptionFeed {
-    return { id: feed.id, title: feed.title, url: feed.url, unreadQty: 0, siteUrl: feed.siteUrl, groupId: feed.groupId, icon: `https://unavatar.webp.se/${getBaseDomain(feed.siteUrl)}?fallback=false` }
+    return { id: feed.id, title: feed.title, url: feed.url, unreadQty: 0, siteUrl: feed.siteUrl, groupId: feed.groupId, icon: `https://favicon.im/${getBaseDomain(feed.siteUrl)}` }
 }
 
 function extImgs(htmlContent: string): string[] {

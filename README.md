@@ -1,4 +1,8 @@
-# webfollow-app
+# IFeed
+
+> 原名 webfollow
+
+![](./doc/logo.png)
 
 > RSS reader suppot fever api
 
@@ -25,17 +29,17 @@
 - [x] podcast-reader
 - [x] img-reader
 - [x] video-reader
-- [x] auto-view
-- [x] column-view
-- [x] list-view
-- [x] card-view
-- [x] text-view
-- [x] content-view
+- [x] auto-list-view
+- [x] column-list-view
+- [x] list-list-view
+- [x] card-list-view
+- [x] text-list-view
+- [x] content-list-view
 
 **todo list**
 
 - [ ] ai search 2.0 (mcp / function-call)
-- [ ] export opml
+- [x] export opml
 - [ ] data reset
 
 ## Demo
@@ -44,25 +48,17 @@
 
 ## Preview
 
-**AI**
-
-![](./doc/ai-search.png)
-
-**Mobile**
-
-![](./doc/mobile-feed.png)
-![](./doc/mobile-reader.png)
-
 **PC**
 
-![](./doc/col-view.png)
-![](./doc/text-reader.png)
-![](./doc/podcast-reader.png)
-![](./doc/video-reader.png)
-![](./doc/img-reader.png)
-![](./doc/feed-items.png)
-![](./doc/login.png)
-![](./doc/feed-follow.png)
+![](./doc/index.png)
+![](./doc/reader.png)
+![](./doc/filter.png)
+![](./doc/follow.png)
+![](./doc/settings.png)
+![](./doc/card-view.png)
+![](./doc/podcast.png)
+![](./doc/reader-full.png)
+![](./doc/reader-img-ext.png)
 
 ## Use
 

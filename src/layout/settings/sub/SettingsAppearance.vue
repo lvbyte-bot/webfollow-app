@@ -151,7 +151,8 @@ const { appearance: data } = storeToRefs(settingsStore);
 
 // 主题颜色选项
 const themeColors = [
-  { title: "蓝色", value: "25, 118, 210", color: "blue" },
+  // { title: "蓝色", value: "25, 118, 210", color: "blue" },
+  { title: "蓝色", value: "2, 114, 203", color: "#0272cb" },
   { title: "绿色", value: "39, 174, 96", color: "#27AE60" },
   { title: "紫色", value: "123, 31, 162", color: "purple" },
   { title: "橙色", value: "245, 124, 0", color: "orange" },

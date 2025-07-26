@@ -74,7 +74,7 @@ export const useSettingsStore = defineStore('settings', () => {
 
     const appearance = ref<AppearanceSettings>({
         themeMode: 'system',
-        themeColor: '39, 174, 96',
+        themeColor: '2, 114, 203',
         fontFamily: 'system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, SN Pro',
         codeFont: 'mono',
         fontSize: 14,
@@ -161,7 +161,7 @@ export const useSettingsStore = defineStore('settings', () => {
     function resetAppearanceSettings() {
         appearance.value = {
             themeMode: 'system',
-            themeColor: '39, 174, 96',
+            themeColor: '2, 114, 203',
             fontFamily: 'system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, SN Pro',
             codeFont: 'mono',
             fontSize: 14,

@@ -63,7 +63,7 @@
             @contextmenu.prevent="showContextMenu($event, subItem)">
             <template #prepend>
               <div class="icon-warp">
-                <img :src="subItem.icon" onerror="this.src='/logo.svg'" width="17">
+                <img :src="subItem.icon" width="17">
                 </img>
               </div>
 
@@ -100,7 +100,7 @@
             @contextmenu.prevent="showContextMenu($event, subItem)">
             <template #prepend>
               <div class="icon-warp">
-                <img :src="subItem.icon" onerror="this.src='/logo.svg'" width="17">
+                <img :src="subItem.icon" width=" 17">
                 </img>
               </div>
             </template>
@@ -522,5 +522,7 @@ const exportOPML = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
+
+
 }
 </style>
