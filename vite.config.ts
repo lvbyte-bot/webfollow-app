@@ -39,8 +39,8 @@ export default defineConfig(async () => ({
     },
     includeAssets: ['favicon.ico', 'logo.svg'],
     manifest: {
-      name: 'WebFollow',
-      short_name: 'WebFollow',
+      name: 'IFeed',
+      short_name: 'IF',
       description: '做懂你阅读的RSS阅读器',
       display: 'standalone',
       theme_color: '#0000',
