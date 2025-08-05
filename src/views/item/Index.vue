@@ -28,10 +28,16 @@
     </v-list>
   </template>
   <template v-else>
-    <content-item v-for="(item, index) in items" :item="item" @click="openReader(index, item)"
+    <v-list max-width="600" class="mx-auto">
+      <tweet-item v-for="(item, index) in items" :item="item" @click="openReader(index, item)"
+        @click-action="clickAction" @contextmenu.prevent="showContextMenu($event, item, index)" :type="type"
+        :key="item.id" class="entry-item" :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
+        :style="{ animationDelay: `${(index % 50) * 0.005}s` }" />
+    </v-list>
+    <!-- <content-item v-for="(item, index) in items" :item="item" @click="openReader(index, item)"
       @click-action="clickAction" @contextmenu.prevent="showContextMenu($event, item, index)" :type="type"
       :key="item.id" class="entry-item" :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
-      :style="{ animationDelay: `${(index % 50) * 0.03}s` }" />
+      :style="{ animationDelay: `${(index % 50) * 0.03}s` }" /> -->
   </template>
   <!-- 右键菜单 -->
   <v-dialog-transition>
@@ -80,8 +86,9 @@ import CardItem from "./CardItem.vue";
 import MagazineItem from "./MagazineItem.vue";
 import AiSummaryItem from "./AISummaryItem.vue";
 
-import ContentItem from "./ContentItem.vue";
+// import ContentItem from "./ContentItem.vue";
 import TextItem from "./TextItem.vue";
+import TweetItem from "./TweetItem.vue";
 import { FeedItem } from "@/service/types";
 import { ClickType } from "./types";
 import { ViewMode } from "@/store/types";
@@ -189,6 +196,7 @@ defineExpose({
   background-color: rgb(var(--v-theme-on-surface-variant));
 }
 
+
 .items-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -209,100 +217,6 @@ defineExpose({
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
 }
 
-/**
-.items-list {
-  .v-col-xxl,
-  .v-col-xxl-auto,
-  .v-col-xxl-12,
-  .v-col-xxl-11,
-  .v-col-xxl-10,
-  .v-col-xxl-9,
-  .v-col-xxl-8,
-  .v-col-xxl-7,
-  .v-col-xxl-6,
-  .v-col-xxl-5,
-  .v-col-xxl-4,
-  .v-col-xxl-3,
-  .v-col-xxl-2,
-  .v-col-xxl-1,
-  .v-col-xl,
-  .v-col-xl-auto,
-  .v-col-xl-12,
-  .v-col-xl-11,
-  .v-col-xl-10,
-  .v-col-xl-9,
-  .v-col-xl-8,
-  .v-col-xl-7,
-  .v-col-xl-6,
-  .v-col-xl-5,
-  .v-col-xl-4,
-  .v-col-xl-3,
-  .v-col-xl-2,
-  .v-col-xl-1,
-  .v-col-lg,
-  .v-col-lg-auto,
-  .v-col-lg-12,
-  .v-col-lg-11,
-  .v-col-lg-10,
-  .v-col-lg-9,
-  .v-col-lg-8,
-  .v-col-lg-7,
-  .v-col-lg-6,
-  .v-col-lg-5,
-  .v-col-lg-4,
-  .v-col-lg-3,
-  .v-col-lg-2,
-  .v-col-lg-1,
-  .v-col-md,
-  .v-col-md-auto,
-  .v-col-md-12,
-  .v-col-md-11,
-  .v-col-md-10,
-  .v-col-md-9,
-  .v-col-md-8,
-  .v-col-md-7,
-  .v-col-md-6,
-  .v-col-md-5,
-  .v-col-md-4,
-  .v-col-md-3,
-  .v-col-md-2,
-  .v-col-md-1,
-  .v-col-sm,
-  .v-col-sm-auto,
-  .v-col-sm-12,
-  .v-col-sm-11,
-  .v-col-sm-10,
-  .v-col-sm-9,
-  .v-col-sm-8,
-  .v-col-sm-7,
-  .v-col-sm-6,
-  .v-col-sm-5,
-  .v-col-sm-4,
-  .v-col-sm-3,
-  .v-col-sm-2,
-  .v-col-sm-1,
-  .v-col,
-  .v-col-auto,
-  .v-col-12,
-  .v-col-11,
-  .v-col-10,
-  .v-col-9,
-  .v-col-8,
-  .v-col-7,
-  .v-col-6,
-  .v-col-5,
-  .v-col-4,
-  .v-col-3,
-  .v-col-2,
-  .v-col-1 {
-    padding: 0;
-    padding-top: 12px;
-  }
-}
-.v-list-item .v-card {
-  padding: 9px;
-}
-*/
 .fade-in {
   opacity: 0;
   transform: translateY(-20px);
@@ -325,5 +239,10 @@ defineExpose({
     opacity: 1;
     transform: translateY(0);
   }
+}
+</style>
+<style scoped>
+.v-list {
+  background-color: transparent;
 }
 </style>
