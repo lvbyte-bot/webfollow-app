@@ -25,10 +25,7 @@
       </template>
     </SideBar>
   </v-navigation-drawer>
-  <!-- 播放列表 -->
-  <v-navigation-drawer width="320" temporary v-model="showPlayList">
-    <PlayList></PlayList>
-  </v-navigation-drawer>
+
   <!-- pc端侧边栏 -->
   <v-navigation-drawer :model-value="!mobile && !hideSide" class="resizable-drawer"
     :width="settingsStore.appearance.sidebarWidth">
@@ -71,7 +68,10 @@
       </template>
     </SideBar>
   </v-navigation-drawer>
-
+  <!-- 播放列表 -->
+  <v-navigation-drawer width="260" location="right" v-model="showPlayList">
+    <PlayList></PlayList>
+  </v-navigation-drawer>
   <!-- 侧边栏切换按钮 -->
   <c-btn class="ma-2 menu-warp logo" variant="text" icon="mdi-dock-left" title="打开边栏" @click="
     () => {
@@ -235,7 +235,7 @@ const { showSearch, showHelp } = useHotkeys();
 .podcast-player {
   position: fixed;
   bottom: 2rem;
-  left: 1rem;
+  right: 1rem;
   z-index: 1006;
 }
 

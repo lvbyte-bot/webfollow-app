@@ -1,48 +1,22 @@
 <template>
   <div class="play">
-    <v-img
-      :src="modelValue?.thumbil"
-      cover
-      max-height="160px"
-      max-width="160px"
-      class="d-flex align-center mx-auto"
-      :class="{ 'spinner-2': isPlaying }"
-      style="border-radius: 50%"
-    >
+    <v-img :src="modelValue?.thumbil" cover height="130px" width="130px" class="d-flex align-center mx-auto"
+      :class="{ 'spinner-2': isPlaying }" style="border-radius: 50%">
     </v-img>
 
     <v-card-text>
-      <p class="text-body-1" v-text="modelValue?.title"></p>
-      <p
-        class="text-center text-subtitle-2 my-2"
-        v-text="modelValue?.subtitle"
-      ></p>
-      <audio
-        ref="audio"
-        @timeupdate="updateProgress"
-        @loadedmetadata="setDuration"
-        @ended="onEnded"
-        :src="modelValue?.url || ''"
-        controls
-        hidden
-      ></audio>
+      <p class="text-body-1 text-ellipsis" v-text="modelValue?.title"></p>
+      <p class="text-center text-subtitle-2 my-2 " v-text="modelValue?.subtitle"></p>
+      <audio ref="audio" @timeupdate="updateProgress" @loadedmetadata="setDuration" @ended="onEnded"
+        :src="modelValue?.url || ''" controls hidden></audio>
 
-      <v-slider
-        v-model="currentTime"
-        :max="duration"
-        @update:modelValue="seek"
-        hide-details
-      ></v-slider>
+      <v-slider v-model="currentTime" :max="duration" @update:modelValue="seek" color="primary" hide-details></v-slider>
       <div class="d-flex align-center justify-space-between">
         <span>{{ formatTime(currentTime) }}</span>
         <span>{{ formatTime(duration) }}</span>
       </div>
       <div class="d-flex justify-center mt-3">
-        <v-btn
-          @click="togglePlay"
-          :icon="isPlaying ? 'mdi-pause' : 'mdi-play'"
-          color="primary"
-        >
+        <v-btn @click="togglePlay" :icon="isPlaying ? 'mdi-pause' : 'mdi-play'" color="primary">
         </v-btn>
       </div>
     </v-card-text>
