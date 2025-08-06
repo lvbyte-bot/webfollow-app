@@ -1,84 +1,47 @@
 <template>
   <v-list-item v-bind="$attrs" class="pa-0 rounded-lg">
     <v-card flat class="rounded-lg card">
-      <div
-        v-if="item.thumbnail || isVideoOrPodcast"
-        @mouseover="showIframe = true"
-        @mouseleave="showIframe = false"
+      <div v-if="item.thumbnail || isVideoOrPodcast" @mouseover="showIframe = true" @mouseleave="showIframe = false"
         :style="{
           maxHeight:
             item.type == 'VIDEO' && !mobile ? imageHeight + 'px' : 'none',
-        }"
-        class="rounded-lg"
-        :class="{
+        }" class="rounded-lg" :class="{
           'iframe-container': showIframe && item.type == 'VIDEO',
-        }"
-      >
+        }">
         <template v-if="item.type == 'VIDEO' && showIframe">
-          <iframe
-            type="text/html"
-            class="iframe"
-            :src="videoUrl()"
-            :style="{ height: imageHeight + 2 + 'px' }"
-            frameborder="0"
-            allow="fullscreen"
-            mozallowfullscreen="mozallowfullscreen"
-            msallowfullscreen="msallowfullscreen"
-            oallowfullscreen="oallowfullscreen"
-            webkitallowfullscreen="webkitallowfullscreen"
-          ></iframe>
-          <div
-            class="video-warp"
-            :style="{
-              height: imageHeight + 'px',
-            }"
-          ></div>
+          <iframe type="text/html" class="iframe" :src="videoUrl()" :style="{ height: imageHeight + 2 + 'px' }"
+            frameborder="0" allow="fullscreen" mozallowfullscreen="mozallowfullscreen"
+            msallowfullscreen="msallowfullscreen" oallowfullscreen="oallowfullscreen"
+            webkitallowfullscreen="webkitallowfullscreen"></iframe>
+          <div class="video-warp" :style="{
+            height: imageHeight + 'px',
+          }"></div>
         </template>
-        <v-img
-          v-else
-          ref="imageRef"
-          class="align-end text-white rounded-lg play-preview"
-          :title="item.title"
-          :aspect-ratio="
-            mobile ? (item.enclosure ? 1.78 : 0.7) : item.enclosure ? 1.79 : 0
-          "
-          max-height="600px"
-          min-height="80px"
-          :cover="mobile || item.enclosure"
-          :src="item.thumbnail || item.feed?.icon"
-        >
+        <v-img v-else ref="imageRef" class="align-end text-white rounded-lg play-preview" :title="item.title"
+          :aspect-ratio="mobile ? (item.enclosure ? 1.78 : 0.7) : item.enclosure ? 1.79 : 0
+            " max-height="600px" min-height="80px" :cover="mobile || item.enclosure"
+          :src="item.thumbnail || item.feed?.icon">
           <template v-if="isVideoOrPodcast">
             <div class="play-duration">
-              {{ formatDuration(item.duration) }}
+              <!-- {{ formatDuration(item.duration) }} -->
+              v
             </div>
           </template>
         </v-img>
       </div>
-      <div
-        v-else
-        :style="{ '--line-clamp': mobile ? 12 : 7 }"
-        class="text-body-2 px-4 py-3 text-grey border rounded-lg summary-warp"
-      >
+      <div v-else :style="{ '--line-clamp': mobile ? 12 : 7 }"
+        class="text-body-2 px-4 py-3 text-grey border rounded-lg summary-warp">
         <p v-text="item.summary" class="text-ellipsis"></p>
       </div>
       <!-- 标题信息 -->
       <div class="my-2 d-flex mx-1">
         <div class="text-center mr-2 left-info">
           <v-badge v-if="!item.isRead" color="primary" dot>
-            <img
-              :src="item?.feed?.icon"
-              onerror="this.src='/logo.svg'"
-              style="width: 1.8rem; height: 1.8rem"
-              class="rounded-circle"
-            />
+            <img :src="item?.feed?.icon" onerror="this.src='/logo.svg'" style="width: 1.8rem; height: 1.8rem"
+              class="rounded-circle" />
           </v-badge>
-          <img
-            v-else
-            :src="item?.feed?.icon"
-            onerror="this.src='/logo.svg'"
-            style="width: 1.8rem; height: 1.8rem"
-            class="rounded-circle"
-          />
+          <img v-else :src="item?.feed?.icon" onerror="this.src='/logo.svg'" style="width: 1.8rem; height: 1.8rem"
+            class="rounded-circle" />
           <!-- <v-icon
             v-if="!item.isRead"
             style="margin-left: -5px"
@@ -142,9 +105,8 @@ const isVideoOrPodcast = computed(() => {
 function videoUrl() {
   const link = props.item.link;
   return link.indexOf("youtube.com/watch")
-    ? `https://www.youtube-nocookie.com/embed/${
-        link.split("?v=")[1]
-      }?autoplay=1&controls=0&mute=1`
+    ? `https://www.youtube-nocookie.com/embed/${link.split("?v=")[1]
+    }?autoplay=1&controls=0&mute=1`
     : link;
 }
 
@@ -164,11 +126,13 @@ function formatDuration(seconds: number) {
   box-sizing: border-box;
   background-color: rgba(var(--v-theme-surface-light), 0.2);
 }
+
 .iframe-container {
   background-color: #111;
   overflow: hidden;
   position: relative;
 }
+
 .video-warp {
   position: absolute;
   top: 0;
@@ -176,11 +140,13 @@ function formatDuration(seconds: number) {
   width: 100%;
   background-color: rgba(var(--v-theme-surface-light), 0);
 }
+
 iframe {
   width: 100%;
   margin: 0;
   padding: 0;
 }
+
 .play-preview {
   overflow: hidden;
 
@@ -195,6 +161,7 @@ iframe {
     font-size: 0.8rem;
   }
 }
+
 .left-info {
   display: flex;
   justify-content: space-between;

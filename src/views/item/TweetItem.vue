@@ -27,7 +27,7 @@
           <p class="text-medium-emphasis text-body-2 summary">
             {{ item.summary }}
           </p>
-          <div v-if="hasMedia" class="tweet-media mt-2" :class="`media-count-${imageCount}`">
+          <div v-if="hasMedia" class="tweet-media mt-2" :class="`media-count-${isVideoOrPodcast ? 0 : imageCount}`">
             <template v-if="isVideoOrPodcast">
               <v-img :src="item.thumbnail || item.feed?.icon" class="media-preview video-preview" cover>
                 <div class="play-icon-wrapper">
@@ -36,7 +36,8 @@
                   </div>
                 </div>
                 <div class="play-duration">
-                  {{ formatDuration(item.duration) }}
+                  media
+                  <!-- {{ formatDuration(item.duration) }} -->
                 </div>
               </v-img>
             </template>
@@ -159,6 +160,8 @@ const hasMedia = computed(() => {
       aspect-ratio: 1 / 1; // Make images square
     }
 
+
+    &.media-count-0,
     &.media-count-1 {
       grid-template-columns: 1fr;
       grid-template-rows: 1fr;
@@ -166,6 +169,13 @@ const hasMedia = computed(() => {
       .media-preview {
         height: auto;
         aspect-ratio: 16 / 9; // A single image can be wider
+      }
+    }
+
+    &.media-count-0 {
+      .media-preview {
+        height: auto;
+        aspect-ratio: auto; // A single image can be wider
       }
     }
 
