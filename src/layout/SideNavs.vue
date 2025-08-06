@@ -110,7 +110,7 @@
   <!-- 搜索弹框 -->
   <search-dialog v-model="showSearch" />
   <help-dialog v-model="showHelp" />
-  <settings-dialog max-width="900px" :activeMenu="activeMenu" v-model="settingable" />
+  <settings-dialog max-width="760px" :activeMenu="activeMenu" v-model="settingable" />
 </template>
 
 <script setup async>

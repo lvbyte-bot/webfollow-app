@@ -1,67 +1,76 @@
 <template>
-  <v-container>
-    <!-- API设置 -->
-    <v-card flat>
-      <v-card-title class="mb-2">OpenAI 接口设置</v-card-title>
-      <v-card-text>
-        <v-text-field v-model="data.apiUrl" label="API 地址" variant="outlined" placeholder="https://api.openai.com/v1"
-          class="mb-4"></v-text-field>
-
-        <v-text-field v-model="data.apiKey" label="API Key" variant="outlined" placeholder="sk-..."
-          :type="showKey ? 'text' : 'password'" :append-inner-icon="showKey ? 'mdi-eye-off' : 'mdi-eye'"
-          @click:append-inner="showKey = !showKey" @focus="handleFocus"
-          :hint="showHint ? '检测到剪贴板中有 API Key，按 Ctrl+V 粘贴' : ''" persistent-hint></v-text-field>
-
-        <!-- 添加测试按钮 -->
-        <div class="d-flex mt-2 mb-6">
+  <v-container class="pa-6">
+    <div class="mb-6">
+      <h2 class="text-h6">OpenAI 接口设置</h2>
+      <div class="mt-4">
+        <div class="d-flex justify-space-between align-center">
+          <div>
+            <div class="text-subtitle-1">API 地址</div>
+            <div class="text-caption text-medium-emphasis">自定义 OpenAI API 地址，如反向代理。</div>
+          </div>
+          <v-text-field v-model="data.apiUrl" variant="outlined" density="compact" hide-details
+            placeholder="https://api.openai.com/v1" style="max-width: 300px;"></v-text-field>
+        </div>
+      </div>
+      <v-divider class="my-4"></v-divider>
+      <div class="mt-4">
+        <div class="d-flex justify-space-between align-center">
+          <div>
+            <div class="text-subtitle-1">API Key</div>
+            <div class="text-caption text-medium-emphasis">您的 OpenAI API 密钥。</div>
+          </div>
+          <v-text-field v-model="data.apiKey" variant="outlined" density="compact" hide-details placeholder="sk-..."
+            :type="showKey ? 'text' : 'password'" :append-inner-icon="showKey ? 'mdi-eye-off' : 'mdi-eye'"
+            @click:append-inner="showKey = !showKey" @focus="handleFocus"
+            :hint="showHint ? '检测到剪贴板中有 API Key，按 Ctrl+V 粘贴' : ''" persistent-hint
+            style="max-width: 300px;"></v-text-field>
+        </div>
+        <div class="d-flex mt-2">
           <v-btn color="info" size="small" :loading="testing" @click="testConnection">
-            <v-icon v-if="data.isApiValid" left color="success" class="mr-2">
-              mdi-check-circle
-            </v-icon>
+            <v-icon v-if="data.isApiValid" left color="success" class="mr-2">mdi-check-circle</v-icon>
             测试连接
-            <v-icon right class="ml-2">mdi-connection</v-icon>
           </v-btn>
-          <v-chip v-if="data.lastTestTime" size="small" class="ml-6" :color="data.isApiValid ? 'success' : 'error'">
+          <v-chip v-if="data.lastTestTime" size="small" class="ml-4" :color="data.isApiValid ? 'success' : 'error'">
             上次检测: {{ formatDate(data.lastTestTime) }}
           </v-chip>
         </div>
-        <v-textarea v-model="data.summaryPrompt" label="文章总结提示词" variant="outlined" rows="4"
-          placeholder="请用简洁的语言总结这篇文章的主要内容..."></v-textarea>
-
-        <!-- 模型选择部分 -->
-        <div v-if="data.isApiValid">
-          <v-divider class="my-4"></v-divider>
-          <div class="d-flex align-center justify-space-between mb-4">
-            <v-select v-model="data.selectedModel" :items="availableModels" label="选择模型" variant="outlined"
-              :loading="loadingModels" :disabled="loadingModels" class="flex-grow-1" hide-details>
-              <template v-slot:prepend>
-                <v-icon>mdi-robot-outline</v-icon>
-              </template>
-            </v-select>
-            <v-btn color="primary" variant="text" height="50" class="ml-2" :loading="loadingModels"
-              @click="fetchModels">
-              <v-icon>mdi-refresh</v-icon>
-            </v-btn>
+      </div>
+      <v-divider class="my-4"></v-divider>
+      <div class="mt-4">
+        <div class="d-flex justify-space-between align-start">
+          <div>
+            <div class="text-subtitle-1">文章总结提示词</div>
+            <div class="text-caption text-medium-emphasis">自定义用于生成文章摘要的提示。</div>
+          </div>
+          <v-textarea v-model="data.summaryPrompt" variant="outlined" rows="4" placeholder="请用简洁的语言总结这篇文章的主要内容..."
+            style="max-width: 300px;"></v-textarea>
+        </div>
+      </div>
+      <div v-if="data.isApiValid" class="mt-4">
+        <v-divider class="my-4"></v-divider>
+        <div class="d-flex justify-space-between align-center">
+          <div>
+            <div class="text-body-1">选择模型</div>
+            <div class="text-caption text-medium-emphasis">选择用于AI功能的语言模型。</div>
+          </div>
+          <div class="d-flex align-center" style="max-width: 300px;">
+            <v-select v-model="data.selectedModel" :items="availableModels" variant="outlined" density="compact"
+              :loading="loadingModels" :disabled="loadingModels" class="flex-grow-1" hide-details></v-select>
+            <v-btn color="primary" variant="text" icon="mdi-refresh" :loading="loadingModels" @click="fetchModels"
+              class="ml-2"></v-btn>
           </div>
         </div>
-      </v-card-text>
-    </v-card>
-    <a href="https://oneapi.jisuai.cn/" target="_blank">
-      <v-btn color="primary" variant="outlined">
-        获取API Key
-        <v-icon right class="ml-2">mdi-key</v-icon>
-      </v-btn>
-    </a>
+      </div>
+    </div>
+
     <!-- 保存按钮 -->
-    <v-row class="mt-4">
+    <v-row>
       <v-col>
-        <v-btn color="primary" @click="saveSettings">
+        <v-btn color="primary" @click="saveSettings" class="mr-2">
           保存设置
-          <v-icon right class="ml-2">mdi-content-save</v-icon>
         </v-btn>
-        <v-btn color="error" variant="outlined" class="ml-2" @click="resetSettings">
+        <v-btn color="error" variant="outlined" @click="resetSettings">
           重置默认
-          <v-icon right class="ml-2">mdi-refresh</v-icon>
         </v-btn>
       </v-col>
     </v-row>

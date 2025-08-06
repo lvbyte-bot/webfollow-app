@@ -1,101 +1,84 @@
 <template>
-  <v-container>
-    <!-- 开始页设置 -->
-    <v-card class="mb-4" flat>
-      <v-card-title>开始页</v-card-title>
-      <v-card-text>
-        <div class="d-flex align-center justify-space-between">
-          <label>选择开始页</label>
-          <v-select v-model="data.startPage" :items="startPageOptions" variant="outlined" density="comfortable"
-            hide-details :max-width="200"></v-select>
+  <v-container class="pa-6">
+    <div class="mb-6">
+      <h2 class="text-h6">自定义</h2>
+      <div class="d-flex justify-space-between align-center mt-4">
+        <div>
+          <div class="text-subtitle-1">开始页</div>
+          <div class="text-caption text-medium-emphasis">选择您打开应用时看到的第一个页面。</div>
         </div>
-      </v-card-text>
-    </v-card>
+        <v-select v-model="data.startPage" :items="startPageOptions" variant="outlined" density="compact" hide-details
+          style="max-width: 200px;"></v-select>
+      </div>
+      <v-divider class="my-4"></v-divider>
+      <div class="d-flex justify-space-between align-center">
+        <div>
+          <div class="text-subtitle-1">默认视图</div>
+          <div class="text-caption text-medium-emphasis">为您所有的订阅源选择默认的文章列表布局。</div>
+        </div>
+        <v-select v-model="data.defaultView" :items="viewOptions" variant="outlined" density="compact" hide-details
+          style="max-width: 200px;">
+          <template v-slot:selection="{ item }">
+            <v-icon :icon="getViewIcon(item.value)" class="mr-2"></v-icon>
+            {{ item.title }}
+          </template>
+          <template v-slot:item="{ item, props }">
+            <v-list-item v-bind="props">
+              <template v-slot:prepend>
+                <v-icon :icon="getViewIcon(item.value)"></v-icon>
+              </template>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item>
+          </template>
+        </v-select>
+      </div>
+    </div>
 
-    <!-- 默认视图设置 -->
-    <v-card class="mb-4" flat>
-      <v-card-title>默认视图</v-card-title>
-      <v-card-text>
-        <div class="d-flex align-center justify-space-between">
-          <label>选择默认视图</label>
-          <v-select v-model="data.defaultView" :items="viewOptions" variant="outlined" density="comfortable"
-            hide-details :max-width="200">
-            <template v-slot:selection="{ item }">
-              <v-icon :icon="getViewIcon(item.value)" class="mr-2"></v-icon>
-              {{ item.title }}
-            </template>
-            <template v-slot:item="{ item, props }">
-              <v-list-item v-bind="props">
-                <template v-slot:prepend>
-                  <v-icon :icon="getViewIcon(item.value)"></v-icon>
-                </template>
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
-              </v-list-item>
-            </template>
-          </v-select>
+    <div class="mb-6">
+      <h2 class="text-h6">自动化</h2>
+      <div class="d-flex justify-space-between align-center mt-4">
+        <div>
+          <div class="text-subtitle-1">隐藏已读文章</div>
+          <div class="text-caption text-medium-emphasis">自动将您已读的文章从列表中隐藏。</div>
         </div>
-      </v-card-text>
-    </v-card>
-
-    <!-- 隐藏已读文章设置 -->
-    <v-card class="mb-4" flat>
-      <v-card-title>隐藏已读文章</v-card-title>
-      <v-card-text>
-        <div class="d-flex align-center justify-space-between">
-          <label>自动隐藏已读文章</label>
-          <v-switch v-model="data.hideReadArticles" color="primary" hide-details></v-switch>
+        <v-switch v-model="data.hideReadArticles" color="primary" hide-details></v-switch>
+      </div>
+      <v-divider class="my-4"></v-divider>
+      <div class="d-flex justify-space-between align-center">
+        <div>
+          <div class="text-subtitle-1">列表AI总结</div>
+          <div class="text-caption text-medium-emphasis">在文章列表中显示由AI生成的摘要。注意：可能会增加API调用。</div>
         </div>
-      </v-card-text>
-    </v-card>
-
-    <!-- 列表AI总结设置 -->
-    <v-card class="mb-4" flat>
-      <v-card-title>列表AI总结</v-card-title>
-      <v-card-text>
-        <div class="d-flex align-center justify-space-between">
-          <label>在列表视图中显示AI总结</label>
-          <v-switch v-model="data.enableListAISummary" color="primary" hide-details></v-switch>
+        <v-switch v-model="data.enableListAISummary" color="primary" hide-details></v-switch>
+      </div>
+      <v-divider class="my-4"></v-divider>
+      <div class="d-flex justify-space-between align-center">
+        <div>
+          <div class="text-subtitle-1">列表滚动标记为已读</div>
+          <div class="text-caption text-medium-emphasis">当您在文章列表视图中向下滚动时，自动将文章标记为已读。</div>
         </div>
-        <div class="text-caption text-medium-emphasis mt-2">
-          注意：启用此功能可能会增加API调用次数
+        <v-switch v-model="data.autoRead" color="primary" hide-details></v-switch>
+      </div>
+      <v-divider class="my-4"></v-divider>
+      <div class="d-flex justify-space-between align-center">
+        <div>
+          <div class="text-body-1">自动刷新</div>
+          <div class="text-caption text-medium-emphasis">在后台自动为您同步订阅源。</div>
         </div>
-      </v-card-text>
-    </v-card>
-
-    <!-- 自动阅读设置 -->
-    <v-card class="mb-4" flat>
-      <v-card-title>列表滚动标记为已读</v-card-title>
-      <v-card-text>
-        <div class="d-flex align-center justify-space-between">
-          <label>启用列表滚动标记为已读</label>
-          <v-switch v-model="data.autoRead" color="primary" hide-details></v-switch>
-        </div>
-      </v-card-text>
-    </v-card>
-
-    <!-- 自动刷新设置 -->
-    <v-card class="mb-4" flat>
-      <v-card-title>自动刷新</v-card-title>
-      <v-card-text>
-        <div class="d-flex align-center justify-space-between">
-          <label>启用自动刷新</label>
-          <v-switch v-model="data.autoRefresh" color="primary" hide-details></v-switch>
-        </div>
-        <v-select v-if="data.autoRefresh" v-model="data.refreshInterval" :items="refreshIntervals" label="刷新间隔"
-          variant="outlined" density="comfortable" class="mt-2"></v-select>
-      </v-card-text>
-    </v-card>
+        <v-switch v-model="data.autoRefresh" color="primary" hide-details></v-switch>
+      </div>
+      <v-select v-if="data.autoRefresh" v-model="data.refreshInterval" :items="refreshIntervals" label="刷新间隔"
+        variant="outlined" density="compact" class="mt-4" hide-details></v-select>
+    </div>
 
     <!-- 保存按钮 -->
     <v-row>
       <v-col>
         <v-btn color="primary" @click="saveSettings" class="mr-2">
           保存设置
-          <v-icon right class="ml-2">mdi-content-save</v-icon>
         </v-btn>
         <v-btn color="error" variant="outlined" @click="resetSettings">
           重置默认
-          <v-icon right class="ml-2">mdi-refresh</v-icon>
         </v-btn>
       </v-col>
     </v-row>
