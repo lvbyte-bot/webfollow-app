@@ -59,7 +59,7 @@ onMounted(() => {
 .player-section {
   position: relative;
   height: 380px;
-  background-size: cover;
+  /* background-size: cover; */
   background-position: center;
   background-color: #555;
   margin-bottom: 1rem;

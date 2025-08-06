@@ -2,23 +2,14 @@
   <div class="grid">
     <div>
       <div class="podcat-reader">
-        <div class="warp">
+        <div class="warp" :style="{ backgroundImage: `url(${item.thumbnail || item.feed?.icon || ''})` }">
           <div class="glass">
-            <v-img
-              :src="item.thumbnail || item.feed?.icon || ''"
-              cover
-              max-height="300px"
-              max-width="300px"
-              class="d-flex align-center mx-auto rounded-lg"
-            >
+            <v-img :src="item.thumbnail || item.feed?.icon || ''" cover max-height="300px" max-width="300px"
+              class="d-flex align-center mx-auto rounded-lg">
               <div class="d-flex justify-center">
                 <!-- 播放暂停按钮 -->
-                <v-btn
-                  @click="togglePlay"
-                  :icon="curretIsPlaying ? 'mdi-pause' : 'mdi-play'"
-                  theme="dark"
-                  style="opacity: 0.7"
-                >
+                <v-btn @click="togglePlay" :icon="curretIsPlaying ? 'mdi-pause' : 'mdi-play'" theme="dark"
+                  style="opacity: 0.7">
                 </v-btn>
               </div>
             </v-img>
@@ -135,26 +126,28 @@ function addClass(list: Element[]) {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .grid {
   display: grid;
   grid-gap: 1rem;
   grid-template-columns: minmax(20vw, 1fr) 2fr;
 }
+
 .podcat-reader {
   width: 100%;
   position: sticky;
   top: calc(56px + 16px);
   padding: 1rem;
+
   .warp {
     height: calc(100vh - 56px - 5rem);
     border-radius: 1rem;
-    background: linear-gradient(
-      to right bottom,
-      rgba(var(--v-theme-primary), 0.6),
-      rgba(var(--v-theme-primary), 1)
-    );
+    background: linear-gradient(to right bottom,
+        rgba(var(--v-theme-primary), 0.6),
+        rgba(var(--v-theme-primary), 1));
+    background-position: center;
   }
+
   .glass {
     height: 100%;
     display: flex;
@@ -164,17 +157,21 @@ function addClass(list: Element[]) {
     font-size: 20px;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 1rem;
-    backdrop-filter: blur(10px); /* 模糊效果 */
+    backdrop-filter: blur(10px);
+    /* 模糊效果 */
     -webkit-backdrop-filter: blur(10px);
   }
+
   .v-card {
     margin: 0 auto;
     background-color: transparent;
   }
 }
+
 @media (max-width: 760px) {
   .grid {
     grid-template-columns: 1fr;
+
     .warp {
       height: 30vh;
     }
