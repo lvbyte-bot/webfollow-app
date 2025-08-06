@@ -57,7 +57,7 @@ const appStore = useAppStore();
 
 const currentSection = ref("general");
 const menuItems = [
-  { key: "general", label: "通用设置", icon: "mdi-cog" },
+  { key: "general", label: "通用设置", icon: "mdi-cog-outline" },
   // { key: "account", label: "账号设置", icon: "mdi-account" },
   // { key: "notification", label: "通知设置", icon: "mdi-bell" },
   // { key: "privacy", label: "隐私设置", icon: "mdi-shield-lock" },
