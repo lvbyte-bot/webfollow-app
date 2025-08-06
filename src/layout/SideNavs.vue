@@ -16,7 +16,7 @@
             </template>
           </v-list-item>
 
-          <c-btn id="menu-activator-2" icon=" mdi-cog-outline"> </c-btn>
+          <c-btn id="menu-activator-2" icon="mdi-cog-outline"> </c-btn>
         </div>
         <v-divider class="mb-2"></v-divider>
       </template>
@@ -148,7 +148,7 @@ const menus = [
   { title: "搜索 (ctrl+/)", value: "search", icon: "mdi-magnify" },
   { title: "快捷键 (ctrl+?)", value: "hotkeys", icon: "mdi-keyboard" },
   { title: "AI Key", value: "aikey", icon: "mdi-key-variant" },
-  { title: "套餐", value: "combo", icon: "mdi-package-variant" },
+  // { title: "套餐", value: "combo", icon: "mdi-package-variant" },
   {},
   // { title: "反馈", value: "feedback" },
   { title: "注册账号", value: "register", icon: "mdi-account-plus" },

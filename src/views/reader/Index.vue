@@ -45,7 +45,7 @@
             class="entry-read">
             <v-icon>{{
               item.isRead ? "mdi-circle-outline" : "mdi-circle"
-              }}</v-icon>
+            }}</v-icon>
           </c-btn>
         </slot>
       </div>
