@@ -11,7 +11,7 @@ export function useScroll(el: any): any {
 
         observer = new MutationObserver(debound(() => {
             isBottom.value = false
-        }, 300));
+        }, 100));
         const config = { childList: true, subtree: true };
         if (el.value) {
             observer.observe(el.value, config);
@@ -36,12 +36,12 @@ export function useScroll(el: any): any {
         const clientHeight = container.clientHeight;
 
         // 判断是否滚动到底部
-        if (scrollTop + clientHeight >= scrollHeight - 300) { // 300 像素缓冲
+        if (scrollTop + clientHeight >= scrollHeight - 200) { // 200 像素缓冲
             isBottom.value = true;
         } else {
             isBottom.value = false;
         }
-    }, 300)
+    }, 100)
 
     return { isBottom }
 }
