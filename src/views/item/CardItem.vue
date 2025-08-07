@@ -29,10 +29,7 @@
           </template>
         </v-img>
       </div>
-      <div v-else :style="{ '--line-clamp': mobile ? 12 : 7 }"
-        class="text-body-2 px-4 py-3 text-grey border rounded-lg summary-warp">
-        <p v-text="item.summary" class="text-ellipsis"></p>
-      </div>
+
       <!-- 标题信息 -->
       <div class="my-2 d-flex mx-1">
         <div class="text-center mr-2 left-info">
