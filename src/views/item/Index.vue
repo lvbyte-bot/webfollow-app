@@ -1,23 +1,23 @@
 <template>
-  <div class="items-list" v-if="view == 'card'" :class="{ 'items-list-col': itemsType !== ItemType.VIDEO }">
+  <template v-if="general.enableListAISummary">
+    <ai-summary-item v-for="(item, index) in items" :item="item" @click="openReader(index, item)"
+      @contextmenu.prevent="showContextMenu($event, item, index)" :type="type" :key="item.id" class="entry-item"
+      :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
+      :style="{ animationDelay: `${(index % 50) * 0.03}s` }" />
+  </template>
+  <div class="items-list" v-else-if="view == 'card'" :class="{ 'items-list-col': itemsType !== ItemType.VIDEO }">
     <card-item v-for="(item, index) in items" :key="item.id" :item="item" @click="openReader(index, item)"
       @click-action="clickAction" @contextmenu.prevent="showContextMenu($event, item, index)" :type="type"
       class="entry-item" :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
       :style="{ animationDelay: `${(index % 50) * 0.05}s` }" />
   </div>
   <template v-else-if="view == 'magazine' || view == 'column'">
-    <template v-if="general.enableListAISummary">
-      <ai-summary-item v-for="(item, index) in items" :item="item" @click="openReader(index, item)"
-        @contextmenu.prevent="showContextMenu($event, item, index)" :type="type" :key="item.id" class="entry-item"
-        :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
-        :style="{ animationDelay: `${(index % 50) * 0.03}s` }" />
-    </template>
-    <template v-else>
+    <div style="max-width: 600px;" class="mx-auto">
       <magazine-item v-for="(item, index) in items" :item="item" @click="openReader(index, item)"
         @contextmenu.prevent="showContextMenu($event, item, index)" :type="type" :key="item.id" class="entry-item"
         :class="{ 'fade-in': !settingStore.appearance.lessAnimation }"
         :style="{ animationDelay: `${(index % 50) * 0.03}s` }" />
-    </template>
+    </div>
   </template>
   <template v-else-if="view == 'text'">
     <v-list>

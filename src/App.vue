@@ -85,6 +85,18 @@ html {
   outline: none;
 }
 
+.i-avatar {
+  height: 1.2rem;
+  width: 1.2rem;
+  border-radius: 5px;
+}
+
+.i-avatar-lg {
+  height: 2rem;
+  width: 2rem;
+  border-radius: 8px;
+}
+
 .text-ellipsis {
   display: -webkit-box;
   -webkit-box-orient: vertical;

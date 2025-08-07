@@ -37,11 +37,9 @@
       <div class="my-2 d-flex mx-1">
         <div class="text-center mr-2 left-info">
           <v-badge v-if="!item.isRead" color="primary" dot>
-            <img :src="item?.feed?.icon" onerror="this.src='/logo.svg'" style="width: 1.8rem; height: 1.8rem"
-              class="rounded-circle" />
+            <img :src="item?.feed?.icon" onerror="this.src='/logo.svg'" class="i-avatar" />
           </v-badge>
-          <img v-else :src="item?.feed?.icon" onerror="this.src='/logo.svg'" style="width: 1.8rem; height: 1.8rem"
-            class="rounded-circle" />
+          <img v-else :src="item?.feed?.icon" onerror="this.src='/logo.svg'" class="i-avatar" />
           <!-- <v-icon
             v-if="!item.isRead"
             style="margin-left: -5px"
@@ -121,7 +119,6 @@ function videoUrl() {
 </script>
 <style lang="scss" scoped>
 .summary-warp {
-  // min-height: 152px;
   min-height: 10rem;
   box-sizing: border-box;
   background-color: rgba(var(--v-theme-surface-light), 0.2);

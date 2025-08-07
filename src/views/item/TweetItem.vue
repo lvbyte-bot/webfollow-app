@@ -2,7 +2,7 @@
   <v-list-item class="tweet-item py-3" v-bind="$attrs">
     <div class="tweet" :class="{ readly: item.isRead }">
       <div class="tweet-left">
-        <img :src="item.feed?.icon" alt="" />
+        <img :src="item.feed?.icon" alt="" class="i-avatar-lg" />
         <v-icon :color="item.isRead ? '-' : 'primary'">
           {{ item.isRead ? "" : "mdi-circle-medium" }}
         </v-icon>
@@ -107,9 +107,6 @@ const hasMedia = computed(() => {
   }
 
   img {
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 50%;
     flex-shrink: 0;
   }
 }

@@ -2,7 +2,7 @@
   <v-list-item class="magazine-item py-3" v-bind="$attrs">
     <div class="magazine">
       <div class="magazine-left">
-        <img :src="item.feed?.icon" alt="" />
+        <img :src="item.feed?.icon" alt="" class="i-avatar" />
         <v-icon :color="item.isRead ? '-' : 'primary'">
           {{ item.isRead ? "" : "mdi-circle-medium" }}
         </v-icon>
@@ -11,8 +11,7 @@
         <div class="magazine-info mb-2">
           <div class="text-body-2 text-truncate text-medium-emphasis">
             <router-link :to="'/f/' + item.feedId" @click.stop="">
-              {{ getSource() }}</router-link
-            >
+              {{ getSource() }}</router-link>
           </div>
           <div class="text-body-2 text-medium-emphasis text-right">
             {{ item.datestr }}
@@ -21,32 +20,21 @@
         <div class="magazine-sec">
           <div class="desc text-ellipsis">
             <template v-if="isLoading">
-              <v-skeleton-loader
-                type="heading"
-              ></v-skeleton-loader>
-              <v-skeleton-loader
-                type="paragraph"
-                class="text-medium-emphasis"
-              ></v-skeleton-loader>
+              <v-skeleton-loader type="heading"></v-skeleton-loader>
+              <v-skeleton-loader type="paragraph" class="text-medium-emphasis"></v-skeleton-loader>
             </template>
             <template v-else>
               <p class="mb-2 text-body-1 title">
                 {{ item.title }}
               </p>
               <p class="text-medium-emphasis text-body-2">
-                {{ summary|| item.summary  }}
+                {{ summary || item.summary }}
               </p>
             </template>
           </div>
           <div class="text-right mt-2">
-            <v-btn
-              v-if="!isLoading"
-              size="small"
-              variant="text"
-              color="primary"
-              @click.stop="handleRetry"
-              :loading="isRetrying"
-            >
+            <v-btn v-if="!isLoading" size="small" variant="text" color="primary" @click.stop="handleRetry"
+              :loading="isRetrying">
               <template v-slot:prepend>
                 <v-icon>mdi-refresh</v-icon>
               </template>
@@ -132,6 +120,7 @@ function getSource() {
   padding-left: 5px;
   padding-right: 10px;
 }
+
 .magazine {
   display: grid;
   grid-template-columns: 1rem auto;
@@ -144,40 +133,44 @@ function getSource() {
     align-items: center;
     align-self: flex-start;
     justify-content: space-between;
+
     .v-icon {
       margin-top: 1rem;
     }
-    img {
-      width: 14px;
-      border-radius: 2px;
-    }
   }
 }
+
 .magazine-info {
   display: grid;
   grid-template-columns: auto 6rem;
 }
+
 .magazine-sec {
   display: grid;
   grid-template-columns: 1fr;
   grid-gap: 0.5rem;
 }
+
 .text-right {
   text-align: right;
 }
+
 .desc {
   --line-clamp: 10;
   width: 100%;
   align-self: flex-start;
+
   .title {
     font-weight: 500;
   }
 }
+
 a {
   text-decoration: none;
   color: rgb(var(--v-theme-surface-variant));
+
   &:hover {
     text-decoration: underline;
   }
 }
-</style> 
+</style>

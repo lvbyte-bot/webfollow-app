@@ -11,8 +11,7 @@
           </span>
         </div>
         <div class="d-flex align-center ">
-          <img class="noclick mr-2 rounded" :src="item?.feed?.icon" onerror="this.src='/logo.svg'" style="width:1rem">
-          </img>
+          <img class="noclick mr-2 rounded i-avatar" :src="item?.feed?.icon" onerror="this.src='/logo.svg'" />
           <small class="text-truncate  text-medium-emphasis " v-text="getSource()"></small>
         </div>
       </div>

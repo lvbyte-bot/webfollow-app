@@ -63,8 +63,7 @@
             @contextmenu.prevent="showContextMenu($event, subItem)">
             <template #prepend>
               <div class="icon-warp">
-                <img :src="subItem.icon" width="17">
-                </img>
+                <img :src="subItem.icon" class="i-avatar" />
               </div>
 
             </template>
@@ -100,8 +99,7 @@
             @contextmenu.prevent="showContextMenu($event, subItem)">
             <template #prepend>
               <div class="icon-warp">
-                <img :src="subItem.icon" width=" 17">
-                </img>
+                <img :src="subItem.icon" class="i-avatar" />
               </div>
             </template>
             <v-list-item-title :class="{ 'font-weight-bold': subItem.unreadQty }" v-text="subItem.title">
