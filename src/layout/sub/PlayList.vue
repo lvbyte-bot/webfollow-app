@@ -59,10 +59,10 @@ onMounted(() => {
 .player-section {
   position: relative;
   height: 380px;
-  /* background-size: cover; */
-  background-position: center;
-  background-color: #555;
   margin-bottom: 1rem;
+  background-repeat: repeat;
+  background-position: center;
+  background-color: rgb(var(--v-theme-on-kbd));
 }
 
 .player-overlay {
@@ -71,9 +71,10 @@ onMounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
+  background: linear-gradient(to bottom, rgba(var(--v-theme-kbd), 0.6), rgba(var(--v-theme-background), 0.6));
+  /* rgba(var(--v-theme-kbd), 0.4); */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -87,7 +88,7 @@ onMounted(() => {
 
 .empty-state-content {
   text-align: center;
-  color: white;
+  color: rgb(var(--v-theme-on-kbd));
 }
 
 .v-list-item--active {

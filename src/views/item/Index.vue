@@ -110,6 +110,9 @@ const itemsType = inject(itemsTypeSymbol);
 function openReader(index: number, item: FeedItem) {
   ifeedApp.view.changeEntryCurrentIndex(index);
   emit("open-reader", index, item);
+  setTimeout(() => {
+    (document.querySelector('.overflow') as HTMLElement)?.focus();
+  }, 100);
 }
 
 function clickAction(action: ClickType, item: FeedItem) {

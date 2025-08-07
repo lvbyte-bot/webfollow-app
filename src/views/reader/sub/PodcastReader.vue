@@ -142,9 +142,7 @@ function addClass(list: Element[]) {
   .warp {
     height: calc(100vh - 56px - 5rem);
     border-radius: 1rem;
-    background: linear-gradient(to right bottom,
-        rgba(var(--v-theme-primary), 0.6),
-        rgba(var(--v-theme-primary), 1));
+    background-repeat: repeat;
     background-position: center;
   }
 

@@ -24,7 +24,7 @@
           <template v-if="isVideoOrPodcast">
             <div class="play-duration">
               <!-- {{ formatDuration(item.duration) }} -->
-              v
+              media
             </div>
           </template>
         </v-img>

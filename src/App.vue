@@ -81,6 +81,10 @@ html {
   color: rgba(var(--v-theme-surface-variant), 0.8);
 }
 
+.overflow:focus {
+  outline: none;
+}
+
 .text-ellipsis {
   display: -webkit-box;
   -webkit-box-orient: vertical;
