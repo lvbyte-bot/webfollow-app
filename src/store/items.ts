@@ -45,7 +45,7 @@ export const useItemsStore = defineStore('items', () => {
         id = type == LsItemType.SAVED ? saved_item_ids : id
         id = type == LsItemType.ALL ? null : id
         if (page == 0) {
-            currentPageUnReadItemIds = unread_item_ids
+            currentPageUnReadItemIds = new Set([...unread_item_ids])
         }
         if (meta?.id && meta?.type) {
             pageRoute.id = meta.id
@@ -55,7 +55,6 @@ export const useItemsStore = defineStore('items', () => {
             pageRoute.type = type
         }
         pageRoute.meta = meta
-        // console.log('run loadData', pageRoute.meta)
         const r = await listItem(id, type, page, onlyUnread, currentPageUnReadItemIds)
         if (page == 0) {
             data.value = []
