@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts" setup>
-import { useSettingsStore, useAppStore } from "@/store";
+import { useSettingsStore } from "@/store";
 import { ref, computed, onMounted, watch } from "vue";
 import { useDisplay } from "vuetify";
 import SettingsGeneral from "./sub/SettingsGeneral.vue";
@@ -53,7 +53,7 @@ const comps: any = {
   integrated: SettingsIntegrated,
 };
 const { mobile } = useDisplay();
-const appStore = useAppStore();
+// const appStore = useAppStore();
 
 const currentSection = ref("general");
 const menuItems = [

@@ -110,14 +110,14 @@ function videoUrl() {
     : link;
 }
 
-function formatDuration(seconds: number) {
-  if (!seconds) return "00:00";
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = Math.floor(seconds % 60);
-  return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
-    .toString()
-    .padStart(2, "0")}`;
-}
+// function formatDuration(seconds: number) {
+//   if (!seconds) return "00:00";
+//   const minutes = Math.floor(seconds / 60);
+//   const remainingSeconds = Math.floor(seconds % 60);
+//   return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
+//     .toString()
+//     .padStart(2, "0")}`;
+// }
 </script>
 <style lang="scss" scoped>
 .summary-warp {
