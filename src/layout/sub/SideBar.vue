@@ -41,8 +41,8 @@
               icon="mdi-export" size="small" title="导出OPML" height="20" width="20"></v-btn></span>
           <div>
 
-            <v-btn variant="text" to="/subscribe" icon="mdi-plus-circle-outline" size="small" title="订阅" height="20"
-              width="20" class="mr-1"></v-btn>
+            <v-btn variant="text" to="/subscribe" icon="mdi-plus" size="small" title="订阅" height="20" width="20"
+              class="mr-1"></v-btn>
 
           </div>
         </div>
