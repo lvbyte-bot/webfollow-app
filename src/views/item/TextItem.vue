@@ -11,7 +11,7 @@
           </span>
         </div>
         <div class="d-flex align-center ">
-          <img class="noclick mr-2 rounded i-avatar" :src="item?.feed?.icon" onerror="this.src='/logo.svg'" />
+          <m-avatar class="noclick mr-2 rounded " :src="item.feed?.icon" :name="item.feed?.title" />
           <small class="text-truncate  text-medium-emphasis " v-text="getSource()"></small>
         </div>
       </div>
@@ -23,7 +23,7 @@
         <v-btn size="small" variant="text" height="24" width="24" icon title="稍后阅读" @click.stop="toggleSaved">
           <v-icon>{{
             item.isSaved ? "mdi-playlist-minus" : "mdi-playlist-plus"
-          }}</v-icon>
+            }}</v-icon>
         </v-btn>
       </div>
     </div>

@@ -34,7 +34,7 @@
       <div class="my-2 d-flex mx-1">
         <div class="text-center mr-2 left-info">
           <v-badge v-if="!item.isRead" color="primary" dot>
-            <img :src="item?.feed?.icon" onerror="this.src='/logo.svg'" class="i-avatar" />
+            <m-avatar :src="item.feed?.icon" :name="item.feed?.title" />
           </v-badge>
           <img v-else :src="item?.feed?.icon" onerror="this.src='/logo.svg'" class="i-avatar" />
           <!-- <v-icon

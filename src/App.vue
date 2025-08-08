@@ -88,13 +88,13 @@ html {
 .i-avatar {
   height: 1.2rem;
   width: 1.2rem;
-  border-radius: 5px;
+  border-radius: 3px;
 }
 
 .i-avatar-lg {
   height: 2rem;
   width: 2rem;
-  border-radius: 8px;
+  border-radius: 5px;
 }
 
 .text-ellipsis {

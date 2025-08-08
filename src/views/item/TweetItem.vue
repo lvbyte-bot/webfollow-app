@@ -2,7 +2,7 @@
   <v-list-item class="tweet-item py-3" v-bind="$attrs">
     <div class="tweet" :class="{ readly: item.isRead }">
       <div class="tweet-left">
-        <img :src="item.feed?.icon" alt="" class="i-avatar-lg" />
+        <m-avatar :src="item.feed?.icon" :name="item.feed?.title" size="lg" />
         <v-icon :color="item.isRead ? '-' : 'primary'">
           {{ item.isRead ? "" : "mdi-circle-medium" }}
         </v-icon>
@@ -42,7 +42,7 @@
               </v-img>
             </template>
             <template v-else-if="item.images && item.images.length > 0">
-              <v-img v-for="(image, index) in item.images.slice(0, 4)" :key="index" :src="image" class="media-preview"
+              <v-img v-for="(image, index) in item.images.slice(0, 9)" :key="index" :src="image" class="media-preview"
                 cover></v-img>
             </template>
             <template v-else-if="item.thumbnail">
@@ -70,7 +70,7 @@ const isVideoOrPodcast = computed(() => {
 });
 const imageCount = computed(() => {
   const images = props.item.images || [];
-  return Math.min(images.length, 4);
+  return Math.min(images.length, 9);
 });
 const hasMedia = computed(() => {
   return isVideoOrPodcast.value || imageCount.value > 0;
@@ -175,6 +175,20 @@ const hasMedia = computed(() => {
       }
     }
 
+    &.media-count-5,
+    &.media-count-6,
+    &.media-count-7,
+    &.media-count-8,
+    &.media-count-9 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .v-img--booting {
+      background-color: rgb(var(--v-theme-on-surface-variant));
+      animation: pulse 1.5s infinite ease-in-out;
+
+    }
+
     .video-preview {
       .play-icon-wrapper {
         position: absolute;
@@ -203,6 +217,8 @@ const hasMedia = computed(() => {
       }
     }
   }
+
+
 }
 
 .readly {
@@ -226,5 +242,19 @@ a {
 
 .text-medium-emphasis {
   opacity: 0.8;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.2;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 </style>

@@ -63,7 +63,7 @@
             @contextmenu.prevent="showContextMenu($event, subItem)">
             <template #prepend>
               <div class="icon-warp">
-                <img :src="subItem.icon" class="i-avatar" />
+                <m-avatar :src="subItem.icon" :name="subItem.title" />
               </div>
 
             </template>
@@ -77,8 +77,7 @@
         <v-list-group v-else-if="gItem.feeds.length" :value="gItem.id" :key="gItem.id">
           <template v-slot:activator="{ isOpen, props }">
             <v-list-item v-bind="props" @contextmenu.prevent="showContextMenu($event, gItem, true)">
-              <v-list-item-title :class="{ 'font-weight-bold': gItem.unreadQty }"
-                v-text="gItem.title"></v-list-item-title>
+              <v-list-item-title :class="{ 'font-weight-bold': gItem.unreadQty }">{{ gItem.title }}</v-list-item-title>
               <template #prepend>
                 <v-icon :icon="isOpen ? 'mdi-chevron-down' : ' mdi-chevron-right'">
                 </v-icon>
@@ -99,10 +98,11 @@
             @contextmenu.prevent="showContextMenu($event, subItem)">
             <template #prepend>
               <div class="icon-warp">
-                <img :src="subItem.icon" class="i-avatar" />
+                <m-avatar :src="subItem.icon" :name="subItem.title" />
               </div>
             </template>
-            <v-list-item-title :class="{ 'font-weight-bold': subItem.unreadQty }" v-text="subItem.title">
+            <v-list-item-title :class="{ 'font-weight-bold': subItem.unreadQty }">
+              {{ subItem.title }}
             </v-list-item-title>
             <template v-slot:append>
               <small v-if="subItem.unreadQty" class="font-weight-thin" v-text="subItem.unreadQty"></small>
@@ -517,10 +517,5 @@ const exportOPML = async () => {
 
 .icon-warp {
   width: 21px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-
 }
 </style>

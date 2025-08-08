@@ -2,7 +2,7 @@
   <v-list-item class="magazine-item py-3" v-bind="$attrs">
     <div class="magazine">
       <div class="magazine-left">
-        <img :src="item.feed?.icon" alt="" class="i-avatar" />
+        <m-avatar :src="item.feed?.icon" :name="item.feed?.title" />
         <v-icon :color="item.isRead ? '-' : 'primary'">
           {{ item.isRead ? "" : "mdi-circle-medium" }}
         </v-icon>
